@@ -41,7 +41,7 @@ extern "C" {
  *	CLASS ht_blockop_dialog
  */
 
-void ht_blockop_dialog::init(bounds *b, FILEOFS pstart, FILEOFS pend, ht_list *history=0)
+void ht_blockop_dialog::init(bounds *b, FILEOFS pstart, FILEOFS pend, ht_list *history)
 {
 	ht_dialog::init(b, "operate on block", FS_TITLE | FS_KILLER | FS_MOVE);
 	bounds c;
