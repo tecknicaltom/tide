@@ -47,7 +47,7 @@ public:
 
 void ht_clipboard::init()
 {
-	ht_mem_file::init(0, 16);
+	ht_mem_file::init(0, 16, FAM_READ | FAM_WRITE);
 	copy_history=new ht_clist();
 	((ht_clist*)copy_history)->init();
 	select_start=0;
