@@ -228,7 +228,7 @@ protected:
 
 	FILEOFS offset;
 
-	bool	set_access_mode_internal(dword access_mode);
+	bool	set_access_mode_internal(UINT access_mode);
 public:
 
 		   void	init(char *filename, UINT access_mode);
@@ -289,7 +289,7 @@ protected:
 		   void	resizebuf(UINT newsize);
 public:
 		   void	init();
-		   void	init(FILEOFS ofs, UINT size);
+		   void	init(FILEOFS ofs, UINT size, UINT access_mode);
 	virtual void	done();
 /* overwritten */
 	virtual int	extend(UINT newsize);
