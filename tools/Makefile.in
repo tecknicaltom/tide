@@ -196,8 +196,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-bin2c.o: bin2c.c
-
 info-am:
 info: info-am
 dvi-am:
