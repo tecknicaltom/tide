@@ -1242,7 +1242,7 @@ bool ht_text_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 
 bool ht_text_viewer::goto_line(UINT line)
 {
-	if (line > textfile->linecount()) {
+	if (line >= textfile->linecount()) {
 		return false;
 	}
 	if ((line >= top_line) && (line - top_line < (UINT)size.h)) {
