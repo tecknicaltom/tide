@@ -6,6 +6,7 @@ version 0.7.0b:
 	  directory instead of executable's
 	- (win32) findfirst/next now fill the ctime, mtime and atime fields
 	- (win32) chdir() to "X:\" fixed
+	- cmdline param '-h' works again
 	- new config.guess/config.sub
 
 version 0.7.0:
