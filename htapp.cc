@@ -1371,6 +1371,29 @@ static int compare_keys_app_window_entry(ht_data *key_a, ht_data *key_b)
  *	CLASS ht_app
  */
 
+static bool doFileChecks(ht_file *file)
+{
+// FIXME: this is notify-user-only. should actually also take the actions it claims to...
+//        (its done in stream.cc in ht_file::set_access_mode_internal()
+	pstat_t s;
+	file->pstat(&s);
+	if (s.caps & pstat_mode_type) {
+		switch (s.mode & HT_S_IFMT) {
+			case HT_S_IFREG: return true;
+			default:
+				LOG_EX(LOG_WARN, "file is not regular (but device, fifo or something...).");
+				LOG_EX(LOG_WARN, "Write-access disabled for safety !");
+				return true;
+		}
+	} else {
+		LOG_EX(LOG_WARN, "can't determine file type (regular, device, directory...) ! assuming non-regular...");
+		LOG_EX(LOG_WARN, "file is not regular (but device, fifo or something...).");
+		LOG_EX(LOG_WARN, "Write-access disabled for safety !");
+		return true;
+	}
+	return false;
+}
+
 /*debug*/
 //#define DRAW_TIMINGS
 //#define NO_AVG
@@ -1715,18 +1738,20 @@ bool ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 		return true;
 	}
 
-	ht_file *emfile=new ht_file();
+	ht_file *emfile = new ht_file();
 	emfile->init(fullfilename, FAM_READ, FOM_EXISTS);
-	
-	if ((e=emfile->get_error())) {
+
+	if ((e = emfile->get_error())) {
 		LOG_EX(LOG_ERROR, "error loading file %s: %s", fullfilename, strerror(e & ~STERR_SYSTEM));
 		return false;
 	}
 
-	ht_streamfile_modifier *mfile=new ht_streamfile_modifier();
+	if (!doFileChecks(emfile)) return false;
+
+	ht_streamfile_modifier *mfile = new ht_streamfile_modifier();
 	mfile->init(emfile, true, 8*1024);
 
-	ht_layer_streamfile *file=new ht_layer_streamfile();
+	ht_layer_streamfile *file = new ht_layer_streamfile();
 	file->init(mfile, true);
 			 
 	if ((e=file->get_error())) {
@@ -1741,7 +1766,7 @@ bool ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 
 bool ht_app::create_window_file_bin(bounds *b, ht_layer_streamfile *file, char *title, bool isfile)
 {
-	ht_file_window *window=new ht_file_window();
+	ht_file_window *window = new ht_file_window();
 	window->init(b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
 	bounds k=*b;
@@ -1832,10 +1857,17 @@ bool ht_app::create_window_file_text(char *filename, bool allow_duplicates)
 		return true;
 	}
 
-	ht_file *emfile=new ht_file();
+	ht_file *emfile = new ht_file();
 	emfile->init(fullfilename, FAM_READ, FOM_EXISTS);
-	
-	ht_ltextfile *tfile=new ht_ltextfile();
+
+	if ((e=emfile->get_error())) {
+		LOG_EX(LOG_ERROR, "error loading file %s: %s", fullfilename, strerror(e & ~STERR_SYSTEM));
+		return false;
+	}
+
+	if (!doFileChecks(emfile)) return false;
+
+	ht_ltextfile *tfile = new ht_ltextfile();
 	tfile->init(emfile, true, NULL);
 
 	ht_layer_textfile *file=new ht_layer_textfile();
@@ -1858,7 +1890,7 @@ bool ht_app::create_window_file_text(bounds *c, ht_layer_streamfile *f, char *ti
 
 	ht_layer_textfile *file = (ht_layer_textfile *)f;
 	
-	ht_file_window *window=new ht_file_window();
+	ht_file_window *window = new ht_file_window();
 	window->init(&b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
 	b.x=0;
@@ -2516,11 +2548,11 @@ void ht_app::handlemsg(htmsg *msg)
 			ht_streamfile *f = (ht_streamfile *)msg->data1.ptr;
 			UINT s = (UINT)msg->data2.integer;
 			if (confirmbox("really extend %s to offset %08x/%d ?", f->get_filename(), s, s) == button_ok) {
-               	int oam = f->get_access_mode();
-                    if (!(oam & FAM_WRITE)) f->set_access_mode(oam | FAM_WRITE);
+				int oam = f->get_access_mode();
+				if (!(oam & FAM_WRITE)) f->set_access_mode(oam | FAM_WRITE);
 				int e = f->extend(s);
-                    if (!(oam & FAM_WRITE)) f->set_access_mode(oam);
-                    if (e) errorbox("couldn't extend file to offset %08x/%d: %s", s, s, strerror(e));
+				if (!(oam & FAM_WRITE)) f->set_access_mode(oam);
+				if (e) errorbox("couldn't extend file to offset %08x/%d: %s", s, s, strerror(e));
 			}
 			clearmsg(msg);
 			return;
@@ -3137,11 +3169,11 @@ ht_list *build_vfs_list()
 	vfslist->insert(registryfs);
 #else
 /* file_vfs */
-	ht_file_vfs *file_vfs=new ht_file_vfs();
+	ht_file_vfs *file_vfs = new ht_file_vfs();
 	file_vfs->init();
 
 /* reg_vfs */
-	ht_reg_vfs *reg_vfs=new ht_reg_vfs();
+	ht_reg_vfs *reg_vfs = new ht_reg_vfs();
 	reg_vfs->init();
 
 	vfslist->insert(file_vfs);
