@@ -2,8 +2,10 @@
 ==============
 
 version 0.7.0b:
-	- fixed bug that caused ht-win32 to create ht.cfg in current directory
-	  instead of executable's on Windows XP
+	- (win2k/xp) fixed bug that caused ht to create ht.cfg in current
+	  directory instead of executable's
+	- (win32) findfirst/next now fill the ctime, mtime and atime fields
+	- new config.guess/config.sub
 
 version 0.7.0:
 	- whole new Address class for the analyser. Much more flexible.
