@@ -401,7 +401,7 @@ void	ht_file::init(char *fn, UINT am)
 	ht_streamfile::init();
 	filename=strdup(fn);
 	offset=0;
-	file=0;
+	file=NULL;
 	access_mode=0;
 	set_access_mode(am);
 }
@@ -508,6 +508,7 @@ RETRY:
 		if (am & FAM_WRITE) mode="rb+";
 	}
 
+	bool retval = true;
 	if (mode) {
 		pstat_t s;
 		int e=0;
@@ -524,10 +525,10 @@ RETRY:
 			set_error(e | STERR_SYSTEM);
 			if ((stream_error_func) && (stream_error_func(this)==SERR_RETRY))
 				goto RETRY;
-			return false;
+			retval = false;
 		}
-	}
-	return ht_streamfile::set_access_mode(am);
+	} else retval = false;
+	return retval && ht_streamfile::set_access_mode(am);
 }
 
 FILEOFS ht_file::tell()
@@ -611,7 +612,7 @@ UINT	ht_file::write(void *buf, UINT size)
  *	CLASS ht_memmap_file
  */
 
-void ht_memmap_file::init(byte *b, UINT s = 0)
+void ht_memmap_file::init(byte *b, UINT s)
 {
 	ht_streamfile::init();
 	buf = b;
@@ -668,10 +669,10 @@ UINT ht_memmap_file::write(void *b, UINT size)
 
 void ht_mem_file::init()
 {
-	ht_mem_file::init(0, HTMEMFILE_INITIAL_SIZE);
+	ht_mem_file::init(0, HTMEMFILE_INITIAL_SIZE, FAM_READ | FAM_WRITE);
 }
 
-void ht_mem_file::init(FILEOFS o, UINT size)
+void ht_mem_file::init(FILEOFS o, UINT size, UINT am)
 {
 	ht_streamfile::init();
 	ofs=o;
@@ -681,6 +682,8 @@ void ht_mem_file::init(FILEOFS o, UINT size)
 	memset(buf, 0, size);
 	pos=0;
 	dsize=0;
+	access_mode=0;
+	set_access_mode(am);
 }
 
 void ht_mem_file::done()
