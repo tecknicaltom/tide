@@ -28,9 +28,9 @@ File: hthelp.info,  Node: Top,  Prev: (dir),  Up: (dir)
 HT Editor
 =========
 
-This is HT 0.8.0pre1; please note that this is a beta version
-of the program.  Therefore HT is incomplete and sometimes
-buggy. Enjoy anyway...
+This is HT 0.8.0; please note that this is a beta version of
+the program.  Therefore HT is incomplete and sometimes buggy.
+Enjoy anyway...
 
 * Menu:
 
@@ -38,7 +38,7 @@ buggy. Enjoy anyway...
 * Key bindings::
 * Features::
 * Authors::
-* Where to download ?::
+* Where to download?::
 
 
 File: hthelp.info,  Node: About,  Prev: Top,  Up: Top
@@ -288,7 +288,7 @@ Global history
 it for all open files. Histories are also grouped by their
 context. I.e. file-related and regex-search-related dialogs
 have their own history (who would want to open "[0-9][0-9a-z]+"
-anyway ?).
+anyway?).
 
    History entries are stored within the *Note Configuration
 files::, so they can be reused when you relaunch.
@@ -442,7 +442,7 @@ and `readstring(ofs, size)' you access the file's content.
 
 
 
-File: hthelp.info,  Node: Where to download ?,  Prev: Top,  Up: Top
+File: hthelp.info,  Node: Where to download?,  Prev: Top,  Up: Top
 
 Where to download?
 ==================
@@ -456,17 +456,17 @@ also take a look at `http://sourceforge.net/projects/hte'
 
 Tag Table:
 Node: Top581
-Node: About891
-Node: Key bindings1739
-Node: Authors3227
-Node: Features3363
-Node: General features3744
-Node: Configuration files6554
-Node: Clipboard7204
-Node: Global history8017
-Node: Expression evaluation8570
-Node: Block operations9951
-Node: Search and its different modes10852
-Node: Where to download ?13542
+Node: About886
+Node: Key bindings1734
+Node: Authors3222
+Node: Features3358
+Node: General features3739
+Node: Configuration files6549
+Node: Clipboard7199
+Node: Global history8012
+Node: Expression evaluation8564
+Node: Block operations9945
+Node: Search and its different modes10846
+Node: Where to download?13536
 
 End Tag Table
