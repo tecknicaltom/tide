@@ -51,7 +51,7 @@ be registered in certain jurisdictions.
 @titlepage
 
 @title{HT Manual}
-@subtitle{Edition 0.7.3, June 2003}
+@subtitle{Edition 0.7.4, June 2003}
 
 @author{Stefan Weyergraf, Sebastian Biallas}
 @c The following two commands start the copyright page.
@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-0.7.3
+0.7.4
 @end macro
 
 @macro hturl
@@ -108,7 +108,7 @@ Therefore HT is incomplete and sometimes buggy. Enjoy anyway@dots{}
 * Key bindings::
 * Features::
 * Authors::
-* Where to download ?::
+* Where to download?::
 @end menu
 
 @node About, , Top, Top
@@ -508,8 +508,8 @@ one please let us know!
 
 @end enumerate
 
-@node Where to download ?, , Top, Top
-@section Where to download ?
+@node Where to download?, , Top, Top
+@section Where to download?
 
 @noindent
 The HT homepage is at 
@@ -531,8 +531,8 @@ one please let us know!
 
 @end enumerate
 
-@node Where to download ?, , Top, Top
-@section Where to download ?
+@node Where to download?, , Top, Top
+@section Where to download?
 
 @noindent
 The HT homepage is at 
