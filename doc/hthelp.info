@@ -1,4 +1,4 @@
-Dies ist hthelp.info, hergestellt von Makeinfo Version 4.5 aus
+Dies ist hthelp.info, hergestellt von Makeinfo Version 4.2 aus
 ht.texi.
 
 START-INFO-DIR-ENTRY
@@ -28,7 +28,7 @@ File: hthelp.info,  Node: Top,  Prev: (dir),  Up: (dir)
 HT Editor
 =========
 
-This is HT 0.7.3; please note that this is a beta version of
+This is HT 0.7.4; please note that this is a beta version of
 the program.  Therefore HT is incomplete and sometimes buggy.
 Enjoy anyway...
 
@@ -38,7 +38,7 @@ Enjoy anyway...
 * Key bindings::
 * Features::
 * Authors::
-* Where to download ?::
+* Where to download?::
 
 
 File: hthelp.info,  Node: About,  Prev: Top,  Up: Top
@@ -426,10 +426,10 @@ and `readstring(ofs, size)' you access the file's content.
 
 
 
-File: hthelp.info,  Node: Where to download ?,  Prev: Top,  Up: Top
+File: hthelp.info,  Node: Where to download?,  Prev: Top,  Up: Top
 
-Where to download ?
-===================
+Where to download?
+==================
 
 The HT homepage is at `http://hte.sourceforge.net'
 
@@ -440,17 +440,17 @@ also take a look at `http://sourceforge.net/projects/hte'
 
 Tag Table:
 Node: Top585
-Node: About891
-Node: Key bindings1739
-Node: Authors3227
-Node: Features3385
-Node: General features3766
-Node: Configuration files6003
-Node: Clipboard6653
-Node: Global history7466
-Node: Expression evaluation8019
-Node: Block operations9400
-Node: Search and its different modes10301
-Node: Where to download ?12991
+Node: About890
+Node: Key bindings1738
+Node: Authors3226
+Node: Features3384
+Node: General features3765
+Node: Configuration files6002
+Node: Clipboard6652
+Node: Global history7465
+Node: Expression evaluation8018
+Node: Block operations9399
+Node: Search and its different modes10300
+Node: Where to download?12990
 
 End Tag Table
