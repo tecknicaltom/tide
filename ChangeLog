@@ -1,7 +1,7 @@
  HT ChangeLog
 ==============
 
-version 0.7.0b:
+version 0.7.1:
 	- (win2k/xp) fixed bug that caused ht to create ht.cfg in current
 	  directory instead of executable's
 	- (win32) findfirst/next now fill the ctime, mtime and atime fields
