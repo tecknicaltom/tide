@@ -24,17 +24,40 @@
 #include "analy.h"
 #include "alphadis.h"
 
-class analy_alpha_disassembler: public analy_disassembler {
+class AddressAlphaFlat32: public Address {
 public:
-			void			init(analyser *A);
+	dword addr;
+	AddressAlphaFlat32();
+	AddressAlphaFlat32(dword addr);
+	virtual bool add(int offset);
+	virtual int byteSize();
+	virtual int compareTo(Object *to);
+	virtual int compareDelinear(Address *to);
+	virtual bool difference(int &result, Address *to);
+	virtual Object *duplicate();
+	virtual void getFromArray(const byte *array);
+	virtual void getFromCPUAddress(CPU_ADDR *ca);
+	virtual int load(ht_object_stream *s);
+	virtual OBJECT_ID object_id();
+	virtual int parseString(const char *s, int length, Analyser *a);
+	virtual void putIntoArray(byte *array);
+	virtual void putIntoCPUAddress(CPU_ADDR *ca);
+	virtual void store(ht_object_stream *s);
+	virtual int stringify(char *s, int max_length, int format);
+	virtual int stringSize();
+};
+
+class AnalyAlphaDisassembler: public AnalyDisassembler {
+public:
+			void			init(Analyser *A);
 			int 			load(ht_object_stream *f);
 	virtual   void	     	done();
 	virtual	OBJECT_ID		object_id();
 
-	virtual	ADDR			branch_addr(OPCODE *opcode, tbranchtype branchtype, bool examine);
-	virtual	void			examine_opcode(OPCODE *opcode);
-	virtual	void			init_disasm();
-	virtual	tbranchtype 	is_branch(OPCODE *opcode);
+	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+			Address		*createAddress(dword offset);
+	virtual	void			examineOpcode(OPCODE *opcode);
+	virtual	branch_enum_t 	isBranch(OPCODE *opcode);
 	virtual	void			store(ht_object_stream *f);
 };
 
