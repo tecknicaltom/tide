@@ -23,6 +23,7 @@
 #include "htle.h"
 #include "htlehead.h"
 #include "httag.h"
+#include "snprintf.h"
 #include "formats.h"
 
 #include "lestruct.h"
