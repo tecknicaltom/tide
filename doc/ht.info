@@ -1,4 +1,4 @@
-Dies ist ht.info, hergestellt von Makeinfo Version 4.5 aus ht.texi.
+This is ht.info, produced by makeinfo version 4.2 from ht.texi.
 
 START-INFO-DIR-ENTRY
 * ht: (ht.info).             HT Editor.
@@ -115,7 +115,7 @@ File: ht.info,  Node: Authors,  Prev: Top,  Up: Top
 Authors
 =======
 
-   Stefan Weyergraf <stefan@weyergraf.de>
+   Stefan Weyergraf
 
    Sebastian Biallas <sb@biallas.net>
 
@@ -422,8 +422,8 @@ file's content.
 
 File: ht.info,  Node: Where to download ?,  Prev: Top,  Up: Top
 
-Where to download ?
-===================
+Where to download?
+==================
 
 The HT homepage is at `http://hte.sourceforge.net'
 
@@ -433,18 +433,18 @@ a look at `http://sourceforge.net/projects/hte'
 
 
 Tag Table:
-Node: Top581
-Node: About887
-Node: Key bindings1716
-Node: Authors3235
-Node: Features3389
-Node: General features3766
-Node: Configuration files6517
-Node: Clipboard7164
-Node: Global history7973
-Node: Expression evaluation8522
-Node: Block operations9898
-Node: Search and its different modes10790
-Node: Where to download ?13460
+Node: Top577
+Node: About883
+Node: Key bindings1712
+Node: Authors3231
+Node: Features3363
+Node: General features3740
+Node: Configuration files6491
+Node: Clipboard7138
+Node: Global history7947
+Node: Expression evaluation8496
+Node: Block operations9872
+Node: Search and its different modes10764
+Node: Where to download ?13434
 
 End Tag Table
