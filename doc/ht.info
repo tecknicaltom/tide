@@ -1,4 +1,4 @@
-Dies ist ht.info, hergestellt von Makeinfo Version 4.2 aus ht.texi.
+Dies ist ht.info, hergestellt von Makeinfo Version 4.5 aus ht.texi.
 
 START-INFO-DIR-ENTRY
 * ht: (ht.info).             HT Editor.
@@ -26,7 +26,7 @@ File: ht.info,  Node: Top,  Prev: (dir),  Up: (dir)
 HT Editor
 =========
 
-This is HT 0.7.2; please note that this is a beta version of the
+This is HT 0.7.3; please note that this is a beta version of the
 program.  Therefore HT is incomplete and sometimes buggy. Enjoy
 anyway...
 
