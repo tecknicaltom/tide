@@ -5,6 +5,7 @@ version 0.7.0b:
 	- (win2k/xp) fixed bug that caused ht to create ht.cfg in current
 	  directory instead of executable's
 	- (win32) findfirst/next now fill the ctime, mtime and atime fields
+	- (win32) chdir() to "X:\" fixed
 	- new config.guess/config.sub
 
 version 0.7.0:
