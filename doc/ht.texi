@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-0.8.0pre1
+0.8.0
 @end macro
 
 @macro hturl
@@ -108,7 +108,7 @@ Therefore HT is incomplete and sometimes buggy. Enjoy anyway@dots{}
 * Key bindings::
 * Features::
 * Authors::
-* Where to download ?::
+* Where to download?::
 @end menu
 
 @node About, , Top, Top
@@ -411,7 +411,7 @@ retrieved from the config file automatically.
 HTs history system is global, which means that you can use it for all open
 files. Histories are also grouped by their context. I.e. file-related and 
 regex-search-related dialogs have their own history (who would want to 
-open "[0-9][0-9a-z]+" anyway ?).
+open "[0-9][0-9a-z]+" anyway?).
 
 History entries are stored within the @xref{Configuration files}, so they
 can be reused when you relaunch.
@@ -536,7 +536,7 @@ one please let us know!
 
 @end enumerate
 
-@node Where to download ?, , Top, Top
+@node Where to download?, , Top, Top
 @section Where to download?
 
 @noindent
@@ -559,8 +559,8 @@ one please let us know!
 
 @end enumerate
 
-@node Where to download ?, , Top, Top
-@section Where to download ?
+@node Where to download?, , Top, Top
+@section Where to download?
 
 @noindent
 The HT homepage is at 
