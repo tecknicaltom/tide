@@ -303,10 +303,10 @@ void CallChain::examineNode(CallChainNode *n)
 		ht_tree *x_tree = n->faddr->xrefs;
 		assert(x_tree);
 		AddrXRef *x;
-		Address *a = (Address *)x_tree->enum_next((ht_data**)&x, NULL);
+		Address *a = (Address *)x_tree->enum_next((Object**)&x, NULL);
 		assert(a);
 		CallChainNode *nn = n->child = createNode(a);
-		while ((a = (Address *)x_tree->enum_next((ht_data**)&x, a))) {
+		while ((a = (Address *)x_tree->enum_next((Object**)&x, a))) {
 			nn->next = createNode(a);
 			nn = nn->next;
 		}
@@ -1810,7 +1810,7 @@ restart:
 		new_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		char str2[1024];
 		AddrXRef *x;
-		Address *xa = (Address*)x_tree->enum_next((ht_data**)&x, NULL);
+		Address *xa = (Address*)x_tree->enum_next((Object**)&x, NULL);
 		int xcount=0;
 		while (xa) {
 			xcount++;
@@ -1830,7 +1830,7 @@ restart:
 				strcpy(str2, "?");
 			}
 			list->insert_str((int)xa, str, xref_type(x->type), str2);
-			xa = (Address*)x_tree->enum_next((ht_data**)&x, xa);
+			xa = (Address*)x_tree->enum_next((Object**)&x, xa);
 		}
 		list->attachTitle(text);
 		list->update();
