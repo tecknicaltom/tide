@@ -26,7 +26,7 @@
 extern format_viewer_if htpeimports_if;
 
 /*
- *	class ht_pe_import_dlibrary
+ *	class ht_pe_import_library
  */
 
 class ht_pe_import_library: public ht_data {
