@@ -1,4 +1,4 @@
-Dies ist hthelp.info, hergestellt von Makeinfo Version 4.5 aus
+This is hthelp.info, produced by makeinfo version 4.2 from
 ht.texi.
 
 START-INFO-DIR-ENTRY
@@ -121,7 +121,7 @@ File: hthelp.info,  Node: Authors,  Prev: Top,  Up: Top
 Authors
 =======
 
-   Stefan Weyergraf <stefan@weyergraf.de>
+   Stefan Weyergraf
 
    Sebastian Biallas <sb@biallas.net>
 
@@ -444,8 +444,8 @@ and `readstring(ofs, size)' you access the file's content.
 
 File: hthelp.info,  Node: Where to download ?,  Prev: Top,  Up: Top
 
-Where to download ?
-===================
+Where to download?
+==================
 
 The HT homepage is at `http://hte.sourceforge.net'
 
@@ -455,18 +455,18 @@ also take a look at `http://sourceforge.net/projects/hte'
 
 
 Tag Table:
-Node: Top585
-Node: About895
-Node: Key bindings1743
-Node: Authors3231
-Node: Features3389
-Node: General features3770
-Node: Configuration files6580
-Node: Clipboard7230
-Node: Global history8043
-Node: Expression evaluation8596
-Node: Block operations9977
-Node: Search and its different modes10878
-Node: Where to download ?13568
+Node: Top581
+Node: About891
+Node: Key bindings1739
+Node: Authors3227
+Node: Features3363
+Node: General features3744
+Node: Configuration files6554
+Node: Clipboard7204
+Node: Global history8017
+Node: Expression evaluation8570
+Node: Block operations9951
+Node: Search and its different modes10852
+Node: Where to download ?13542
 
 End Tag Table
