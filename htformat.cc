@@ -2603,12 +2603,29 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					dirtyview();
 					return;
 				}
+				case K_Control_F:
+					if (caps & VC_SEARCH) {
+						sendmsg(cmd_file_search);
+						dirtyview();
+						clearmsg(msg);
+						return;
+					}
+					break;
 				case K_Control_L:
 				case K_Shift_F7:
-					if (!continue_search()) infobox("no further matches");
-					dirtyview();
-					clearmsg(msg);
-					return;
+					if (caps & VC_SEARCH) {
+						if (!continue_search()) {
+							if (last_search_request) {
+								infobox("no further matches");
+							} else {
+								infobox("you must 'search' first !");
+							}
+						}
+						dirtyview();
+						clearmsg(msg);
+						return;
+					}
+					break;
 				case K_Alt_C:
 				case K_Control_Insert:
 					sendmsg(cmd_edit_copy);
@@ -2679,8 +2696,10 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 				if (addrstr[0]) {
 					viewer_pos pos;
 					globalerror[0] = 0;
-					if (string_to_pos(addrstr, &pos) && goto_pos(pos, this))
+					if (string_to_pos(addrstr, &pos) && goto_pos(pos, this)) {
+						focus_cursor();
 						break;
+					}
 					if (globalerror[0]) {
 						infobox("error: %s\nin '%s'", globalerror, addrstr);
 					} else {
@@ -3219,7 +3238,7 @@ UINT ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, UINT maxlen, 
 					int shift=((ht_tag_edit_bit*)n)->bitidx;
 					int op=shift/8;
 					byte d;
-					
+
 					tag_offset=tag_get_offset(n);
 					tag_color=getcolor_tag(palidx_tags_edit_tag);
 					bool isdirty = false;
@@ -3227,7 +3246,7 @@ UINT ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, UINT maxlen, 
 					if (isdirty) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
 					if ((tag_offset>=sel_start) && (tag_offset<sel_end)) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
 					if (is_cursor) tag_color=vcp_mix(tag_color, getcolor_tag(edit() ? palidx_tags_edit_tag_cursor_edit : palidx_tags_edit_tag_cursor_select));
-					
+
 					if (pread(tag_offset+op, &d, 1)==1) {
 						str[0]=(d& (1 << (shift%8))) ? '1' : '0';
 						str[1]=0;
