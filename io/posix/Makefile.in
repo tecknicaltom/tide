@@ -202,13 +202,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-htcurses.o: htcurses.cc ../../config.h ../../global.h htcurses.h \
-	../../io/htio.h ../../common.h ../../stream.h htsys.h \
-	../../htdebug.h
-htkeyb.o: htkeyb.cc htkeyb.h ../../io/htio.h ../../global.h \
-	../../config.h
-htsys.o: htsys.cc htsys.h ../../io/htio.h ../../global.h
-
 info-am:
 info: info-am
 dvi-am:
