@@ -3573,7 +3573,7 @@ int ht_uformat_viewer::ref_desc(ID id, FILEOFS offset, UINT size, bool bigendian
 				baseview->sendmsg(cmd_edit_mode_i, file, NULL);
 				if (edit()) {
 					byte buf[4];
-					uint v = desc[i].value;
+					UINT v = desc[i].value;
 					create_foreign_int(buf, v, size, end);
 					pwrite(offset, buf, size);
 					dirtyview();
@@ -4365,7 +4365,7 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id2 != uid) return false;
 	ID ofs = line_id.id1;
-	uint c=MIN(line_length, (fofs+fsize-ofs));
+	UINT c=MIN(line_length, (fofs+fsize-ofs));
 	if (c<=0) return false;
 	c = MIN(line_length, c+ofs%line_length);
 	char *l=line;
