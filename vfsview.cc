@@ -524,11 +524,21 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 					break;
 			}
 			if (avail) {
-				tm t = *gmtime(&q);
+				tm *pt = gmtime(&q);
+				if (!pt) {
+					q = 0;
+					pt = gmtime(&q);
+				}
+				tm t = *pt;
 
 				time_t ct;
 				time(&ct);
-				tm c = *gmtime(&ct);
+				tm *pc = gmtime(&ct);
+				if (!pc) {
+					ct = 0;
+					pc = gmtime(&ct);
+				}
+				tm c = *pc;
 				char *line = buf;
 									   
 				char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
