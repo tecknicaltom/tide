@@ -23,6 +23,6 @@
 
 #include "srt.h"
 
-void srt_x86(analyser *analy, ADDR addr);
+void srt_x86(Analyser *analy, Address *addr);
 
 #endif /* __SRT_X86_H__ */
