@@ -38,6 +38,8 @@
 - document commandline options in help
 
 +steves
+- ./configure should not fail if it can't find lex/flex (and probably other including
+	but not limited to yacc)
 - x86asm: "test eax, [2342343]" should yield "test [2342343], eax" 
           ("test" ist symmetric)
 	  same with "xchg"
