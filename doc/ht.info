@@ -1,4 +1,4 @@
-Dies ist ht.info, hergestellt von Makeinfo Version 4.5 aus ht.texi.
+Dies ist ht.info, hergestellt von Makeinfo Version 4.2 aus ht.texi.
 
 START-INFO-DIR-ENTRY
 * ht: (ht.info).             HT Editor.
@@ -26,7 +26,7 @@ File: ht.info,  Node: Top,  Prev: (dir),  Up: (dir)
 HT Editor
 =========
 
-This is HT 0.7.3; please note that this is a beta version of the
+This is HT 0.7.4; please note that this is a beta version of the
 program.  Therefore HT is incomplete and sometimes buggy. Enjoy
 anyway...
 
@@ -36,7 +36,7 @@ anyway...
 * Key bindings::
 * Features::
 * Authors::
-* Where to download ?::
+* Where to download?::
 
 
 File: ht.info,  Node: About,  Prev: Top,  Up: Top
@@ -404,10 +404,10 @@ file's content.
 
 
 
-File: ht.info,  Node: Where to download ?,  Prev: Top,  Up: Top
+File: ht.info,  Node: Where to download?,  Prev: Top,  Up: Top
 
-Where to download ?
-===================
+Where to download?
+==================
 
 The HT homepage is at `http://hte.sourceforge.net'
 
@@ -418,17 +418,17 @@ a look at `http://sourceforge.net/projects/hte'
 
 Tag Table:
 Node: Top581
-Node: About883
-Node: Key bindings1712
-Node: Authors3231
-Node: Features3385
-Node: General features3762
-Node: Configuration files5940
-Node: Clipboard6587
-Node: Global history7396
-Node: Expression evaluation7945
-Node: Block operations9321
-Node: Search and its different modes10213
-Node: Where to download ?12883
+Node: About882
+Node: Key bindings1711
+Node: Authors3230
+Node: Features3384
+Node: General features3761
+Node: Configuration files5939
+Node: Clipboard6586
+Node: Global history7395
+Node: Expression evaluation7944
+Node: Block operations9320
+Node: Search and its different modes10212
+Node: Where to download?12882
 
 End Tag Table
