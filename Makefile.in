@@ -157,7 +157,18 @@ SUBDIRS = tools analyser asm doc info io output eval minilzo srt
 
 INCLUDES = -I$(ANALYSER_DIR) -I$(ASM_DIR) -I$(INFO_DIR) -I$(IO_DIR) -I$(COMIO_DIR) -I$(OUTPUT_DIR) -I$(EVAL_DIR) -I$(MINILZO_DIR) -I$(SRT_DIR) -I.
 
-ht_LDADD = $(ANALYSER_DIR)/libanalyser.a $(ASM_DIR)/libasm.a $(INFO_DIR)/libinfo.a $(IO_DIR)/libhtio.a $(OUTPUT_DIR)/liboutput.a $(COMIO_DIR)/libcomio.a $(EVAL_DIR)/libhteval.a $(MINILZO_DIR)/liblzo.a $(SRT_DIR)/libsrt.a
+ht_LDADD = \
+$(ANALYSER_DIR)/libanalyser.a \
+$(ASM_DIR)/libasm.a \
+$(INFO_DIR)/libinfo.a \
+$(IO_DIR)/libhtio.a \
+$(OUTPUT_DIR)/liboutput.a \
+$(COMIO_DIR)/libcomio.a \
+$(EVAL_DIR)/libhteval.a \
+$(SRT_DIR)/libsrt.a \
+$(MINILZO_DIR)/liblzo.a
+
+
 ht_LDFLAGS = @HT_LDFLAGS@
 ht_LIBS = @HT_LIBS@
 
@@ -238,8 +249,8 @@ ht_OBJECTS = $(am_ht_OBJECTS)
 ht_DEPENDENCIES = $(ANALYSER_DIR)/libanalyser.a $(ASM_DIR)/libasm.a \
 	$(INFO_DIR)/libinfo.a $(IO_DIR)/libhtio.a \
 	$(OUTPUT_DIR)/liboutput.a $(COMIO_DIR)/libcomio.a \
-	$(EVAL_DIR)/libhteval.a $(MINILZO_DIR)/liblzo.a \
-	$(SRT_DIR)/libsrt.a
+	$(EVAL_DIR)/libhteval.a $(SRT_DIR)/libsrt.a \
+	$(MINILZO_DIR)/liblzo.a
 
 DEFAULT_INCLUDES =  -I. -I$(srcdir) -I.
 depcomp = $(SHELL) $(top_srcdir)/depcomp
