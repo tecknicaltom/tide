@@ -75,7 +75,7 @@ ht_view *htcoff_init(bounds *b, ht_streamfile *file, ht_format_group *format_gro
 /* look for dj-coff */
 		byte mz[2];
 		file->seek(0);
-		file->read(mz, 2);
+		if (file->read(mz, 2) != 2) return 0;
 		if ((mz[0]!=IMAGE_MZ_MAGIC0) || (mz[1]!=IMAGE_MZ_MAGIC1) ||
 				(!is_coff(file, h=0x800)))
 				return 0;
@@ -102,6 +102,7 @@ void ht_coff::init(bounds *b, ht_streamfile *file, format_viewer_if **ifs, ht_fo
 	LOG("%s: COFF: found header at %08x", file->get_filename(), h);
 	coff_shared = (ht_coff_shared_data *)malloc(sizeof(*coff_shared));
 	coff_shared->hdr_ofs = h;
+	coff_shared->sections.hdr_ofs = h;
 	coff_shared->v_image = NULL;
 	coff_shared->v_header = NULL;
 
@@ -124,7 +125,6 @@ void ht_coff::init(bounds *b, ht_streamfile *file, format_viewer_if **ifs, ht_fo
 /* read section headers */
 	int os=coff_shared->coffheader.optional_header_size;
 	coff_shared->sections.section_count=coff_shared->coffheader.section_count;
-	coff_shared->sections.base_ofs = 0x800;
 
 	h-=4;
 	
@@ -172,7 +172,7 @@ int coff_rva_to_ofs(coff_section_headers *section_headers, RVA rva, dword *ofs)
 	for (UINT i=0; i<section_headers->section_count; i++) {
 		if ((rva>=s->data_address) &&
 		(rva<s->data_address+s->data_size)) {
-			*ofs=rva-s->data_address+s->data_offset+section_headers->base_ofs;
+			*ofs=rva-s->data_address+s->data_offset+section_headers->hdr_ofs;
 			return 1;
 		}
 		s++;
@@ -216,9 +216,9 @@ int coff_ofs_to_rva(coff_section_headers *section_headers, dword ofs, RVA *rva)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (UINT i=0; i<section_headers->section_count; i++) {
-		if ((ofs>=s->data_offset+section_headers->base_ofs) &&
-		(ofs<s->data_offset+section_headers->base_ofs+s->data_size)) {
-			*rva=ofs-(s->data_offset+section_headers->base_ofs)+s->data_address;
+		if ((ofs>=s->data_offset+section_headers->hdr_ofs) &&
+		(ofs<s->data_offset+section_headers->hdr_ofs+s->data_size)) {
+			*rva=ofs-(s->data_offset+section_headers->hdr_ofs)+s->data_address;
 			return 1;
 		}
 		s++;
@@ -230,8 +230,8 @@ int coff_ofs_to_section(coff_section_headers *section_headers, dword ofs, UINT *
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (UINT i=0; i<section_headers->section_count; i++) {
-		if ((ofs>=s->data_offset+section_headers->base_ofs) &&
-		(ofs<s->data_offset+section_headers->base_ofs+s->data_size)) {
+		if ((ofs>=s->data_offset+section_headers->hdr_ofs) &&
+		(ofs<s->data_offset+section_headers->hdr_ofs+s->data_size)) {
 			*section=i;
 			return 1;
 		}
