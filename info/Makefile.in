@@ -203,12 +203,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-infoview.o: infoview.cc ../htdoc.h ../htiobox.h ../htdialog.h \
-	../htdebug.h ../global.h ../htobj.h ../common.h ../stream.h \
-	../io/posix/htsys.h ../io/htio.h ../io/posix/htcurses.h \
-	../config.h ../htstring.h ../htdata.h ../htpal.h ../htreg.h \
-	infoview.h ../textedit.h ../textfile.h ../syntax.h ../tools.h
-
 info-am:
 info: info-am
 dvi-am:
