@@ -301,31 +301,33 @@ UINT ht_ltextfile::find_linelen_forwd(byte *buf, UINT maxbuflen, FILEOFS ofs, in
 	UINT readlen=(maxbuflen>TEXTFILE_READSIZE) ? TEXTFILE_READSIZE : maxbuflen;
 	byte *bufp;
 	UINT s;
-	UINT len=0;
+	UINT len = 0;
 	
-	if (le_len) *le_len=0;
+	if (le_len) *le_len = 0;
 	do {
 		streamfile->seek(ofs);
 		s=streamfile->read(buf, readlen);
 		int l;
-		bufp=match_lineend_forwd(buf, s, &l);
+		bufp = match_lineend_forwd(buf, s, &l);
 		if (bufp) {
-			len+=bufp-buf+l;
-			if (len>TEXTFILE_MAX_LINELEN) {
-				len=TEXTFILE_MAX_LINELEN;
+			len += bufp-buf+l;
+			if (len > TEXTFILE_MAX_LINELEN) {
+				len = TEXTFILE_MAX_LINELEN;
 				break;
 			}
-			if (le_len) *le_len=l;
+			if (le_len) *le_len = l;
 			break;
-		} else len+=s;
-		if (len>TEXTFILE_MAX_LINELEN) {
-			len=TEXTFILE_MAX_LINELEN;
+		} else if (s >= (TEXTFILE_MAX_LINEENDLEN-1)) {
+			len += s-(TEXTFILE_MAX_LINEENDLEN-1);
+		}
+		if (len > TEXTFILE_MAX_LINELEN) {
+			len = TEXTFILE_MAX_LINELEN;
 			break;
 		}
-		   /* make sure current and next read overlap
+		/* make sure current and next read overlap
 		   to guarantee proper lineend-matching */
-		ofs+=s-(TEXTFILE_MAX_LINEENDLEN-1);
-	} while (s==readlen);
+		ofs += s-(TEXTFILE_MAX_LINEENDLEN-1);
+	} while (s == readlen);
 	return len;
 }
 
