@@ -69,7 +69,7 @@ char *mkhexq(char *buf, qword q);
  *	CLASS ht_data_string
  */
 
-class ht_data_string: public ht_data {
+class ht_data_string: public Object {
 public:
 	char *value;
 
@@ -100,14 +100,14 @@ public:
 
 class ht_sorted_string_list: public ht_sorted_list {
 public:
-			void init(int (*compare_keys_proc)(ht_data *key_a, ht_data *key_b));
+			void init(int (*compare_keys_proc)(Object *key_a, Object *key_b));
 /* new */
 			char *get_string(char *s);
 			void insert_string(char *s);
 };
 
-int compare_keys_string(ht_data *key_a, ht_data *key_b);
-int icompare_keys_string(ht_data *key_a, ht_data *key_b);
+int compare_keys_string(Object *key_a, Object *key_b);
+int icompare_keys_string(Object *key_a, Object *key_b);
 
 /*
  *	INIT
