@@ -589,7 +589,7 @@ void ht_le_reloc_file::init(ht_streamfile *s, bool os, ht_le_shared_data *d)
 	data = d;
 }
 
-void ht_le_reloc_file::reloc_apply(ht_data *reloc, byte *data)
+void ht_le_reloc_file::reloc_apply(Object *reloc, byte *data)
 {
 	ht_le_reloc_entry *e = (ht_le_reloc_entry*)reloc;
 
@@ -620,7 +620,7 @@ void ht_le_reloc_file::reloc_apply(ht_data *reloc, byte *data)
 	}
 }
 
-bool ht_le_reloc_file::reloc_unapply(ht_data *reloc, byte *data)
+bool ht_le_reloc_file::reloc_unapply(Object *reloc, byte *data)
 {
 	return false;
 }
