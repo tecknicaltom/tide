@@ -210,10 +210,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-eval.o: eval.c ../config.h lex.h evaltype.h evalx.h
-evalx.o: evalx.c evaltype.h eval.h lex.h
-lex.o: lex.c evaltype.h eval.h
-
 info-am:
 info: info-am
 dvi-am:
