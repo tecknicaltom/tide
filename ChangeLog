@@ -7,6 +7,7 @@ version 0.7.5:
 	- fixed bug in ht_sys_file/ht_stdio_file::extend()
 	- fixed bug, causing invalid history entries when specifying files
 	  on the command-line
+	- fixed bug in x86-assembler (correct opcode for [ebp+esp])
 
 version 0.7.4:
 	- fixed bug in COFF code (hdr_ofs sometimes fixed to 0x800)
