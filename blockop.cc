@@ -304,7 +304,7 @@ static int blockop_func_eval(eval_scalar *result, char *name, eval_scalarlist *p
  *	BLOCKOP STRING
  */
 
-class ht_blockop_str_context: public ht_data {
+class ht_blockop_str_context: public Object {
 public:
 	ht_streamfile *file;
 
@@ -329,7 +329,7 @@ public:
 	}
 };
 
-ht_data *create_blockop_str_context(ht_streamfile *file, FILEOFS ofs, UINT len, UINT size, bool netendian, char *action)
+Object *create_blockop_str_context(ht_streamfile *file, FILEOFS ofs, UINT len, UINT size, bool netendian, char *action)
 {
 	ht_blockop_str_context *ctx = new ht_blockop_str_context();
 	ctx->file = file;
@@ -365,7 +365,7 @@ ht_data *create_blockop_str_context(ht_streamfile *file, FILEOFS ofs, UINT len, 
 }
 
 #define BLOCKOP_STR_MAX_ITERATIONS 1024
-bool blockop_str_process(ht_data *context, ht_text *progress_indicator)
+bool blockop_str_process(Object *context, ht_text *progress_indicator)
 {
 	char status[64];
 	ht_blockop_str_context *ctx = (ht_blockop_str_context*)context;
@@ -424,7 +424,7 @@ bool blockop_str_process(ht_data *context, ht_text *progress_indicator)
  *	BLOCKOP INTEGER
  */
 
-class ht_blockop_int_context: public ht_data {
+class ht_blockop_int_context: public Object {
 public:
 	ht_streamfile *file;
 
@@ -448,7 +448,7 @@ public:
 	}
 };
 
-ht_data *create_blockop_int_context(ht_streamfile *file, FILEOFS ofs, UINT len, UINT size, endianess endian, char *action)
+Object *create_blockop_int_context(ht_streamfile *file, FILEOFS ofs, UINT len, UINT size, endianess endian, char *action)
 {
 	ht_blockop_int_context *ctx = new ht_blockop_int_context();
 	ctx->file = file;
@@ -486,7 +486,7 @@ ht_data *create_blockop_int_context(ht_streamfile *file, FILEOFS ofs, UINT len, 
 }
 
 #define BLOCKOP_INT_MAX_ITERATIONS	1024
-bool blockop_int_process(ht_data *context, ht_text *progress_indicator)
+bool blockop_int_process(Object *context, ht_text *progress_indicator)
 {
 	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
 	char status[64];
@@ -615,7 +615,7 @@ void blockop_dialog(ht_format_viewer *format, FILEOFS pstart, FILEOFS pend)
 							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
 						
 							esize = esizes[esize];
-							ht_data *ctx = NULL;
+							Object *ctx = NULL;
 							try {
 								ctx = create_blockop_int_context(file, start, end-start, esize, little_endian, a);
 								if (ctx) {
@@ -639,7 +639,7 @@ void blockop_dialog(ht_format_viewer *format, FILEOFS pstart, FILEOFS pend)
 							bin2str(addr, t.end.text, MIN(sizeof addr, t.end.textlen));
 							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
 
-							ht_data *ctx = NULL;
+							Object *ctx = NULL;
 							try {
 								ctx = create_blockop_str_context(file, start, end-start, esize, little_endian, a);
 								if (ctx) {
