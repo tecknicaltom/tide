@@ -858,7 +858,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-x11-textmode   build with x11 textmode support default=yes
-  --enable-release        make a release build default=no
+  --enable-release        make a release build default=yes
   --enable-profiling      make a profile build default=no
   --disable-dependency-tracking Speeds up one-time builds
   --enable-dependency-tracking  Do not reject slow dependency extractors
@@ -1407,7 +1407,7 @@ if test "${enable_release+set}" = set; then
   enableval="$enable_release"
 
 else
-  enable_release="no"
+  enable_release="yes"
 fi;
 # Check whether --enable-profiling or --disable-profiling was given.
 if test "${enable_profiling+set}" = set; then
