@@ -25,32 +25,36 @@
 #include "htpe.h"
 
 
-class pe_analyser: public analyser {
+class PEAnalyser: public Analyser {
 public:
 	ht_pe_shared_data 	*pe_shared;
 	ht_streamfile 		*file;
-	area				*validarea;
+	Area				*validarea;
 
 			void		init(ht_pe_shared_data *Pe_shared, ht_streamfile *File);
 			int 		load(ht_object_stream *f);
 	virtual	void		done();
 	virtual	OBJECT_ID	object_id();
 
-	virtual	void		begin_analysis();
-	virtual	UINT		bufptr(ADDR Addr, byte *buf, int size);
-	virtual   assembler *create_assembler();
-	virtual	FILEADDR	file_addr(ADDR Addr);
-	virtual	char		*get_addr_section_name(ADDR Addr);
-	virtual	char		*get_name();
-	virtual   char		*get_type();
-	virtual	void 	init_code_analyser();
-	virtual	void 	init_unasm();
+	virtual	void		beginAnalysis();
+	virtual	UINT		bufPtr(Address *Addr, byte *buf, int size);
+			bool		convertAddressToRVA(Address *addr, RVA *r);
+	virtual	Address	*createAddress();
+			Address	*createAddress32(dword addr);
+			Address	*createAddress64(dword high_addr, dword low_addr);
+	virtual   Assembler *createAssembler();
+	virtual	char		*getName();
+	virtual   char		*getType();
+	virtual	void 	initCodeAnalyser();
+	virtual	void 	initUnasm();
 	virtual	void 	log(char *msg);
-	virtual	ADDR		next_valid(ADDR Addr);
+	virtual	Address	*nextValid(Address *Addr);
 	virtual	void		store(ht_object_stream *f);
-	virtual	int		query_config(int mode);
-	virtual	ADDR		vaddr(FILEADDR fileaddr);
-	virtual	bool 	valid_addr(ADDR Addr, tsectype action);
+	virtual	int		queryConfig(int mode);
+	virtual	bool 	validAddress(Address *Addr, tsectype action);
+	virtual	Address	*fileofsToAddress(FILEOFS fileofs);
+	virtual	FILEOFS	addressToFileofs(Address *Addr);
+	virtual	char		*getSegmentNameByAddress(Address *Addr);
 };
 
 #endif
