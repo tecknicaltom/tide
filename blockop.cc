@@ -334,6 +334,9 @@ ht_data *create_blockop_str_context(ht_streamfile *file, FILEOFS ofs, UINT len, 
 
 	blockop_expr_is_const = true;
 
+	// test if first eval works
+	blockop_i = ctx->i;
+	blockop_o = ctx->o;
 	eval_scalar r;
 	if (!eval(&r, action, blockop_func_eval, blockop_symbol_eval, file)) {
 		char *s;
@@ -450,6 +453,9 @@ ht_data *create_blockop_int_context(ht_streamfile *file, FILEOFS ofs, UINT len, 
 
 	blockop_expr_is_const = true;
 	
+	// test if first eval works
+	blockop_i = ctx->i;
+	blockop_o = ctx->o;
 	eval_scalar r;
 	eval_int ir;
 	if (!eval(&r, action, blockop_func_eval, blockop_symbol_eval, file)) {
