@@ -205,21 +205,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-alphadis.o: alphadis.cc alphadis.h ../global.h asm.h ../common.h \
-	../stream.h ../io/posix/htsys.h ../io/htio.h alphaopc.h \
-	../htdebug.h ../tools.h ../htdata.h
-alphaopc.o: alphaopc.cc alphaopc.h ../global.h
-asm.o: asm.cc asm.h ../common.h ../global.h ../stream.h \
-	../io/posix/htsys.h ../io/htio.h ../htatom.h ../htdata.h \
-	../htdebug.h alphadis.h alphaopc.h x86dis.h x86opc.h
-x86asm.o: x86asm.cc x86asm.h asm.h ../common.h ../global.h ../stream.h \
-	../io/posix/htsys.h ../io/htio.h x86opc.h
-x86dis.o: x86dis.cc ../stream.h ../common.h ../global.h \
-	../io/posix/htsys.h ../io/htio.h ../store.h ../htdata.h \
-	../tools.h x86dis.h asm.h x86opc.h
-x86opc.o: x86opc.cc x86opc.h ../common.h ../global.h ../stream.h \
-	../io/posix/htsys.h ../io/htio.h
-
 info-am:
 info: info-am
 dvi-am:
