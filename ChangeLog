@@ -3,7 +3,8 @@
 
 version 0.8.0pre2:
 	- compiles with gcc 3.4
-	
+	- fixed buggy blockop-progress indicator
+
 version 0.8.0pre1:
 	- disassembler:
 		- IBM/Motorola PowerPC (PPC) (new)
