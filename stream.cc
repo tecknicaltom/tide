@@ -431,7 +431,7 @@ int ht_sys_file::extend(UINT newsize)
 	char buf[EXTEND_BUFSIZE];
 	memset(buf, 0, sizeof buf);
 	newsize-=s;
-	seek(s);
+	if ((r = seek(s))) return r;
 	while (newsize) {
 		UINT k=MIN(sizeof buf, newsize);
 		UINT l=write(buf, k);
@@ -519,7 +519,7 @@ int ht_stdio_file::extend(UINT newsize)
 	char buf[EXTEND_BUFSIZE];
 	memset(buf, 0, sizeof buf);
 	newsize-=s;
-	seek(s);
+	if ((r = seek(s))) return r;
 	while (newsize) {
 		UINT k=MIN(sizeof buf, newsize);
 		UINT l=write(buf, k);
