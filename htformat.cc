@@ -4234,7 +4234,7 @@ int ht_hex_sub::next_line_id(ID *id1, ID *id2, int n)
  *	CLASS ht_mask
  */
 
-void ht_mask_sub::init(ht_streamfile *f, UINT u, fmt_vaddress ba=0)
+void ht_mask_sub::init(ht_streamfile *f, UINT u, fmt_vaddress ba)
 {
 	ht_sub::init(f);
 	masks = new ht_string_list();
