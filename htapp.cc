@@ -495,10 +495,10 @@ int file_window_load_fcfg_func(ht_object_stream *f, void *context)
 		struct tm *t;
 
 		t=gmtime((time_t*)&newtime);
-		strftime(s_newtime, sizeof s_newtime, "%X %d %h %Y", t);
+		strftime(s_newtime, sizeof s_newtime, "%X %d %b %Y", t);
 
 		t=gmtime((time_t*)&oldtime);
-		strftime(s_oldtime, sizeof s_oldtime, "%X %d %h %Y", t);
+		strftime(s_oldtime, sizeof s_oldtime, "%X %d %b %Y", t);
 
 		if (confirmbox_c("\ecconfig file applies to different version of file '%s'.\n\n\elcurrent: %10d %s\n\elold:     %10d %s\n\n\ecload config file ?", w->file->get_desc(), newsize, s_newtime, oldsize, s_oldtime) != button_yes) {
 			return f->get_error();
