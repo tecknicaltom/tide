@@ -1,6 +1,16 @@
  HT ChangeLog
 ==============
 
+version 0.6.0c:
+     - sys/djgpp: ff2pstat(...) fixed
+     - sys/posix: X11 textmode support works now
+     - textedit: another save as-bug fixed (arrrgh...)
+     - textedit: goto-one-line-beyond-end bug fixed 
+     - htpehead.cc: directory goto works now, OFSs really are RVAs !
+     - text inputlines: shift+home and shift+end work now
+     - textfile: another bug fixed
+     - gcc 3.x patches (thanks petef)
+
 version 0.6.0b:
      - textedit: save-bug fixed
      - sys/posix: pstat() fixed
