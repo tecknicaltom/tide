@@ -1338,11 +1338,11 @@ bool scrollbar_pos(int start, int size, int all, int *pstart, int *psize)
 	if (!all) return false;
 	if (start+size>=all) {
 		if (size>=all) return false;
-		*psize=size*100/all;
-		*pstart=100-*psize;
+		*psize = (int)(((double)size)*100/all);
+		*pstart = 100-*psize;
 	} else {
-		*psize=size*100/all;
-		*pstart=start*100/all;
+		*psize = (int)(((double)size)*100/all);
+		*pstart = (int)(((double)start)*100/all);
 	}
 	return true;
 }
