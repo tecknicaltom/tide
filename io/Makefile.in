@@ -279,8 +279,6 @@ distdir: $(DISTFILES)
 	      || exit 1; \
 	  fi; \
 	done
-htio.o: htio.cc htio.h ../global.h
-
 info-am:
 info: info-recursive
 dvi-am:
