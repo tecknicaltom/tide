@@ -51,7 +51,7 @@ be registered in certain jurisdictions.
 @titlepage
 
 @title{HT Manual}
-@subtitle{Edition 0.8.0pre1, Mar 2004}
+@subtitle{Edition 0.8.0, Aug 2004}
 
 @author{Stefan Weyergraf, Sebastian Biallas}
 @c The following two commands start the copyright page.
@@ -229,7 +229,7 @@ instead of Control or something...
 @node Authors, , Top, Top
 @section Authors
 
-Stefan Weyergraf @email{stefan@@weyergraf.de}
+Stefan Weyergraf
 
 
 Sebastian Biallas @email{sb@@biallas.net}
@@ -537,7 +537,7 @@ one please let us know!
 @end enumerate
 
 @node Where to download ?, , Top, Top
-@section Where to download ?
+@section Where to download?
 
 @noindent
 The HT homepage is at 
