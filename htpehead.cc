@@ -255,12 +255,14 @@ int ht_pe_header_viewer::ref_sel(ID id_low, ID id_high)
 			}
 			// ok now.
 			if (hexv && (pe_shared->opt_magic == COFF_OPTMAGIC_PE32)) {
-				FILEOFS offset = pe_shared->pe32.header_nt.directory[id_low].address;
+				UINT rva = pe_shared->pe32.header_nt.directory[id_low].address;
 				UINT size = pe_shared->pe32.header_nt.directory[id_low].size;
-				if (hexv->goto_address(offset, this)) {
-					hexv->pselect_set(offset, offset+size);
+				FILEOFS ofs = 0;
+				if (pe_rva_to_ofs(&pe_shared->sections, rva, &ofs)
+				&& hexv->goto_offset(ofs, this)) {
+					hexv->pselect_set(ofs, ofs+size);
 					app->focus(hexv);
-				} else errorbox("can't follow: %s %08x is not valid !", "directory offset", offset);
+				} else errorbox("can't follow: %s %08x is not valid !", "directory RVA", rva);
 			}
 			break;
 		}
