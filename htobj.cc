@@ -672,7 +672,7 @@ void ht_view::sendmsg(int msg, void *data1, void *data2)
 	sendmsg(&m);
 }
 
-void ht_view::sendmsg(int msg, int data1=0, int data2=0)
+void ht_view::sendmsg(int msg, int data1, int data2)
 {
 	htmsg m;
 	switch (msg) {
@@ -1419,7 +1419,7 @@ void	ht_scrollbar::store(ht_object_stream *s)
  *	CLASS ht_frame
  */
 
-void ht_frame::init(bounds *b, char *desc, UINT _style, UINT _number=0)
+void ht_frame::init(bounds *b, char *desc, UINT _style, UINT _number)
 {
 	ht_view::init(b, VO_RESIZE, desc);
 	VIEW_DEBUG_NAME("ht_frame");
