@@ -4,8 +4,8 @@
 version 0.7.4:
 	- fixed bug in COFF code (hdr_ofs sometimes fixed to 0x800)
 	- fixed bug in blockop (checking if const/var op didn't set 'i' and 'o' and sometimes failed)
-	- fixed bug in Java bytecode disassembler: invalid opcode crashed
-	  whole program. Thanks Jerome (freejazz).
+	- fixed bug in Java bytecode disassembler: invalid opcodes crash.
+	  Thanks Jerome (freejazz).
 	- fixed bug in Java class processing code: errors always crash HT
 	- fixed: 0xcafebabe in mach_kernel... made classread more strict
 	- fixed object streaming bug in GET_OBJECT (only when compiled with GCC 3.3+)
@@ -13,7 +13,7 @@ version 0.7.4:
 version 0.7.3:
 	- some keys were assigned to multiple commands in hex-viewer
 	- percent display for searches and scrollbars in big files was incorrect
-	- POSIX: improved keyboard handling (merge from 0.8.0 tree)
+	- POSIX: improved keyboard handling (merge from 0.9.0 tree)
 	- POSIX: X11 textmode keyboard support didn't work :-), was not configured correctly
 	- configure now does final (release) builds by default (ie. -O2 -fomit-frame-pointer)
 	- binary search in */image disabled because its buggy
