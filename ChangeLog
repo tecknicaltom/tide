@@ -8,6 +8,7 @@ version 0.7.0b:
 	- (win32) chdir() to "X:\" fixed
 	- cmdline param '-h' works again
 	- new config.guess/config.sub
+	- New file/Binary, then extend new file was buggy
 
 version 0.7.0:
 	- whole new Address class for the analyser. Much more flexible.
