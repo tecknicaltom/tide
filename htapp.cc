@@ -338,7 +338,7 @@ bool file_chooser(const char *title, char *buf, int bufsize)
 		d->extract_url(b);
 
 		// FIXME: urls not fully supported...
-		if (strcmp(b, "local:")) {
+		if (strncmp(b, "local:", 6) == 0) {
 			ht_snprintf(buf, bufsize, "%s", b+6);
 
 			if (hist) insert_history_entry(hist, buf, 0);
