@@ -7,6 +7,7 @@ version 0.7.3:
 	- POSIX: improved keyboard handling (merge from 0.8.0 tree)
 	- POSIX: X11 textmode keyboard support didn't work :-), was not configured correctly
 	- configure now does final (release) builds by default (ie. -O2 -fomit-frame-pointer)
+	- binary search in */image disabled because its buggy
 
 version 0.7.2:
 	- Hexview: Number of bytes per line can be changed now
