@@ -415,7 +415,7 @@ void	analyser::done()
 /*
  *	addaddrlabel will never overwrite an existing label (like addlabel)
  */
-bool analyser::add_addr_label(ADDR Addr, char *Prefix, labeltype type, taddr *infunc=NULL)
+bool analyser::add_addr_label(ADDR Addr, char *Prefix, labeltype type, taddr *infunc)
 {
 	if (!valid_addr(Addr, scvalid)) return false;
 
@@ -461,7 +461,7 @@ void	analyser::add_comment(ADDR Addr, int line, char *c)
  *           fail if label exist on another address
  *
  */
-bool analyser::add_label(ADDR Addr, char *label, labeltype type, taddr *infunc=NULL)
+bool analyser::add_label(ADDR Addr, char *label, labeltype type, taddr *infunc)
 {
 	if (!valid_addr(Addr, scvalid)) return false;
 
@@ -545,7 +545,7 @@ void	analyser::assign_comment(ADDR Addr, int line, char *c)
 /*
  *
  */
-bool analyser::assign_label(ADDR Addr, char *label, labeltype type, taddr *infunc=NULL)
+bool analyser::assign_label(ADDR Addr, char *label, labeltype type, taddr *infunc)
 {
 	if (!valid_addr(Addr, scvalid)) return false;
 
