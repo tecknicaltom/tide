@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(common.h)
 
 PACKAGE=ht
-VERSION=0.6.0b
+VERSION=0.6.0c
 
 dnl Check the system.
 AC_CANONICAL_SYSTEM
@@ -96,16 +96,18 @@ fi
 
 dnl Checks for libraries.
 
-HAVE_X11=0
+HAVE_TEXTMODE_X11=0
 
 if test "x$enable_x11_textmode" = "xyes"; then
 	TEMP_LDFLAGS=$LDFLAGS
 	LDFLAGS="$HT_LDFLAGS -L/usr/X11/lib"
-	AC_CHECK_LIB(X11, XOpenDisplay, HAVE_X11=1)
+	AC_CHECK_LIB(X11, XOpenDisplay, HAVE_TEXTMODE_X11=1)
 	LDFLAGS=$TEMP_LDFLAGS
-	if test "x$HAVE_X11" = "x1"; then
+	if test "x$HAVE_TEXTMODE_X11" = "x1"; then
 		HT_LIBS="$HT_LIBS -lX11"
 		HT_LDFLAGS="$HT_LDFLAGS -L/usr/X11/lib"
+		AC_DEFINE(HAVE_TEXTMODE_X11)
+	
 	fi
 fi
 
@@ -165,7 +167,7 @@ echo "=====================" 1>&2
 echo "Configuration summary" 1>&2
 echo "=====================" 1>&2
 echo 1>&2
-if test "x$HAVE_X11" = "x1"; then
+if test "x$HAVE_TEXTMODE_X11" = "x1"; then
 	echo "X11 textmode support available:   yes" 1>&2
 else
 	echo "X11 textmode support available:   no" 1>&2
