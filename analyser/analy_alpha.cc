@@ -18,38 +18,153 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <string.h>
+
 #include "analy_alpha.h"
 #include "analy_register.h"
 #include "alphadis.h"
 #include "htiobox.h"
+#include "snprintf.h"
 
-#include <string.h>
+AddressAlphaFlat32::AddressAlphaFlat32()
+{
+}
 
+AddressAlphaFlat32::AddressAlphaFlat32(dword Addr)
+{
+	addr = Addr;
+}
+
+bool AddressAlphaFlat32::add(int offset)
+{
+	// check for overflow
+	if ((int)offset < 0) {
+		if (addr+offset > addr) return false;
+	} else {
+		if (addr+offset < addr) return false;
+	}
+	addr+=offset;
+	return true;
+}
+
+int AddressAlphaFlat32::byteSize()
+{
+	return 4;
+}
+
+int AddressAlphaFlat32::compareTo(Object *to)
+{
+	assert(object_id() == to->object_id());
+	return addr-((AddressAlphaFlat32 *)to)->addr;
+}
+
+int AddressAlphaFlat32::compareDelinear(Address *to)
+{
+	assert(object_id() == to->object_id());
+	return delinearize(addr)-delinearize(((AddressFlat32 *)to)->addr);
+}
+
+bool AddressAlphaFlat32::difference(int &result, Address *to)
+{
+	if (object_id() == to->object_id()) {
+		result = addr-((AddressAlphaFlat32 *)to)->addr;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+Object *AddressAlphaFlat32::duplicate()
+{
+	return new AddressAlphaFlat32(addr);
+}
+
+void AddressAlphaFlat32::getFromArray(const byte *array)
+{
+	UNALIGNED_MOVE(addr, *(dword*)array);
+}
+
+void AddressAlphaFlat32::getFromCPUAddress(CPU_ADDR *ca)
+{
+	addr = ca->addr32.offset;
+}
+
+int AddressAlphaFlat32::load(ht_object_stream *s)
+{
+	addr = s->getIntHex(4, NULL);
+	return s->get_error();
+}
+
+OBJECT_ID AddressAlphaFlat32::object_id()
+{
+	return ATOM_ADDRESS_ALPHA_FLAT_32;
+}
+
+int AddressAlphaFlat32::parseString(const char *s, int length, Analyser *a)
+{
+	return 0;
+}
+
+void AddressAlphaFlat32::putIntoArray(byte *array)
+{
+	UNALIGNED_MOVE(*(dword*)array, addr);
+}
+
+void AddressAlphaFlat32::putIntoCPUAddress(CPU_ADDR *ca)
+{
+	ca->addr32.offset = addr;
+}
+
+void AddressAlphaFlat32::store(ht_object_stream *s)
+{
+	s->putIntHex(addr, 4, NULL);
+}
+
+int AddressAlphaFlat32::stringify(char *s, int max_length, int format)
+{
+	char *formats[] = {
+		"%s%x%s",
+		"%s%8x%s",
+		"%s%08x%s",
+		"",
+		"%s%X%s",
+		"%s%8X%s",
+		"%s%08X%s",
+		"",
+	};
+	return ht_snprintf(s, max_length, formats[format&7], (format & ADDRESS_STRING_FORMAT_ADD_0X) ? "0x":"", addr, (format & ADDRESS_STRING_FORMAT_ADD_H) ? "h":"");
+}
+
+int AddressAlphaFlat32::stringSize()
+{
+	return 8;
+}
 /*
  *
  */
-void analy_alpha_disassembler::init(analyser *A)
+void AnalyAlphaDisassembler::init(Analyser *A)
 {
-	analy_disassembler::init(A);
+	disasm = new Alphadis();
+	AnalyDisassembler::init(A);
 }
 
 /*
  *
  */
-int  analy_alpha_disassembler::load(ht_object_stream *f)
+int  AnalyAlphaDisassembler::load(ht_object_stream *f)
 {
-	return analy_disassembler::load(f);
+	return AnalyDisassembler::load(f);
 }
 
 /*
  *
  */
-void analy_alpha_disassembler::done()
+void AnalyAlphaDisassembler::done()
 {
-	analy_disassembler::done();
+	AnalyDisassembler::done();
 }
 
-OBJECT_ID analy_alpha_disassembler::object_id()
+OBJECT_ID AnalyAlphaDisassembler::object_id()
 {
 	return ATOM_ANALY_ALPHA;
 }
@@ -57,34 +172,32 @@ OBJECT_ID analy_alpha_disassembler::object_id()
 /*
  *
  */
-ADDR	analy_alpha_disassembler::branch_addr(OPCODE *opcode, tbranchtype branchtype, bool examine)
+Address *AnalyAlphaDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
-	if (examine && analy->valid_addr(((alphadis_insn *)opcode)->data, scvalid)) {
+	Address *a = createAddress(((alphadis_insn *)opcode)->data);
+	if (examine && analy->validAddress(a, scvalid)) {
+		return a;
 	}
-	return ((alphadis_insn *)opcode)->data;
+	delete a;
+	return new InvalidAddress();
+}
+
+Address *AnalyAlphaDisassembler::createAddress(dword offset)
+{
+	return new AddressAlphaFlat32(offset);
 }
 
 /*
  *
  */
-void analy_alpha_disassembler::examine_opcode(OPCODE *opcode)
+void AnalyAlphaDisassembler::examineOpcode(OPCODE *opcode)
 {
 }
 
 /*
  *
  */
-void analy_alpha_disassembler::init_disasm()
-{
-	DPRINTF("analy_alpha_disassembler: initing alphadis\n");
-	disasm = new alphadis();
-	if (analy) analy->set_disasm(disasm);
-}
-
-/*
- *
- */
-tbranchtype analy_alpha_disassembler::is_branch(OPCODE *opcode)
+branch_enum_t AnalyAlphaDisassembler::isBranch(OPCODE *opcode)
 {
 	// FIXME: needs work!!
 	alphadis_insn *alpha_insn = (alphadis_insn *) opcode;
@@ -94,34 +207,34 @@ tbranchtype analy_alpha_disassembler::is_branch(OPCODE *opcode)
 				if (alpha_insn->table == alpha_instr_tbl) {
 					switch (alpha_insn->code) {
 						case 0x30:
-							return brjump;
+							return br_jump;
 						case 0x34:
-							return brcall;
+							return br_call;
 						default:
-							if (alpha_insn->code > 0x30) return brjXX;
+							if (alpha_insn->code > 0x30) return br_jXX;
 					}
 				}
-				return brnobranch;
+				return br_nobranch;
 			case ALPHA_GROUP_JMP: {
 				switch (alpha_insn->code) {
 					case 0:
 					case 3:
 					case 1:
-						return brcall;
+						return br_call;
 					case 2:
-						return brreturn;
+						return br_return;
 				}
 			}
 		}
 	}
-	return brnobranch;
+	return br_nobranch;
 }
 
 /*
  *
  */
-void analy_alpha_disassembler::store(ht_object_stream *f)
+void AnalyAlphaDisassembler::store(ht_object_stream *f)
 {
-	analy_disassembler::store(f);
+	AnalyDisassembler::store(f);
 }
 
