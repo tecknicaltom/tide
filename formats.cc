@@ -30,6 +30,7 @@
 #include "htelf.h"
 #include "htcoff.h"
 #include "htle.h"
+#include "htmacho.h"
 #include "htmz.h"
 #include "htne.h"
 #include "htpe.h"
@@ -48,6 +49,7 @@ format_viewer_if *format_viewer_ifs[] =
 	&htpe_if,
 	&htne_if,
 	&htle_if,
+	&htmacho_if,
 //	&htstructure_if,
-	0
+	NULL
 };
