@@ -77,6 +77,10 @@ UINT ht_escseq2rawkey(UINT r)
 	switch (r) {
 		case 'H': return KEY_HOME;
 		case 'F': return KEY_END;
+		case 'P': return KEY_F(1);
+		case 'Q': return KEY_F(2);
+		case 'R': return KEY_F(3);
+		case 'S': return KEY_F(4);
 	}
 	return K_INVALID;
 }
