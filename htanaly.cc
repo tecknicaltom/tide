@@ -500,7 +500,7 @@ void ht_aviewer::init(bounds *b, char *desc, int caps, ht_streamfile *file, ht_f
 	}
 	analy_sub = NULL;
 	ht_uformat_viewer::init(b, desc, caps, file, format_group);
-	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
+//	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 	infoline = NULL;
 	idle_count = 0;
 	last_active = true;
