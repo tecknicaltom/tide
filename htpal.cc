@@ -214,7 +214,7 @@ bool load_pal(char *pal_class, char *pal_flavour, palette *p)
  *	CLASS palette_entry
  */
  
-palette_entry::palette_entry(UINT _idx=0, vcp _color=0)
+palette_entry::palette_entry(UINT _idx, vcp _color)
 {
 	idx=_idx;
 	color=_color;
