@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
 	HMODULE h = GetModuleHandle(NULL);
 	GetModuleFileName(h, appname, sizeof appname);
 #else
-	strncpy(appname, sizeof appname, argv[0]);
+	strncpy(appname, argv[0], sizeof appname);
 #endif
 
 	if (!init()) {
@@ -276,6 +276,7 @@ int main(int argc, char *argv[])
 		LOG(*copyrights);
 		copyrights++;
 	}
+	LOG("appname = %s", appname);
 
 	int systemconfig_version = 0;   // -1 for older and 1 for newer file found
 	int systemconfig_magic = 0;     // !=0 meens wrong magic found
