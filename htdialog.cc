@@ -569,7 +569,7 @@ void ht_history_popup_dialog::setdata(ht_object_stream *s)
  *	CLASS ht_inputfield
  */
 
-void ht_inputfield::init(bounds *b, int _maxtextlen, ht_list *_history=0)
+void ht_inputfield::init(bounds *b, int _maxtextlen, ht_list *_history)
 {
 	ht_view::init(b, VO_SELECTABLE, "some inputfield");
 	VIEW_DEBUG_NAME("ht_inputfield");
@@ -727,7 +727,7 @@ void ht_inputfield::setdata(ht_object_stream *s)
  *	CLASS ht_strinputfield
  */
 
-void ht_strinputfield::init(bounds *b, int maxstrlen, ht_list *history=0)
+void ht_strinputfield::init(bounds *b, int maxstrlen, ht_list *history)
 {
 	ht_inputfield::init(b, maxstrlen, history);
 	VIEW_DEBUG_NAME("ht_strinputfield");
@@ -892,10 +892,10 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 			case K_Shift_Home:
 			case K_Home:
 				is_virgin=0;
-				*curchar=*text;
 				if ((k==K_Shift_Home) != selectmode) {
 					select_add(*curchar, *text);
 				}					
+				*curchar=*text;
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
@@ -903,10 +903,10 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 			case K_Shift_End:
 			case K_End:
 				is_virgin=0;
-				*curchar=*text+*textlen;
 				if ((k==K_Shift_End) != selectmode) {
 					select_add(*curchar, *text+*textlen);
 				}						
+				*curchar=*text+*textlen;
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
@@ -1319,7 +1319,7 @@ void ht_button::push()
  *	ht_listbox
  */
 
-void ht_listbox::init(bounds *b, UINT Listboxcaps=LISTBOX_QUICKFIND)
+void ht_listbox::init(bounds *b, UINT Listboxcaps)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_RESIZE, 0);
 
@@ -1784,7 +1784,7 @@ void ht_listbox::update_cursor()
  *	ht_text_listbox
  */
 
-void	ht_text_listbox::init(bounds *b, int Cols, int Keycol, UINT Listboxcaps=LISTBOX_QUICKFIND)
+void	ht_text_listbox::init(bounds *b, int Cols, int Keycol, UINT Listboxcaps)
 {
 	cols = Cols;
 	keycol = Keycol;
@@ -2046,7 +2046,7 @@ void ht_text_listbox::update()
  *	CLASS ht_itext_listbox
  */
 
-void	ht_itext_listbox::init(bounds *b, int Cols=1, int Keycol=0)
+void	ht_itext_listbox::init(bounds *b, int Cols, int Keycol)
 {
 	ht_text_listbox::init(b, Cols, Keycol);
 }
