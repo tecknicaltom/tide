@@ -1,6 +1,6 @@
 /*
  *	HT Editor
- *	htanaly.cc
+ *	tools.cc
  *
  *	Copyright (C) 1999-2002 Sebastian Biallas (sb@web-productions.de)
  *
