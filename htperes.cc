@@ -86,7 +86,7 @@ void read_resource_dir(void *node, int ofs, int level)
 	PE_RESOURCE_DIRECTORY dir;
 // get directory
 	peresource_file->seek(peresource_dir_ofs+ofs);
-	peresource_file->read(&dir, sizeof dir);
+	if (peresource_file->read(&dir, sizeof dir) != (sizeof dir)) return;
 	create_host_struct(&dir, PE_RESOURCE_DIRECTORY_struct, little_endian);
 // get entries
 	PE_RESOURCE_DIRECTORY_ENTRY entry;
