@@ -34,6 +34,7 @@
 #include "htmz.h"
 #include "htne.h"
 #include "htpe.h"
+#include "htflt.h"
 #include "htstruct.h"
 
 format_viewer_if *format_viewer_ifs[] =
@@ -50,6 +51,7 @@ format_viewer_if *format_viewer_ifs[] =
 	&htne_if,
 	&htle_if,
 	&htmacho_if,
+	&htflt_if,
 //	&htstructure_if,
 	NULL
 };
