@@ -780,7 +780,7 @@ void ht_vregex_search_form::init(bounds *b, int options, ht_list *history)
  *	CLASS ht_expr_search_form
  */
 
-void	ht_expr_search_form::init(bounds *b, int options, ht_list *history=0)
+void	ht_expr_search_form::init(bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_expr_search_form");
