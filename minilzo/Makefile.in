@@ -197,8 +197,6 @@ distdir: $(DISTFILES)
 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
 	  fi; \
 	done
-minilzo.o: minilzo.c minilzo.h lzoconf.h
-
 info-am:
 info: info-am
 dvi-am:
