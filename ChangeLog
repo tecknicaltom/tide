@@ -1,6 +1,10 @@
  HT ChangeLog
 ==============
 
+version 0.7.3:
+	- some keys were assigned to multiple commands in hex-viewer
+	- percent display for searches and scrollbars in big files was incorrect
+	
 version 0.7.2:
 	- Hexview: Number of bytes per line can be changed now
 	- PE/header: can now follow bound import directory link (it's offset not RVA !)
