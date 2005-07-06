@@ -51,7 +51,7 @@ be registered in certain jurisdictions.
 @titlepage
 
 @title{HT Manual}
-@subtitle{Edition 0.9.0, May 2005}
+@subtitle{Edition 0.9.1, May 2005}
 
 @author{Stefan Weyergraf, Sebastian Biallas}
 @c The following two commands start the copyright page.
@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-0.9.0
+0.9.1
 @end macro
 
 @macro hturl
@@ -554,29 +554,7 @@ one please let us know!
 @noindent
 The HT homepage is at 
 @hturl{}
-@noindent
-Downloads are available from the 'download' section. 
-Please also take a look at
-@htsfurl{}
 
-@ifinfo
-@contents
-@end ifinfo
-@bye
-ter than 82% (guessed value)
-is encountered, which normally indicates packed or encryted data.
-
-Note: the @code{entropy()} function is not the best of its kind, if you know of a better
-one please let us know!
-
-@end enumerate
-
-@node Where to download?, , Top, Top
-@unnumberedsec Where to download?
-
-@noindent
-The HT homepage is at 
-@hturl{}
 @noindent
 Downloads are available from the 'download' section. 
 Please also take a look at
