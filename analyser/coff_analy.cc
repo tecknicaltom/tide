@@ -115,7 +115,7 @@ void CoffAnalyser::beginAnalysis()
 	};*/
 	COFF_SECTION_HEADER *s=coff_shared->sections.sections;
 	char blub[100];
-	for (UINT i=0; i<coff_shared->sections.section_count; i++) {
+	for (uint i=0; i<coff_shared->sections.section_count; i++) {
 		Address *secaddr = createAddress32(s->data_address);
 		sprintf(blub, ";  section %d <%s>", i+1, getSegmentNameByAddress(secaddr));
 		addComment(secaddr, 0, "");
@@ -233,7 +233,7 @@ ObjectID	CoffAnalyser::getObjectID() const
  */
 uint CoffAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 	assert(ofs != INVALID_FILE_OFS);
 	file->seek(ofs);
 	return file->read(buf, size);
@@ -295,10 +295,10 @@ Assembler *CoffAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS CoffAnalyser::addressToFileofs(Address *Addr)
+FileOfs CoffAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
-		FILEOFS ofs;
+		FileOfs ofs;
 //		Addr-=pe_shared->pe32.header_nt.image_base;
 		RVA rva;
 		if (!convertAddressToRVA(Addr, &rva)) return INVALID_FILE_OFS;
