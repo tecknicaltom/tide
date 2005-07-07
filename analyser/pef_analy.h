@@ -43,7 +43,7 @@ public:
 		bool		convertAddressToPEFAddress(Address *addr, PEFAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(uint32 addr);
-		Address		*createAddress64(qword addr);
+		Address		*createAddress64(uint64 addr);
 	virtual	Assembler 	*createAssembler();
 	virtual	const char	*getName();
 	virtual	const char	*getType();
