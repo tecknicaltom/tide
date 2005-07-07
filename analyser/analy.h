@@ -138,7 +138,7 @@ class Segment: public Object {
 	
 					Segment(const char *n, Address *s, Address *e, int c, int address_size);
 	virtual	bool			containsAddress(Address *addr) = 0;
-	virtual	const char *		getName();
+	virtual	String &		getName(String &res);
 	virtual	int			getAddressSize();
 	virtual	int			getCapability(int cap);
 };
@@ -396,7 +396,7 @@ public:
 		const char *	getDisasmStr(Address *Addr, int &length);
 		const char *	getDisasmStrFormatted(Address *Addr);
 		int		getDisplayMode();
-	virtual	const char *	getName();
+	virtual	String &	getName(String &res);
 	virtual	const char *	getType();
 		Container *	getXRefs(Address *Addr);
 		bool		isDirty();
