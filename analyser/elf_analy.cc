@@ -25,7 +25,6 @@
 #include "analy_ppc.h"
 #include "analy_register.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "elf_analy.h"
 
 #include "htctrl.h"
@@ -49,7 +48,7 @@ extern "C" {
  *
  */
  
-void ElfAnalyser::init(ht_elf_shared_data *Elf_shared, ht_streamfile *File)
+void ElfAnalyser::init(ht_elf_shared_data *Elf_shared, File *File)
 {
 	elf_shared = Elf_shared;
 	file = File;
@@ -693,7 +692,7 @@ int ElfAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *ElfAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *ElfAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	ELFAddress ea;
 	if (elf_ofs_to_addr(&elf_shared->sheaders, elf_shared->ident.e_ident[ELF_EI_CLASS], fileofs, &ea)) {
