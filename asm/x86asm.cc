@@ -169,7 +169,7 @@ char hsz16_16[] = { SIZE_W, SIZE_V, 0 };
 char hsz32_16[] = { SIZE_D, SIZE_P, SIZE_Z, 0 };
 /* pword */
 char hsz48_16[] = { 0 };
-/* qword */
+/* uint64 */
 char hsz64_16[] = { SIZE_Q, SIZE_U, SIZE_Z, 0};
 /* oword */
 char hsz128_16[] = { SIZE_O, SIZE_U, 0};
@@ -182,7 +182,7 @@ char hsz16_32[] = { SIZE_W, 0 };
 char hsz32_32[] = { SIZE_D, SIZE_V, SIZE_Z, 0 };
 /* pword */
 char hsz48_32[] = { SIZE_P, 0 };
-/* qword */
+/* uint64 */
 char hsz64_32[] = { SIZE_Q, SIZE_U, SIZE_Z, 0};
 /* oword */
 char hsz128_32[] = { SIZE_O, SIZE_U, 0};
