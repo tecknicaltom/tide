@@ -44,7 +44,7 @@
 /*
  *
  */
-void	PEAnalyser::init(ht_pe_shared_data *Pe_shared, ht_streamfile *File)
+void	PEAnalyser::init(ht_pe_shared_data *Pe_shared, File *File)
 {
 	pe_shared = Pe_shared;
 	file = File;
@@ -62,7 +62,7 @@ static char *token_func(uint32 token, void *context);
 /*
  *
  */
-int	PEAnalyser::load(ObjectStream &f)
+void	PEAnalyser::load(ObjectStream &f)
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
@@ -70,7 +70,7 @@ int	PEAnalyser::load(ObjectStream &f)
 	area				*validarea;
 	*/
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -86,7 +86,7 @@ void	PEAnalyser::done()
 /*
  *
  */
-void	PEAnalyser::reinit(ht_pe_shared_data *Pe_shared, ht_streamfile *File)
+void	PEAnalyser::reinit(ht_pe_shared_data *Pe_shared, File *File)
 {
 	pe_shared = Pe_shared;
 	file = File;
@@ -114,7 +114,7 @@ void PEAnalyser::beginAnalysis()
 	if (pe32) {
 		entry = createAddress32(pe_shared->pe32.header.entrypoint_address+pe_shared->pe32.header_nt.image_base);
 	} else {
-		entry = createAddress64(to_qword(pe_shared->pe64.header.entrypoint_address)+pe_shared->pe64.header_nt.image_base);
+		entry = createAddress64(pe_shared->pe64.header.entrypoint_address+pe_shared->pe64.header_nt.image_base);
 	}
 	pushAddress(entry, entry);
 	
@@ -139,9 +139,9 @@ void PEAnalyser::beginAnalysis()
 	for (uint i=0; i<pe_shared->sections.section_count; i++) {
 		Address *secaddr;
 		if (pe32) {
-			secaddr = createAddress32(s->data_address+pe_shared->pe32.header_nt.image_base);
+			secaddr = createAddress32(s->data_address + pe_shared->pe32.header_nt.image_base);
 		} else {
-			secaddr = createAddress64(to_qword(s->data_address)+pe_shared->pe64.header_nt.image_base);
+			secaddr = createAddress64(s->data_address + pe_shared->pe64.header_nt.image_base);
 		}
 		ht_snprintf(blub, sizeof blub, ";  section %d <%s>", i+1, getSegmentNameByAddress(secaddr));
 		addComment(secaddr, 0, "");
@@ -180,7 +180,7 @@ void PEAnalyser::beginAnalysis()
 	int export_count=pe_shared->exports.funcs->count();
 	int *entropy = random_permutation(export_count);
 	for (int i=0; i<export_count; i++) {
-		ht_pe_export_function *f=(ht_pe_export_function *)pe_shared->exports.funcs->get(*(entropy+i));
+		ht_pe_export_function *f=(ht_pe_export_function *)pe_shared->exports.funcs[entropy[i]];
 		Address *faddr;
 		if (pe32) {
 			faddr = createAddress32(f->address+pe_shared->pe32.header_nt.image_base);
@@ -584,7 +584,7 @@ Address *PEAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void PEAnalyser::store(ObjectStream &st)
+void PEAnalyser::store(ObjectStream &st) const
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
@@ -613,7 +613,7 @@ int	PEAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *PEAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *PEAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	RVA r;
 	if (pe_ofs_to_rva(&pe_shared->sections, fileofs, &r)) {
