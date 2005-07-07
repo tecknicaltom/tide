@@ -120,7 +120,7 @@ void ElfAnalyser::beginAnalysis()
 			if (c32) {
 				secend_addr->add(s32->sh_size);
 			} else {
-				secend_addr->add(s64->sh_size.lo);
+				secend_addr->add(s64->sh_size);
 			}
 			newLocation(secend_addr)->flags |= AF_FUNCTION_END;
 			addComment(secend_addr, 0, "");
@@ -187,27 +187,27 @@ void ElfAnalyser::beginAnalysis()
 void ElfAnalyser::initInsertFakeSymbols()
 {
 	if (!elf_shared->undefined2fakeaddr) return;
-	sectionAndIdx *key = NULL;
-	ht_data_uint32 *value;
-	while ((key = (sectionAndIdx*)elf_shared->undefined2fakeaddr->enum_next(
-	(ht_data**)&value, key))) {
+	
+	foreach(KeyValue, kv, *elf_shared->undefined2fakeaddr, {
+		sectionAndIdx *key = (sectionAndIdx*)kv->mKey;
+		UInt *value = (UInt *)kv->mValue;
 		Address *address = createAddress32(value->value);
 		FileOfs h = elf_shared->sheaders.sheaders32[key->secidx].sh_offset;
 		ELF_SYMBOL32 sym;
-		file->seek(h+key->symidx*sizeof (ELF_SYMBOL32));
+		file->seek(h + key->symidx * sizeof (ELF_SYMBOL32));
 		file->read(&sym, sizeof sym);
 		create_host_struct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 
 		FileOfs sto = elf_shared->sheaders.sheaders32[
 			elf_shared->sheaders.sheaders32[key->secidx].sh_link].sh_offset;
-		file->seek(sto+sym.st_name);
+		file->seek(sto + sym.st_name);
 		char *name = fgetstrz(file);
 		char buf[1024];
 		ht_snprintf(buf, sizeof buf, "undef_%s", name);
 		free(name);
 		make_valid_name(buf, buf);
 		assignSymbol(address, buf, label_func);
-	}
+	})
 }
 
 void ElfAnalyser::initInsertSymbols(int shidx)
@@ -219,7 +219,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 		uint symnum = elf_shared->sheaders.sheaders32[shidx].sh_size / sizeof (ELF_SYMBOL32);
 
 		int *entropy = random_permutation(symnum);
-		for (uint i=0; i<symnum; i++) {
+		for (uint i = 0; i < symnum; i++) {
 			ELF_SYMBOL32 sym;
 			if (entropy[i] == 0) continue;
 			file->seek(h+entropy[i]*sizeof (ELF_SYMBOL32));
@@ -318,9 +318,9 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 		if (entropy) free(entropy);
 	} else {
 		// FIXME: 64 bit
-		FileOfs h = elf_shared->sheaders.sheaders64[shidx].sh_offset.lo;
-		FileOfs sto = elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[shidx].sh_link].sh_offset.lo;
-		uint symnum = elf_shared->sheaders.sheaders64[shidx].sh_size.lo / sizeof (ELF_SYMBOL64);
+		FileOfs h = elf_shared->sheaders.sheaders64[shidx].sh_offset;
+		FileOfs sto = elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[shidx].sh_link].sh_offset;
+		uint symnum = elf_shared->sheaders.sheaders64[shidx].sh_size / sizeof (ELF_SYMBOL64);
 
 		int *entropy = random_permutation(symnum);
 		for (uint i=0; i<symnum; i++) {
@@ -397,7 +397,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 				
 					make_valid_name(label, label);
 				
-					ht_snprintf(elf_buffer, sizeof elf_buffer, "; data object %s, size %d (%s)", (demangled) ? demangled : label, sym.st_size.lo, bind);
+					ht_snprintf(elf_buffer, sizeof elf_buffer, "; data object %s, size %qd (%s)", (demangled) ? demangled : label, sym.st_size, bind);
 
 					if (demangled) free(demangled);
 
@@ -424,10 +424,10 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 /*
  *
  */
-int ElfAnalyser::load(ObjectStream &f)
+void ElfAnalyser::load(ObjectStream &f)
 {
     	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -468,8 +468,7 @@ bool ElfAnalyser::convertAddressToELFAddress(Address *addr, ELFAddress *r)
 		r->a32 = ((AddressX86Flat32*)addr)->addr;
 		return true;
 	} else if (addr->getObjectID()==ATOM_ADDRESS_FLAT_64) {
-		r->a64.lo = ((AddressFlat64*)addr)->addr.lo;
-		r->a64.hi = ((AddressFlat64*)addr)->addr.hi;
+		r->a64 = ((AddressFlat64*)addr)->addr;
 		return true;
 	} else {
 		return false;
@@ -565,9 +564,9 @@ const char *ElfAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *ElfAnalyser::getName()
+String &ElfAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
@@ -668,7 +667,7 @@ Address *ElfAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void ElfAnalyser::store(ObjectStream &f)
+void ElfAnalyser::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, validarea);
 	Analyser::store(f);
@@ -718,40 +717,40 @@ bool ElfAnalyser::validAddress(Address *Addr, tsectype action)
 	if (!convertAddressToELFAddress(Addr, &ea)) return false;
 	if (!elf_addr_to_section(sections, cls, ea, &sec)) return false;
 	switch (cls) {
-		case ELFCLASS32: {
-			ELF_SECTION_HEADER32 *s=sections->sheaders32+sec;
-			switch (action) {
-				case scvalid:
-					return true;
-				case scread:
-					return true;
-				case scwrite:
-				case screadwrite:
-					return s->sh_flags & ELF_SHF_WRITE;
-				case sccode:
-					return (s->sh_flags & ELF_SHF_EXECINSTR) && (s->sh_type==ELF_SHT_PROGBITS);
-				case scinitialized:
-					return s->sh_type==ELF_SHT_PROGBITS;
-			}
-			return false;
+	case ELFCLASS32: {
+		ELF_SECTION_HEADER32 *s = sections->sheaders32 + sec;
+		switch (action) {
+		case scvalid:
+			return true;
+		case scread:
+			return true;
+		case scwrite:
+		case screadwrite:
+			return s->sh_flags & ELF_SHF_WRITE;
+		case sccode:
+			return (s->sh_flags & ELF_SHF_EXECINSTR) && (s->sh_type == ELF_SHT_PROGBITS);
+		case scinitialized:
+			return s->sh_type==ELF_SHT_PROGBITS;
 		}
-		case ELFCLASS64: {
-			ELF_SECTION_HEADER64 *s=sections->sheaders64+sec;
-			switch (action) {
-				case scvalid:
-					return true;
-				case scread:
-					return true;
-				case scwrite:
-				case screadwrite:
-					return s->sh_flags.lo & ELF_SHF_WRITE;
-				case sccode:
-					return (s->sh_flags.lo & ELF_SHF_EXECINSTR) && (s->sh_type==ELF_SHT_PROGBITS);
-				case scinitialized:
-					return s->sh_type==ELF_SHT_PROGBITS;
-			}
-			return false;
+		return false;
+	}
+	case ELFCLASS64: {
+		ELF_SECTION_HEADER64 *s = sections->sheaders64 + sec;
+		switch (action) {
+		case scvalid:
+			return true;
+		case scread:
+			return true;
+		case scwrite:
+		case screadwrite:
+			return s->sh_flags & ELF_SHF_WRITE;
+		case sccode:
+			return (s->sh_flags & ELF_SHF_EXECINSTR) && (s->sh_type == ELF_SHT_PROGBITS);
+		case scinitialized:
+			return s->sh_type==ELF_SHT_PROGBITS;
 		}
+		return false;
+	}
 	}
 	return false;
 }
