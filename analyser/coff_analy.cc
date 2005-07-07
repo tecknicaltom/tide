@@ -30,7 +30,6 @@
 #include "analy_x86.h"
 #include "coff_analy.h"
 #include "coff_s.h"
-#include "global.h"
 
 #include "htctrl.h"
 #include "htdebug.h"
@@ -43,7 +42,7 @@
 /*
  *
  */
-void	CoffAnalyser::init(ht_coff_shared_data *Coff_shared, ht_streamfile *File)
+void	CoffAnalyser::init(ht_coff_shared_data *Coff_shared, File *File)
 {
 	coff_shared = Coff_shared;
 	file = File;
@@ -450,7 +449,7 @@ int	CoffAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *CoffAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *CoffAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	RVA a;
 	if (coff_ofs_to_rva(&coff_shared->sections, fileofs, &a)) {
