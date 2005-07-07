@@ -430,9 +430,9 @@ const char *LEAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *LEAnalyser::getName()
+String &LEAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
@@ -486,7 +486,7 @@ Address *LEAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void LEAnalyser::store(ObjectStream &st)
+void LEAnalyser::store(ObjectStream &st) const
 {
 	PUT_OBJECT(st, validarea);
 	Analyser::store(st);
