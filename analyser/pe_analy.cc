@@ -30,7 +30,6 @@
 #include "analy_register.h"
 #include "analy_ppc.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "htctrl.h"
 #include "htdebug.h"
 #include "htiobox.h"
@@ -317,7 +316,7 @@ bool PEAnalyser::convertAddressToRVA(Address *addr, RVA *r)
 		*r = ((AddressX86Flat32*)addr)->addr - pe_shared->pe32.header_nt.image_base;
 		return true;
 	} else if (oid == ATOM_ADDRESS_FLAT_64) {
-		qword q = ((AddressFlat64*)addr)->addr - pe_shared->pe64.header_nt.image_base;
+		uint64 q = ((AddressFlat64*)addr)->addr - pe_shared->pe64.header_nt.image_base;
 		if (QWORD_GET_HI(q)) return false;
 		*r = QWORD_GET_LO(q);
 		return true;
@@ -343,7 +342,7 @@ Address *PEAnalyser::createAddress32(uint32 addr)
 /*
  *
  */
-Address *PEAnalyser::createAddress64(qword addr)
+Address *PEAnalyser::createAddress64(uint64 addr)
 {
 	return new AddressFlat64(addr);
 }
