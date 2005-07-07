@@ -26,6 +26,9 @@
 
 class AnalyILDisassembler: public AnalyDisassembler {
 public:
+					AnalyILDisassembler();
+					AnalyILDisassembler(BuildCtorArg&);
+
 		void			init(Analyser *A, char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context);
 	virtual void		     	done();
 	virtual	ObjectID		getObjectID() const;
