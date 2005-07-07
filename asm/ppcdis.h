@@ -22,7 +22,7 @@
 #define __PPC_DIS_H__
 
 #include "asm.h"
-#include "global.h"
+#include "io/types.h"
 #include "ppcopc.h"
 
 struct ppcdis_operand {
