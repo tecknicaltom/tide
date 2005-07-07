@@ -30,7 +30,6 @@
 #include "analy_register.h"
 #include "analy_ppc.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "htctrl.h"
 #include "htdebug.h"
 #include "htiobox.h"
@@ -46,7 +45,7 @@
 /*
  *
  */
-void	XBEAnalyser::init(ht_xbe_shared_data *XBE_shared, ht_streamfile *File)
+void	XBEAnalyser::init(ht_xbe_shared_data *XBE_shared, File *File)
 {
 	xbe_shared = XBE_shared;
 	file = File;
@@ -453,7 +452,7 @@ int	XBEAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *XBEAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *XBEAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	RVA r;
 	if (xbe_ofs_to_rva(&xbe_shared->sections, fileofs, &r)) {
