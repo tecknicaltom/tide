@@ -29,6 +29,10 @@
 /*
  *
  */
+AnalyIA64Disassembler::AnalyIA64Disassembler()
+{
+}
+
 void AnalyIA64Disassembler::init(Analyser *A)
 {
 	disasm = new IA64Disassembler();
