@@ -77,7 +77,7 @@ void PEFAnalyser::beginAnalysis()
 
 	PEF_SECTION_HEADER *s32=pef_shared->sheaders.sheaders;
 	char blub[100];
-	for (UINT i=0; i < pef_shared->sheaders.count; i++) {
+	for (uint i=0; i < pef_shared->sheaders.count; i++) {
 		Address *secaddr;
 		secaddr = createAddress32(s32->defaultAddress);
 		if (validAddress(secaddr, scvalid)) {
@@ -110,7 +110,7 @@ void PEFAnalyser::beginAnalysis()
 	}
 
 /* symbols */
-/*	for (UINT i=1; i<pef_shared->sheaders.count; i++) {
+/*	for (uint i=1; i<pef_shared->sheaders.count; i++) {
 		if ((pef_shared->sheaders.sheaders32[i].sh_type==PEF_SHT_SYMTAB) || (pef_shared->sheaders.sheaders32[i].sh_type==PEF_SHT_DYNSYM)) {
 			initInsertSymbols(i);
 		}
@@ -136,12 +136,12 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 /*	char pef_buffer[1024];
 	if (pef_shared->ident.e_ident[PEF_EI_CLASS] == PEFCLASS32) {
 
-		FILEOFS h=pef_shared->sheaders.sheaders32[shidx].sh_offset;
-		FILEOFS sto=pef_shared->sheaders.sheaders32[pef_shared->sheaders.sheaders32[shidx].sh_link].sh_offset;
+		FileOfs h=pef_shared->sheaders.sheaders32[shidx].sh_offset;
+		FileOfs sto=pef_shared->sheaders.sheaders32[pef_shared->sheaders.sheaders32[shidx].sh_link].sh_offset;
 		uint symnum=pef_shared->sheaders.sheaders32[shidx].sh_size / sizeof (PEF_SYMBOL32);
 
 		int *entropy = random_permutation(symnum);
-		for (UINT i=0; i<symnum; i++) {
+		for (uint i=0; i<symnum; i++) {
 			PEF_SYMBOL32 sym;
 			if (entropy[i] == 0) continue;
 			file->seek(h+entropy[i]*sizeof (PEF_SYMBOL32));
@@ -240,12 +240,12 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 		if (entropy) free(entropy);
 	} else {
 		// FIXME: 64 bit
-		FILEOFS h=pef_shared->sheaders.sheaders64[shidx].sh_offset.lo;
-		FILEOFS sto=pef_shared->sheaders.sheaders64[pef_shared->sheaders.sheaders64[shidx].sh_link].sh_offset.lo;
+		FileOfs h=pef_shared->sheaders.sheaders64[shidx].sh_offset.lo;
+		FileOfs sto=pef_shared->sheaders.sheaders64[pef_shared->sheaders.sheaders64[shidx].sh_link].sh_offset.lo;
 		uint symnum=pef_shared->sheaders.sheaders64[shidx].sh_size.lo / sizeof (PEF_SYMBOL64);
 
 		int *entropy = random_permutation(symnum);
-		for (UINT i=0; i<symnum; i++) {
+		for (uint i=0; i<symnum; i++) {
 			PEF_SYMBOL64 sym;
 			if (entropy[i] == 0) continue;
 			file->seek(h+entropy[i]*sizeof (PEF_SYMBOL64));
@@ -373,7 +373,7 @@ ObjectID PEFAnalyser::getObjectID() const
  */
 uint PEFAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
 		int as = 1;
 	}*/
@@ -418,7 +418,7 @@ Assembler *PEFAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS PEFAnalyser::addressToFileofs(Address *Addr)
+FileOfs PEFAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		uint32 ofs;
