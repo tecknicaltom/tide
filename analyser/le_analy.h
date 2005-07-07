@@ -51,10 +51,10 @@ public:
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
-	virtual	FILEOFS		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 	virtual	Address *	realFileofsToAddress(FILEOFS fileofs);
-	virtual	FILEOFS		addressToRealFileofs(Address *Addr);
+	virtual	FileOfs		addressToRealFileofs(Address *Addr);
 };
 
 #endif /* le_analy_h */
