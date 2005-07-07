@@ -403,8 +403,6 @@ void AddrXRef::store(ObjectStream &f) const
 /*
  *
  */
-AddressQueueItem::AddressQueueItem() {}
-
 AddressQueueItem::AddressQueueItem(Address *Addr, Address *Func)
 {
 	addr = DUP_ADDR(Addr);
