@@ -181,7 +181,7 @@ int sys_filename_cmp(const char *a, const char *b)
 	return tolower(*a) - tolower(*b);
 }
 
-int sys_ipc_exec(ht_streamfile **in, ht_streamfile **out, ht_streamfile **err, int *handle, const char *cmd)
+int sys_ipc_exec(File **in, File **out, File **err, int *handle, const char *cmd)
 {
 	int save_stdout = dup(STDOUT_FILENO);
 	int save_stderr = dup(STDERR_FILENO);
