@@ -52,7 +52,7 @@ public:
 	virtual	void		store(ObjectStream &f);
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
-	virtual	FILEOFS		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 };
 
