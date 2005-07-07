@@ -22,6 +22,10 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -65,11 +69,37 @@
 
 #ifdef __cplusplus
 
+#define DDECL_UINT(name)	uint32 name PACKED
+#define DDECL_PTR(type, name)	type *name PACKED
+
 #define NEW_PTR(type, var) type	*var = (type *) malloc(sizeof(type))
 #define NEW_OBJECT(instance, class, params...) \
 ((class *)(instance = new class()))->init(params)
 #define DELETE_OBJECT(obj) obj->done(); delete obj;
 
 #endif /* __cplusplus */
+
+/*
+ *	steves strucs
+ */
+
+struct bounds {
+	int x, y, w, h;
+};
+
+#define BOUNDS_ASSIGN(b, X, Y, W, H) b.x=X; b.y=Y; b.w=W; b.h=H;
+
+union htmsg_param {
+	int integer;
+	void *ptr;
+	char *str;
+};
+
+struct htmsg {
+	int msg;
+	int type;
+	htmsg_param data1;
+	htmsg_param data2;
+};
 
 #endif
