@@ -49,7 +49,7 @@ public:
 	void     	appendLine(OutLine *l);
 	void		clear();
 	OutLine		*getLine(int i);
-	void		updateTime(UINT Time);
+	void		updateTime(uint Time);
 };
 
 /*
