@@ -464,7 +464,7 @@ void CommentList::appendPostComment(int special)
 
 const char *CommentList::getName(uint i)
 {
-	Object *d = getByIdx(i);
+	Object *d = get(findByIdx(i));
 	return d ? ((d->getObjectID()==OBJID_UINT) ? comment_lookup(((UInt*)d)->value): ((String*)d)->contentChar()) : NULL;
 }
 
