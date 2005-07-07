@@ -101,7 +101,7 @@ void XBEAnalyser::beginAnalysis()
 
 	XBE_SECTION_HEADER *s=xbe_shared->sections.sections;
 	char blub[100];
-	for (UINT i=0; i<xbe_shared->sections.number_of_sections; i++) {
+	for (uint i=0; i<xbe_shared->sections.number_of_sections; i++) {
 		Address *secaddr;
 
 		secaddr = createAddress32(s->virtual_address);
@@ -210,7 +210,7 @@ ObjectID	XBEAnalyser::getObjectID() const
  */
 uint XBEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*	if (ofs == INVALID_FILE_OFS) {
 		int as=0;
 	}*/
@@ -270,14 +270,14 @@ Assembler *XBEAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS XBEAnalyser::addressToFileofs(Address *Addr)
+FileOfs XBEAnalyser::addressToFileofs(Address *Addr)
 {
 /*     char tbuf[1024];
 	Addr->stringify(tbuf, 1024, 0);
 	printf("ADDR=%s", tbuf);*/
 	if (validAddress(Addr, scinitialized)) {
 //     	printf(" v1\n");
-		FILEOFS ofs;
+		FileOfs ofs;
 		RVA r;
 		if (!convertAddressToRVA(Addr, &r)) return INVALID_FILE_OFS;
 		if (!xbe_rva_to_ofs(&xbe_shared->sections, r, &ofs)) return INVALID_FILE_OFS;
@@ -307,7 +307,7 @@ const char *XBEAnalyser::getSegmentNameByAddress(Address *Addr)
 	xbe_rva_to_section(sections, r, &i);
 //	XBE_SECTION_HEADER *s=sections->sections+i;
 	b = xbe_rva_is_valid(sections, r);
-//	{ FILE *f;f=fopen("/tmp/rva","a+");if (f){fprintf(f,"rva: %08x %u\n",r,(UINT)b);fclose(f);} }
+//	{ FILE *f;f=fopen("/tmp/rva","a+");if (f){fprintf(f,"rva: %08x %u\n",r,(uint)b);fclose(f);} }
 	
 	if (!b) return NULL;
 
