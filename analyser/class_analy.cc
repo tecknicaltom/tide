@@ -193,9 +193,9 @@ const char *ClassAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *ClassAnalyser::getName()
+String &ClassAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
