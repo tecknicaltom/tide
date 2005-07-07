@@ -100,7 +100,7 @@ OutLine *OutAddr::getLine(int i)
 	return (OutLine*)lines->get(i);
 }
 
-void OutAddr::updateTime(UINT Time)
+void OutAddr::updateTime(uint Time)
 {
 	time = Time;
 }
@@ -315,7 +315,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 		if (next_addr) {
 			int d=255;
 			next_addr->addr->difference(d, addr);
-			op_len = MIN((uint32)analy->max_opcode_length, (UINT)d);
+			op_len = MIN((uint32)analy->max_opcode_length, (uint)d);
 		} else {
 			op_len = analy->max_opcode_length;
 		}
