@@ -22,7 +22,7 @@
 
 #include "analy_register.h"
 
-#include "htatom.h"
+#include "atom.h"
 #include "stddata.h"
 #include "stream.h"
 #include "tools.h"
@@ -30,6 +30,10 @@
 /*
  *   Area
  */
+Area::Area()
+{
+}
+
 void Area::init()
 {
 	a = NULL;
@@ -43,25 +47,24 @@ static void areaload(ObjectStream &st, area_s *&p, int level, int &left)
 	}
 	p = (area_s *) smalloc0(sizeof(area_s));
 	if ((level<=1) || (left<=1)) {
-		st->getObject(p->start, "start");
-		st->getObject(p->end, "end");
+		st.getObject(p->start, "start");
+		st.getObject(p->end, "end");
 		p->left = p->right = NULL;
 		left--;
 	} else {
 		areaload(st, p->left, level / 2, left);
-		st->getObject(p->start, "start");
-		st->getObject(p->end, "end");
+		st.getObject(p->start, "start");
+		st.getObject(p->end, "end");
 		left--;
 		areaload(st, p->right, level / 2 -1, left);
 	}
 }
 
-int	Area::load(ObjectStream &st)
+void	Area::load(ObjectStream &st)
 {
 	int count;
-	GET_INT_DEC(st, count);
+	GET_INT32D(st, count);
 	areaload(st, a, count, count);
-	return st->get_error();
 }
 
 void Area::done()
@@ -207,11 +210,11 @@ static void areastore(ObjectStream &f, area_s *p, Object **startend)
 	if (p) {
 		areastore(f, p->left, startend);
 		if (!*startend) {
-			f->putObject(p->start, "start");
+			f.putObject(p->start, "start");
 		} else {
 			if ((*startend)->compareTo(p->start) != 0) {
-				f->putObject(*startend, "end");
-				f->putObject(p->start, "start");
+				f.putObject(*startend, "end");
+				f.putObject(p->start, "start");
 			}
 		}
 		*startend = p->end;
@@ -219,15 +222,15 @@ static void areastore(ObjectStream &f, area_s *p, Object **startend)
 	}
 }
 
-void Area::store(ObjectStream &f)
+void Area::store(ObjectStream &f) const
 {
 	int count = 0;
 	Object *start = NULL;
 	areacount(a, count, &start);
-	PUT_INT_DEC(f, count);
+	PUT_INT32D(f, count);
 	start = NULL;
 	areastore(f, a, &start);
-	if (start!=NULL) f->putObject(start, "end");
+	if (start != NULL) f.putObject(start, "end");
 }
 
 #ifdef DEBUG_FIXNEW
