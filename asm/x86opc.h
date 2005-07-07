@@ -137,9 +137,9 @@ struct x86_insn_op {
 #define SIZE_B			'b'		/* byte */
 #define SIZE_W			'w'		/* uint16 */
 #define SIZE_D			'd'		/* uint32 */
-#define SIZE_Q			'q'		/* qword */
-#define SIZE_U			'u'		/* qword OR oword */
-#define SIZE_Z			'z'		/* uint32 OR qword */
+#define SIZE_Q			'q'		/* uint64 */
+#define SIZE_U			'u'		/* uint64 OR oword */
+#define SIZE_Z			'z'		/* uint32 OR uint64 */
 #define SIZE_O			'o'		/* oword */
 #define SIZE_V			'v'		/* uint16 OR uint32 */
 #define SIZE_P			'p'		/* word:word OR word:dword, memory only ! */
