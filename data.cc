@@ -2968,6 +2968,21 @@ bool quickSort(List &l)
 }
 
 /*
+ *   matchhash
+ */
+
+char *matchhash(int value, int_hash *hash_table)
+{
+	if (hash_table) {
+		while (hash_table->desc) {
+			if (hash_table->value==value) return hash_table->desc;
+			hash_table++;
+		}
+	}
+	return NULL;
+}
+
+/*
  *	Module Init/Done
  */
 
