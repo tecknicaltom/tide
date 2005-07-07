@@ -164,7 +164,7 @@ char *AnalyserHTOutput::link(char *s, Address *Addr)
 		Addr->putIntoArray((byte*)&d);
 		*(tag_make_ref(tmpbuffer, d, 0, 0, 0, s)) = 0;
 	} else {
-		qword d;
+		uint64 d;
 		Addr->putIntoArray((byte*)&d);
 		*(tag_make_ref(tmpbuffer, d.hi, d.lo, 0, 0, s)) = 0;
 	}
