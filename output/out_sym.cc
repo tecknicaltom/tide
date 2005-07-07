@@ -69,27 +69,27 @@
  */
 
 struct ImageSymHeader {
-	uint32 file_size HTPACKED;		// in 16-byte blocks
-	uint16 entry_seg HTPACKED;
-	uint16 u0 HTPACKED;				// 0000
-	uint16 u1 HTPACKED;				// 0015 (some flags ?, 0014 for 16-bit .SYM ?)
-	uint16 seg_count HTPACKED;
-	uint32 u2 HTPACKED;				// 04020002 (some flags ?)
-	byte	module_name[16] HTPACKED;
+	uint32 file_size PACKED;		// in 16-byte blocks
+	uint16 entry_seg PACKED;
+	uint16 u0 PACKED;				// 0000
+	uint16 u1 PACKED;				// 0015 (some flags ?, 0014 for 16-bit .SYM ?)
+	uint16 seg_count PACKED;
+	uint32 u2 PACKED;				// 04020002 (some flags ?)
+	byte	module_name[16] PACKED;
 };
 
 struct ImageSymSegHeader {
-	uint16 next_rec_ofs HTPACKED;		// in 16-byte blocks (ring list, last points to first)
-	uint16 sym_count HTPACKED;
-	uint16 sym_ptr_table_ptr HTPACKED;
-	uint16 seg_idx HTPACKED;
-	uint32 seg_start HTPACKED;
-	uint32 seg_size HTPACKED;
+	uint16 next_rec_ofs PACKED;		// in 16-byte blocks (ring list, last points to first)
+	uint16 sym_count PACKED;
+	uint16 sym_ptr_table_ptr PACKED;
+	uint16 seg_idx PACKED;
+	uint32 seg_start PACKED;
+	uint32 seg_size PACKED;
 };
 
 struct ImageSymDescriptor {
-	uint32 address HTPACKED;
-//	byte  name_len HTPACKED;
+	uint32 address PACKED;
+//	byte  name_len PACKED;
 //   name;
 //   ^^^^ pascal string
 };
@@ -129,7 +129,7 @@ static void g(ht_stream *stream, Symbol *s, uint *bytes_written, uint *symbols_w
 	(*symbols_written) ++;
 }
 
-static void align16(ht_streamfile *file, uint *bytes_written)
+static void align16(File *file, uint *bytes_written)
 {
 	byte c = 0;
 	while (*bytes_written % 16) {
@@ -138,7 +138,7 @@ static void align16(ht_streamfile *file, uint *bytes_written)
 	}
 }
  
-int export_to_sym(Analyser *analy, ht_streamfile *file)
+int export_to_sym(Analyser *analy, File *file)
 {
 	if ((!analy) || (!file)) return /*HTML_OUTPUT_ERR_GENERIC*/1;
 	if (analy->active) return /*HTML_OUTPUT_ERR_ANALY_NOT_FINISHED*/1;
