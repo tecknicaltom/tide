@@ -80,7 +80,7 @@ static int get_modifier(int key)
 	return key;
 }
 
-static uint escseq2rawkey(UINT r)
+static uint escseq2rawkey(uint r)
 {
 	switch (r) {
 		case 'H': return KEY_HOME;
