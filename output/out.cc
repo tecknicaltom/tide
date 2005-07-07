@@ -38,7 +38,7 @@
 //#define DPRINTF(msg...) printf(##msg)
 //#define DPRINTF2(msg...) printf(##msg)
 
-int compare_keys_addresses_delinear(ht_data *key_a, ht_data *key_b)
+int compare_keys_addresses_delinear(ht_data *key_a, Object *key_b)
 {
 	return ((Address*)key_a)->compareDelinear((Address*)key_b);
 }
