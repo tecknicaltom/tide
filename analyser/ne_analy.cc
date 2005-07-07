@@ -27,7 +27,6 @@
 #include "analy_names.h"
 #include "analy_register.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "ne_analy.h"
 
 #include "htctrl.h"
@@ -44,7 +43,7 @@
 /*
  *
  */
-void	NEAnalyser::init(ht_ne_shared_data *NE_shared, ht_streamfile *File)
+void	NEAnalyser::init(ht_ne_shared_data *NE_shared, File *File)
 {
 	ne_shared = NE_shared;
 	file = File;
@@ -213,7 +212,7 @@ void NEAnalyser::beginAnalysis()
 
 	if (ne_shared->imports) {
 		ht_tree *t = ne_shared->imports;
-		ht_data *v;
+		Object *v;
 		ne_import_rec *imp = NULL;
 		FileOfs h = ne_shared->hdr_ofs + ne_shared->hdr.imptab;
 		while ((imp = (ne_import_rec*)t->enum_next(&v, imp))) {
@@ -234,7 +233,7 @@ void NEAnalyser::beginAnalysis()
 		}
 	}
 
-/*	virtual ht_data *enum_next(ht_data **value, ht_data *prevkey);
+/*	virtual Object *enum_next(ht_data **value, Object *prevkey);
 	int import_count = ne_shared->imports.funcs->count();
 	for (int i=0; i<import_count; i++) {
 		ht_pe_import_function *f=(ht_pe_import_function *)pe_shared->imports.funcs->get(*(entropy+i));
@@ -440,7 +439,7 @@ int	NEAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *NEAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *NEAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	NEAddress a;
 	if (NE_ofs_to_addr(ne_shared, fileofs, &a)) {
