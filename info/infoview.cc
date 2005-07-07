@@ -29,7 +29,7 @@
 #include "infoview.h"
 #include "tools.h"
 
-class info_pos: public ht_data {
+class info_pos: public Object {
 public:
 	uint line;
 	uint ofs;
@@ -40,7 +40,7 @@ public:
 	}
 };
 
-int compare_keys_info_pos_delinear(ht_data *data_a, ht_data *data_b)
+int compare_keys_info_pos_delinear(ht_data *data_a, Object *data_b)
 {
 	info_pos *a = (info_pos*)data_a;
 	info_pos *b = (info_pos*)data_b;
@@ -52,7 +52,7 @@ int compare_keys_info_pos_delinear(ht_data *data_a, ht_data *data_b)
 	return da - db;
 }
 
-int compare_keys_info_pos(ht_data *data_a, ht_data *data_b)
+int compare_keys_info_pos(ht_data *data_a, Object *data_b)
 {
 	info_pos *a = (info_pos*)data_a;
 	info_pos *b = (info_pos*)data_b;
@@ -62,7 +62,7 @@ int compare_keys_info_pos(ht_data *data_a, ht_data *data_b)
 	return a->line - b->line;
 }
 
-class info_xref: public ht_data {
+class info_xref: public Object {
 public:
 	char *target;
 	uint len;
@@ -90,7 +90,7 @@ char *memndup(const char *s, int n)
  *
  */
 
-bool parse_xref_body(ht_streamfile *f, ht_tree *t, char **n, uint *o, uint *line, bool note)
+bool parse_xref_body(File *f, ht_tree *t, char **n, uint *o, uint *line, bool note)
 {
 	whitespaces(n);
 	char *l = strchr(*n, ':');
@@ -164,7 +164,7 @@ bool parse_xref_body(ht_streamfile *f, ht_tree *t, char **n, uint *o, uint *line
 	return true;
 }
 
-ht_tree *parse_info_node(ht_streamfile *fl, char *infotext)
+ht_tree *parse_info_node(File *fl, char *infotext)
 {
 	char *n = infotext;
 	bool linestart = true;
@@ -329,7 +329,7 @@ void ht_info_lexer::set_xrefs(ht_tree *x)
  *	CLASS ht_info_textfile
  */
  
-class info_history_entry: public ht_data {
+class info_history_entry: public Object {
 public:
 	char *cwd;
 	char *file;
@@ -358,7 +358,7 @@ public:
 	}
 };
  
-void ht_info_textfile::init(ht_streamfile *s, bool own_s, ht_syntax_lexer *l)
+void ht_info_textfile::init(File *s, bool own_s, ht_syntax_lexer *l)
 {
 	start = 0;
 	end = 0;
