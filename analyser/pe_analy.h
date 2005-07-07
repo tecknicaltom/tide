@@ -42,7 +42,7 @@ public:
 		bool		convertAddressToRVA(Address *addr, RVA *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(uint32 addr);
-		Address		*createAddress64(qword high_addr);
+		Address		*createAddress64(uint64 high_addr);
 	virtual Assembler 	*createAssembler();
 	virtual	const char	*getName();
 	virtual const char	*getType();
