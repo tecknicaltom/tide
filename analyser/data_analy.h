@@ -115,6 +115,6 @@ public:
 };
 
 void analyser_put_addrtype(ObjectStream &s, const taddr_type *at);
-int analyser_get_addrtype(ObjectStream &s, taddr_type *at);
+void analyser_get_addrtype(ObjectStream &s, taddr_type *at);
 
 #endif
