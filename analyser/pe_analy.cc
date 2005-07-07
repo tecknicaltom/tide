@@ -180,12 +180,12 @@ void PEAnalyser::beginAnalysis()
 	int export_count=pe_shared->exports.funcs->count();
 	int *entropy = random_permutation(export_count);
 	for (int i=0; i<export_count; i++) {
-		ht_pe_export_function *f=(ht_pe_export_function *)pe_shared->exports.funcs[entropy[i]];
+		ht_pe_export_function *f=(ht_pe_export_function *)(*pe_shared->exports.funcs)[entropy[i]];
 		Address *faddr;
 		if (pe32) {
-			faddr = createAddress32(f->address+pe_shared->pe32.header_nt.image_base);
+			faddr = createAddress32(f->address + pe_shared->pe32.header_nt.image_base);
 		} else {
-			faddr = createAddress64(to_qword(f->address)+pe_shared->pe64.header_nt.image_base);
+			faddr = createAddress64(f->address + pe_shared->pe64.header_nt.image_base);
 		}
 		if (validAddress(faddr, scvalid)) {
 			char *label;
@@ -210,15 +210,15 @@ void PEAnalyser::beginAnalysis()
 	int import_count=pe_shared->imports.funcs->count();
 	entropy = random_permutation(import_count);
 	for (int i=0; i<import_count; i++) {
-		ht_pe_import_function *f=(ht_pe_import_function *)pe_shared->imports.funcs->get(*(entropy+i));
-		ht_pe_import_library *d=(ht_pe_import_library *)pe_shared->imports.libs->get(f->libidx);
+		ht_pe_import_function *f = (ht_pe_import_function *)(*pe_shared->imports.funcs)[entropy[i]];
+		ht_pe_import_library *d = (ht_pe_import_library *)(*pe_shared->imports.libs)[f->libidx];
 		char *label;
 		label = import_func_name(d->name, (f->byname) ? f->name.name : NULL, f->ordinal);
 		Address *faddr;
 		if (pe32) {
-			faddr = createAddress32(f->address+pe_shared->pe32.header_nt.image_base);
+			faddr = createAddress32(f->address + pe_shared->pe32.header_nt.image_base);
 		} else {
-			faddr = createAddress64(to_qword(f->address)+pe_shared->pe64.header_nt.image_base);
+			faddr = createAddress64(f->address + pe_shared->pe64.header_nt.image_base);
 		}
 		addComment(faddr, 0, "");
 		if (!assignSymbol(faddr, label, label_func)) {
@@ -242,8 +242,8 @@ void PEAnalyser::beginAnalysis()
 	entropy = random_permutation(dimport_count);
 	for (int i=0; i<dimport_count; i++) {
 		// FIXME: delay imports need work (push addr)
-		ht_pe_import_function *f=(ht_pe_import_function *)pe_shared->dimports.funcs->get(*(entropy+i));
-		ht_pe_import_library *d=(ht_pe_import_library *)pe_shared->dimports.libs->get(f->libidx);
+		ht_pe_import_function *f=(ht_pe_import_function *)(*pe_shared->dimports.funcs)[entropy[i]];
+		ht_pe_import_library *d=(ht_pe_import_library *)(*pe_shared->dimports.libs)[f->libidx];
 		if (f->byname) {
 			ht_snprintf(buffer, sizeof buffer, "; delay import function loader for %s, ordinal %04x", f->name.name, f->ordinal);
 		} else {
@@ -255,7 +255,7 @@ void PEAnalyser::beginAnalysis()
 		if (pe32) {
 			faddr = createAddress32(f->address);
 		} else {
-			faddr = createAddress64(to_qword(f->address));
+			faddr = createAddress64(f->address);
 		}
 		addComment(faddr, 0, "");
 		addComment(faddr, 0, ";********************************************************");
@@ -309,7 +309,7 @@ uint PEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 bool PEAnalyser::convertAddressToRVA(Address *addr, RVA *r)
 {
 	ObjectID oid = addr->getObjectID();
-	if (oid==ATOM_ADDRESS_FLAT_32) {
+	if (oid == ATOM_ADDRESS_FLAT_32) {
 		*r = ((AddressFlat32*)addr)->addr - pe_shared->pe32.header_nt.image_base;
 		return true;
 	} else if (oid == ATOM_ADDRESS_X86_FLAT_32) {
@@ -317,8 +317,8 @@ bool PEAnalyser::convertAddressToRVA(Address *addr, RVA *r)
 		return true;
 	} else if (oid == ATOM_ADDRESS_FLAT_64) {
 		uint64 q = ((AddressFlat64*)addr)->addr - pe_shared->pe64.header_nt.image_base;
-		if (QWORD_GET_HI(q)) return false;
-		*r = QWORD_GET_LO(q);
+		if (q >> 32) return false;
+		*r = q;
 		return true;
 	}
 	return false;
@@ -424,9 +424,9 @@ const char *PEAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *PEAnalyser::getName()
+String &PEAnalyser::getName(String &s)
 {
-	return file->get_desc();
+	return file->getDesc(s);
 }
 
 /*
@@ -618,9 +618,9 @@ Address *PEAnalyser::fileofsToAddress(FileOfs fileofs)
 	RVA r;
 	if (pe_ofs_to_rva(&pe_shared->sections, fileofs, &r)) {
 		if (pe_shared->opt_magic == COFF_OPTMAGIC_PE32) {
-			return createAddress32(r+pe_shared->pe32.header_nt.image_base);
+			return createAddress32(r + pe_shared->pe32.header_nt.image_base);
 		} else {
-			return createAddress64(to_qword(r)+pe_shared->pe64.header_nt.image_base);
+			return createAddress64(r + pe_shared->pe64.header_nt.image_base);
 		}
 	} else {
 		return new InvalidAddress();
