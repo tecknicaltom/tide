@@ -26,14 +26,14 @@
 
 class AnalyPPCDisassembler: public AnalyDisassembler {
 public:
-			void			init(Analyser *A);
-	virtual   void	     	done();
+		void			init(Analyser *A);
+	virtual void			done();
 	virtual	ObjectID		getObjectID() const;
 
-	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
-			Address		*createAddress(uint32 offset);
+	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+		Address			*createAddress(uint32 offset);
 	virtual	void			examineOpcode(OPCODE *opcode);
-	virtual	branch_enum_t 	isBranch(OPCODE *opcode);
+	virtual	branch_enum_t 		isBranch(OPCODE *opcode);
 };
 
 #endif
