@@ -1660,9 +1660,9 @@ int	Analyser::getLocationCount() const
 /*
  *
  */
-const char *Analyser::getName()
+String & Analyser::getName(String &res)
 {
-	return "generic";
+	return res = "generic";
 }
 
 static void analysergetsymbolcount(Symbol *l, int *c)
