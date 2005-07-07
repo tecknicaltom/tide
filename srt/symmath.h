@@ -80,7 +80,7 @@ extern b_op *c_op_prec[];
  *	CLASS sym_int_token
  */
 
-class sym_int_token: public ht_data {
+class sym_int_token: public Object {
 public:
 /* new */
 	virtual bool compare_eq(sym_int_token *t)=0;
@@ -159,7 +159,7 @@ public:
  *	CLASS sym_bool_token
  */
 
-class sym_bool_token: public ht_data {
+class sym_bool_token: public Object {
 public:
 /* new */
 	virtual bool compare_eq(sym_bool_token *t)=0;
