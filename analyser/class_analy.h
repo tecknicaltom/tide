@@ -30,24 +30,24 @@ public:
 	ht_class_shared_data 	*class_shared;
 	File			*file;
 
-			void			init(ht_class_shared_data *Class_shared, File *File);
-			int 			load(ObjectStream &f);
-	virtual	void			done();
-	virtual	ObjectID		getObjectID() const;
+		void		init(ht_class_shared_data *Class_shared, File *File);
+		void 		load(ObjectStream &f);
+	virtual	void		done();
+	virtual	ObjectID	getObjectID() const;
 
-	virtual	void			beginAnalysis();
-	virtual	uint			bufPtr(Address *Addr, byte *buf, int size);
+	virtual	void		beginAnalysis();
+	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
 	virtual	Address		*createAddress();
-			Address		*createAddress32(ClassAddress addr);
-	virtual   Assembler 	*createAssembler();
-	virtual	const char	*getName();
-	virtual   const char	*getType();
+		Address		*createAddress32(ClassAddress addr);
+	virtual Assembler 	*createAssembler();
+	virtual	String &	getName(String &res);
+	virtual const char	*getType();
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
 	virtual	Address		*nextValid(Address *Addr);
-	virtual	void			store(ObjectStream &f);
-	virtual	int			queryConfig(int mode);
+	virtual	void		store(ObjectStream &f) const;
+	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
