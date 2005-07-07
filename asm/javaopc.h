@@ -21,7 +21,7 @@
 #ifndef __JAVAOPC_H__
 #define __JAVAOPC_H__
 
-#include "common.h"
+#include "io/types.h"
 
 #define JAVA_OPTYPE_EMPTY	0
 #define JAVA_OPTYPE_IMM		1
