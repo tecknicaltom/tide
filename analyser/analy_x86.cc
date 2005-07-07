@@ -83,7 +83,7 @@ bool AddressX86Flat32::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86Flat32::clone()
+Object *AddressX86Flat32::clone() const
 {
 	return new AddressX86Flat32(addr);
 }
@@ -210,7 +210,7 @@ bool AddressX86_1632::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86_1632::clone()
+Object *AddressX86_1632::clone() const
 {
 	return new AddressX86_1632(seg, addr);
 }
@@ -347,7 +347,7 @@ bool AddressX86_1616::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86_1616::clone()
+Object *AddressX86_1616::clone() const
 {
 	return new AddressX86_1616(seg, addr);
 }
@@ -423,6 +423,10 @@ int AddressX86_1616::stringSize() const
 /*
  *
  */
+AnalyX86Disassembler::AnalyX86Disassembler()
+{
+}
+
 void AnalyX86Disassembler::init(Analyser *A, int f)
 {
 	flags = f;
