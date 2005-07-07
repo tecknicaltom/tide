@@ -26,6 +26,8 @@
 
 class AnalyPPCDisassembler: public AnalyDisassembler {
 public:
+					AnalyPPCDisassembler();
+					AnalyPPCDisassembler(BuildCtorArg&);
 		void			init(Analyser *A);
 	virtual void			done();
 	virtual	ObjectID		getObjectID() const;
