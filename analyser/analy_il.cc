@@ -29,6 +29,10 @@
 /*
  *
  */
+AnalyILDisassembler::AnalyILDisassembler()
+{
+}
+
 void AnalyILDisassembler::init(Analyser *A, char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context)
 {
 	disasm = new ILDisassembler(string_func, token_func, context);
