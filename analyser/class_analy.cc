@@ -139,7 +139,7 @@ ObjectID	ClassAnalyser::getObjectID() const
  */
 uint ClassAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 	assert(ofs != INVALID_FILE_OFS);
 	file->seek(ofs);
 	return file->read(buf, size);
@@ -172,7 +172,7 @@ Assembler *ClassAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS ClassAnalyser::addressToFileofs(Address *Addr)
+FileOfs ClassAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		return ((AddressFlat32*)Addr)->addr;
