@@ -22,7 +22,7 @@
 #define OUT_HT_H
 
 #include "analy.h"
-#include "global.h"
+#include "io/types.h"
 #include "htobj.h"
 #include "out.h"
 
