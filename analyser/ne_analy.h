@@ -27,10 +27,10 @@
 class NEAnalyser: public Analyser {
 public:
 	ht_ne_shared_data	*ne_shared;
-	ht_streamfile 		*file;
+	File 		*file;
 	Area			*validarea;
 
-		void		init(ht_ne_shared_data *ne_shared, ht_streamfile *file);
+		void		init(ht_ne_shared_data *ne_shared, File *file);
 		int 		load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
@@ -49,7 +49,7 @@ public:
 	virtual	Address		*nextValid(Address *Addr);
 	virtual	void		store(ObjectStream &f);
 	virtual	int		queryConfig(int mode);
-	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
+	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
