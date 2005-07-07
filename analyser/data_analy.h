@@ -94,7 +94,8 @@ class DataAnalyser: public Object	{
 public:
 	Analyser		*analy;
 	
-	
+				DataAnalyser();
+				DataAnalyser(BuildCtorArg&);
 		void		init(Analyser *Analy);
 	virtual	void		load(ObjectStream &s);
 	virtual	void		done();
