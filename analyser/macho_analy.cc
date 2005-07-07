@@ -23,7 +23,6 @@
 #include "analy_ppc.h"
 #include "analy_register.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "macho_analy.h"
 
 #include "htctrl.h"
@@ -47,7 +46,7 @@ extern "C" {
  *
  */
  
-void MachoAnalyser::init(ht_macho_shared_data *Macho_shared, ht_streamfile *File)
+void MachoAnalyser::init(ht_macho_shared_data *Macho_shared, File *File)
 {
 	macho_shared = Macho_shared;
 	file = File;
@@ -425,7 +424,7 @@ int MachoAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *MachoAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *MachoAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	MACHOAddress ea;
 	if (macho_ofs_to_addr(&macho_shared->sections, 0, fileofs, &ea)) {
