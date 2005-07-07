@@ -194,6 +194,7 @@ public:
 	Address		*addr;
 	xref_enum_t	type;
 				AddrXRef(Address *a, xref_enum_t aType = xrefread);
+				AddrXRef(BuildCtorArg&);
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -276,7 +277,7 @@ class AddressQueueItem: public Object {
 public:
 	Address	*addr;
 	Address	*func;
-				AddressQueueItem();
+				AddressQueueItem(BuildCtorArg&);
 				AddressQueueItem(Address *Addr, Address *Func);
 				~AddressQueueItem();
 	virtual	void		load(ObjectStream &s);
