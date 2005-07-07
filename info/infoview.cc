@@ -34,7 +34,7 @@ public:
 	uint line;
 	uint ofs;
 	
-	info_pos(UINT l, uint o) {
+	info_pos(uint l, uint o) {
 		line = l;
 		ofs = o;
 	}
@@ -168,7 +168,7 @@ ht_tree *parse_info_node(ht_streamfile *fl, char *infotext)
 {
 	char *n = infotext;
 	bool linestart = true;
-	FILEOFS f = 0;
+	FileOfs f = 0;
 	uint o = 0;
 	uint l = 0;
 	ht_stree *t = new ht_stree();
@@ -178,7 +178,7 @@ ht_tree *parse_info_node(ht_streamfile *fl, char *infotext)
 		char *on = n;
 		uint oo = o;
 		uint ol = l;
-		FILEOFS of = f;
+		FileOfs of = f;
 		char *k = (*n == '*') ? n : strchr(n, '*');
 		if ((k == n) && (ht_strnicmp(n, "*note", 5) == 0)) {
 			n += 5;
@@ -262,7 +262,7 @@ lexer_state ht_info_lexer::getinitstate()
 	return 1;
 }
 
-vcp ht_info_lexer::getcolor_syntax(UINT pal_index)
+vcp ht_info_lexer::getcolor_syntax(uint pal_index)
 {
 	return VCP(VC_WHITE, VC_BLACK);
 }
@@ -314,7 +314,7 @@ vcp ht_info_lexer::gettoken_color(lexer_token t)
 	return VCP(VC_WHITE, VC_RED);
 }
 
-void ht_info_lexer::set_cursor(UINT x, uint y)
+void ht_info_lexer::set_cursor(uint x, uint y)
 {
 	cx = x;
 	cy = y;
@@ -370,7 +370,7 @@ void ht_info_textfile::done()
 	ht_ltextfile::done();
 }
 
-ht_ltextfile_line *ht_info_textfile::fetch_line(UINT line)
+ht_ltextfile_line *ht_info_textfile::fetch_line(uint line)
 {
 	if (line < linecount())
 		return ht_ltextfile::fetch_line(start+line);
@@ -382,7 +382,7 @@ uint ht_info_textfile::linecount()
 	return end-start;
 }
 
-void ht_info_textfile::set_node(UINT ofs, uint len)
+void ht_info_textfile::set_node(uint ofs, uint len)
 {
 	uint s, e, t;
 	start = 0;
@@ -455,7 +455,7 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 			while (*s && (s<cr)) {
 				whitespaces(&s);
 				char *os = s;
-				for (UINT i=0; i<NUM_NODE_TAGS; i++) {
+				for (uint i=0; i<NUM_NODE_TAGS; i++) {
 					uint l = strlen(tags[i]);
 					if ((strncmp(s, tags[i], l) == 0) && (s[l] == ':')) {
 						s += l+1;
