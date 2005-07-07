@@ -507,7 +507,7 @@ Address *ElfAnalyser::createAddress32(uint32 addr)
 	return new AddressFlat32(addr);
 }
 
-Address *ElfAnalyser::createAddress64(qword addr)
+Address *ElfAnalyser::createAddress64(uint64 addr)
 {
 	return new AddressFlat64(addr);
 }
