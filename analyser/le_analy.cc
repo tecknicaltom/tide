@@ -27,7 +27,6 @@
 #include "analy_names.h"
 #include "analy_register.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "htanaly.h"		// FIXME: for ht_aviewer, to call gotoAddress(entrypoint)
 #include "le_analy.h"
 
@@ -44,7 +43,7 @@
 /*
  *
  */
-void	LEAnalyser::init(ht_le_shared_data *LE_shared, ht_streamfile *File)
+void	LEAnalyser::init(ht_le_shared_data *LE_shared, File *File)
 {
 	le_shared = LE_shared;
 	file = File;
@@ -222,7 +221,7 @@ void LEAnalyser::beginAnalysis()
 /*
 	if (le_shared->imports) {
 		ht_tree *t = le_shared->imports;
-		ht_data *v;
+		Object *v;
 		ne_import_rec *imp = NULL;
 		FileOfs h = le_shared->hdr_ofs + le_shared->hdr.imptab;
 		while ((imp = (ne_import_rec*)t->enum_next(&v, imp))) {
@@ -244,7 +243,7 @@ void LEAnalyser::beginAnalysis()
 	}
 */
 
-/*	virtual ht_data *enum_next(ht_data **value, ht_data *prevkey);
+/*	virtual Object *enum_next(ht_data **value, Object *prevkey);
 	int import_count = le_shared->imports.funcs->count();
 	for (int i=0; i<import_count; i++) {
 		ht_pe_import_function *f=(ht_pe_import_function *)pe_shared->imports.funcs->get(*(entropy+i));
@@ -511,7 +510,7 @@ int	LEAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *LEAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *LEAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	LEAddress a;
 	if (LE_ofs_to_addr(le_shared, fileofs, &a)) {
@@ -526,7 +525,7 @@ Address *LEAnalyser::fileofsToAddress(FILEOFS fileofs)
  */
 
 /* FIXME: fileofs chaos */
-Address *LEAnalyser::realFileofsToAddress(FILEOFS fileofs)
+Address *LEAnalyser::realFileofsToAddress(FileOfs fileofs)
 {
 	LEAddress a;
 	uint lofs;
