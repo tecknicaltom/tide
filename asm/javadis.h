@@ -77,11 +77,11 @@ public:
 	virtual void getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual char *getName();
 	virtual byte getSize(dis_insn *disasm_insn);
-		   int load(ObjectStream &f);
+		void load(ObjectStream &f);
 	virtual ObjectID getObjectID() const;
 	virtual char *str(dis_insn *disasm_insn, int options);
 	virtual char *strf(dis_insn *disasm_insn, int options, char *format);
-	virtual void store(ObjectStream &f);
+	virtual void store(ObjectStream &f) const;
 	virtual bool validInsn(dis_insn *disasm_insn);
 };
 
