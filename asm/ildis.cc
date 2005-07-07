@@ -21,7 +21,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "global.h"
+#include "data.h"
 #include "htendian.h"
 #include "ildis.h"
 #include "ilopc.h"
