@@ -402,7 +402,7 @@ Address *PEFAnalyser::createAddress32(uint32 addr)
 	return new AddressFlat32(addr);
 }
 
-Address *PEFAnalyser::createAddress64(qword addr)
+Address *PEFAnalyser::createAddress64(uint64 addr)
 {
 	return new AddressFlat64(addr);
 }
