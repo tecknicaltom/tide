@@ -19,7 +19,6 @@
  */
  
 #include "analy_register.h"
-#include "common.h"
 
 #include "analy_alpha.h"
 #include "analy_java.h"
@@ -40,7 +39,7 @@
 #include "xbe_analy.h"
 #include "pef_analy.h"
 
-#include "htatom.h"
+#include "atom.h"
 
 BUILDER(ATOM_ANALY_ALPHA, AnalyAlphaDisassembler)
 BUILDER(ATOM_ANALY_X86, AnalyX86Disassembler)
