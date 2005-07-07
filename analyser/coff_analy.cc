@@ -329,9 +329,9 @@ const char *CoffAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *CoffAnalyser::getName()
+String &CoffAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
