@@ -174,7 +174,7 @@ ObjectID sym_int_const::getObjectID() const
  *	CLASS sym_int_token_rec
  */
  
-class sym_int_token_rec: public ht_data {
+class sym_int_token_rec: public Object {
 public:
 	u_op uop;
 	b_op bop;
@@ -858,7 +858,7 @@ void sym_bool_intcmp::simplify()
  *	CLASS sym_bool_token_rec
  */
  
-class sym_bool_token_rec: public ht_data {
+class sym_bool_token_rec: public Object {
 public:
 	n_op nop;
 	l_op lop;
