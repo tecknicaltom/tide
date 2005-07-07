@@ -29,8 +29,11 @@
 class Analyser;
 
 class CodeAnalyser: public Object {
-public:
-	Analyser		*a;
+public:	
+	Analyser	*a;
+	
+				CodeAnalyser();
+				CodeAnalyser(BuildCtorArg&);
 		void      	init(Analyser *A);
 	virtual	void		load(ObjectStream &s);
 	virtual	void 		done();
