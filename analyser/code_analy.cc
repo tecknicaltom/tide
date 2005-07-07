@@ -29,6 +29,10 @@
 #include "code_analy.h"
 #include "htdebug.h"
 
+CodeAnalyser::CodeAnalyser()
+{
+}
+
 void CodeAnalyser::init(Analyser *A)
 {
 }
