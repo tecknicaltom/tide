@@ -22,7 +22,7 @@
 #define ILDIS_H
 
 #include "asm.h"
-#include "global.h"
+#include "data.h"
 #include "ilopc.h"
 
 struct ILDisInsn {
@@ -31,7 +31,7 @@ struct ILDisInsn {
 	byte			op;
 	union {
 				uint32			ui;
-				qword			q;
+				uint64			q;
 				float			f;
 				double			df;
 				int			i;
