@@ -34,7 +34,7 @@ public:
 	Area			*validarea;
 
 		void		init(ht_macho_shared_data *macho_shared, File *File);
-		int 		load(ObjectStream &f);
+		void		load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
 
@@ -45,14 +45,14 @@ public:
 		Address		*createAddress32(uint32 addr);
 		Address		*createAddress64(uint64 addr);
 	virtual Assembler 	*createAssembler();
-	virtual	const char	*getName();
+	virtual	String &	getName(String &res);
 	virtual const char	*getType();
 	virtual	void 		initCodeAnalyser();
 		void		initInsertSymbols(int shidx);
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
 	virtual	Address		*nextValid(Address *Addr);
-	virtual	void		store(ObjectStream &f);
+	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
