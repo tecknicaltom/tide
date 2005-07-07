@@ -246,7 +246,7 @@ Address *XBEAnalyser::createAddress32(uint32 addr)
 /*
  *
  */
-Address *XBEAnalyser::createAddress64(qword addr)
+Address *XBEAnalyser::createAddress64(uint64 addr)
 {
 	return NULL;
 }
