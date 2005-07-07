@@ -79,7 +79,7 @@ uint get_op_prec(b_op bop, b_op **op_prec)
  *	CLASS sym_int_token
  */
 
-bool sym_int_token::evaluate(UINT *i)
+bool sym_int_token::evaluate(uint *i)
 {
 	return false;
 }
@@ -114,7 +114,7 @@ Object *sym_int_symbol::clone()
 	return p;
 }
 
-bool sym_int_symbol::evaluate(UINT *i)
+bool sym_int_symbol::evaluate(uint *i)
 {
 	return false;
 }
@@ -136,7 +136,7 @@ ObjectID sym_int_symbol::getObjectID() const
  *	CLASS sym_int_const
  */
 
-sym_int_const::sym_int_const(UINT v)
+sym_int_const::sym_int_const(uint v)
 {
 	value = v;
 }
@@ -152,7 +152,7 @@ Object *sym_int_const::clone()
 	return new sym_int_const(value);
 }
 
-bool sym_int_const::evaluate(UINT *i)
+bool sym_int_const::evaluate(uint *i)
 {
 	*i = value;
 	return true;	
@@ -328,7 +328,7 @@ Object *sym_int::clone()
 	return p;
 }
 
-bool sym_int::evaluate(UINT *i)
+bool sym_int::evaluate(uint *i)
 {
 	int c = tokens->count();
 	uint l;
@@ -373,7 +373,7 @@ int sym_int::nstrfy(char *buf, int n)
 		if (para) para_count++;
 		lbop = r->bop;
 	}
-	for (UINT i = 0; i < para_count; i++) buf[l++] = '(';
+	for (uint i = 0; i < para_count; i++) buf[l++] = '(';
 	lbop = b_invalid;
 	for (int i = 0; i < c; i++) {
 		sym_int_token_rec *r = (sym_int_token_rec*)tokens->get(i);
@@ -471,7 +471,7 @@ void sym_int::simplify()
 
 /* step I.2: reduce all "...$c%d..." where allowed
    (c,d constant, $,% operators) */
-	for (UINT i=1; i<c-1; i++) {
+	for (uint i=1; i<c-1; i++) {
 		do {
 			if (i >= c-1) break;
 			sym_int_token_rec *a = (sym_int_token_rec*)tokens->get(i);
@@ -503,7 +503,7 @@ void sym_int::simplify()
 	}
 
 /* step II.2: "...x$N..." (everywhere) */
-	for (UINT i=0; i<c-1; i++) {
+	for (uint i=0; i<c-1; i++) {
 		do {
 			if (i >= c-1) break;
 			sym_int_token_rec *a = (sym_int_token_rec*)tokens->get(i);
@@ -533,7 +533,7 @@ void sym_int::simplify()
 	}
 
 /* step III.2: "...x$y..." (tail) */
-	for (UINT i=1; i<c; i++) {
+	for (uint i=1; i<c; i++) {
 		do {
 			if (i >= c) break;
 			sym_int_token_rec *a = (sym_int_token_rec*)tokens->get(i);
@@ -550,7 +550,7 @@ void sym_int::simplify()
    e.g. "...-x+x", "...^x^x", etc. */
 
 /* step IV.1: "...$x$xi..." (everywhere) */
-	for (UINT i=0; i<c-1; i++) {
+	for (uint i=0; i<c-1; i++) {
 		do {
 			if (i >= c-1) break;
 			sym_int_token_rec *a = (sym_int_token_rec*)tokens->get(i);
