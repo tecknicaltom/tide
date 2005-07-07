@@ -359,9 +359,9 @@ const char *NEAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *NEAnalyser::getName()
+String &NEAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
