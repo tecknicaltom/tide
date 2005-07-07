@@ -63,7 +63,7 @@ class sym_int_reg: public sym_int_token {
 public:
 	uint regidx;
 
-	sym_int_reg(UINT r);
+	sym_int_reg(uint r);
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
 	virtual Object *clone();
