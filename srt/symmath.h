@@ -84,7 +84,7 @@ class sym_int_token: public ht_data {
 public:
 /* new */
 	virtual bool compare_eq(sym_int_token *t)=0;
-	virtual bool evaluate(UINT *i);
+	virtual bool evaluate(uint *i);
 	virtual void simplify();
 	virtual int nstrfy(char *buf, int n)=0;
 };
@@ -108,7 +108,7 @@ public:
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
 	virtual Object *clone();
-	virtual bool evaluate(UINT *i);
+	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
 	virtual void simplify();
@@ -133,7 +133,7 @@ public:
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
 	virtual Object *clone();
-	virtual bool evaluate(UINT *i);
+	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
 };
@@ -146,11 +146,11 @@ class sym_int_const: public sym_int_token {
 public:
 	uint value;
 
-	sym_int_const(UINT value);
+	sym_int_const(uint value);
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
 	virtual Object *clone();
-	virtual bool evaluate(UINT *i);
+	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
 };
