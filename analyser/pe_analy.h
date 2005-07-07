@@ -28,12 +28,12 @@
 class PEAnalyser: public Analyser {
 public:
 	ht_pe_shared_data 	*pe_shared;
-	ht_streamfile 		*file;
+	File 		*file;
 	Area			*validarea;
 
-			void	init(ht_pe_shared_data *Pe_shared, ht_streamfile *File);
-			int 	load(ObjectStream &f);
-			void	reinit(ht_pe_shared_data *Pe_shared, ht_streamfile *File);
+			void	init(ht_pe_shared_data *Pe_shared, File *File);
+			void 	load(ObjectStream &f);
+			void	reinit(ht_pe_shared_data *Pe_shared, File *File);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
 
@@ -50,10 +50,10 @@ public:
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
 	virtual	Address		*nextValid(Address *Addr);
-	virtual	void		store(ObjectStream &f);
+	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
-	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
+	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
 };
