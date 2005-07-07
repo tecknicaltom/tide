@@ -84,17 +84,10 @@ void analyser_get_addrtype(ObjectStream &f, taddr_type *at)
 	}
 }
 
-/*
- *
- *	types to recognize:
- *		- bytes/words/dwords (by access)
- *		- strings (by examinating)
- *			- pascal
- *			- c
- *             - unicode
- *		- arrays (by access)
- *        - records (partially)
- */
+DataAnalyser::DataAnalyser()
+{
+}
+
 void	DataAnalyser::init(Analyser *Analy)
 {
 	analy = Analy;
