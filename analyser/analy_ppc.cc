@@ -29,6 +29,10 @@
 /*
  *
  */
+AnalyPPCDisassembler::AnalyPPCDisassembler()
+{
+}
+
 void AnalyPPCDisassembler::init(Analyser *A)
 {
 	disasm = new PPCDisassembler();
