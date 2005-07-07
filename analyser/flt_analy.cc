@@ -221,9 +221,9 @@ const char *FLTAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *FLTAnalyser::getName()
+String &FLTAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
