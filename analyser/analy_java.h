@@ -26,6 +26,8 @@
 
 class AnalyJavaDisassembler: public AnalyDisassembler {
 public:
+					AnalyJavaDisassembler();
+					AnalyJavaDisassembler(BuildCtorArg&);
 		void			init(Analyser *A, java_token_func token_func, void *context);
 		void 			load(ObjectStream &f);
 	virtual void    	 	done();
