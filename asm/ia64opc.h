@@ -21,7 +21,7 @@
 #ifndef IA64OPC_H
 #define IA64OPC_H
 
-#include "global.h"
+#include "io/types.h"
 
 #define IA64_SLOT_INVALID 0x00
 #define IA64_SLOT_M_UNIT  0x01
