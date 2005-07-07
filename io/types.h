@@ -77,6 +77,8 @@
 ((class *)(instance = new class()))->init(params)
 #define DELETE_OBJECT(obj) obj->done(); delete obj;
 
+#define DPRINTF(msg...)
+
 #endif /* __cplusplus */
 
 /*
