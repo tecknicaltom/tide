@@ -22,11 +22,10 @@
 #define OUT_H
 
 #include "analy.h"
-#include "common.h"
-#include "global.h"
-#include "htdata.h"
+#include "io/types.h"
+#include "data.h"
 
-class OutLine: public ht_data {
+class OutLine: public Object {
 public:
 	int		textlen;
 	byte		*text;
@@ -36,7 +35,7 @@ public:
 };
 
 
-class OutAddr: public ht_data {
+class OutAddr: public Object {
 public:
 	Address		*addr;
 	uint		time;
