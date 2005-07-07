@@ -120,7 +120,7 @@ branch_enum_t AnalyAlphaDisassembler::isBranch(OPCODE *opcode)
 /*
  *
  */
-void AnalyAlphaDisassembler::store(ObjectStream &f)
+void AnalyAlphaDisassembler::store(ObjectStream &f) const
 {
 	AnalyDisassembler::store(f);
 }
