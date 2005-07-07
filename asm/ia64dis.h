@@ -22,7 +22,7 @@
 #define IA64DIS_H
 
 #include "asm.h"
-#include "global.h"
+#include "io/types.h"
 #include "ia64opc.h"
 
 #define IA64_OPERAND_NO 0
@@ -47,8 +47,8 @@ struct IA64Op {
 	int type;
 	union {
 		int reg;
-		qword imm;
-		qword ofs;
+		uint64 imm;
+		uint64 ofs;
 		struct {
 			int db;
 			int idx;
@@ -59,7 +59,7 @@ struct IA64Op {
 struct IA64SlotDisInsn {
 	bool				valid;
 	int				next;
-	qword			data;
+	uint64			data;
 	uint32			qp;
 	IA64OpcodeEntry	*opcode;
 	IA64Op			op[7];
@@ -101,7 +101,7 @@ public:
 	virtual	bool		validInsn(dis_insn *disasm_insn);
 private:
 			void		decodeSlot(int slot_nb);
-			qword	signExtend(qword a, int length);
+			uint64	signExtend(uint64 a, int length);
 };
 								
 #endif 
