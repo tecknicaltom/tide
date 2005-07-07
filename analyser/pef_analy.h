@@ -30,10 +30,10 @@
 class PEFAnalyser: public Analyser {
 public:
 	ht_pef_shared_data 	*pef_shared;
-	ht_streamfile		*file;
+	File		*file;
 	Area			*validarea;
 
-			void	init(ht_pef_shared_data *pef_shared, ht_streamfile *File);
+			void	init(ht_pef_shared_data *pef_shared, File *File);
 			int 	load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
@@ -55,7 +55,7 @@ public:
 	virtual	void		store(ObjectStream &f);
 	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
-	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
+	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
 };
