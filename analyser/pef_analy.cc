@@ -22,7 +22,6 @@
 #include "analy_names.h"
 #include "analy_ppc.h"
 #include "analy_register.h"
-#include "global.h"
 #include "pef_analy.h"
 
 #include "htctrl.h"
@@ -46,7 +45,7 @@ extern "C" {
  *
  */
 
-void PEFAnalyser::init(ht_pef_shared_data *Pef_shared, ht_streamfile *File)
+void PEFAnalyser::init(ht_pef_shared_data *Pef_shared, File *File)
 {
 	pef_shared = Pef_shared;
 	file = File;
@@ -545,7 +544,7 @@ int PEFAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *PEFAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *PEFAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	PEFAddress ea;
 	if (pef_ofs_to_addr(&pef_shared->sheaders, fileofs, &ea)) {
