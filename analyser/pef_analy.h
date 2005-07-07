@@ -34,7 +34,7 @@ public:
 	Area			*validarea;
 
 		void		init(ht_pef_shared_data *pef_shared, File *File);
-		int 		load(ObjectStream &f);
+		void 		load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
 
