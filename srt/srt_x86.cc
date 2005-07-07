@@ -45,7 +45,7 @@ struct CPU {
 	sym_bool *flags[X86_FLAGS];
 };
 
-char *srt_x86_idx2reg(UINT idx)
+char *srt_x86_idx2reg(uint idx)
 {
 	if (idx >= 8) {
 		return srt_x86_flags[(idx-8) % X86_FLAGS];
@@ -76,7 +76,7 @@ void srt_x86_setreg(CPU *cpu, uint idx, Object *o)
 
 class sym_int_reg_x86: public sym_int_reg {
 public:
-	sym_int_reg_x86::sym_int_reg_x86(UINT r): sym_int_reg(r)
+	sym_int_reg_x86::sym_int_reg_x86(uint r): sym_int_reg(r)
 	{
 	}
 
@@ -95,7 +95,7 @@ public:
  *	srt_x86
  */
 
-state_mod *srt_x86_flag(UINT flagidx, sym_bool_token *value)
+state_mod *srt_x86_flag(uint flagidx, sym_bool_token *value)
 {
 	state_mod *f = new state_mod();
 	f->ismem = false;
@@ -105,7 +105,7 @@ state_mod *srt_x86_flag(UINT flagidx, sym_bool_token *value)
 	return f;
 }
 
-state_mod *srt_x86_reg(UINT regidx, sym_int_token *value)
+state_mod *srt_x86_reg(uint regidx, sym_int_token *value)
 {
 	state_mod *r = new state_mod();
 	r->ismem = false;
@@ -625,7 +625,7 @@ ht_list *srt_x86_single(CPU *cpu, x86dis_insn *i)
 
 void create_cpu(CPU *cpu)
 {
-	for (UINT g = 0; g<8; g++) {
+	for (uint g = 0; g<8; g++) {
 		char s[32];
 		sprintf(s, "i%s", srt_x86_idx2reg(g));
 		cpu->regs[g] = new sym_int();
@@ -633,7 +633,7 @@ void create_cpu(CPU *cpu)
 		cpu->regs[g]->set(new sym_int_symbol(s));
 	}
 
-	for (UINT g = 0; g<X86_FLAGS; g++) {
+	for (uint g = 0; g<X86_FLAGS; g++) {
 		char s[32];
 		sprintf(s, "i%s", srt_x86_idx2reg(8+g));
 		cpu->flags[g] = new sym_bool();
@@ -644,12 +644,12 @@ void create_cpu(CPU *cpu)
 
 void destroy_cpu(CPU *cpu)
 {
-	for (UINT g = 0; g<8; g++) {
+	for (uint g = 0; g<8; g++) {
 		cpu->regs[g]->done();
 		delete cpu->regs[g];
 	}
 
-	for (UINT g = 0; g<X86_FLAGS; g++) {
+	for (uint g = 0; g<X86_FLAGS; g++) {
 		cpu->flags[g]->done();
 		delete cpu->flags[g];
 	}
@@ -710,7 +710,7 @@ void srt_x86(Analyser *analy, Address *addr)
 		}
 
 		uint c = rm->count();
-		for (UINT i = 0; i<c; i++) {
+		for (uint i = 0; i<c; i++) {
 			state_mod *r = (state_mod*)rm->get(i);
 			char en[256];
 			if (r->isbool) {
@@ -733,7 +733,7 @@ void srt_x86(Analyser *analy, Address *addr)
 			}
 			dname = "";
 		}
-		for (UINT i = 0; i<c; i++) {
+		for (uint i = 0; i<c; i++) {
 			state_mod *r = (state_mod*)rm->get(i);
 			if (r->isbool) {
 				srt_x86_setreg(&cpu, r->dest.regidx, r->value.boolean);
