@@ -23,7 +23,6 @@
 #include "analy_names.h"
 #include "analy_register.h"
 #include "analy_java.h"
-#include "global.h"
 #include "class.h"
 #include "class_analy.h"
 
@@ -41,7 +40,7 @@
 /*
  *
  */
-void	ClassAnalyser::init(ht_class_shared_data *Class_shared, ht_streamfile *File)
+void	ClassAnalyser::init(ht_class_shared_data *Class_shared, File *File)
 {
 	class_shared = Class_shared;
 	file = File;
@@ -105,7 +104,7 @@ void ClassAnalyser::beginAnalysis()
 	delete a;
 	if (class_shared->methods) {
 		ClassMethod *cm = NULL;
-		ht_data *value;
+		Object *value;
 		while ((cm = (ClassMethod*)class_shared->methods->enum_next(&value, cm))) {
 			Address *a = createAddress32(cm->start);
 			char buffer2[1024];
@@ -278,7 +277,7 @@ int	ClassAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *ClassAnalyser::fileofsToAddress(FILEOFS fileaddr)
+Address *ClassAnalyser::fileofsToAddress(FileOfs fileaddr)
 {
 	Address *a = createAddress32(fileaddr);
 	if (validAddress(a, scvalid)) {
