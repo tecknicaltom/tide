@@ -57,7 +57,7 @@ public:
 	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
-	virtual	FILEOFS		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
 };
 
