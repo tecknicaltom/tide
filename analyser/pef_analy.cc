@@ -454,9 +454,9 @@ const char *PEFAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *PEFAnalyser::getName()
+String &PEFAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
