@@ -150,7 +150,7 @@ void LEAnalyser::beginAnalysis()
 
 	LE_OBJECT *s = le_shared->objmap.header;
 	char blub[100];
-	for (UINT i = 0; i < le_shared->objmap.count; i++) {
+	for (uint i = 0; i < le_shared->objmap.count; i++) {
 		LEAddress la = LE_get_seg_addr(le_shared, i);
 		Address *secaddr = createAddressFlat32(la);
 
@@ -224,7 +224,7 @@ void LEAnalyser::beginAnalysis()
 		ht_tree *t = le_shared->imports;
 		ht_data *v;
 		ne_import_rec *imp = NULL;
-		FILEOFS h = le_shared->hdr_ofs + le_shared->hdr.imptab;
+		FileOfs h = le_shared->hdr_ofs + le_shared->hdr.imptab;
 		while ((imp = (ne_import_rec*)t->enum_next(&v, imp))) {
 			char *name = NULL;
 			char *mod = (imp->module-1 < le_shared->modnames_count) ? le_shared->modnames[imp->module-1] : (char*)"invalid!";
@@ -317,10 +317,10 @@ ObjectID	LEAnalyser::getObjectID() const
 /*
  *
  */
-FILEOFS LEAnalyser::addressToFileofs(Address *Addr)
+FileOfs LEAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
-		FILEOFS ofs;
+		FileOfs ofs;
 		LEAddress na;
 		if (!convertAddressToLEAddress(Addr, &na)) return INVALID_FILE_OFS;
 		if (!LE_addr_to_ofs(le_shared, na, &ofs)) {
@@ -328,7 +328,7 @@ FILEOFS LEAnalyser::addressToFileofs(Address *Addr)
 		}
 		return ofs;
 /*          uint m;
-		FILEOFS oo;
+		FileOfs oo;
 		if (!le_shared->linear_file->map_ofs(ofs, &oo, &m)) {
 			le_shared->linear_file->map_ofs(ofs, &oo, &m);
 			return INVALID_FILE_OFS;
@@ -339,17 +339,17 @@ FILEOFS LEAnalyser::addressToFileofs(Address *Addr)
 	}
 }
 
-FILEOFS LEAnalyser::addressToRealFileofs(Address *Addr)
+FileOfs LEAnalyser::addressToRealFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
-		FILEOFS ofs;
+		FileOfs ofs;
 		LEAddress na;
 		if (!convertAddressToLEAddress(Addr, &na)) return INVALID_FILE_OFS;
 		if (!LE_addr_to_ofs(le_shared, na, &ofs)) {
 			return INVALID_FILE_OFS;
 		}
 		uint m;
-		FILEOFS oo;
+		FileOfs oo;
 		if (!le_shared->linear_file->map_ofs(ofs, &oo, &m)) {
 			return INVALID_FILE_OFS;
 		}
@@ -364,7 +364,7 @@ FILEOFS LEAnalyser::addressToRealFileofs(Address *Addr)
  */
 uint LEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
 		ht_printf("%y", Addr);
 		int as=1;
