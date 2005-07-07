@@ -29,6 +29,10 @@
 /*
  *
  */
+AnalyAlphaDisassembler::AnalyAlphaDisassembler()
+{
+}
+
 void AnalyAlphaDisassembler::init(Analyser *A)
 {
 	disasm = new Alphadis();
