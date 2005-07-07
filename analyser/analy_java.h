@@ -26,15 +26,15 @@
 
 class AnalyJavaDisassembler: public AnalyDisassembler {
 public:
-			void			init(Analyser *A, java_token_func token_func, void *context);
-			int 			load(ObjectStream &f);
-	virtual   void    	 	done();
+		void			init(Analyser *A, java_token_func token_func, void *context);
+		void 			load(ObjectStream &f);
+	virtual void    	 	done();
 	virtual	ObjectID		getObjectID() const;
 
-	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
 	virtual	void			examineOpcode(OPCODE *opcode);
-	virtual	branch_enum_t 	isBranch(OPCODE *opcode);
-	virtual	void			store(ObjectStream &f);
+	virtual	branch_enum_t	 	isBranch(OPCODE *opcode);
+	virtual	void			store(ObjectStream &f) const;
 };
 
 #endif /* ANALY_JAVA_H */
