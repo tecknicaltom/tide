@@ -20,7 +20,6 @@
  */
 
 #include "htsys.h"
-#include "qword.h"
 #include "snprintf.h"
 
 #include <ctype.h>
@@ -204,7 +203,7 @@ int sys_filename_cmp(const char *a, const char *b)
  *	Win32 IPC
  */
 
-class ht_win32_file: public ht_streamfile {
+class ht_win32_file: public File {
 private:
 	HANDLE h;
 public:
@@ -264,7 +263,7 @@ BOOL CreateChildProcess(DWORD *pid, const char *cmd, HANDLE in, HANDLE out, HAND
 
 static HANDLE myPID = NULL;
 
-int sys_ipc_exec(ht_streamfile **in, ht_streamfile **out, ht_streamfile **err, int *handle, const char *cmd, int options)
+int sys_ipc_exec(File **in, File **out, File **err, int *handle, const char *cmd, int options)
 {
 	if (myPID != NULL) return EBUSY;
 	HANDLE old_out = GetStdHandle(STD_OUTPUT_HANDLE);
