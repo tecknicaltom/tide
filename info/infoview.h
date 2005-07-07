@@ -30,13 +30,13 @@
  *	CLASS info_node
  */
 
-class info_node: public ht_data {
+class info_node: public Object {
 public:
 	FileOfs start;
 	uint len;
 	ht_tree *xrefs;
 	
-	info_node(FILEOFS start);
+	info_node(FileOfs start);
 	~info_node();
 };
 
@@ -73,7 +73,7 @@ protected:
 
 	virtual ht_ltextfile_line *fetch_line(uint line);
 public:
-			void	init(ht_streamfile *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
+			void	init(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
 	virtual	void done();
 /* overwritten */
 	virtual	uint linecount();
