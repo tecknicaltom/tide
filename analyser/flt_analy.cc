@@ -25,7 +25,6 @@
 #include "analy_ppc.h"
 #include "analy_register.h"
 #include "analy_x86.h"
-#include "global.h"
 #include "flt_analy.h"
 
 #include "htctrl.h"
@@ -45,7 +44,7 @@
  *
  */
  
-void FLTAnalyser::init(ht_flt_shared_data *Flt_shared, ht_streamfile *File)
+void FLTAnalyser::init(ht_flt_shared_data *Flt_shared, File *File)
 {
 	flt_shared = Flt_shared;
 	file = File;
@@ -191,7 +190,7 @@ FileOfs FLTAnalyser::addressToFileofs(Address *Addr)
 	if (validAddress(Addr, scinitialized)) {
 		FLTAddress ea;
 		if (!convertAddressToFLTAddress(Addr, &ea)) return INVALID_FILE_OFS;
-		return (FILEOFS)ea;
+		return (FileOfs)ea;
 	} else {
 		return INVALID_FILE_OFS;
 	}
@@ -302,7 +301,7 @@ int FLTAnalyser::queryConfig(int mode)
 /*
  *
  */
-Address *FLTAnalyser::fileofsToAddress(FILEOFS fileofs)
+Address *FLTAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	FLTAddress ea = (FLTAddress)fileofs;
 	if (ea >= flt_shared->code_start && ea < flt_shared->data_end) {
