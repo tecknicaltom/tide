@@ -31,7 +31,7 @@ public:
 	Area			*validarea;
 
 		void		init(ht_le_shared_data *le_shared, File *file);
-		int 		load(ObjectStream &f);
+		void 		load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
 
