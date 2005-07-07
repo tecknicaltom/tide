@@ -52,7 +52,7 @@ state_mod::~state_mod()
  *	CLASS sym_int_reg
  */
  
-sym_int_reg::sym_int_reg(UINT r)
+sym_int_reg::sym_int_reg(uint r)
 {
 	regidx = r;
 }
