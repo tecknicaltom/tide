@@ -136,7 +136,7 @@ void PEAnalyser::beginAnalysis()
 	};*/
 	COFF_SECTION_HEADER *s=pe_shared->sections.sections;
 	char blub[100];
-	for (UINT i=0; i<pe_shared->sections.section_count; i++) {
+	for (uint i=0; i<pe_shared->sections.section_count; i++) {
 		Address *secaddr;
 		if (pe32) {
 			secaddr = createAddress32(s->data_address+pe_shared->pe32.header_nt.image_base);
@@ -297,7 +297,7 @@ ObjectID	PEAnalyser::getObjectID() const
  */
 uint PEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*	if (ofs == INVALID_FILE_OFS) {
 		int as=0;
 	}*/
@@ -384,14 +384,14 @@ Assembler *PEAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS PEAnalyser::addressToFileofs(Address *Addr)
+FileOfs PEAnalyser::addressToFileofs(Address *Addr)
 {
 /*     char tbuf[1024];
 	Addr->stringify(tbuf, 1024, 0);
 	printf("ADDR=%s", tbuf);*/
 	if (validAddress(Addr, scinitialized)) {
 //     	printf(" v1\n");
-		FILEOFS ofs;
+		FileOfs ofs;
 		RVA r;
 		if (!convertAddressToRVA(Addr, &r)) return INVALID_FILE_OFS;
 		if (!pe_rva_to_ofs(&pe_shared->sections, r, &ofs)) return INVALID_FILE_OFS;
