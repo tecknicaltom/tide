@@ -19,8 +19,7 @@
  */
 
 #include "asm.h"
-#include "common.h"
-#include "global.h"
+#include "data.h"
 #include "htatom.h"
 #include "htdebug.h"
 
