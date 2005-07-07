@@ -49,7 +49,7 @@ public:
 #endif
 };
 
-#define ATOM_AREA MAGICD("AREA")
+#define ATOM_AREA MAGIC32("AREA")
 
 bool init_stddata();
 void done_stddata();
