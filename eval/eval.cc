@@ -43,7 +43,7 @@ static int helpmode = 0;
 static eval_scalar helpstring;
 static char helpname[MAX_FUNCNAME_LEN+1];
 
-qword f2i(double f)
+uint64 f2i(double f)
 {
 	int r;
 	if (f>0) r = (int)(f+.5); else r = (int)(f-.5);
@@ -62,10 +62,10 @@ void set_helpmode(int flag, char *name)
 	strcpy(helpname, name);
 }
 
-static qword ipow(qword a, qword b)
+static uint64 ipow(uint64 a, uint64 b)
 {
-	qword r = to_qword(1);
-	qword m = to_qword(1) << 63;
+	uint64 r = to_qword(1);
+	uint64 m = to_qword(1) << 63;
 	while (m != to_qword(0)) {
 		r *= r;
 		if ((b & m) != to_qword(0)) {
@@ -77,7 +77,7 @@ static qword ipow(qword a, qword b)
 }
 
 /*
-static int sprint_basen(char *buffer, int base, qword q)
+static int sprint_basen(char *buffer, int base, uint64 q)
 {
 	static char *chars="0123456789abcdef";
 	if ((base<2) || (base>16)) return 0;
@@ -111,10 +111,10 @@ static int hexdigit(char a)
 	return -1;
 }
 
-static void str2int(char *str, qword *q, int base)
+static void str2int(char *str, uint64 *q, int base)
 {
 	*q = to_qword(0);
-	qword qbase = to_qword(base);
+	uint64 qbase = to_qword(base);
 	while (*str) {
 		int c = hexdigit(*str);
 		if ((c == -1) || (c >= base)) break;
@@ -329,7 +329,7 @@ void scalar_create_int_c(eval_scalar *s, const int i)
 	s->scalar.integer.type=TYPE_UNKNOWN;
 }
 
-void scalar_create_int_q(eval_scalar *s, const qword q)
+void scalar_create_int_q(eval_scalar *s, const uint64 q)
 {
 	s->type=SCALAR_INT;
 	s->scalar.integer.value=q;
@@ -580,7 +580,7 @@ int scalar_float_op(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *x
 int scalar_int_op(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *xb, int op)
 {
 	eval_int ai, bi;
-	qword a, b, r;
+	uint64 a, b, r;
 	scalar_context_int(xa, &ai);
 	scalar_context_int(xb, &bi);
 
@@ -620,9 +620,9 @@ int scalar_int_op(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *xb,
 		case EVAL_GE: r=to_qword(a>=b); break;
 		case EVAL_LT: r=to_qword(a<b); break;
 		case EVAL_LE: r=to_qword(a<=b); break;
-		case EVAL_LAND: r=to_qword(qword_cmp(a, to_qword(0)) && qword_cmp(b, to_qword(0))); break;
-		case EVAL_LXOR: r=to_qword((qword_cmp(a,to_qword(0)) && !qword_cmp(b,to_qword(0))) || (!qword_cmp(a,to_qword(0)) && qword_cmp(b,to_qword(0)))); break;
-		case EVAL_LOR: r=to_qword(qword_cmp(a,to_qword(0)) || qword_cmp(b,to_qword(0))); break;
+		case EVAL_LAND: r=to_qword(uint64_cmp(a, to_qword(0)) && qword_cmp(b, to_qword(0))); break;
+		case EVAL_LXOR: r=to_qword((uint64_cmp(a,to_qword(0)) && !qword_cmp(b,to_qword(0))) || (!qword_cmp(a,to_qword(0)) && qword_cmp(b,to_qword(0)))); break;
+		case EVAL_LOR: r=to_qword(uint64_cmp(a,to_qword(0)) || qword_cmp(b,to_qword(0))); break;
 		default: 
 			set_eval_error("invalid operator");
 			return 0;
@@ -857,7 +857,7 @@ int func_min(eval_scalar *r, eval_int *p1, eval_int *p2)
 
 int func_random(eval_scalar *r, eval_int *p1)
 {
-	qword d = to_qword(rand());
+	uint64 d = to_qword(rand());
 	scalar_create_int_q(r, (p1->value != to_qword(0)) ? (d % p1->value):to_qword(0));
 	return 1;
 }
