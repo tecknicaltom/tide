@@ -330,9 +330,9 @@ const char *MachoAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *MachoAnalyser::getName()
+String &MachoAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
