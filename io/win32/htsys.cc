@@ -48,7 +48,7 @@ int sys_canonicalize(char *result, const char *filename)
 
 uint32 filetime_to_ctime(FILETIME f)
 {
-	qword q;
+	uint64 q;
 	QWORD_SET_LO(q, f.dwLowDateTime);
 	QWORD_SET_HI(q, f.dwHighDateTime);
 	q = q / int_to_qword(10000000);		// 100 nano-sec to full sec
