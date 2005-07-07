@@ -44,7 +44,7 @@ public:
 		Address		*createAddress32(uint32 addr);
 		Address		*createAddress64(uint64 high_addr);
 	virtual Assembler 	*createAssembler();
-	virtual	const char	*getName();
+	virtual	String &	getName(String &res);
 	virtual const char	*getType();
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
