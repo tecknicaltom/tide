@@ -31,9 +31,9 @@ public:
 	File 		*file;
 	Area			*validarea;
 
-			void	init(ht_pe_shared_data *Pe_shared, File *File);
-			void 	load(ObjectStream &f);
-			void	reinit(ht_pe_shared_data *Pe_shared, File *File);
+		void		init(ht_pe_shared_data *Pe_shared, File *File);
+		void 		load(ObjectStream &f);
+		void		reinit(ht_pe_shared_data *Pe_shared, File *File);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
 
