@@ -69,7 +69,7 @@ void MachoAnalyser::beginAnalysis()
 	 */
 	uint entrypoint_count = 0;
 	pp = macho_shared->cmds.cmds;
-	for (UINT i=0; i < macho_shared->cmds.count; i++) {
+	for (uint i=0; i < macho_shared->cmds.count; i++) {
 		if (((*pp)->cmd.cmd == LC_UNIXTHREAD) || ((*pp)->cmd.cmd == LC_THREAD)) {
 			MACHO_THREAD_COMMAND *s = (MACHO_THREAD_COMMAND*)*pp;
 			Address *entry;
@@ -101,7 +101,7 @@ void MachoAnalyser::beginAnalysis()
 
 	char blub[100];
 	pp = macho_shared->cmds.cmds;
-	for (UINT i=0; i < macho_shared->cmds.count; i++) {
+	for (uint i=0; i < macho_shared->cmds.count; i++) {
 		if ((*pp)->cmd.cmd == LC_SEGMENT) {
 		MACHO_SEGMENT_COMMAND *s = (MACHO_SEGMENT_COMMAND*)*pp;
 
@@ -142,11 +142,11 @@ void MachoAnalyser::beginAnalysis()
 
 	/* symbols */
 	pp = macho_shared->cmds.cmds;
-	for (UINT i=0; i < macho_shared->cmds.count; i++) {
+	for (uint i=0; i < macho_shared->cmds.count; i++) {
 		if ((*pp)->cmd.cmd == LC_SYMTAB) {
 			MACHO_SYMTAB_COMMAND *s = (MACHO_SYMTAB_COMMAND*)*pp;
 			int *entropy = random_permutation(s->nsyms);
-			for (UINT j=0; j<s->nsyms; j++) {
+			for (uint j=0; j<s->nsyms; j++) {
 				file->seek(s->symoff+entropy[j]*sizeof (MACHO_SYMTAB_NLIST));
 				MACHO_SYMTAB_NLIST nlist;
 				if (file->read(&nlist, sizeof nlist) != sizeof nlist) break;
@@ -223,7 +223,7 @@ ObjectID MachoAnalyser::getObjectID() const
  */
 uint MachoAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
 		int as = 1;
 	}*/
@@ -299,7 +299,7 @@ Assembler *MachoAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS MachoAnalyser::addressToFileofs(Address *Addr)
+FileOfs MachoAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		uint32 ofs;
