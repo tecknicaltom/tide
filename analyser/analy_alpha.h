@@ -35,7 +35,7 @@ public:
 		Address			*createAddress(uint32 offset);
 	virtual	void			examineOpcode(OPCODE *opcode);
 	virtual	branch_enum_t 		isBranch(OPCODE *opcode);
-	virtual	void			store(ObjectStream &f);
+	virtual	void			store(ObjectStream &f) const;
 };
 
 #endif
