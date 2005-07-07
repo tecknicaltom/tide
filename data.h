@@ -1112,6 +1112,40 @@ public:
 bool quickSort(List &l);
 
 
+/*
+ *	char_set
+ */
+
+#define CS_SETSIZE 256
+
+typedef struct char_set {
+  unsigned char char_bits [((CS_SETSIZE) + 7) / 8];
+} char_set;
+
+#define CS_SET(n, p)    ((p)->char_bits[(n) / 8] |= (1 << ((n) & 7)))
+#define CS_CLR(n, p)	((p)->char_bits[(n) / 8] &= ~(1 << ((n) & 7)))
+#define CS_ISSET(n, p)	((p)->char_bits[(n) / 8] & (1 << ((n) & 7)))
+#define CS_ZERO(p)	memset ((void *)(p), 0, sizeof (*(p)))
+
+/*
+ *
+ */
+
+#define BITMAP(a0, a1, a2, a3, a4, a5, a6, a7) (((a0)<<0) | ((a1)<<1) | ((a2)<<2) | ((a3)<<3) | ((a4)<<4) | ((a5)<<5) | ((a6)<<6) | ((a7)<<7))
+
+#define BITBIT(bitmap, p) ((bitmap)>>(p)&1)
+
+/*
+ *	simple int hash
+ */
+
+struct int_hash {
+	int value;
+	char *desc;
+};
+
+char *matchhash(int value, int_hash *hash_table);
+
 #include "stream.h"			// load/store need ObjectStream
 
 
