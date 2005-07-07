@@ -28,10 +28,10 @@
 class CoffAnalyser: public Analyser {
 public:
 	ht_coff_shared_data 	*coff_shared;
-	ht_streamfile 		*file;
+	File 		*file;
 	Area			*validarea;
 
-		void		init(ht_coff_shared_data *Coff_shared, ht_streamfile *File);
+		void		init(ht_coff_shared_data *Coff_shared, File *File);
 		int 		load(ObjectStream &f);
 	virtual	void		done();
 	virtual	ObjectID	getObjectID() const;
@@ -51,7 +51,7 @@ public:
 	virtual	Address		*nextValid(Address *Addr);
 	virtual	void		store(ObjectStream &f);
 	virtual	int		queryConfig(int mode);
-	virtual	Address		*fileofsToAddress(FILEOFS fileofs);
+	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
 	virtual	bool 		validAddress(Address *Addr, tsectype action);
 };
