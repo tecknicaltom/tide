@@ -193,13 +193,13 @@ void ElfAnalyser::initInsertFakeSymbols()
 	while ((key = (sectionAndIdx*)elf_shared->undefined2fakeaddr->enum_next(
 	(ht_data**)&value, key))) {
 		Address *address = createAddress32(value->value);
-		FILEOFS h = elf_shared->sheaders.sheaders32[key->secidx].sh_offset;
+		FileOfs h = elf_shared->sheaders.sheaders32[key->secidx].sh_offset;
 		ELF_SYMBOL32 sym;
 		file->seek(h+key->symidx*sizeof (ELF_SYMBOL32));
 		file->read(&sym, sizeof sym);
 		create_host_struct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 
-		FILEOFS sto = elf_shared->sheaders.sheaders32[
+		FileOfs sto = elf_shared->sheaders.sheaders32[
 			elf_shared->sheaders.sheaders32[key->secidx].sh_link].sh_offset;
 		file->seek(sto+sym.st_name);
 		char *name = fgetstrz(file);
@@ -215,8 +215,8 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 {
 	char elf_buffer[1024];
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS] == ELFCLASS32) {
-		FILEOFS h = elf_shared->sheaders.sheaders32[shidx].sh_offset;
-		FILEOFS sto = elf_shared->sheaders.sheaders32[elf_shared->sheaders.sheaders32[shidx].sh_link].sh_offset;
+		FileOfs h = elf_shared->sheaders.sheaders32[shidx].sh_offset;
+		FileOfs sto = elf_shared->sheaders.sheaders32[elf_shared->sheaders.sheaders32[shidx].sh_link].sh_offset;
 		uint symnum = elf_shared->sheaders.sheaders32[shidx].sh_size / sizeof (ELF_SYMBOL32);
 
 		int *entropy = random_permutation(symnum);
@@ -319,8 +319,8 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 		if (entropy) free(entropy);
 	} else {
 		// FIXME: 64 bit
-		FILEOFS h = elf_shared->sheaders.sheaders64[shidx].sh_offset.lo;
-		FILEOFS sto = elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[shidx].sh_link].sh_offset.lo;
+		FileOfs h = elf_shared->sheaders.sheaders64[shidx].sh_offset.lo;
+		FileOfs sto = elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[shidx].sh_link].sh_offset.lo;
 		uint symnum = elf_shared->sheaders.sheaders64[shidx].sh_size.lo / sizeof (ELF_SYMBOL64);
 
 		int *entropy = random_permutation(symnum);
@@ -451,7 +451,7 @@ ObjectID ElfAnalyser::getObjectID() const
  */
 uint ElfAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
 		int as = 1;
 	}*/
@@ -529,7 +529,7 @@ Assembler *ElfAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS ElfAnalyser::addressToFileofs(Address *Addr)
+FileOfs ElfAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		uint32 ofs;
