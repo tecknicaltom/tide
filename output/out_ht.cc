@@ -45,7 +45,7 @@ void AnalyserHTOutput::done()
 	AnalyserOutput::done();
 }
 
-vcp AnalyserHTOutput::getcolor_analy(UINT pal_index)
+vcp AnalyserHTOutput::getcolor_analy(uint pal_index)
 {
 	return getcolorv(&analy_pal, pal_index);
 }
