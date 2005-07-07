@@ -39,7 +39,7 @@ struct BuildCtorArg {
 /**
  *	Macro for creating object build functions
  */
-#define BUILDER(reg, obj) Object *build_##obj(){BuildCtorArg a;return new obj(a);}
+#define BUILDER(reg, obj) obj::obj(BuildCtorArg&) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
 
 /**
  *	Registers builder function by object id.
