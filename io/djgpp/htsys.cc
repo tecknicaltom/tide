@@ -156,7 +156,7 @@ int sys_get_free_mem()
 	return info.available_memory;
 }
 
-int sys_truncate(const char *filename, FILEOFS ofs)
+int sys_truncate(const char *filename, FileOfs ofs)
 {
 	return truncate(filename, ofs);
 }
@@ -186,7 +186,7 @@ int sys_filename_cmp(const char *a, const char *b)
 	return tolower(*a) - tolower(*b);
 }
 
-int sys_ipc_exec(ht_streamfile **in, ht_streamfile **out, ht_streamfile **err, int *handle, const char *cmd, int options)
+int sys_ipc_exec(File **in, File **out, File **err, int *handle, const char *cmd, int options)
 {
 	if (options & HT_IPC_NONBLOCKING) return ENOSYS;
 	int save_stdin = dup(STDIN_FILENO);
