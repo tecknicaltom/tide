@@ -34,7 +34,7 @@ enum srt_endian { srte_be, srte_le };
 #define MTYPE_FLAG		1
 #define MTYPE_MEM		2
 
-class state_mod: public ht_data {
+class state_mod: public Object {
 public:
 	bool ismem;
 	union {
