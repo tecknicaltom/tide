@@ -318,9 +318,9 @@ const char *XBEAnalyser::getSegmentNameByAddress(Address *Addr)
 /*
  *
  */
-const char *XBEAnalyser::getName()
+String &XBEAnalyser::getName(String &res)
 {
-	return file->get_desc();
+	return file->getDesc(res);
 }
 
 /*
