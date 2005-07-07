@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#include "global.h"
+#include "data.h"
 #include "htendian.h"
 #include "ia64dis.h"
 #include "ia64opc.h"
@@ -46,9 +46,9 @@ bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
 	return true;
 }
 
-qword IA64Disassembler::signExtend(qword a, int length)
+uint64 IA64Disassembler::signExtend(uint64 a, int length)
 {
-	qword sign = (to_qword(1) << (length-1));
+	uint64 sign = (to_qword(1) << (length-1));
 	if ((a & sign) != to_qword(0)) {
 		sign <<= 1;
 		sign -= to_qword(1);
@@ -63,7 +63,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 	IA64SlotDisInsn *slot = &insn.slot[slot_nb];
 	byte role = (insn.tmplt->slot[slot_nb] & 0xf0);
 	if (role==IA64_INST_ROLE_LONG) {
-		qword tmp = insn.slot[slot_nb].data;
+		uint64 tmp = insn.slot[slot_nb].data;
 		insn.slot[slot_nb].data = insn.slot[slot_nb+1].data;
 		insn.slot[slot_nb+1].data = tmp;
 		slot->next = 2;
