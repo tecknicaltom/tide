@@ -264,7 +264,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 					Addr->putIntoArray((byte*)&d);
 					t = externalLink(b, d, 0, 0, 1, NULL);
 				} else {
-					qword d;
+					uint64 d;
 					Addr->putIntoArray((byte*)&d);
 					t = externalLink(b, d.hi, d.lo, 0, 1, NULL);
 				}
@@ -393,7 +393,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 									break;
 								}
 								case dst_iqword: {
-									qword c;
+									uint64 c;
 									analy->bufPtr(addr, (byte *)&c, 8);
 									ht_snprintf(buf, sizeof buf, "dq          \\@n%016qxh", &c);
 									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
