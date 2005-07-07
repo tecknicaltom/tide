@@ -142,7 +142,7 @@ void NEAnalyser::beginAnalysis()
 
 	NE_SEGMENT *s = ne_shared->segments.segments;
 	char blub[100];
-	for (UINT i = 0; i < ne_shared->segments.segment_count; i++) {
+	for (uint i = 0; i < ne_shared->segments.segment_count; i++) {
 		Address *secaddr = createAddress1616(NE_ADDR_SEG(NE_get_seg_addr(ne_shared, i)), NE_ADDR_OFS(NE_get_seg_addr(ne_shared, i)));
 
 		uint epsize = MIN(NE_get_seg_vsize(ne_shared, i), NE_get_seg_psize(ne_shared, i));
@@ -215,7 +215,7 @@ void NEAnalyser::beginAnalysis()
 		ht_tree *t = ne_shared->imports;
 		ht_data *v;
 		ne_import_rec *imp = NULL;
-		FILEOFS h = ne_shared->hdr_ofs + ne_shared->hdr.imptab;
+		FileOfs h = ne_shared->hdr_ofs + ne_shared->hdr.imptab;
 		while ((imp = (ne_import_rec*)t->enum_next(&v, imp))) {
 			char *name = NULL;
 			char *mod = (imp->module-1 < ne_shared->modnames_count) ? ne_shared->modnames[imp->module-1] : (char*)"invalid!";
@@ -281,7 +281,7 @@ ObjectID	NEAnalyser::getObjectID() const
  */
 uint NEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 {
-	FILEOFS ofs = addressToFileofs(Addr);
+	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
 		int as=1;
 	}*/
@@ -324,10 +324,10 @@ Assembler *NEAnalyser::createAssembler()
 /*
  *
  */
-FILEOFS NEAnalyser::addressToFileofs(Address *Addr)
+FileOfs NEAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
-		FILEOFS ofs;
+		FileOfs ofs;
 		NEAddress na;
 		if (!convertAddressToNEAddress(Addr, &na)) return INVALID_FILE_OFS;
 		if (!NE_addr_to_ofs(ne_shared, na, &ofs)) {
