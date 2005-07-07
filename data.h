@@ -93,6 +93,7 @@ struct BuildCtorArg {
 class Object {
 public:
 				Object(BuildCtorArg);
+				Object();
 
 	virtual			~Object();
 		void		init();
