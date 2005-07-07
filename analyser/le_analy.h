@@ -41,13 +41,13 @@ public:
 	virtual	Address		*createAddress();
 		Address		*createAddressFlat32(uint32 ofs);
 	virtual Assembler 	*createAssembler();
-	virtual	const char	*getName();
+	virtual	String &	getName(String &res);
 	virtual const char	*getType();
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
 	virtual	Address		*nextValid(Address *Addr);
-	virtual	void		store(ObjectStream &f);
+	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	const char	*getSegmentNameByAddress(Address *Addr);
