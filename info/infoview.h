@@ -32,7 +32,7 @@
 
 class info_node: public ht_data {
 public:
-	FILEOFS start;
+	FileOfs start;
 	uint len;
 	ht_tree *xrefs;
 	
@@ -52,7 +52,7 @@ public:
 	
 			void init(ht_view *pal_from);
 /* overwritten */
-	virtual	vcp getcolor_syntax(UINT pal_index);
+	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();
 	virtual	lexer_token geterrortoken();
 	virtual	char *getname();
@@ -60,7 +60,7 @@ public:
 	virtual	vcp gettoken_color(lexer_token t);
 /* new */
 			void set_xrefs(ht_tree *xrefs);
-			void set_cursor(UINT cx, uint cy);
+			void set_cursor(uint cx, uint cy);
 };
 
 /*
@@ -71,14 +71,14 @@ class ht_info_textfile: public ht_ltextfile {
 protected:
 	uint start, end;
 
-	virtual ht_ltextfile_line *fetch_line(UINT line);
+	virtual ht_ltextfile_line *fetch_line(uint line);
 public:
 			void	init(ht_streamfile *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
 	virtual	void done();
 /* overwritten */
 	virtual	uint linecount();
 /* new */	
-			void set_node(UINT ofs, uint len);
+			void set_node(uint ofs, uint len);
 };
 
 /*
