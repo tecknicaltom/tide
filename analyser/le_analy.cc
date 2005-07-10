@@ -43,6 +43,10 @@
 /*
  *
  */
+LEAnalyser::LEAnalyser()
+{
+}
+
 void	LEAnalyser::init(ht_le_shared_data *LE_shared, File *File)
 {
 	le_shared = LE_shared;
