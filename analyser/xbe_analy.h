@@ -28,9 +28,11 @@
 class XBEAnalyser: public Analyser {
 public:
 	ht_xbe_shared_data 	*xbe_shared;
-	File		*file;
+	File			*file;
 	Area			*validarea;
 
+				XBEAnalyser();
+				XBEAnalyser(BuildCtorArg&);
 		void		init(ht_xbe_shared_data *XBE_shared, File *File);
 		void		load(ObjectStream &f);
 	virtual	void		done();
