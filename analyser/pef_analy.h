@@ -30,9 +30,11 @@
 class PEFAnalyser: public Analyser {
 public:
 	ht_pef_shared_data 	*pef_shared;
-	File		*file;
+	File			*file;
 	Area			*validarea;
 
+				PEFAnalyser();
+				PEFAnalyser(BuildCtorArg&);
 		void		init(ht_pef_shared_data *pef_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
