@@ -30,6 +30,8 @@ public:
 	ht_class_shared_data 	*class_shared;
 	File			*file;
 
+				ClassAnalyser();
+				ClassAnalyser(BuildCtorArg&);
 		void		init(ht_class_shared_data *Class_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
