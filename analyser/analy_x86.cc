@@ -26,10 +26,6 @@
 #include "snprintf.h"
 #include "x86dis.h"
 
-AddressX86Flat32::AddressX86Flat32()
-{
-}
-
 AddressX86Flat32::AddressX86Flat32(uint32 Addr)
 {
 	addr = Addr;
@@ -148,10 +144,6 @@ int AddressX86Flat32::stringSize() const
 	return 8;
 }
 
-
-AddressX86_1632::AddressX86_1632()
-{
-}
 
 AddressX86_1632::AddressX86_1632(uint16 Seg, uint32 Addr)
 {
@@ -286,10 +278,6 @@ int AddressX86_1632::stringSize() const
 /*
  *
  */
-AddressX86_1616::AddressX86_1616()
-{
-}
-
 AddressX86_1616::AddressX86_1616(uint16 Seg, uint16 Addr)
 {
 	seg = Seg;
