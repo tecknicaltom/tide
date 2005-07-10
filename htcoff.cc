@@ -190,100 +190,100 @@ void ht_coff::done()
  *	rva conversion routines
  */
 
-int coff_rva_to_section(coff_section_headers *section_headers, RVA rva, int *section)
+bool coff_rva_to_section(coff_section_headers *section_headers, RVA rva, int *section)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (uint i=0; i<section_headers->section_count; i++) {
 		if ((rva >= s->data_address) && (rva < s->data_address+s->data_size)) {
 			*section = i;
-			return 1;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
-int coff_rva_to_ofs(coff_section_headers *section_headers, RVA rva, uint32 *ofs)
+bool coff_rva_to_ofs(coff_section_headers *section_headers, RVA rva, FileOfs *ofs)
 {
-	COFF_SECTION_HEADER *s=section_headers->sections;
-	for (uint i=0; i<section_headers->section_count; i++) {
-		if (s->data_offset && (rva >= s->data_address) &&
-		(rva < s->data_address+s->data_size)) {
-			*ofs = rva-s->data_address+s->data_offset+section_headers->hdr_ofs;
-			return 1;
+	COFF_SECTION_HEADER *s = section_headers->sections;
+	for (uint i = 0; i < section_headers->section_count; i++) {
+		if (s->data_offset && rva >= s->data_address 
+		&& rva < s->data_address+s->data_size) {
+			*ofs = rva-s->data_address + s->data_offset + section_headers->hdr_ofs;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
-int coff_rva_is_valid(coff_section_headers *section_headers, RVA rva)
+bool coff_rva_is_valid(coff_section_headers *section_headers, RVA rva)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (uint i=0; i<section_headers->section_count; i++) {
 		if ((rva >= s->data_address) && (rva < s->data_address+s->data_size)) {
-			return 1;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
-int coff_rva_is_physical(coff_section_headers *section_headers, RVA rva)
+bool coff_rva_is_physical(coff_section_headers *section_headers, RVA rva)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (uint i=0; i<section_headers->section_count; i++) {
 		if (s->data_offset && (rva >= s->data_address) &&
 		(rva < s->data_address+s->data_size)) {
-			return 1;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
 /*
  *	ofs conversion routines
  */
 
-int coff_ofs_to_rva(coff_section_headers *section_headers, uint32 ofs, RVA *rva)
+bool coff_ofs_to_rva(coff_section_headers *section_headers, uint32 ofs, RVA *rva)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (uint i=0; i<section_headers->section_count; i++) {
 		if ((ofs>=s->data_offset+section_headers->hdr_ofs) &&
 		(ofs<s->data_offset+section_headers->hdr_ofs+s->data_size)) {
 			*rva=ofs-(s->data_offset+section_headers->hdr_ofs)+s->data_address;
-			return 1;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
-int coff_ofs_to_section(coff_section_headers *section_headers, uint32 ofs, uint *section)
+bool coff_ofs_to_section(coff_section_headers *section_headers, uint32 ofs, uint *section)
 {
 	COFF_SECTION_HEADER *s=section_headers->sections;
 	for (uint i=0; i<section_headers->section_count; i++) {
 		if ((ofs>=s->data_offset+section_headers->hdr_ofs) &&
 		(ofs<s->data_offset+section_headers->hdr_ofs+s->data_size)) {
 			*section=i;
-			return 1;
+			return true;
 		}
 		s++;
 	}
-	return 0;
+	return false;
 }
 
 int coff_ofs_to_rva_and_section(coff_section_headers *section_headers, uint32 ofs, RVA *rva, uint *section)
 {
-	int r=coff_ofs_to_rva(section_headers, ofs, rva);
+	int r = coff_ofs_to_rva(section_headers, ofs, rva);
 	if (r) {
-		r=coff_ofs_to_section(section_headers, ofs, section);
+		r = coff_ofs_to_section(section_headers, ofs, section);
 	}
 	return r;
 }
 
-int coff_ofs_is_valid(coff_section_headers *section_headers, uint32 ofs)
+bool coff_ofs_is_valid(coff_section_headers *section_headers, uint32 ofs)
 {
 	RVA rva;
 	return coff_ofs_to_rva(section_headers, ofs, &rva);
