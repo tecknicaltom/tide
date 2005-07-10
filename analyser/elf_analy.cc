@@ -48,6 +48,10 @@ extern "C" {
  *
  */
  
+ElfAnalyser::ElfAnalyser()
+{
+}
+
 void ElfAnalyser::init(ht_elf_shared_data *Elf_shared, File *File)
 {
 	elf_shared = Elf_shared;
