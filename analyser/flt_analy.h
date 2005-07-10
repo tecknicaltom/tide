@@ -33,6 +33,8 @@ public:
 	File			*file;
 	Area			*validarea;
 
+				FLTAnalyser();
+				FLTAnalyser(BuildCtorArg&);
 		void		init(ht_flt_shared_data *flt_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
