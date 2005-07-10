@@ -45,6 +45,10 @@ extern "C" {
  *
  */
 
+PEFAnalyser::PEFAnalyser()
+{
+}
+
 void PEFAnalyser::init(ht_pef_shared_data *Pef_shared, File *File)
 {
 	pef_shared = Pef_shared;
