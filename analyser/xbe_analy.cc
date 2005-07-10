@@ -45,6 +45,10 @@
 /*
  *
  */
+XBEAnalyser::XBEAnalyser()
+{
+}
+
 void	XBEAnalyser::init(ht_xbe_shared_data *XBE_shared, File *File)
 {
 	xbe_shared = XBE_shared;
