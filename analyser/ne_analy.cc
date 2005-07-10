@@ -43,6 +43,10 @@
 /*
  *
  */
+NEAnalyser::NEAnalyser()
+{
+}
+
 void	NEAnalyser::init(ht_ne_shared_data *NE_shared, File *File)
 {
 	ne_shared = NE_shared;
