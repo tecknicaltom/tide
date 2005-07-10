@@ -26,8 +26,8 @@
 class AddressX86Flat32: public Address {
 public:
 	uint32 addr;
-	AddressX86Flat32();
-	AddressX86Flat32(uint32 addr);
+	AddressX86Flat32(BuildCtorArg&);
+	AddressX86Flat32(uint32 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
@@ -51,8 +51,8 @@ public:
 	uint16 seg;
 	uint16 addr;
 public:
-	AddressX86_1616();
-	AddressX86_1616(uint16 seg, uint16 addr);
+	AddressX86_1616(BuildCtorArg&);
+	AddressX86_1616(uint16 seg=0, uint16 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
@@ -76,8 +76,8 @@ public:
 	uint16 seg;
 	uint32 addr;
 public:
-	AddressX86_1632();
-	AddressX86_1632(uint16 seg, uint32 addr);
+	AddressX86_1632(BuildCtorArg&);
+	AddressX86_1632(uint16 seg=0, uint32 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
