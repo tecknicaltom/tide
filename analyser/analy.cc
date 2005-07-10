@@ -131,10 +131,6 @@ int InvalidAddress::stringSize() const
 /*
  *
  */
-AddressFlat32::AddressFlat32(BuildCtorArg)
-{
-}
-
 AddressFlat32::AddressFlat32(uint32 a)
 {
 	addr = a;
@@ -253,10 +249,6 @@ int AddressFlat32::stringSize() const
 /*
  *
  */
-AddressFlat64::AddressFlat64(BuildCtorArg)
-{
-}
-
 AddressFlat64::AddressFlat64(uint64 a)
 {
 	addr = a;
