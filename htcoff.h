@@ -78,13 +78,13 @@ public:
 	virtual	void done();
 };
 
-int coff_rva_to_section(coff_section_headers *section_headers, RVA rva, int *section);
-int coff_rva_to_ofs(coff_section_headers *section_headers, RVA rva, uint32 *ofs);
-int coff_rva_is_valid(coff_section_headers *section_headers, RVA rva);
-int coff_rva_is_physical(coff_section_headers *section_headers, RVA rva);
+bool coff_rva_to_section(coff_section_headers *section_headers, RVA rva, int *section);
+bool coff_rva_to_ofs(coff_section_headers *section_headers, RVA rva, FileOfs *ofs);
+bool coff_rva_is_valid(coff_section_headers *section_headers, RVA rva);
+bool coff_rva_is_physical(coff_section_headers *section_headers, RVA rva);
 
-int coff_ofs_to_rva(coff_section_headers *section_headers, uint32 ofs, RVA *rva);
-int coff_ofs_to_section(coff_section_headers *section_headers, uint32 ofs, uint *section);
+bool coff_ofs_to_rva(coff_section_headers *section_headers, uint32 ofs, RVA *rva);
+bool coff_ofs_to_section(coff_section_headers *section_headers, uint32 ofs, uint *section);
 int coff_ofs_to_rva_and_section(coff_section_headers *section_headers, uint32 ofs, RVA *rva, uint *section);
 
 #endif /* !__HTCOFF_H__ */
