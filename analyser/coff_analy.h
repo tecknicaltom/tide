@@ -28,9 +28,11 @@
 class CoffAnalyser: public Analyser {
 public:
 	ht_coff_shared_data 	*coff_shared;
-	File 		*file;
+	File			*file;
 	Area			*validarea;
 
+				CoffAnalyser();
+				CoffAnalyser(BuildCtorArg&);
 		void		init(ht_coff_shared_data *Coff_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
