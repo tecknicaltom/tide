@@ -42,6 +42,10 @@
 /*
  *
  */
+CoffAnalyser::CoffAnalyser()
+{
+}
+
 void	CoffAnalyser::init(ht_coff_shared_data *Coff_shared, File *File)
 {
 	coff_shared = Coff_shared;
@@ -62,7 +66,7 @@ void	CoffAnalyser::init(ht_coff_shared_data *Coff_shared, File *File)
 /*
  *
  */
-int	CoffAnalyser::load(ObjectStream &f)
+void	CoffAnalyser::load(ObjectStream &f)
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
@@ -70,7 +74,7 @@ int	CoffAnalyser::load(ObjectStream &f)
 	area				*validarea;
 	*/
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -420,7 +424,7 @@ Address *CoffAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void CoffAnalyser::store(ObjectStream &st)
+void CoffAnalyser::store(ObjectStream &st) const
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
