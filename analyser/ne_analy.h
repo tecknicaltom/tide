@@ -30,6 +30,8 @@ public:
 	File 		*file;
 	Area			*validarea;
 
+				NEAnalyser();
+				NEAnalyser(BuildCtorArg&);
 		void		init(ht_ne_shared_data *ne_shared, File *file);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
