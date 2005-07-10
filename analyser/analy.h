@@ -61,7 +61,7 @@ public:
 class InvalidAddress: public Address {
 public:
 				InvalidAddress();
-				InvalidAddress(BuildCtorArg);
+				InvalidAddress(BuildCtorArg&);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
 	virtual	int		compareTo(const Object *obj) const;
@@ -84,7 +84,7 @@ public:
 class AddressFlat32: public Address {
 public:
 	uint32 addr;
-				AddressFlat32(BuildCtorArg);
+				AddressFlat32(BuildCtorArg&);
 				AddressFlat32(uint32 a=0);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
@@ -107,7 +107,7 @@ public:
 class AddressFlat64: public Address {
 public:
 	uint64 addr;
-				AddressFlat64(BuildCtorArg);
+				AddressFlat64(BuildCtorArg&);
 				AddressFlat64(uint64 a=0);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
