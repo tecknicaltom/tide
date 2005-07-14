@@ -64,10 +64,10 @@ void	XBEAnalyser::init(ht_xbe_shared_data *XBE_shared, File *File)
 /*
  *
  */
-int	XBEAnalyser::load(ObjectStream &f)
+void	XBEAnalyser::load(ObjectStream &f)
 {
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -143,9 +143,9 @@ void XBEAnalyser::beginAnalysis()
 
 	int import_count=xbe_shared->imports.funcs->count();
 	int *entropy = random_permutation(import_count);
-	for (int i=0; i<import_count; i++) {
-		ht_xbe_import_function *f=(ht_xbe_import_function *)xbe_shared->imports.funcs->get(*(entropy+i));
-//		ht_pe_import_library *d=(ht_pe_import_library *)pe_shared->imports.libs->get(f->libidx);
+	for (int i = 0; i < import_count; i++) {
+		ht_xbe_import_function *f=(ht_xbe_import_function *) (*xbe_shared->imports.funcs)[entropy[i]];
+//		ht_pe_import_library *d=(ht_pe_import_library *)(*pe_shared->imports.libs)[f->libidx];
 		char *label;
 		label = import_func_name("NTOSKRNL.EXE", (f->byname) ? f->name.name : NULL, f->ordinal);
 		Address *faddr;
@@ -427,7 +427,7 @@ Address *XBEAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void XBEAnalyser::store(ObjectStream &st)
+void XBEAnalyser::store(ObjectStream &st) const
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
@@ -478,20 +478,20 @@ bool XBEAnalyser::validAddress(Address *Addr, tsectype action)
 	if (!xbe_rva_to_section(sections, r, &sec)) return false;
 	XBE_SECTION_HEADER *s=sections->sections+sec;
 	switch (action) {
-		case scvalid:
-			return true;
-		case scread:
-			return true;
-		case scwrite:
-			return s->section_flags & XBE_SECTION_FLAGS_WRITABLE;
-		case screadwrite:
-			return s->section_flags & XBE_SECTION_FLAGS_WRITABLE;
-		case sccode:
-			if (!xbe_rva_is_physical(sections, r)) return false;
-			return s->section_flags & XBE_SECTION_FLAGS_EXECUTABLE;
-		case scinitialized:
-			if (!xbe_rva_is_physical(sections, r)) return false;
-			return true;
+	case scvalid:
+		return true;
+	case scread:
+		return true;
+	case scwrite:
+		return s->section_flags & XBE_SECTION_FLAGS_WRITABLE;
+	case screadwrite:
+		return s->section_flags & XBE_SECTION_FLAGS_WRITABLE;
+	case sccode:
+		if (!xbe_rva_is_physical(sections, r)) return false;
+		return s->section_flags & XBE_SECTION_FLAGS_EXECUTABLE;
+	case scinitialized:
+		if (!xbe_rva_is_physical(sections, r)) return false;
+		return true;
 	}
 	return false;
 }
