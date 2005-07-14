@@ -67,7 +67,7 @@ void	LEAnalyser::init(ht_le_shared_data *LE_shared, File *File)
 /*
  *
  */
-int	LEAnalyser::load(ObjectStream &f)
+void	LEAnalyser::load(ObjectStream &f)
 {
 	/*
 	ht_pe_shared_data 	*pe_shared;
@@ -75,7 +75,7 @@ int	LEAnalyser::load(ObjectStream &f)
 	area				*validarea;
 	*/
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -551,23 +551,23 @@ bool LEAnalyser::validAddress(Address *Addr, tsectype action)
 	LEAddress na;
 	if (!convertAddressToLEAddress(Addr, &na)) return false;
 	if (!LE_addr_to_segment(le_shared, na, &sec)) return false;
-	LEAddress temp;
+	FileOfs temp;
 	bool init = LE_addr_to_ofs(le_shared, na, &temp);
 	LE_OBJECT *s = objects->header + sec;
 
 	switch (action) {
-		case scvalid:
-			return true;
-		case scread:
-			return (s->flags & LE_OBJECT_FLAG_READABLE);
-		case scwrite:
-			return (s->flags & LE_OBJECT_FLAG_WRITEABLE);
-		case screadwrite:
-			return (s->flags & LE_OBJECT_FLAG_READABLE) && (s->flags & LE_OBJECT_FLAG_WRITEABLE);
-		case sccode:
-			return (s->flags & LE_OBJECT_FLAG_EXECUTABLE) && init;
-		case scinitialized:
-			return init;
+	case scvalid:
+		return true;
+	case scread:
+		return (s->flags & LE_OBJECT_FLAG_READABLE);
+	case scwrite:
+		return (s->flags & LE_OBJECT_FLAG_WRITEABLE);
+	case screadwrite:
+		return (s->flags & LE_OBJECT_FLAG_READABLE) && (s->flags & LE_OBJECT_FLAG_WRITEABLE);
+	case sccode:
+		return (s->flags & LE_OBJECT_FLAG_EXECUTABLE) && init;
+	case scinitialized:
+		return init;
 	}
 	return false;
 }
