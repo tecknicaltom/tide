@@ -350,7 +350,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 /*
  *
  */
-int PEFAnalyser::load(ObjectStream &f)
+void PEFAnalyser::load(ObjectStream &f)
 {
 	GET_OBJECT(f, validarea);
 	return Analyser::load(f);
@@ -524,7 +524,7 @@ Address *PEFAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void PEFAnalyser::store(ObjectStream &f)
+void PEFAnalyser::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, validarea);
 	Analyser::store(f);
