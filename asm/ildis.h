@@ -52,9 +52,8 @@ protected:
 	char* (*string_func)(uint32 string_ofs, void *context);
 	char* (*token_func)(uint32 token, void *context);
 public:
-				ILDisassembler();
 				ILDisassembler(char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context);
-	virtual			~ILDisassembler();
+				ILDisassembler(BuildCtorArg&);
 
 	virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn	*duplicateInsn(dis_insn *disasm_insn);
