@@ -60,9 +60,9 @@ void	ClassAnalyser::init(ht_class_shared_data *Class_shared, File *File)
 /*
  *
  */
-int	ClassAnalyser::load(ObjectStream &f)
+void	ClassAnalyser::load(ObjectStream &f)
 {
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -91,7 +91,7 @@ void ClassAnalyser::beginAnalysis()
 		b += ht_snprintf(b, 1024, " implements");
 		int count = class_shared->classinfo.interfaces->count();
 		for (int i=0; i<count; i++) {
-			b += ht_snprintf(b, 1024, " %y%c", class_shared->classinfo.interfaces->get(i), (i+1<count)?',':' ');
+			b += ht_snprintf(b, 1024, " %y%c", (*class_shared->classinfo.interfaces)[i], (i+1<count)?',':' ');
 		}
 	}
 	b += ht_snprintf(b, 1024, " {");
@@ -103,9 +103,10 @@ void ClassAnalyser::beginAnalysis()
 	addComment(a, 0, ";********************************************************");
 	delete a;
 	if (class_shared->methods) {
-		ClassMethod *cm = NULL;
-		Object *value;
-		while ((cm = (ClassMethod*)class_shared->methods->enum_next(&value, cm))) {
+		foreach (KeyValue, kv, *class_shared->methods, {
+			ClassMethod *cm = (ClassMethod*)kv->mKey;
+			Object *value = kv->mValue;
+		
 			Address *a = createAddress32(cm->start);
 			char buffer2[1024];
 			java_demangle(buffer2, class_shared->classinfo.thisclass, cm->name, cm->type, cm->flags);
@@ -117,7 +118,7 @@ void ClassAnalyser::beginAnalysis()
 			addAddressSymbol(a, cm->name, label_func);
 			pushAddress(a, a);
 			delete a;
-		}
+		});
 	}
 	setLocationTreeOptimizeThreshold(1000);
 	setSymbolTreeOptimizeThreshold(1000);
@@ -254,7 +255,7 @@ Address *ClassAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void ClassAnalyser::store(ObjectStream &st)
+void ClassAnalyser::store(ObjectStream &st) const
 {
 	Analyser::store(st);
 }
