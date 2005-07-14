@@ -41,9 +41,9 @@ void AnalyJavaDisassembler::init(Analyser *A, java_token_func token_func, void *
 /*
  *
  */
-int  AnalyJavaDisassembler::load(ObjectStream &f)
+void  AnalyJavaDisassembler::load(ObjectStream &f)
 {
-	return AnalyDisassembler::load(f);
+	AnalyDisassembler::load(f);
 }
 
 /*
@@ -129,7 +129,7 @@ branch_enum_t AnalyJavaDisassembler::isBranch(OPCODE *opcode)
 /*
  *
  */
-void AnalyJavaDisassembler::store(ObjectStream &f)
+void AnalyJavaDisassembler::store(ObjectStream &f) const
 {
 	AnalyDisassembler::store(f);
 }
