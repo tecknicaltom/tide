@@ -45,10 +45,10 @@ public:
 			palette_entry(uint idx=0, vcp color=0);
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
-	virtual   void strvalue(char *buf32bytes);
-	virtual	int  load(ObjectStream &f);
+	virtual void strvalue(char *buf32bytes);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 };
 
 /*
