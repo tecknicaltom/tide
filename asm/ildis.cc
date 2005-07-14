@@ -22,7 +22,7 @@
 #include <stdlib.h>
 
 #include "data.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "ildis.h"
 #include "ilopc.h"
 #include "snprintf.h"
@@ -80,7 +80,7 @@ restart:
 		break;
 	}
 	case IL_OPCODE_ARGS_LONG_JUMP: {
-		int c = create_host_int(code+1, 4, little_endian);
+		int c = createHostInt(code+1, 4, little_endian);
 		insn.data.ui = addr.addr32.offset+5+c;
 		break;
 	}
@@ -90,12 +90,12 @@ restart:
 	case IL_OPCODE_ARGS_ANN_ARG: 
 	case IL_OPCODE_ARGS_ANN_DEAD: 
 	case IL_OPCODE_ARGS_ANN_LIVE: {
-		uint16 w = create_host_int(code+1, 2, little_endian);
+		uint16 w = createHostInt(code+1, 2, little_endian);
 		insn.data.ui = w;
 		break;
 	}
 	case IL_OPCODE_ARGS_INT16: {
-		uint16 w = create_host_int(code+1, 2, little_endian);
+		uint16 w = createHostInt(code+1, 2, little_endian);
 		insn.data.i = (int)((short)w);
 		break;
 	}
@@ -110,9 +110,7 @@ restart:
 		break;
 	}
 	case IL_OPCODE_ARGS_INT64:
-	        QWORD_SET_LO(insn.data.q, create_host_int(code+1, 4, little_endian));
-	        QWORD_SET_HI(insn.data.q, );
-		insn.data.q = create_host_int(code+5, 4, little_endian);
+		insn.data.q = createHostInt64(code+5, 8, little_endian);
 		break;
 	case IL_OPCODE_ARGS_TOKEN:
 	case IL_OPCODE_ARGS_NEW:
@@ -120,22 +118,21 @@ restart:
 	case IL_OPCODE_ARGS_CALLVIRT:
 	case IL_OPCODE_ARGS_INT32:
 	case IL_OPCODE_ARGS_STRING:
-		insn.data.ui = create_host_int(code+1, 4, little_endian);
+		insn.data.ui = createHostInt(code+1, 4, little_endian);
 		break;
 	case IL_OPCODE_ARGS_FLOAT32:
 		// FIXME: hack
-		insn.data.ui = create_host_int(code+1, 4, little_endian);
+		insn.data.ui = createHostInt(code+1, 4, little_endian);
 		break;
 	case IL_OPCODE_ARGS_FLOAT64:
 		// FIXME: hack
-	        QWORD_SET_LO(insn.data.q, create_host_int(code+1, 4, little_endian));
-	        QWORD_SET_HI(insn.data.q, create_host_int(code+5, 4, little_endian));
+		insn.data.q = createHostInt64(code+5, 8, little_endian);
 		break;
 		
 	// variable length opcodes
 
 	case IL_OPCODE_ARGS_SWITCH: {
-		uint32 num = create_host_int(code+1, 4, little_endian);
+		uint32 num = createHostInt(code+1, 4, little_endian);
 		if (num > 10000) {
 			insn.valid = false;
 			insn.size = 1;
@@ -150,12 +147,12 @@ restart:
 		break;
 	}
 	case IL_OPCODE_ARGS_ANN_DATA: {
-		uint32 num = create_host_int(code+1, 4, little_endian);
+		uint32 num = createHostInt(code+1, 4, little_endian);
 		insn.size += num;
 		break;
 	}
 	case IL_OPCODE_ARGS_ANN_PHI: {
-		uint32 num = create_host_int(code+1, 2, little_endian);
+		uint32 num = createHostInt(code+1, 2, little_endian);
 		insn.size += num * 2;
 		break;
 	}
