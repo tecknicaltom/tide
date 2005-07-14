@@ -123,10 +123,10 @@ void FLTAnalyser::beginAnalysis()
 /*
  *
  */
-int FLTAnalyser::load(ObjectStream &f)
+void FLTAnalyser::load(ObjectStream &f)
 {
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -281,7 +281,7 @@ Address *FLTAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void FLTAnalyser::store(ObjectStream &f)
+void FLTAnalyser::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, validarea);
 	Analyser::store(f);
