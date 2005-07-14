@@ -2,7 +2,7 @@
  *	HT Editor
  *	store.cc
  *
- *	Copyright (C) 1999-2002 Sebastian Biallas (sb@biallas.net)
+ *	Copyright (C) 1999-2003 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -18,215 +18,228 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <errno.h>
-#include <string.h>
+#include <cerrno>
+#include <cstring>
 
-#include "htendian.h"
-#include "htatom.h"
-#include "htdebug.h"
-#include "htstring.h"
+#include "atom.h"
+#include "debug.h"
+#include "endianess.h"
 #include "language.h"
-#include "store.h"
 #include "snprintf.h"
+#include "store.h"
+#include "strtools.h"
 #include "tools.h"
 
-static char hexchars2[]="0123456789abcdef";
+static char hexchars[] = "0123456789abcdef";
 
-/*
- *	CLASS ht_object_stream_inter
- */
- 
-Object *ht_object_stream_inter::getObject(char *name)
+char oidchar(ObjectID oID, int byte)
 {
-	Object *o;
-	getObject(o, name);
-	return o;
+	unsigned char c = (oID >> (byte*8)) & 0xff;
+	if ((c<32) || (c>0x7f)) c = '?';
+	return c;
 }
 
-void ht_object_stream_inter::getObject(Object *&o, char *name)
+ObjectNotRegisteredException::ObjectNotRegisteredException(ObjectID aID)
+	: MsgfException("Object %x/%c%c%c-%x not registered.", aID,
+	  oidchar(aID, 3), oidchar(aID, 2), oidchar(aID, 1), aID & 0xff)
 {
-	ObjectID id=getIntHex(4, "id");
-	if (id) {
-		object_builder b=(object_builder)find_atom(id);
-		if (b) {
-			o=b();
-			if (o->load(this)!=0) {
-//	               o->done();
-				delete o;
-				o = NULL;
-			}
-		} else {
-			/* object not registered! */
-//			assert(0);
-			o = NULL;
-		}
-	} else {
-		o = NULL;
-	}
-}
-
-void ht_object_stream_inter::putObject(Object *obj, char *name)
-{
-	if (obj) {
-		ObjectID o=obj->getObjectID();
-		object_builder b=(object_builder)find_atom(o);;
-		if (b) {
-			putIntHex(o, 4, "id");
-			obj->store(this);
-		} else {
-			/* object not registered! */
-			assert(0);
-			putIntHex(0, 4, "id");
-		}
-	} else {
-		putIntHex(0, 4, "id");
-	}
 }
 
 /*
- *	CLASS ht_object_stream_bin
+ *	ObjectStreamInter
  */
  
-void	ht_object_stream_bin::init(ht_stream *s)
+ObjectStreamInter::ObjectStreamInter(Stream *s, bool own_s)
+ : ObjectStream(s, own_s)
 {
-	ht_object_stream_inter::init(s);
+}
+
+void	ObjectStreamInter::getObject(Object *&object, const char *name, ObjectID id)
+{
+	if (id == OBJID_INVALID) {
+		GET_INT32X(*this, id);
+		if (!id) {
+			object = NULL;
+			return;
+		}
+	}
+	object_builder build = (object_builder)getAtomValue(id);
+	if (!build) throw new ObjectNotRegisteredException(id);
+	object = build();
+	object->load(*this);
+}
+
+void	ObjectStreamInter::putObject(const Object *object, const char *name, ObjectID id)
+{
+	if (!object) {
+		if (id == OBJID_INVALID) {
+			PUTX_INT32X(*this, 0, "id");
+			return;
+		} else {
+			throw new IllegalArgumentException(HERE);
+		}
+	}		
+	if (id == OBJID_INVALID) {
+		id = object->getObjectID();
+		char buf[64];
+		char id_str[4];
+		id_str[3] = id&0xff;
+		id_str[2] = (id>>8)&0xff;
+		id_str[1] = (id>>16)&0xff;
+		id_str[0] = (id>>24)&0xff;
+		escape_special(buf, sizeof buf, id_str, 4);
+		putComment(buf);
+		PUTX_INT32X(*this, id, "id");
+	}
+	object_builder build = (object_builder)getAtomValue(id);
+	if (!build) {
+		throw new ObjectNotRegisteredException(id);
+	}
+	object->store(*this);
+}
+
+/*
+ *	ObjectStreamBin
+ */
+ 
+ObjectStreamBin::ObjectStreamBin(Stream *s, bool own_s)
+ : ObjectStreamInter(s, own_s)
+{
 }
  
-void *ht_object_stream_bin::getBinary(int size, char *desc)
+void ObjectStreamBin::getBinary(void *buf, uint size, const char *desc)
 {
-	void *p = smalloc(size);
-	if (stream->read(p, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
-	return p;
+	mStream->readx(buf, size);
 }
 
-void	ht_object_stream_bin::getBinary(void *p, int size, char *desc)
-{
-	if (stream->read(p, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
-}
-
-bool ht_object_stream_bin::getBool(char *desc)
+bool ObjectStreamBin::getBool(const char *desc)
 {
 	bool b;
-	if (stream->read(&b, 1) != 1) set_error(EIO | STERR_SYSTEM);
+	mStream->readx(&b, 1);
 	return b;
 }
 
-int  ht_object_stream_bin::getIntDec(int size, char *desc)
+uint64 ObjectStreamBin::getInt(uint size, const char *desc)
 {
-	return getIntHex(size, desc);
-}
-
-int  ht_object_stream_bin::getIntHex(int size, char *desc)
-{
-	assert(size <= 8);
+	ASSERT(size <= 8);
 	byte neta[8];
-	if (stream->read(&neta, size)!=(uint)size) set_error(EIO | STERR_SYSTEM);
-	return create_host_int(neta, size, big_endian);
+	mStream->readx(&neta, size);
+	return createHostInt64(neta, size, big_endian);
 }
 
-uint64  ht_object_stream_bin::getQWordDec(int size, char *desc)
+char *ObjectStreamBin::getString(const char *desc)
 {
-	return getQWordHex(size, desc);
+	return getstrz(mStream);
 }
 
-uint64  ht_object_stream_bin::getQWordHex(int size, char *desc)
+byte *ObjectStreamBin::getLenString(int &length, const char *desc)
 {
-	assert(size == 8);
+	byte b;
+	mStream->readx(&b, 1);
+	switch (b) {
+    	case 0xfe: {
+		byte neta[2];
+		mStream->readx(&neta, 2);
+		length = createHostInt(neta, 2, big_endian);
+		break;
+	}
+	case 0xff: {
+		byte neta[4];
+		mStream->readx(&neta, 4);
+		length = createHostInt(neta, 4, big_endian);
+		break;
+	}
+	default:
+		length = b;
+		break;
+	}
+	if (length==0) return NULL;
+	byte *p = (byte*)malloc(length);
+	mStream->readx(p, length);
+	return p;
+}
+
+void ObjectStreamBin::putBinary(const void *mem, uint size, const char *desc)
+{
+	mStream->writex(mem, size);
+}
+
+void ObjectStreamBin::putBool(bool b, const char *desc)
+{
+	b = (b) ? 1 : 0;
+	mStream->writex(&b, 1);
+}
+
+void ObjectStreamBin::putCommentf(const char *comment_format, ...)
+{
+	// NOP
+}
+
+void ObjectStreamBin::putComment(const char *comment)
+{
+	// NOP
+}
+
+void ObjectStreamBin::putInt(uint64 i, uint size, const char *desc, uint int_fmt_hint)
+{
+	ASSERT(size <= 8);
 	byte neta[8];
-	if (stream->read(&neta, size)!=(uint)size) set_error(EIO | STERR_SYSTEM);
-	return create_host_int64(neta, big_endian);
+	createForeignInt64(neta, i, size, big_endian);
+	mStream->writex(neta, size);
 }
 
-void ht_object_stream_bin::getSeparator()
+void ObjectStreamBin::putSeparator()
 {
-	// empty
+	// NOP
 }
 
-char *ht_object_stream_bin::getString(char *desc)
+void ObjectStreamBin::putString(const char *string, const char *desc)
 {
-	return getstrz(stream);
+	putstrz(this, string);
 }
 
-void ht_object_stream_bin::putBinary(void *mem, int size, char *desc)
+void ObjectStreamBin::putLenString(const byte *string, int len, const char *desc)
 {
-	if (stream->write(mem, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
-}
-
-void ht_object_stream_bin::putBool(bool b, char *desc)
-{
-	b = (b)?1:0;
-	if (stream->write(&b, 1) != 1) set_error(EIO | STERR_SYSTEM);
-}
-
-void ht_object_stream_bin::putInfo(char *info)
-{
-	// empty
-}
-
-void ht_object_stream_bin::putIntDec(int a, int size, char *desc)
-{
-	putIntHex(a, size, desc);
-}
-
-void ht_object_stream_bin::putIntHex(int a, int size, char *desc)
-{
-	assert(size <= 8);
-	byte neta[8];
-	create_foreign_int(neta, a, size, big_endian);
-	if (stream->write(&neta, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
-}
-
-void ht_object_stream_bin::putQWordDec(uint64 a, int size, char *desc)
-{
-	putQWordHex(a, size, desc);
-}
-
-void ht_object_stream_bin::putQWordHex(uint64 a, int size, char *desc)
-{
-	assert(size == 8);
-	byte neta[8];
-	create_foreign_int64(neta, a, size, big_endian);
-	if (stream->write(&neta, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
-}
-
-void ht_object_stream_bin::putSeparator()
-{
-	// empty
-}
-
-void ht_object_stream_bin::putString(char *string, char *desc)
-{
-	uint len = strlen(string)+1;
-	if (stream->write(string, len) != len) set_error(EIO | STERR_SYSTEM);
+	byte bLen;
+	if (len < 0xfe) {
+		bLen = len;
+		mStream->writex(&bLen, 1);
+	} else if (len <= 0xffff) {
+		byte neta[2];
+		createForeignInt(neta, len, 2, big_endian);
+		bLen = 0xfe;
+		mStream->writex(&bLen, 1);
+		mStream->writex(neta, 2);
+	} else {
+		byte neta[4];
+		createForeignInt(neta, len, 4, big_endian);
+		bLen = 0xff;
+		mStream->writex(&bLen, 1);
+		mStream->writex(neta, 4);
+	}
+	mStream->writex(string, len);
 }
 
 /*
- *	CLASS ht_object_stream_txt
+ *	ObjectStreamText
  */
  
-void ht_object_stream_txt::init(ht_stream *s)
+ObjectStreamText::ObjectStreamText(Stream *s, bool own_s)
+ : ObjectStreamInter(s, own_s)
 {
-	ht_object_stream::init(s);
 	indent = 0;
-	cur = ' '; // important to initialize it to a whitespace char
+	cur = ' ';	// must be initialized to a whitespace char
 	line = 1;
 	errorline = 0;
 }
 
-void *ht_object_stream_txt::getBinary(int size, char *desc)
-{
-	void *p=smalloc(size);
-	getBinary(p, size, desc);
-	return p;
-}
-
-void	ht_object_stream_txt::getBinary(void *p, int size, char *desc)
+void	ObjectStreamText::getBinary(void *buf, uint size, const char *desc)
 {
 	readDesc(desc);
 	expect('=');
 	expect('[');
-	byte *pp=(byte *)p;
-	for (int i=0; i<size; i++) {
+	byte *pp=(byte *)buf;
+	for (uint i=0; i<size; i++) {
 		skipWhite();
 
 		int bb;
@@ -244,7 +257,7 @@ void	ht_object_stream_txt::getBinary(void *p, int size, char *desc)
 	expect(']');
 }
 
-bool ht_object_stream_txt::getBool(char *desc)
+bool ObjectStreamText::getBool(const char *desc)
 {
 	readDesc(desc);
 	expect('=');
@@ -258,82 +271,55 @@ bool ht_object_stream_txt::getBool(char *desc)
 	}
 }
 
-int  ht_object_stream_txt::getIntDec(int size, char *desc)
-{
-	return getIntHex(size, desc);
-}
-
-int  ht_object_stream_txt::getIntHex(int size, char *desc)
-{
-	return QWORD_GET_LO(getQWordHex(size, desc));
-}
-
-uint64 ht_object_stream_txt::getQWordDec(int size, char *desc)
-{
-	return getQWordHex(size, desc);
-}
-
-uint64 ht_object_stream_txt::getQWordHex(int size, char *desc)
+uint64 ObjectStreamText::getInt(uint size, const char *desc)
 {
 	readDesc(desc);
 	expect('=');
 	skipWhite();
-	if (mapchar[cur]!='0') setSyntaxError();
+	if (mapchar[(byte)cur]!='0') setSyntaxError();
 	char str[40];
 	char *s=str;
 	do {
 		*s++ = cur;
 		if (s-str >= 39) setSyntaxError();
 		readChar();
-		if (get_error()) return to_qword(0);
-	} while (mapchar[cur]=='0' || mapchar[cur]=='A');
+	} while (mapchar[(byte)cur]=='0' || mapchar[(byte)cur]=='A');
 	*s=0; s=str;
 	uint64 a;
-	if (!bnstr(&s, &a, 10)) setSyntaxError();
+	const char *s2 = s;
+	if (!parseIntStr(s2, a, 10)) setSyntaxError();
 	return a;
 }
 
-void	ht_object_stream_txt::getObject(Object *&o, char *name)
+void ObjectStreamText::getObject(Object *&object, const char *name, ObjectID id)
 {
 	readDesc(name);
 	expect('=');
 	expect('{');
-	if (!get_error()) {
-		ht_object_stream_inter::getObject(o, name);
-	} else {
-		o = NULL;
-	}
+	ObjectStreamInter::getObject(object, name, id);
 	expect('}');
 }
 
-void ht_object_stream_txt::getSeparator()
-{
-	// do nothing
-}
-
-char *ht_object_stream_txt::getString(char *desc)
+char *ObjectStreamText::getString(const char *desc)
 {
 	readDesc(desc);
 	expect('=');
 	skipWhite();
 	if (cur=='"') {
-		char str[1024]; // FIXME: the good old buffer overflow
-		char *s=str;
+		String s;
 		do {
 			readChar();
-			*s++=cur;
+			s += cur;
 			if (cur=='\\') {
 				readChar();
-				*s++=cur;
+				s += cur;
 				cur = 0; // hackish
 			}
-			if (get_error()) return NULL;
-		} while (cur!='"');
-		s--;*s=0;
+		} while (cur != '"');
 		readChar();
-		int str2l = strlen(str)+1;
+		int str2l = s.length();
 		char *str2 = (char *)smalloc(str2l);
-		unescape_special_str(str2, str2l, str);
+		unescape_special_str(str2, str2l, s);
 		return str2;
 	} else {
 		readDesc("NULL");
@@ -341,106 +327,96 @@ char *ht_object_stream_txt::getString(char *desc)
 	}
 }
 
-void ht_object_stream_txt::putBinary(void *mem, int size, char *desc)
+byte *ObjectStreamText::getLenString(int &len, const char *desc)
+{
+	readDesc(desc);
+	expect('=');
+	skipWhite();
+	if (cur=='"') {
+		String s;
+		do {
+			readChar();
+			s += cur;
+			if (cur=='\\') {
+				readChar();
+				s += cur;
+				cur = 0; // hackish
+			}
+		} while (cur != '"');
+		readChar();
+		len = s.length()-1;
+		if (!len) return NULL;
+		byte *str2 = (byte *)smalloc(len);
+		unescape_special(str2, len, s);
+		return str2;
+	} else {
+		readDesc("NULL");
+		return NULL;
+	}
+}
+
+void ObjectStreamText::putBinary(const void *mem, uint size, const char *desc)
 {
 	putDesc(desc);
 	putChar('[');
-	for(int i=0; i<size; i++) {
+	for (uint i=0; i<size; i++) {
 		byte a = *((byte *)mem+i);
-		putChar(hexchars2[(a & 0xf0) >> 4]);
-		putChar(hexchars2[(a & 0x0f)]);
+		putChar(hexchars[(a & 0xf0) >> 4]);
+		putChar(hexchars[(a & 0x0f)]);
 		if (i+1<size) putChar(' ');
 	}
 	putS("]\n");
 }
 
-void ht_object_stream_txt::putBool(bool b, char *desc)
+void ObjectStreamText::putBool(bool b, const char *desc)
 {
 	putDesc(desc);
 	if (b) putS("true"); else putS("false");
 	putChar('\n');
 }
 
-void ht_object_stream_txt::putInfo(char *info)
+void ObjectStreamText::putComment(const char *comment)
 {
 	putIndent();
 	putS("# ");
-	putS(info);
+	putS(comment);
 	putChar('\n');
 }
 
-void ht_object_stream_txt::putIntDec(int a, int size, char *desc)
-{
-	putDesc(desc);
-	int b;
-	switch (size) {
-		case 1:
-			b = (char) a;
-		case 2:
-			b = (short) a;
-		case 4:
-			b = (int) a;
-		default:
-			b = a;
-	}
-	char number[12];
-	sprintf(number, "%d\n", a);
-	putS(number);
-}
-
-void ht_object_stream_txt::putIntHex(int a, int size, char *desc)
-{
-	putDesc(desc);
-	int b;
-	switch (size) {
-		case 1:
-			b = (char) a;
-		case 2:
-			b = (short) a;
-		case 4:
-			b = (int) a;
-		default:
-			b = a;
-	}
-	char number2[12];
-	sprintf(number2, "0x%x\n", b);
-	putS(number2);
-}
-
-void ht_object_stream_txt::putQWordDec(uint64 a, int size, char *desc)
+void ObjectStreamText::putInt(uint64 i, uint size, const char *desc, uint int_fmt_hint)
 {
 	putDesc(desc);
 	char number[40];
-	ht_snprintf(number, sizeof number, "%qd\n", &a);
+	switch (int_fmt_hint) {
+		case OS_FMT_DEC:
+			ht_snprintf(number, sizeof number, "%qd\n", i);
+			break;
+		case OS_FMT_HEX:
+		default:
+			ht_snprintf(number, sizeof number, "0x%qx\n", i);
+			break;
+	}
 	putS(number);
 }
 
-void ht_object_stream_txt::putQWordHex(uint64 a, int size, char *desc)
-{
-	putDesc(desc);
-	char number2[40];
-	ht_snprintf(number2, sizeof number2, "0x%qx\n", a);
-	putS(number2);
-}
-
-void	ht_object_stream_txt::putObject(Object *obj, char *name)
+void ObjectStreamText::putObject(const Object *object, const char *name, ObjectID id)
 {
 	putDesc(name);
 	putS("{\n");
 	indent++;
-	ht_object_stream_inter::putObject(obj, name);
+	ObjectStreamInter::putObject(object, name, id);
 	indent--;
 	putIndent();
 	putS("}\n");
 }
 
-void ht_object_stream_txt::putSeparator()
+void ObjectStreamText::putSeparator()
 {
 	putIndent();
 	putS("# ------------------------ \n");
 }
 
-void ht_object_stream_txt::putString(char *string, char *desc)
+void ObjectStreamText::putString(const char *string, const char *desc)
 {
 	putDesc(desc);
 	if (string) {
@@ -457,40 +433,64 @@ void ht_object_stream_txt::putString(char *string, char *desc)
 	putChar('\n');
 }
 
-void	ht_object_stream_txt::setSyntaxError()
+void ObjectStreamText::putLenString(const byte *string, int len, const char *desc)
 {
+	putDesc(desc);
+	if (string) {
+		int strl=len*4+1;
+		char *str = (char*)smalloc(strl);
+		putChar('"');
+		escape_special(str, strl, string, len, "\"");
+		putS(str);
+		putChar('"');
+		free(str);
+	} else {
+		putS("NULL");
+	}
+	putChar('\n');
+}
+
+class TextSyntaxError: public MsgfException {
+public:
+	TextSyntaxError::TextSyntaxError(uint line)
+		: MsgfException("syntax error in line %d", line)
+	{
+	}
+};
+
+void	ObjectStreamText::setSyntaxError()
+{
+// FIXME: errorline still usable ?
 	if (!errorline) {
-		set_error(EIO | STERR_SYSTEM);
 		errorline = line;
+		throw new TextSyntaxError(line);
 	}
 }
 
-int	ht_object_stream_txt::getErrorLine()
+int	ObjectStreamText::getErrorLine()
 {
 	return errorline;
 }
 
-void	ht_object_stream_txt::expect(char c)
+void	ObjectStreamText::expect(char c)
 {
 	skipWhite();
 	if (cur!=c) setSyntaxError();
 	readChar();
 }
 
-void	ht_object_stream_txt::skipWhite()
+void	ObjectStreamText::skipWhite()
 {
 	while (1) {
-		switch (mapchar[cur]) {
+		switch (mapchar[(byte)cur]) {
 			case '\n':
 				line++;  // fallthrough
 			case ' ':
 				readChar();
-				if (get_error()) return;
 				break;
 			case '#':
 				do {
 					readChar();
-					if (get_error()) return;
 				} while (cur!='\n');
 				break;
 			default: return;
@@ -498,13 +498,13 @@ void	ht_object_stream_txt::skipWhite()
 	}
 }
 
-char	ht_object_stream_txt::readChar()
+char	ObjectStreamText::readChar()
 {
-	if (stream->read(&cur, 1) != 1) setSyntaxError();
+	mStream->readx(&cur, 1);
 	return cur;
 }
 
-void	ht_object_stream_txt::readDesc(char *desc)
+void	ObjectStreamText::readDesc(const char *desc)
 {
 	skipWhite();
 	if (!desc) desc="data";
@@ -515,150 +515,167 @@ void	ht_object_stream_txt::readDesc(char *desc)
 	}
 }
 
-void ht_object_stream_txt::putDesc(char *desc)
+void ObjectStreamText::putDesc(const char *desc)
 {
 	putIndent();
 	if (desc) putS(desc); else putS("data");
 	putChar('=');
 }
 
-void ht_object_stream_txt::putIndent()
+void ObjectStreamText::putIndent()
 {
 	for(int i=0; i<indent; i++) putChar(' ');
 }
 
-void ht_object_stream_txt::putChar(char c)
+void ObjectStreamText::putChar(char c)
 {
-	if (stream->write(&c, 1) != 1) setSyntaxError();
+	mStream->writex(&c, 1);
 }
 
-void ht_object_stream_txt::putS(char *s)
+void ObjectStreamText::putS(const char *s)
 {
 	uint len=strlen(s);
-	if (stream->write(s, len) != len) setSyntaxError();
+	if (mStream->write(s, len) != len) setSyntaxError();
 }
 
 /*
- *	CLASS ht_object_stream_memmap
- *   ht_object_stream_memmap dups strings + mem for set/getdata (pointers)
- *	and uses host endianess (integers)
+ *	ObjectStreamNative View:set/getData() methods
+ *	(endian-dependend)
  */
- 
-void ht_object_stream_memmap::init(ht_stream *s, bool d)
+
+ObjectStreamNative::ObjectStreamNative(Stream *s, bool own_s, bool d)
+: ObjectStream(s, own_s), allocd(true)
 {
-	ht_object_stream_bin::init(s);
-	duplicate=d;
-	allocd = new ht_clist();
-	allocd->init();
+	duplicate = d;
 }
 
-void	ht_object_stream_memmap::done()
-{
-	ht_object_stream_bin::done();
-	allocd->destroy();
-	delete allocd;
-}
-
-void	*ht_object_stream_memmap::duppa(void *p, int size)
+void	*ObjectStreamNative::duppa(const void *p, int size)
 {
 	if (duplicate) {
-		ht_data_mem *pp = new ht_data_mem(p, size);
-		allocd->insert(pp);
-		return pp->value;
+		MemArea *m = new MemArea(p, size, true);
+		allocd += m;
+		return m->ptr;
 	} else {
-		return p;
+		// FIXME: un-const'ing p
+		return (void*)p;
 	}
 }
 
-void *ht_object_stream_memmap::getBinary(int size, char *desc)
+void ObjectStreamNative::getBinary(void *buf, uint size, const char *desc)
 {
 	void *pp;
-	stream->read(&pp, sizeof pp);
-	return pp;
+	mStream->readx(&pp, sizeof pp);
+	memmove(buf, pp, size);
 }
 
-void	ht_object_stream_memmap::getBinary(void *p, int size, char *desc)
+bool ObjectStreamNative::getBool(const char *desc)
 {
-	void *pp;
-	stream->read(&pp, sizeof pp);
-	memmove(p, pp, size);
+	bool b;
+	mStream->readx(&b, sizeof b);
+	return b;
 }
 
-int  ht_object_stream_memmap::getIntDec(int size, char *desc)
+uint64 ObjectStreamNative::getInt(uint size, const char *desc)
 {
-	return getIntHex(size, desc);
+	switch (size) {
+		case 1:case 2:case 4: {
+			uint i = 0;
+			mStream->readx(&i, size);
+			return i;
+		}
+		case 8: {
+			uint64 i;
+			mStream->readx(&i, size);
+			return i;
+		}
+	}
+	throw new IllegalArgumentException(HERE);
 }
 
-int  ht_object_stream_memmap::getIntHex(int size, char *desc)
+void ObjectStreamNative::getObject(Object *&object, const char *name, ObjectID id)
 {
-	assert(size <= 8);
-	int a;
-	if (stream->read(&a, size)!=(uint)size) set_error(EIO | STERR_SYSTEM);
-	return a;
+	Object *pp;
+	mStream->readx(&pp, sizeof pp);
+	object = pp;
 }
 
-uint64 ht_object_stream_memmap::getQWordDec(int size, char *desc)
-{
-	return getQWordHex(size, desc);
-}
-
-uint64 ht_object_stream_memmap::getQWordHex(int size, char *desc)
-{
-	assert(size==8);
-	uint64 a;
-	if (stream->read(&a, size)!=(uint)size) set_error(EIO | STERR_SYSTEM);
-	return a;
-}
-
-char	*ht_object_stream_memmap::getString(char *desc)
+char	*ObjectStreamNative::getString(const char *desc)
 {
 	char *pp;
-	stream->read(&pp, sizeof pp);
+	mStream->readx(&pp, sizeof pp);
 	return pp;
 }
 
-uint	ht_object_stream_memmap::recordStart(uint size)
+byte	*ObjectStreamNative::getLenString(int &len, const char *desc)
 {
-	return ((File*)stream)->tell()+size;
+	byte *pp;
+	mStream->readx(&pp, sizeof pp);
+	// FIXME?
+	if (pp) len = strlen((char*)pp); else len = 0;
+	return pp;
 }
 
-void	ht_object_stream_memmap::recordEnd(uint a)
-{
-	FileOfs o =((File*)stream)->tell();
-	if (o>a) HT_ERROR("kput");
-	((File*)stream)->seek(a);
-}
-
-void	ht_object_stream_memmap::putBinary(void *mem, int size, char *desc)
+void	ObjectStreamNative::putBinary(const void *mem, uint size, const char *desc)
 {
 	void *pp = mem ? duppa(mem, size) : NULL;
-	stream->write(&pp, sizeof pp);
+	mStream->writex(&pp, sizeof pp);
 }
 
-void	ht_object_stream_memmap::putIntDec(int a, int size, char *desc)
+void	ObjectStreamNative::putBool(bool b, const char *desc)
 {
-	putIntHex(a, size, desc);
+	mStream->writex(&b, sizeof b);
 }
 
-void	ht_object_stream_memmap::putIntHex(int a, int size, char *desc)
+void	ObjectStreamNative::putComment(const char *comment)
 {
-	assert(size <= 8);
-	if (stream->write(&a, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
+	// NOP
 }
 
-void	ht_object_stream_memmap::putQWordDec(uint64 a, int size, char *desc)
+void	ObjectStreamNative::putInt(uint64 i, uint size, const char *desc, uint int_fmt_hint)
 {
-	putQWordHex(a, size, desc);
+	switch (size) {
+		case 1: {
+			uint8 x = i;
+			mStream->writex(&x, size);
+			return;
+		}
+		case 2: {
+			uint16 x = i;
+			mStream->writex(&x, size);
+			return;
+		}
+		case 4: {
+			uint32 x = i;
+			mStream->writex(&x, size);
+			return;
+		}
+		case 8: {
+			mStream->writex(&i, size);
+			return;
+		}
+	}
+	throw new IllegalArgumentException(HERE);
 }
 
-void	ht_object_stream_memmap::putQWordHex(uint64 a, int size, char *desc)
+void ObjectStreamNative::putObject(const Object *object, const char *name, ObjectID id)
 {
-	assert(size <= 8);
-	if (stream->write(&a, size) != (uint)size) set_error(EIO | STERR_SYSTEM);
+	Object *d = duplicate ? d->clone() : d;
+	mStream->write(&d, sizeof d);
 }
 
-void	ht_object_stream_memmap::putString(char *string, char *desc)
+void	ObjectStreamNative::putSeparator()
 {
-	char *pp = string ? (char*)duppa(string, strlen(string)+1) : NULL;
-	stream->write(&pp, sizeof pp);
+	// NOP
+}
+
+void	ObjectStreamNative::putString(const char *string, const char *desc)
+{
+	const char *pp = string ? (const char*)duppa(string, strlen(string)+1) : NULL;
+	mStream->write(&pp, sizeof pp);
+}
+
+void	ObjectStreamNative::putLenString(const byte *string, int len, const char *desc)
+{
+	const char *pp = string ? (const char*)duppa(string, len+1) : NULL;
+	mStream->write(&pp, sizeof pp);
 }
