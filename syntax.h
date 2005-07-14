@@ -21,7 +21,7 @@
 #ifndef __SYNTAX_H__
 #define __SYNTAX_H__
 
-#include "common.h"
+#include "data.h"
 #include "htio.h"
 #include "htobj.h"
 
