@@ -62,6 +62,30 @@ static int compare_keys_ne_import_rec(ht_data *key_a, Object *key_b)
 	return a->module - b->module;
 }
 
+ne_import_rec::ne_import_rec(uint a, uint mod, bool b, uint i)
+{
+	addr = a;
+	module = mod;
+	byname = b;
+	ord = i;
+}
+
+int ne_import_rec::compareTo(const Object *obj) const
+{
+	ne_import_rec *b=(ne_import_rec*)obj;
+	if (module == b->module) {
+		if (byname == b->byname) {
+			if (byname) {
+				return name_ofs - b->name_ofs;
+			} else {
+				return ord - b->ord;
+			}
+		}
+		return byname - b->byname;
+	}
+	return module - b->module;
+}
+
 static ht_view *htne_init(bounds *b, File *file, ht_format_group *format_group)
 {
 	byte nemagic[2];
@@ -287,51 +311,51 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				create_host_struct(&reloc, NE_RELOC_HEADER_struct, little_endian);
 				f += sizeof reloc;
 				switch (reloc.flags & NE_RF_RT_MASK) {
-					case NE_RF_INTERNAL: {
-						NE_RELOC_INTERNAL sreloc;
-						file->read(&sreloc, sizeof sreloc);
-						create_host_struct(&sreloc, NE_RELOC_INTERNAL_struct, little_endian);
-						f += sizeof sreloc;
-						if (sreloc.seg == 0xff) {
-//                              	ne_shared->entrypoint->;
-							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf1, 0)) return false;
-						} else {
-							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, sreloc.seg, sreloc.ofs)) return false;
-						}
-						break;
+				case NE_RF_INTERNAL: {
+					NE_RELOC_INTERNAL sreloc;
+					file->read(&sreloc, sizeof sreloc);
+					create_host_struct(&sreloc, NE_RELOC_INTERNAL_struct, little_endian);
+					f += sizeof sreloc;
+					if (sreloc.seg == 0xff) {
+//		                              	ne_shared->entrypoint->;
+						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf1, 0)) return false;
+					} else {
+						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, sreloc.seg, sreloc.ofs)) return false;
 					}
-					case NE_RF_IMPORT_ORD: {
-						NE_RELOC_IMPORT sreloc;
-						file->read(&sreloc, sizeof sreloc);
-						create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
-						f += sizeof sreloc;
-						if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, false, sreloc.ord), NULL)) {
-//							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf2, sreloc.ord)) return false;
-							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
-							fake_entry_count++;
-						}
-						break;
+					break;
+				}
+				case NE_RF_IMPORT_ORD: {
+					NE_RELOC_IMPORT sreloc;
+					file->read(&sreloc, sizeof sreloc);
+					create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
+					f += sizeof sreloc;
+					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, false, sreloc.ord), NULL)) {
+//						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf2, sreloc.ord)) return false;
+						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
+						fake_entry_count++;
 					}
-					case NE_RF_IMPORT_NAME: {
-						NE_RELOC_IMPORT sreloc;
-						file->read(&sreloc, sizeof sreloc);
-						create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
-						f += sizeof sreloc;
-						if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, true, sreloc.name_ofs), NULL)) {
-//							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf3, sreloc.name_ofs)) return false;
-							if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
-							fake_entry_count++;
-						}
-						break;
+					break;
+				}
+				case NE_RF_IMPORT_NAME: {
+					NE_RELOC_IMPORT sreloc;
+					file->read(&sreloc, sizeof sreloc);
+					create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
+					f += sizeof sreloc;
+					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, true, sreloc.name_ofs), NULL)) {
+//						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf3, sreloc.name_ofs)) return false;
+						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
+						fake_entry_count++;
 					}
-					case NE_RF_OSFIXUP: {
-						NE_RELOC_FIXUP sreloc;
-						file->read(&sreloc, sizeof sreloc);
-						create_host_struct(&sreloc, NE_RELOC_FIXUP_struct, little_endian);
-						f += sizeof sreloc;
-						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xdead, 0xcafebabe)) return false;
-						break;
-					}
+					break;
+				}
+				case NE_RF_OSFIXUP: {
+					NE_RELOC_FIXUP sreloc;
+					file->read(&sreloc, sizeof sreloc);
+					create_host_struct(&sreloc, NE_RELOC_FIXUP_struct, little_endian);
+					f += sizeof sreloc;
+					if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xdead, 0xcafebabe)) return false;
+					break;
+				}
 				}
 			}
 		}
@@ -345,20 +369,21 @@ bool ht_ne::relocate_single(ht_reloc_file *rf, uint seg, FileOfs ofs, uint type,
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
 	while (1) {
 		if (flags & NE_RF_ADD) break;
+
 		switch (type & NE_RT_MASK) {
-			case NE_RT_SEG16:
-			case NE_RT_PTR32:
-			case NE_RT_OFS16:
-			case NE_RT_PTR48:
-			case NE_RT_OFS32:
-				break;
-			case NE_RT_OFS8:
+		case NE_RT_SEG16:
+		case NE_RT_PTR32:
+		case NE_RT_OFS16:
+		case NE_RT_PTR48:
+		case NE_RT_OFS32:
+			break;
+		case NE_RT_OFS8:
 			/* FIXME: we want to read a uint16 (offset) out of the file,
 			   but we can't because there's only one relocated
 			   byte. Maybe I dont understand NE relocs completely. */
-			default:
+		default:
 			/* unknown relocation record */
-				return false;
+			return false;
 		}
 		rf->insert_reloc(ofs, new ht_ne_reloc_entry(type, flags & NE_RF_ADD, value_seg, value_ofs));
 		char buf[2];
@@ -454,25 +479,25 @@ bool ht_ne_reloc_file::reloc_unapply(ht_data *reloc, byte *data)
 
 FileOfs NE_get_seg_ofs(ht_ne_shared_data *NE_shared, uint i)
 {
-		return (NE_shared->segments.segments[i].offset << NE_shared->hdr.align);
+	return (NE_shared->segments.segments[i].offset << NE_shared->hdr.align);
 }
 
 NEAddress NE_get_seg_addr(ht_ne_shared_data *NE_shared, uint i)
 {
-		return NE_MAKE_ADDR(i+1, 0);
+	return NE_MAKE_ADDR(i+1, 0);
 }
 
 uint NE_get_seg_psize(ht_ne_shared_data *NE_shared, uint i)
 {
-		return (NE_shared->segments.segments[i].size || !NE_shared->segments.segments[i].offset)
-			   ? NE_shared->segments.segments[i].size : 0x10000;
-//		return NE_shared->segments.segments[i].size;
+	return (NE_shared->segments.segments[i].size || !NE_shared->segments.segments[i].offset)
+		   ? NE_shared->segments.segments[i].size : 0x10000;
+//	return NE_shared->segments.segments[i].size;
 }
 
 uint NE_get_seg_vsize(ht_ne_shared_data *NE_shared, uint i)
 {
-		return NE_shared->segments.segments[i].minalloc ? NE_shared->segments.segments[i].minalloc : 0x10000;
-//		return NE_shared->segments.segments[i].minalloc;
+	return NE_shared->segments.segments[i].minalloc ? NE_shared->segments.segments[i].minalloc : 0x10000;
+//	return NE_shared->segments.segments[i].minalloc;
 }
 
 bool NE_addr_to_segment(ht_ne_shared_data *NE_shared, NEAddress Addr, int *segment)
