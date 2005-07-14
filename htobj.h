@@ -26,6 +26,7 @@ class ht_group;
 
 #include "io/types.h"
 #include "htcurses.h"
+#include "data.h"
 
 struct palette {
 	uint size;
