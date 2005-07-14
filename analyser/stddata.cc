@@ -257,7 +257,7 @@ void Area::dump()
  *  BUILDER etc.
  */
 
-BUILDER(ATOM_AREA, Area)
+BUILDER(ATOM_AREA, Area, Object)
 
 bool init_stddata()
 {
