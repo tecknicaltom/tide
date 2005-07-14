@@ -40,7 +40,7 @@ public:
 	}
 };
 
-int compare_keys_info_pos_delinear(ht_data *data_a, Object *data_b)
+int compare_keys_info_pos_delinear(Object *data_a, Object *data_b)
 {
 	info_pos *a = (info_pos*)data_a;
 	info_pos *b = (info_pos*)data_b;
@@ -52,7 +52,7 @@ int compare_keys_info_pos_delinear(ht_data *data_a, Object *data_b)
 	return da - db;
 }
 
-int compare_keys_info_pos(ht_data *data_a, Object *data_b)
+int compare_keys_info_pos(Object *data_a, Object *data_b)
 {
 	info_pos *a = (info_pos*)data_a;
 	info_pos *b = (info_pos*)data_b;
@@ -90,7 +90,7 @@ char *memndup(const char *s, int n)
  *
  */
 
-bool parse_xref_body(File *f, ht_tree *t, char **n, uint *o, uint *line, bool note)
+bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool note)
 {
 	whitespaces(n);
 	char *l = strchr(*n, ':');
@@ -363,11 +363,6 @@ void ht_info_textfile::init(File *s, bool own_s, ht_syntax_lexer *l)
 	start = 0;
 	end = 0;
 	ht_ltextfile::init(s, own_s, l);
-}
-
-void ht_info_textfile::done()
-{
-	ht_ltextfile::done();
 }
 
 ht_ltextfile_line *ht_info_textfile::fetch_line(uint line)
