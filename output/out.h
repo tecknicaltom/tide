@@ -39,7 +39,7 @@ class OutAddr: public Object {
 public:
 	Address		*addr;
 	uint		time;
-	ht_clist	*lines;
+	Container	*lines;
 	int		size;                     // size in memory
 	int		bytes;                    // bytes of address in file
 	
@@ -86,7 +86,7 @@ public:
 	int		want_bytes_line;
 	int		bytes_addr;               // bytes of current addr in file
 		
-	ht_dtree	*out_addrs;
+	Container	*out_addrs;
 
 	byte		*work_buffer_start;
 	byte		*work_buffer;
@@ -110,7 +110,7 @@ public:
 	virtual	void			footer();
 			void		generateAddr(Address *Addr, OutAddr *oa);
 			int		generateFile(Address *from, Address *to);
-	virtual	ht_stream *		getGenerateStream();
+	virtual	Stream *		getGenerateStream();
 			void		generatePage(Address *from, int lines);
 			OutAddr *	getAddr(Address *Addr);
 			OutLine *	getLine(Address *Addr, int line);
