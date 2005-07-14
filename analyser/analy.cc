@@ -43,6 +43,10 @@
 
 int global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 
+Address::Address()
+{
+}
+
 int Address::compareDelinear(Address *obj)
 {
 	return compareTo(obj);
@@ -461,6 +465,10 @@ const char *CommentList::getName(uint i)
 /*
  *
  */
+Analyser::Analyser()
+{
+}
+
 void	Analyser::init()
 {
 	active = false;
