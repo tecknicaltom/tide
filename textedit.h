@@ -227,17 +227,17 @@ public:
  *	CLASS ht_text_editor_undo
  */
  
-class ht_text_editor_undo: public ht_clist {
+class ht_text_editor_undo: public Array {
 public:
 	uint size, max_size;
 	int clean_state;
 	int current_position;
 	bool goto_state;
 public:
-	void init(uint max_undo_size);
+	ht_text_editor_undo(uint max_undo_size);
 	void insert_undo(ht_text_editor *te, ht_undo_data *undo);
 	bool is_clean();
-	bool	is_clean(int i);
+	bool is_clean(int i);
 	int get_current_position();
 	void mark_clean();
 	void undo(ht_text_editor *te, bool place_cursor_first);
@@ -251,9 +251,9 @@ public:
 #define cmd_text_viewer_goto				HT_COMMAND(601)
 #define cmd_text_viewer_change_highlight     HT_COMMAND(602)
 
-#define cmd_text_editor_undo				HT_COMMAND(620)
-#define cmd_text_editor_redo				HT_COMMAND(621)
-#define cmd_text_editor_protocol			HT_COMMAND(622)
+#define cmd_text_editor_undo			HT_COMMAND(620)
+#define cmd_text_editor_redo			HT_COMMAND(621)
+#define cmd_text_editor_protocol		HT_COMMAND(622)
 #define cmd_text_editor_delete_line		HT_COMMAND(623)
 
 class ht_text_viewer: public ht_view {
@@ -270,7 +270,7 @@ protected:
 	ht_textfile *textfile;
 	bool own_textfile;
 
-	ht_list *lexers;
+	Container *lexers;
 	
 	ht_syntax_lexer *lexer;
 	bool own_lexer;
@@ -311,7 +311,7 @@ protected:
 			ht_search_result *search(ht_search_request *request, text_search_pos *start, text_search_pos *end);
 			bool show_search_result(ht_search_result *result);
 public:
-			void init(bounds *b, bool own_textfile, ht_textfile *textfile, ht_list *lexers);
+			void init(bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers);
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();
@@ -380,7 +380,7 @@ protected:
 	virtual	vcp  get_bgcolor();
 			bool save();
 public:
-			void init(bounds *b, bool own_textfile, ht_textfile *textfile, ht_list *lexers, uint edit_options);
+			void init(bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers, uint edit_options);
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();
