@@ -19,7 +19,6 @@
  */
 
 #include "stream.h"
-#include "store.h"
 #include "tools.h"
 #include "javadis.h"
 
@@ -30,18 +29,10 @@
  *	CLASS javadis
  */
 
-javadis::javadis()
-{
-}
-
 javadis::javadis(java_token_func tf, void *c)
 {
 	token_func = tf;
 	context = c;
-}
-
-javadis::~javadis()
-{
 }
 
 dis_insn *javadis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
@@ -217,11 +208,6 @@ byte javadis::getSize(dis_insn *disasm_insn)
 void javadis::invalidate()
 {
 	insn.invalid = true;
-}
-
-int javadis::load(ObjectStream &f)
-{
-	return f->get_error();
 }
 
 ObjectID javadis::getObjectID() const
@@ -426,10 +412,6 @@ char *javadis::strf(dis_insn *disasm_insn, int opt, char *format)
 	str_format(&s, &format, prefix, insn->name, op, oplen, 0, 1);
 	disable_highlighting();
 	return insnstr;
-}
-
-void javadis::store(ObjectStream &f)
-{
 }
 
 bool javadis::validInsn(dis_insn *disasm_insn)
