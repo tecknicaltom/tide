@@ -42,8 +42,8 @@ public:
 					Stream();
 	virtual				~Stream();
 	/* new */
-	virtual	uint			copyAllTo(Stream *stream);
-	virtual	uint			copyTo(Stream *stream, uint count);
+	virtual	FileOfs			copyAllTo(Stream *stream);
+	virtual	FileOfs			copyTo(Stream *stream, FileOfs count);
 	virtual	IOAccessMode		getAccessMode() const;
 	virtual	String &		getDesc(String &result) const;
 	virtual	uint			read(void *buf, uint size);
@@ -270,7 +270,7 @@ public:
 	virtual uint			write(const void *buf, uint size);
 	/* new */
 		File *			getLayered() const;
-		void			setLayered(File *newLayered, bool ownNewLayered);
+	virtual	void			setLayered(File *newLayered, bool ownNewLayered);
 };
 
 /**
