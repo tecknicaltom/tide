@@ -30,10 +30,6 @@ IA64Disassembler::IA64Disassembler()
 {
 }
 
-IA64Disassembler::~IA64Disassembler()
-{
-}
-
 bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
 {
 	IA64DisInsn *insn = (IA64DisInsn *)disasm_insn;
