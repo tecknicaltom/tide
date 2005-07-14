@@ -32,7 +32,7 @@ class ht_registry_data: public Object {
 public:
 /* new */
 	virtual	bool editdialog(const char *keyname);
-	virtual   void strvalue(char *buf32bytes);
+	virtual void strvalue(char *buf32bytes);
 };
 
 /*
@@ -41,14 +41,14 @@ public:
 
 class ht_registry_data_stree: public ht_registry_data {
 public:
-	ht_stree *tree;
+	Container *tree;
 
-			ht_registry_data_stree(ht_stree *tree=0);
+			ht_registry_data_stree(Container *aTree=NULL);
 			~ht_registry_data_stree();
 /* overwritten */
-	virtual	int  load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	void strvalue(char *buf32bytes);
 };
 
@@ -63,9 +63,9 @@ public:
 			ht_registry_data_dword(uint32 value=0);
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
-	virtual	int  load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	void strvalue(char *buf32bytes);
 };
 
@@ -82,9 +82,9 @@ public:
 			~ht_registry_data_raw();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
-	virtual	int  load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	void strvalue(char *buf32bytes);
 };
 
@@ -100,9 +100,9 @@ public:
 			~ht_registry_data_string();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
-	virtual	int  load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	void strvalue(char *buf32bytes);
 };
 
@@ -119,9 +119,9 @@ public:
 	ht_registry_node_type type;
 	create_empty_registry_data_func create_empty_registry_data;
 	
-	virtual	int  load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 };
 
 #define RNT_INVALID		0	/* returned by some functions */
@@ -143,8 +143,8 @@ public:
 			void init(ht_registry_node_type type);
 	virtual	void done();
 /* overwritten */
-	virtual	int  load(ObjectStream &f);
-	virtual	void store(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	ObjectID getObjectID() const;
 };
 
@@ -159,13 +159,13 @@ protected:
 	ht_registry_node *root;
 	uint rec_depth;
 
-			ht_registry_node *find_entry_i(ht_tree **dir, const char *key, bool follow_symlinks);
-			ht_registry_node *find_entry_get_node(ht_tree *dir, const char *nodename);
-			ht_registry_node *find_entry_get_subdir(ht_tree *dir, const char *nodename);
-			ht_registry_node *find_entry_get_data(ht_tree *dir, const char *nodename, bool follow_symlinks);
+			ht_registry_node *find_entry_i(Container **dir, const char *key, bool follow_symlinks);
+			ht_registry_node *find_entry_get_node(Container *dir, const char *nodename);
+			ht_registry_node *find_entry_get_subdir(Container *dir, const char *nodename);
+			ht_registry_node *find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks);
 			bool splitfind(const char *key, const char **name, ht_registry_node **node);
 public:
-	ht_stree *node_types;
+	Container *node_types;
 
 			void init();
 	virtual	void done();
@@ -191,12 +191,12 @@ public:
 			int set_symlink(const char *key, const char *dest);
 			bool valid_nodename(const char *nodename);
 /* overwritten */
-	virtual	int  load(ObjectStream &f);
-	virtual	void store(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 	virtual	ObjectID getObjectID() const;
 /* debug */
 			void debug_dump();
-			void debug_dump_i(FILE *f, ht_tree *t, int ident);
+			void debug_dump_i(FILE *f, Container *t, int ident);
 };
 
 uint32 get_config_dword(char *ident);
