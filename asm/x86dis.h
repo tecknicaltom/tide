@@ -91,9 +91,8 @@ protected:
 			void	str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual		void	str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
 public:
-				x86dis();
 				x86dis(int opsize, int addrsize);
-	virtual			~x86dis();
+				x86dis(BuildCtorArg&);
 
 /* overwritten */
 	virtual	dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
@@ -112,16 +111,15 @@ public:
 class x86_64dis: public x86dis {
 public:	
 				x86_64dis();
-	virtual			~x86_64dis();
+				x86_64dis(BuildCtorArg&);
 };
 
 class x86dis_vxd: public x86dis {
 protected:
 	virtual void str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
 public:
-				x86dis_vxd();
+				x86dis_vxd(BuildCtorArg&);
 				x86dis_vxd(int opsize, int addrsize);
-	virtual			~x86dis_vxd();
 
 	virtual dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual ObjectID	getObjectID() const;
