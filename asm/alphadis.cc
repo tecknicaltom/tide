@@ -59,18 +59,10 @@
 #define MAKE_PAL(opcode)		(opcode & 0x3ffffff)
 #define MAKE_HINT(opcode)	(opcode & 0x3fff)
 
-Alphadis::Alphadis():Disassembler()
+Alphadis::Alphadis()
+	:Disassembler()
 {
 	insn.valid = false;
-}
-
-Alphadis::~Alphadis()
-{
-}
-
-int Alphadis::load(ObjectStream &f)
-{
-	return Disassembler::load(f);
 }
 
 int find_alpha_instruction(alpha_opcode_tab_entry *table, int f)
@@ -273,11 +265,6 @@ byte	Alphadis::getSize(dis_insn *disasm_insn)
 ObjectID Alphadis::getObjectID() const
 {
 	return ATOM_DISASM_ALPHA;
-}
-
-void	Alphadis::store(ObjectStream &f)
-{
-	Disassembler::store(f);
 }
 
 char	*Alphadis::str(dis_insn *disasm_insn, int style)
