@@ -91,10 +91,10 @@ void Stream::checkAccess(IOAccessMode mask)
  *	@param stream Stream to copy this Stream to
  *	@returns number of bytes copied
  */
-uint Stream::copyAllTo(Stream *stream)
+FileOfs Stream::copyAllTo(Stream *stream)
 {
 	byte *buf = new byte[STREAM_COPYBUF_SIZE];
-	uint result = 0;
+	FileOfs result = 0;
 	uint r, t;
 	do {
 		uint k = STREAM_COPYBUF_SIZE;
@@ -115,10 +115,10 @@ uint Stream::copyAllTo(Stream *stream)
  *	@param count maximum number of bytes to copy
  *	@returns number of bytes copied
  */
-uint Stream::copyTo(Stream *stream, uint count)
+FileOfs Stream::copyTo(Stream *stream, uint count)
 {
 	byte *buf = new byte[STREAM_COPYBUF_SIZE];
-	uint result = 0;
+	FileOfs result = 0;
 	while (count) {
 		uint k = STREAM_COPYBUF_SIZE;
 		if (k > count) k = count;
