@@ -62,6 +62,7 @@ protected:
 	ppcdis_insn insn;
 public:
 			PPCDisassembler();
+			PPCDisassembler(BuildCtorArg&);
 
 	virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn	*duplicateInsn(dis_insn *disasm_insn);
