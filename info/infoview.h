@@ -34,7 +34,7 @@ class info_node: public Object {
 public:
 	FileOfs start;
 	uint len;
-	ht_tree *xrefs;
+	Container *xrefs;
 	
 	info_node(FileOfs start);
 	~info_node();
@@ -46,7 +46,7 @@ public:
 
 class ht_info_lexer: public ht_syntax_lexer {
 public:
-	ht_tree *xrefs;
+	Container *xrefs;
 	uint cx, cy;
 	ht_view *pal_from;
 	
@@ -59,8 +59,8 @@ public:
 	virtual	lexer_token gettoken(void *buf, uint buflen, text_pos p, bool start_of_line, lexer_state *ret_state, uint *ret_len);
 	virtual	vcp gettoken_color(lexer_token t);
 /* new */
-			void set_xrefs(ht_tree *xrefs);
-			void set_cursor(uint cx, uint cy);
+		void set_xrefs(Container *xrefs);
+		void set_cursor(uint cx, uint cy);
 };
 
 /*
@@ -73,8 +73,7 @@ protected:
 
 	virtual ht_ltextfile_line *fetch_line(uint line);
 public:
-			void	init(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
-	virtual	void done();
+		ht_info_textfile(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
 /* overwritten */
 	virtual	uint linecount();
 /* new */	
@@ -90,11 +89,11 @@ protected:
 	char *cwd;
 	char *file;
 	char *node;
-	ht_tree *xrefs;
-	ht_list *history;
+	Container *xrefs;
+	Container *history;
 
 			int find_node(char *infofile, char *node);
-			ht_tree *get_xrefs();
+			Container *get_xrefs();
 			bool igotonode(char *file, char *node, bool add2hist);
 			uint readfile(char *fn, char **text);
 public:
