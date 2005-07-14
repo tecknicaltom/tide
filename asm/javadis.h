@@ -67,9 +67,8 @@ protected:
 			void str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual	void str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_op *op);
 public:
-	javadis();
+	javadis(BuildCtorArg&);
 	javadis(java_token_func token_func, void *context);
-	virtual ~javadis();
 
 /* overwritten */
 	virtual dis_insn *decode(byte *code, int maxlen, CPU_ADDR addr);
@@ -77,11 +76,9 @@ public:
 	virtual void getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual char *getName();
 	virtual byte getSize(dis_insn *disasm_insn);
-		void load(ObjectStream &f);
 	virtual ObjectID getObjectID() const;
 	virtual char *str(dis_insn *disasm_insn, int options);
 	virtual char *strf(dis_insn *disasm_insn, int options, char *format);
-	virtual void store(ObjectStream &f) const;
 	virtual bool validInsn(dis_insn *disasm_insn);
 };
 
