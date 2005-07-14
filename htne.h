@@ -62,13 +62,9 @@ public:
 		uint ord;
 	};
 
-	ne_import_rec(uint a, uint mod, bool b, uint i)
-	{
-		addr = a;
-		module = mod;
-		byname = b;
-		ord = i;
-	}
+			ne_import_rec(uint a, uint mod, bool b, uint i);
+
+	virtual	int	compareTo(const Object *obj) const;
 };
 
 class ht_aviewer;
