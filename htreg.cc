@@ -74,16 +74,12 @@ ht_registry_data_stree::ht_registry_data_stree(ht_stree *t)
 
 ht_registry_data_stree::~ht_registry_data_stree()
 {
-	if (tree) {
-		tree->destroy();
-		delete tree;
-	}
+	delete tree;
 }
 
-int ht_registry_data_stree::load(ObjectStream &f)
+void ht_registry_data_stree::load(ObjectStream &f)
 {
-	if (!(tree = (ht_stree*)f->getObject("tree"))) return 1;
-	return f->get_error();
+	GET_OBJECT(f, tree);
 }
 
 ObjectID ht_registry_data_stree::getObjectID() const
@@ -93,7 +89,7 @@ ObjectID ht_registry_data_stree::getObjectID() const
 
 void ht_registry_data_stree::store(ObjectStream &f)
 {
-	f->putObject(tree, "tree");
+	PUT_OBJECT(f, tree);
 }
 
 void ht_registry_data_stree::strvalue(char *buf32bytes)
@@ -156,7 +152,7 @@ ht_registry_data_raw::ht_registry_data_raw(const void *v, uint s)
 	size = s;
 	if (size) {
 		value = malloc(s);
-		memmove(value, v, s);
+		memcpy(value, v, s);
 	} else {
 		value = 0;
 	}
