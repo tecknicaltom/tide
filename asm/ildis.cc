@@ -27,18 +27,9 @@
 #include "ilopc.h"
 #include "snprintf.h"
 
-
-ILDisassembler::ILDisassembler()
-{
-}
-
 ILDisassembler::ILDisassembler(char* (*sf)(uint32 string_ofs, void *context), char* (*tf)(uint32 token, void *context), void *ctx)
 {
 	initialize(sf, tf, ctx);
-}
-
-ILDisassembler::~ILDisassembler()
-{
 }
 
 void ILDisassembler::initialize(char* (*sf)(uint32 string_ofs, void *context), char* (*tf)(uint32 token, void *context), void *ctx)
@@ -120,7 +111,8 @@ restart:
 	}
 	case IL_OPCODE_ARGS_INT64:
 	        QWORD_SET_LO(insn.data.q, create_host_int(code+1, 4, little_endian));
-	        QWORD_SET_HI(insn.data.q, create_host_int(code+5, 4, little_endian));
+	        QWORD_SET_HI(insn.data.q, );
+		insn.data.q = create_host_int(code+5, 4, little_endian);
 		break;
 	case IL_OPCODE_ARGS_TOKEN:
 	case IL_OPCODE_ARGS_NEW:
