@@ -23,7 +23,6 @@
 #define __HTSYS_H__
 
 #include "htio.h"
-#include "global.h"
 #include "stream.h"
 
 #define HT_SYS_NAME			"Win32"
@@ -38,7 +37,7 @@ int sys_findnext(pfind_t *pfind);
 int sys_pstat(pstat_t *s, const char *filename);
 void sys_suspend();
 int sys_get_free_mem();
-int sys_truncate(const char *filename, FILEOFS ofs);
+int sys_truncate(const char *filename, FileOfs ofs);
 int sys_deletefile(const char *filename);
 bool sys_is_path_delim(char c);
 int sys_filename_cmp(const char *a, const char *b);
