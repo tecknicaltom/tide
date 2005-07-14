@@ -196,10 +196,10 @@ void MachoAnalyser::initInsertSymbols(int shidx)
 /*
  *
  */
-int MachoAnalyser::load(ObjectStream &f)
+void MachoAnalyser::load(ObjectStream &f)
 {
 	GET_OBJECT(f, validarea);
-	return Analyser::load(f);
+	Analyser::load(f);
 }
 
 /*
@@ -400,7 +400,7 @@ Address *MachoAnalyser::nextValid(Address *Addr)
 /*
  *
  */
-void MachoAnalyser::store(ObjectStream &f)
+void MachoAnalyser::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, validarea);
 	Analyser::store(f);
