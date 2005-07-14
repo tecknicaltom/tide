@@ -29,8 +29,9 @@
  *	CLASS ht_textfile
  */
  
-class ht_textfile: public ht_layer_streamfile {
+class ht_textfile: public FileLayer {
 public:
+			ht_textfile(File *file, bool own_file);
 /* new */
 	virtual	bool convert_ofs2line(FileOfs o, uint *line, uint *pofs)=0;
 	virtual	bool convert_line2ofs(uint line, uint pofs, FileOfs *o)=0;
@@ -53,7 +54,7 @@ public:
  
 class ht_layer_textfile: public ht_textfile {
 public:
-			void init(ht_textfile *textfile, bool own_textfile);
+			ht_layer_textfile(ht_textfile *textfile, bool own_textfile);
 /* overwritten */
 	virtual	bool convert_ofs2line(FileOfs o, uint *line, uint *pofs);
 	virtual	bool convert_line2ofs(uint line, uint pofs, FileOfs *o);
@@ -100,8 +101,8 @@ public:
 class ht_ltextfile: public ht_textfile {
 protected:
 	FileOfs ofs;
-	ht_clist *lines;
-	ht_clist *orig_lines;
+	Container *lines;
+	Container *orig_lines;
 	ht_syntax_lexer *lexer;
 	uint first_parse_dirty_line;
 	uint first_nofs_dirty_line;
@@ -126,19 +127,19 @@ protected:
 			void update_parse(uint line);
 			void reread();
 public:
-			void	init(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
-	virtual	void done();
+			ht_ltextfile(File *file, bool own_file, ht_syntax_lexer *lexer);
+	virtual		~ht_ltextfile();
 /* overwritten (streamfile) */
-	virtual	void	copy_to(ht_stream *stream);
-	virtual	int	extend(uint newsize);
-	virtual	uint	get_size();
-	virtual	void	pstat(pstat_t *s);
+	virtual	FileOfs	copyAllTo(Stream *stream);
+	virtual	void	extend(FileOfs newsize);
+	virtual	FileOfs	getSize() const;
+	virtual	void	pstat(pstat_t &s) const;
 	virtual	uint	read(void *buf, uint size);
-	virtual	void set_layered(File *streamfile);
-	virtual	int	seek(FileOfs offset);
-	virtual	FileOfs tell();
-	virtual	int	truncate(uint newsize);
-	virtual	int	vcntl(uint cmd, va_list vargs);
+	virtual	void	setLayered(File *newLayered, bool ownNewLayered);
+	virtual	void	seek(FileOfs offset);
+	virtual	FileOfs tell() const;
+	virtual	void	truncate(FileOfs newsize);
+	virtual int	vcntl(uint cmd, va_list vargs);
 	virtual	uint	write(const void *buf, uint size);
 /* overwritten (textfile) */
 	virtual	bool convert_ofs2line(FileOfs o, uint *line, uint *pofs);
