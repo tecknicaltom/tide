@@ -28,10 +28,8 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_HT_OBJECTS
 #include "atom.h"
 #include "except.h"
-#endif
 
 #include "data.h"
 #include "debug.h"
@@ -40,7 +38,6 @@
 
 int autoCompare(const Object *a, const Object *b)
 {
-#ifdef HAVE_HT_OBJECTS
 // FIXME: better use instanceOf
 // SB: warum auskommentieren?
 // SW: weil nicht so gute logik
@@ -49,7 +46,6 @@ int autoCompare(const Object *a, const Object *b)
 /*	uint	ida = a->getObjectID();
 	uint idb = b->getObjectID();
 	if (ida != idb) return ida-idb;*/
-#endif
 	return a->compareTo(b);
 }
 
@@ -79,48 +75,37 @@ void Object::done()
 
 int Object::compareTo(const Object *obj) const
 {
-#ifdef HAVE_HT_OBJECTS
-	throw new NotImplementedException(HERE);
-#else
-	return 1;
-#endif
+	throw NotImplementedException(HERE);
 }
 
 int Object::toString(char *buf, int buflen) const
 {
-#ifdef HAVE_HT_OBJECTS
 	ObjectID oid = getObjectID();
-	unsigned char c[16];
+	unsigned char c[20];
 	int l = 4;
 	c[0] = (oid >> 24) & 0xff;
 	c[1] = (oid >> 16) & 0xff;
 	c[2] = (oid >>  8) & 0xff;
 	c[3] = oid & 0xff;
-	for (int i=0; i<l; i++) {
-		if ((c[i]<32) || (c[i]>127)) {
-			c[i+1] = "0123456789abcdef"[c[i]>>4];
-			c[i+2] = "0123456789abcdef"[c[i]&0xf];
-			c[i] = '\\';
-			l += 2;
+	for (int i = 0; i < 4; i++) {
+		if (c[i] < 32 || c[i] > 127) {
+			c[l] = '\\';
+			c[l+1] = "0123456789abcdef"[c[i] >> 4];
+			c[l+2] = "0123456789abcdef"[c[i] & 0xf];
+			l += 3;
+		} else {
+			c[l] = c[i];
+			l++;
 		}
 	}
 	c[l] = 0;
-	return ht_snprintf(buf, buflen, "Object-%s", c);
-#else
-	return ht_snprintf(buf, buflen, "Object");
-#endif
+	return ht_snprintf(buf, buflen, "Object-%s", c+4);
 }
 
 Object *Object::clone() const
 {
-#ifdef HAVE_HT_OBJECTS
-	throw new NotImplementedException(HERE);
-#else
-	return NULL;
-#endif
+	throw NotImplementedException(HERE);
 }
-
-#ifdef HAVE_HT_OBJECTS
 
 bool	Object::idle()
 {
@@ -149,8 +134,6 @@ ObjectID Object::getObjectID() const
 void	Object::store(ObjectStream &s) const
 {
 }
-
-#endif /* HAVE_HT_OBJECTS */
 
 /*
  *	Enumerator
@@ -397,7 +380,6 @@ Object *Array::clone() const
 // SB: kann man die funktionen nicht alphabetisch sortieren?
 // SW: doch aber hab keinen bock dazu, kommt am schluss
 
-#ifdef HAVE_HT_OBJECTS
 bool Array::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || List::instanceOf(id);
@@ -435,8 +417,6 @@ void Array::store(ObjectStream &s) const
 		s.putObject(elems[i], "element", hom_objid);
 	}
 }
-
-#endif /* HAVE_HT_OBJECTS */
 
 int Array::calcNewBufferSize(int curbufsize, int min_newbufsize) const
 {
@@ -492,7 +472,7 @@ void Array::realloc(int n)
  */
 void Array::prepareWriteAccess(int i)
 {
-	if (i<0) throw new MsgException("data structure too big (Array)");
+	if (i < 0) throw MsgException("data structure too big (Array)");
 	uint n = calcNewBufferSize(acount, i+1);
 	if (n > acount) realloc(n);
 }
@@ -660,7 +640,6 @@ Object *Stack::pop()
 	return remove(findLast());
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool Stack::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || Array::instanceOf(id);
@@ -670,7 +649,6 @@ ObjectID Stack::getObjectID() const
 {
 	return OBJID_STACK;
 }
-#endif
 
 /*
  *	SLinkedList
@@ -736,7 +714,6 @@ Object *SLinkedList::clone() const
 	return l;
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool SLinkedList::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || List::instanceOf(id);
@@ -779,7 +756,6 @@ void SLinkedList::store(ObjectStream &s) const
 	}
 }
 
-#endif
 uint SLinkedList::count() const
 {
 	return ecount;
@@ -793,7 +769,7 @@ int SLinkedList::compareObjects(const Object *a, const Object *b) const
 void SLinkedList::forceSetByIdx(int idx, Object *obj)
 {
 	// FIXME:
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 Object *SLinkedList::get(ObjHandle h) const
@@ -904,7 +880,7 @@ Object *SLinkedList::remove(ObjHandle h)
 void SLinkedList::insertAt(ObjHandle h, Object *obj)
 {
 	// FIXME: nyi
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 #if 0
 	uint i = ((uint)h)-1;	// WRONG!
 	if (i>ecount-1) {
@@ -940,7 +916,7 @@ void SLinkedList::insertAt(ObjHandle h, Object *obj)
 bool SLinkedList::moveTo(ObjHandle from, ObjHandle to)
 {
 	// FIXME:
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 bool SLinkedList::set(ObjHandle h, Object *obj)
@@ -1041,7 +1017,6 @@ Object *DLinkedList::clone() const
 	return l;
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool DLinkedList::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || List::instanceOf(id);
@@ -1083,7 +1058,6 @@ void DLinkedList::store(ObjectStream &s) const
 		h = findNext(h);
 	}
 }
-#endif
 
 uint DLinkedList::count() const
 {
@@ -1098,7 +1072,7 @@ int DLinkedList::compareObjects(const Object *a, const Object *b) const
 void DLinkedList::forceSetByIdx(int idx, Object *obj)
 {
 	// FIXME:
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 Object *DLinkedList::get(ObjHandle h) const
@@ -1206,13 +1180,13 @@ Object *DLinkedList::remove(ObjHandle h)
 void DLinkedList::insertAt(ObjHandle h, Object *obj)
 {
 	// FIXME: nyi
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 bool DLinkedList::moveTo(ObjHandle from, ObjHandle to)
 {
 	// FIXME:
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 bool DLinkedList::set(ObjHandle h, Object *obj)
@@ -1261,7 +1235,6 @@ Queue::Queue(bool own_objects) : SLinkedList(own_objects)
 }
 
 
-#ifdef HAVE_HT_OBJECTS
 bool Queue::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || SLinkedList::instanceOf(id);
@@ -1271,7 +1244,6 @@ ObjectID Queue::getObjectID() const
 {
 	return OBJID_QUEUE;
 }
-#endif
 
 /*
  *	BinaryTree
@@ -1480,7 +1452,6 @@ Object *BinaryTree::clone() const
 	return c;
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool	BinaryTree::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || Container::instanceOf(id);
@@ -1504,7 +1475,7 @@ void BinaryTree::loadR(ObjectStream &s, BinTreeNode **n, int l, int r)
 void BinaryTree::load(ObjectStream &s)
 {
 	const void *m = getAtomValue(GETX_INT32(s, "comparator"));
-	if (!m) throw new MsgException("BinaryTree::load() : invalid 'comparator' !");
+	if (!m) throw MsgException("BinaryTree::load() : invalid 'comparator' !");
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
@@ -1533,7 +1504,7 @@ void BinaryTree::storeR(ObjectStream &s, BinTreeNode *n) const
 void	BinaryTree::store(ObjectStream &s) const
 {
 	int aId = getAtomId((void*)compare);
-	if (!aId) throw new MsgException("BinaryTree::store() : comparator not registered !");
+	if (!aId) throw MsgException("BinaryTree::store() : comparator not registered !");
 	PUTX_INT32X(s, aId, "comparator");
 
 	PUT_INT32D(s, ecount);
@@ -1542,8 +1513,6 @@ void	BinaryTree::store(ObjectStream &s) const
 	ASSERT(hom_objid != OBJID_TEMP);
 	storeR(s, root);
 }
-
-#endif
 
 uint BinaryTree::count() const
 {
@@ -1589,7 +1558,7 @@ Object *BinaryTree::get(ObjHandle h) const
 uint BinaryTree::getObjIdx(ObjHandle h) const
 {
 	// FIXME: implement it
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 ObjHandle BinaryTree::findByIdx(int i) const
@@ -1806,7 +1775,6 @@ Object *AVLTree::clone() const
 	return c;
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool AVLTree::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || BinaryTree::instanceOf(id);
@@ -1840,7 +1808,7 @@ int AVLTree::loadR(ObjectStream &s, BinTreeNode *&n, int l, int r)
 void AVLTree::load(ObjectStream &s)
 {
 	const void *m = getAtomValue(GETX_INT32X(s, "comparator"));
-	if (!m) throw new MsgException("AVLTree::load() : invalid 'comparator' !");
+	if (!m) throw MsgException("AVLTree::load() : invalid 'comparator' !");
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
@@ -1855,8 +1823,6 @@ ObjectID AVLTree::getObjectID() const
 {
 	return OBJID_AVL_TREE;
 }
-
-#endif
 
 ObjHandle AVLTree::insert(Object *obj)
 {
@@ -2118,7 +2084,7 @@ MRUCacheNode *MRUCache::allocNode() const
 
 Object *MRUCache::clone() const
 {
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
 void MRUCache::delAll()
@@ -2217,12 +2183,10 @@ void MRUCache::setNodeIdentity(BinTreeNode *node, BinTreeNode *newident)
 	}
 }
 
-#ifdef HAVE_HT_OBJECTS
 void MRUCache::store(ObjectStream &s) const
 {
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
-#endif
 
 void MRUCache::propagate(ObjHandle h)
 {
@@ -2336,7 +2300,6 @@ Set::Set(bool oo)
 {
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool Set::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || AVLTree::instanceOf(id);
@@ -2346,7 +2309,6 @@ ObjectID Set::getObjectID() const
 {
 	return OBJID_SET;
 }
-#endif
 
 void Set::intersectWith(Set *b)
 {
@@ -2399,7 +2361,6 @@ int KeyValue::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "[Key: %y; Value: %y]", mKey, mValue);
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool KeyValue::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
@@ -2421,8 +2382,6 @@ void KeyValue::store(ObjectStream &s) const
 	PUT_OBJECT(s, mKey);
 	PUT_OBJECT(s, mValue);
 }
-
-#endif
 
 /*
  *	SInt
@@ -2452,8 +2411,6 @@ int SInt::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%d", value);
 }
 
-#ifdef HAVE_HT_OBJECTS
-
 bool SInt::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
@@ -2474,15 +2431,9 @@ void SInt::store(ObjectStream &s) const
 	PUT_INT32D(s, value);
 }
 
-#endif
-
 /*
  *	A signed Integer (64-bit)
  */
-#ifdef HAVE_HT_OBJECTS
-SInt64::SInt64(BuildCtorArg) {}
-#endif
-
 SInt64::SInt64(sint64 i)
 {
 	value = i;
@@ -2511,7 +2462,6 @@ int SInt64::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%qd", value);
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool SInt64::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
@@ -2531,7 +2481,6 @@ void SInt64::store(ObjectStream &s) const
 {
 	PUT_INT64D(s, value);
 }
-#endif
 
 /*
  *	UInt
@@ -2568,8 +2517,6 @@ int UInt::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%u", value);
 }
 
-#ifdef HAVE_HT_OBJECTS
-
 bool UInt::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
@@ -2590,15 +2537,9 @@ void UInt::store(ObjectStream &s) const
 	PUT_INT32D(s, value);
 }
 
-#endif
-
 /*
  *	A unsigned Integer (64-bit)
  */
-#ifdef HAVE_HT_OBJECTS
-UInt64::UInt64(BuildCtorArg) {}
-#endif
-
 UInt64::UInt64(uint64 i)
 {
 	value = i;
@@ -2627,7 +2568,6 @@ int UInt64::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%qu", value);
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool UInt64::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
@@ -2648,17 +2588,9 @@ void UInt64::store(ObjectStream &s) const
 	PUT_INT64D(s, value);
 }
 
-#endif
-
 /*
  *	A floating-point number	(FIXME: no portable storage yet)
  */
-
-#ifdef HAVE_HT_OBJECTS
-Float::Float(BuildCtorArg)
-{
-}
-#endif
 
 Float::Float(double d)
 {
@@ -2689,22 +2621,15 @@ int Float::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%f", value);
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool Float::instanceOf(ObjectID id) const
 {
 	return id == getObjectID();
 }
 
-//	virtual	void		load(ObjectStream &s);
-
 ObjectID Float::getObjectID() const
 {
 	return OBJID_FLOAT;
 }
-
-//	virtual	void		store(ObjectStream &s) const;
-
-#endif
 
 /*
  *	Pointer
@@ -2756,10 +2681,9 @@ int MemArea::compareTo(const Object *obj) const
 
 int MemArea::toString(char *buf, int buflen) const
 {
-	throw new NotImplementedException(HERE);
+	throw NotImplementedException(HERE);
 }
 
-#ifdef HAVE_HT_OBJECTS
 bool MemArea::instanceOf(ObjectID id) const
 {
 	return (id == getObjectID()) || Object::instanceOf(id);
@@ -2783,8 +2707,6 @@ void MemArea::store(ObjectStream &s) const
 	PUT_INT32D(s, size),
 	PUT_BINARY(s, ptr, size);
 }
-
-#endif
 
 /*
  *	IntSet
@@ -2841,7 +2763,7 @@ inline uint IntSet::idx2BitMask(uint i) const
 void IntSet::makeAccessible(uint i)
 {
 	if (!isAccessible(i)) {
-		if (i+1 > mMaxSetSize) throw new IndexOutOfBoundsException(HERE);
+		if (i+1 > mMaxSetSize) throw IndexOutOfBoundsException(HERE);
 		uint oldByteSize = mSetSize ? idx2ByteOfs(mSetSize-1)+1 : 0;
 		uint newByteSize = idx2ByteOfs(i)+1;
 		// grow exponentially
