@@ -20,7 +20,6 @@
  */
 
 #include "stream.h"
-#include "store.h"
 #include "snprintf.h"
 #include "tools.h"
 #include "vxd.h"
@@ -54,18 +53,11 @@ int sibscale[4] = {1, 2, 4, 8};
  *	CLASS x86dis
  */
 
-x86dis::x86dis()
-{
-}
-
 x86dis::x86dis(int aOpsize, int aAddrsize)
 {
 	opsize = aOpsize;
 	addrsize = aAddrsize;
-}
-
-x86dis::~x86dis()
-{
+	insn.invalid = true;
 }
 
 dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
@@ -963,7 +955,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 				reg = 2;
 			}
 			if (insn->segprefix != X86_PREFIX_NO) {
-				d+=sprintf(d, "%s%s:%s", x86_segs[insn->segprefix], cs_symbol, cs_default);
+				d += sprintf(d, "%s%s:%s", x86_segs[insn->segprefix], cs_symbol, cs_default);
 			}
 			strcpy(d, cs_symbol); d += strlen(cs_symbol);
 			*(d++)='[';
@@ -1253,28 +1245,16 @@ x86_64dis::x86_64dis()
 {
 }
 
-x86_64dis::~x86_64dis()
-{
-}
-
 /*
  *	CLASS x86dis_vxd
  */
 
-x86dis_vxd::x86dis_vxd()
-{
-}
-
 x86dis_vxd::x86dis_vxd(int opsize, int addrsize)
-: x86dis(opsize, addrsize)
+	: x86dis(opsize, addrsize)
 {
 }
 
-x86dis_vxd::~x86dis_vxd()
-{
-}
-
-dis_insn *x86dis_vxd::decode(byte *code, byte maxlen, CPU_ADDR addr)
+dis_insn *x86dis_vxd::decode(byte *code, int maxlen, CPU_ADDR addr)
 {
 	if ((maxlen >= 6) && (code[0] == 0xcd) && (code[1] == 0x20)) {
 		insn.name = "VxDCall";
