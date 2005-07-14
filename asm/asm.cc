@@ -20,7 +20,7 @@
 
 #include "asm.h"
 #include "data.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htdebug.h"
 
 #include <string.h>
@@ -46,6 +46,7 @@ Assembler::Assembler(bool b)
 
 Assembler::~Assembler()
 {
+	free_asm_codes();
 }
 
 asm_insn *Assembler::alloc_insn()
@@ -193,10 +194,6 @@ Disassembler::Disassembler()
 	disable_highlighting();
 }
 
-Disassembler::~Disassembler()
-{
-}
-
 char* (*addr_sym_func)(CPU_ADDR addr, int *symstrlen, void *context) = NULL;
 void* addr_sym_func_context = NULL;
 
@@ -266,13 +263,13 @@ void Disassembler::disable_highlighting()
 	highlight = false;
 }
 
-BUILDER(ATOM_DISASM_X86, x86dis)
-BUILDER(ATOM_DISASM_X86_VXD, x86dis_vxd)
-BUILDER(ATOM_DISASM_ALPHA, Alphadis)
-BUILDER(ATOM_DISASM_JAVA, javadis)
-BUILDER(ATOM_DISASM_IA64, IA64Disassembler)
-BUILDER(ATOM_DISASM_PPC, PPCDisassembler)
-BUILDER(ATOM_DISASM_IL, ILDisassembler)
+BUILDER(ATOM_DISASM_X86, x86dis, Disassembler)
+BUILDER(ATOM_DISASM_X86_VXD, x86dis_vxd, x86dis)
+BUILDER(ATOM_DISASM_ALPHA, Alphadis, Disassembler)
+BUILDER(ATOM_DISASM_JAVA, javadis, Disassembler)
+BUILDER(ATOM_DISASM_IA64, IA64Disassembler, Disassembler)
+BUILDER(ATOM_DISASM_PPC, PPCDisassembler, Disassembler)
+BUILDER(ATOM_DISASM_IL, ILDisassembler, Disassembler)
 
 bool init_asm()
 {
