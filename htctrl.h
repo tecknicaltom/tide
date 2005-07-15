@@ -29,7 +29,7 @@ extern char *globalerror;
 
 extern ht_view *app;
 extern ht_view *baseview;
-extern screendrawbuf *screen;
+extern SystemDisplay *screen;
 extern Enumerator *virtual_fs_list;
 extern void *project;
 extern char appname[HT_NAME_MAX+1];
