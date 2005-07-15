@@ -49,6 +49,8 @@ public:
 	void		clear();
 	OutLine		*getLine(int i);
 	void		updateTime(uint Time);
+	
+	virtual int	compareTo(const Object *) const;
 };
 
 /*
@@ -106,7 +108,7 @@ public:
 	virtual	int			elementLength(const char *s);
 	virtual	void			endAddr();
 	virtual	void			endLine();
-	virtual	char *			externalLink(char *s, int type1, int type2, int type3, int type4, void *special);
+	virtual	char *			externalLink(char *s, uint32 type1, uint32 type2, uint32 type3, uint32 type4, void *special);
 	virtual	void			footer();
 			void		generateAddr(Address *Addr, OutAddr *oa);
 			int		generateFile(Address *from, Address *to);
