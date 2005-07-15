@@ -25,7 +25,7 @@ class ht_view;
 class ht_group;
 
 #include "io/types.h"
-#include "htcurses.h"
+#include "io/display.h"
 #include "data.h"
 
 struct palette {
@@ -134,7 +134,7 @@ public:
 	int options;
 	char *desc;
 	int browse_idx;
-	genericdrawbuf *buf;
+	Display *buf;
 	ht_view *prev, *next;
 
 	bounds size;
