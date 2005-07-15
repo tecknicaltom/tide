@@ -25,7 +25,6 @@
 #include "htiobox.h"
 #include "htpal.h"
 #include "htstring.h"
-#include "htsys.h"
 #include "infoview.h"
 #include "tools.h"
 
@@ -638,7 +637,7 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		}
-		case K_Alt_Backspace:
+		case K_Meta_Backspace:
 		case K_Backspace: {
 			int c;
 			if ((c = history->count())) {
@@ -675,7 +674,7 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 			dirtyview();
 			return;
 		}
-		case K_BackTab: {
+		case K_Shift_Tab: {
 			if (get_xrefs()) {
 				KeyValue p(new info_pos(top_line + cursory, xofs + physical_cursorx()), NULL);
 				KeyValue *kv = (KeyValue *)get_xrefs()->findL(&p);
