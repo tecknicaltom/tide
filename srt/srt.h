@@ -66,8 +66,8 @@ public:
 	sym_int_reg(uint r);
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
-	virtual Object *clone();
-	virtual bool evaluate(bool *i);
+	virtual Object *clone() const;
+	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
 }; 
@@ -85,8 +85,8 @@ public:
 	sym_int_mem(sym_int_token *a, uint s, srt_endian e);
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
-	virtual Object *clone();
-	virtual bool evaluate(bool *i);
+	virtual Object *clone() const;
+	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
 };
