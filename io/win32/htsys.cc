@@ -48,10 +48,9 @@ int sys_canonicalize(char *result, const char *filename)
 uint32 filetime_to_ctime(FILETIME f)
 {
 	uint64 q;
-	QWORD_SET_LO(q, f.dwLowDateTime);
-	QWORD_SET_HI(q, f.dwHighDateTime);
-	q = q / int_to_qword(10000000);		// 100 nano-sec to full sec
-	return QWORD_GET_LO(q) + 1240431886;	// MAGIC: this is 1.1.1970 minus 1.1.1601 in seconds
+	q = ((uint64)f.dwHighDateTime) << 32 | f.dwLowDateTime;
+	q /= 10000000ULL;		// 100 nano-sec to full sec
+	return q + 1240431886;	// MAGIC: this is 1.1.1970 minus 1.1.1601 in seconds
 }
 
 void sys_findfill(pfind_t *pfind)
