@@ -59,7 +59,7 @@ char *stylesheet = "<style type=\"text/css\">\n"
 "//-->\n"
 "</style>\n";
 
-int write_str(ht_stream *stream, char *s)
+int write_str(Stream *stream, char *s)
 {
 	return stream->write(s, strlen(s));
 }
@@ -87,7 +87,7 @@ char *html_addr_sym_func(CPU_ADDR Addr, int *symstrlen)
 }
 #endif
 
-int generate_html_output(Analyser *analy, ht_stream *stream, Address *from, Address *to)
+int generate_html_output(Analyser *analy, Stream *stream, Address *from, Address *to)
 {
 #if 0
 	if ((!analy) || (!stream)) return HTML_OUTPUT_ERR_GENERIC;
