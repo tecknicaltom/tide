@@ -57,10 +57,10 @@ extern "C" {
 #if !defined(CHAR_BIT) || (CHAR_BIT != 8)
 #  error "invalid CHAR_BIT"
 #endif
-#if !defined(UCHAR_MAX) || !defined(uint_MAX) || !defined(ULONG_MAX)
+#if !defined(UCHAR_MAX) || !defined(UINT_MAX) || !defined(ULONG_MAX)
 #  error "check your compiler installation"
 #endif
-#if (USHRT_MAX < 1) || (uint_MAX < 1) || (ULONG_MAX < 1)
+#if (USHRT_MAX < 1) || (UINT_MAX < 1) || (ULONG_MAX < 1)
 #  error "your limits.h macros are broken"
 #endif
 
@@ -68,7 +68,7 @@ extern "C" {
 #define LZO_0xffffffffL         4294967295ul
 
 #if !defined(LZO_UINT32_C)
-#  if (uint_MAX < LZO_0xffffffffL)
+#  if (UINT_MAX < LZO_0xffffffffL)
 #    define LZO_UINT32_C(c)     c ## UL
 #  else
 #    define LZO_UINT32_C(c)     c ## U
@@ -98,7 +98,7 @@ extern "C" {
 #  endif
 #endif
 
-#if (uint_MAX < LZO_0xffffffffL)
+#if (UINT_MAX < LZO_0xffffffffL)
 #  if defined(__LZO_WIN)
 #    define __LZO_WIN16
 #  elif defined(__LZO_DOS)
@@ -124,7 +124,7 @@ extern "C" {
 #endif
 
 #if defined(__LZO_STRICT_16BIT)
-#  if (uint_MAX < LZO_0xffffffffL)
+#  if (UINT_MAX < LZO_0xffffffffL)
 #    include <lzo16bit.h>
 #  endif
 #endif
@@ -149,7 +149,7 @@ extern "C" {
 
 /* Integral types with 32 bits or more */
 #if !defined(LZO_UINT32_MAX)
-#  if (uint_MAX >= LZO_0xffffffffL)
+#  if (UINT_MAX >= LZO_0xffffffffL)
 	typedef unsigned int       lzo_uint32;
 	typedef int                lzo_int32;
 #    define LZO_UINT32_MAX      UINT_MAX
@@ -168,7 +168,7 @@ extern "C" {
 
 /* lzo_uint is used like size_t */
 #if !defined(LZO_UINT_MAX)
-#  if (uint_MAX >= LZO_0xffffffffL)
+#  if (UINT_MAX >= LZO_0xffffffffL)
 	typedef unsigned int       lzo_uint;
 	typedef int                lzo_int;
 #    define LZO_UINT_MAX        UINT_MAX
