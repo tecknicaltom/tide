@@ -1,4 +1,4 @@
-/*
+/*                       s
  *	HT Editor
  *	data.h
  *
@@ -40,6 +40,7 @@ struct BuildCtorArg {
  *	Macro for creating object build functions
  */
 #define BUILDER(reg, obj, parent) obj::obj(BuildCtorArg&a):parent(a) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
+#define BUILDER2(reg, obj) obj::obj(BuildCtorArg&a) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
 
 /**
  *	Registers builder function by object id.
@@ -92,7 +93,7 @@ struct BuildCtorArg {
  */
 class Object {
 public:
-				Object(BuildCtorArg);
+				Object(BuildCtorArg&);
 				Object();
 
 	virtual			~Object();
@@ -169,7 +170,7 @@ const uint invIdx = ((uint)-1);
  */
 class Enumerator: public Object {
 public:
-				Enumerator(BuildCtorArg);
+				Enumerator(BuildCtorArg&);
 				Enumerator();
 	/* extends Object */
 	virtual	int		toString(char *buf, int buflen) const;
@@ -380,7 +381,7 @@ protected:
 
 	virtual	void		notifyInsertOrSet(const Object *o);
 public:
-				Container(BuildCtorArg);
+				Container(BuildCtorArg&);
 				Container();
 /* new */
 
@@ -467,7 +468,7 @@ public:
  */
 class List: public Container {
 public:
-				List(BuildCtorArg);
+				List(BuildCtorArg&);
 				List();
 /* new */
 
@@ -566,7 +567,7 @@ private:
 		return elems+i;
 	}
 public:
-				Array(BuildCtorArg);
+				Array(BuildCtorArg&);
 				Array(bool own_objects, int prealloc = ARRAY_CONSTR_ALLOC_DEFAULT);
 	virtual			~Array();
 	/* extends Object */
@@ -603,7 +604,7 @@ public:
  */
 class Stack: public Array {
 public:
-				Stack(BuildCtorArg);
+				Stack(BuildCtorArg&);
 				Stack(bool own_objects);
 	/* new */
 	virtual Object *	pop();
@@ -636,7 +637,7 @@ private:
 	inline	SLinkedListNode *handleToNative(ObjHandle h) const;
 	inline	ObjHandle	nativeToHandle(SLinkedListNode *n) const;
 public:
-				SLinkedList(BuildCtorArg);
+				SLinkedList(BuildCtorArg&);
 				SLinkedList(bool own_objects);
 	virtual			~SLinkedList();
 	/* extends Object */
@@ -673,7 +674,7 @@ public:
  */
 class Queue: public SLinkedList {
 public:
-				Queue(BuildCtorArg);
+				Queue(BuildCtorArg&);
 				Queue(bool own_objects);
 /* new */
 
@@ -728,7 +729,7 @@ private:
 	inline	DLinkedListNode *handleToNative(ObjHandle h) const;
 	inline	ObjHandle	nativeToHandle(DLinkedListNode *n) const;
 public:
-				DLinkedList(BuildCtorArg);
+				DLinkedList(BuildCtorArg&);
 				DLinkedList(bool own_objects);
 	virtual			~DLinkedList();
 	/* extends Object */
@@ -802,7 +803,7 @@ protected:
 	inline	BinTreeNode *	handleToNative(ObjHandle h) const { return (BinTreeNode*)h; }
 	inline	ObjHandle	nativeToHandle(BinTreeNode *n) const { return (ObjHandle*)n; }
 public:
-				BinaryTree(BuildCtorArg);
+				BinaryTree(BuildCtorArg&);
 				BinaryTree(bool own_objects, Comparator comparator = autoCompare);
 	virtual			~BinaryTree();
 	/* extends Object */
@@ -850,7 +851,7 @@ private:
 			BinTreeNode *removeR(Object *key, BinTreeNode *&root, int &change, int cmp);
 			int	loadR(ObjectStream &s, BinTreeNode *&n, int l, int r);
 public:
-				AVLTree(BuildCtorArg);
+				AVLTree(BuildCtorArg&);
 				AVLTree(bool own_objects, Comparator comparator = autoCompare);
 
 		void		debugOut();
@@ -907,7 +908,7 @@ public:
  */
 class Set: public AVLTree {
 public:
-				Set(BuildCtorArg);
+				Set(BuildCtorArg&);
 				Set(bool own_objects);
 	/* new */
 			void	intersectWith(Set *b);
@@ -963,7 +964,7 @@ public:
 	Object		*mKey;
 	Object		*mValue;
 
-				KeyValue(BuildCtorArg);
+				KeyValue(BuildCtorArg&);
 				KeyValue(Object *aKey, Object *aValue);
 	virtual			~KeyValue();
 
@@ -983,7 +984,7 @@ class SInt: public Object {
 public:
 	signed int value;
 
-				SInt(BuildCtorArg);
+				SInt(BuildCtorArg&);
 				SInt(signed int i);
 	/* extends Object */
 	virtual	Object *	clone() const;
@@ -1004,7 +1005,7 @@ class SInt64: public Object {
 public:
 	sint64 value;
 
-				SInt64(BuildCtorArg);
+				SInt64(BuildCtorArg&);
 				SInt64(sint64 i);
 	/* extends Object */
 	virtual	Object *	clone() const;
@@ -1023,7 +1024,7 @@ class UInt: public Object {
 public:
 	unsigned int value;
 
-				UInt(BuildCtorArg);
+				UInt(BuildCtorArg&);
 				UInt(unsigned int i);
 	/* extends Object */
 	virtual	Object *	clone() const;
@@ -1042,7 +1043,7 @@ class UInt64: public Object {
 public:
 	uint64 value;
 
-				UInt64(BuildCtorArg);
+				UInt64(BuildCtorArg&);
 				UInt64(uint64 i);
 	/* extends Object */
 	virtual	Object *	clone() const;
@@ -1061,7 +1062,7 @@ class Float: public Object {
 public:
 	double value;
 
-				Float(BuildCtorArg);
+				Float(BuildCtorArg&);
 				Float(double d);
 	/* extends Object */
 	virtual	Object *	clone() const;
@@ -1093,7 +1094,7 @@ public:
 	void *ptr;
 	uint size;
 
-				MemArea(BuildCtorArg);
+				MemArea(BuildCtorArg&);
 				MemArea(const void *p, uint size, bool duplicate = false);
 				~MemArea();
 	/* extends Object */
