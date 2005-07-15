@@ -45,10 +45,9 @@ static char helpname[MAX_FUNCNAME_LEN+1];
 
 uint64 f2i(double f)
 {
-	int r;
-	if (f>0) r = (int)(f+.5); else r = (int)(f-.5);
-	// FIXME
-	return to_qword(r);
+	uint64 r;
+	if (f>0) r = (sint64)(f+.5); else r = (sint64)(f-.5);
+	return r;
 }
 
 void set_helpmode(int flag, char *name)
@@ -64,11 +63,11 @@ void set_helpmode(int flag, char *name)
 
 static uint64 ipow(uint64 a, uint64 b)
 {
-	uint64 r = to_qword(1);
-	uint64 m = to_qword(1) << 63;
-	while (m != to_qword(0)) {
+	uint64 r = 1ULL;
+	uint64 m = 1ULL << 63;
+	while (m != 0) {
 		r *= r;
-		if ((b & m) != to_qword(0)) {
+		if ((b & m) != 0) {
 			r *= a;
 		}
 		m = m >> 1;
@@ -113,13 +112,13 @@ static int hexdigit(char a)
 
 static void str2int(char *str, uint64 *q, int base)
 {
-	*q = to_qword(0);
-	uint64 qbase = to_qword(base);
+	*q = 0;
+	uint64 qbase = base;
 	while (*str) {
 		int c = hexdigit(*str);
 		if ((c == -1) || (c >= base)) break;
 		*q *= qbase;
-		*q += to_qword(c);
+		*q += c;
 		str++;
 	}
 }
@@ -318,15 +317,15 @@ void scalar_dump(eval_scalar *s)
 
 void scalar_create_int(eval_scalar *s, const eval_int *t)
 {
-	s->type=SCALAR_INT;
+	s->type = SCALAR_INT;
 	s->scalar.integer=*t;
 }
 
 void scalar_create_int_c(eval_scalar *s, const int i)
 {
-	s->type=SCALAR_INT;
-	s->scalar.integer.value=to_uint64(to_sint64(i));
-	s->scalar.integer.type=TYPE_UNKNOWN;
+	s->type = SCALAR_INT;
+	s->scalar.integer.value = (sint64)i;
+	s->scalar.integer.type = TYPE_UNKNOWN;
 }
 
 void scalar_create_int_q(eval_scalar *s, const uint64 q)
@@ -338,10 +337,10 @@ void scalar_create_int_q(eval_scalar *s, const uint64 q)
 
 void scalar_create_str(eval_scalar *s, const eval_str *t)
 {
-	s->type=SCALAR_STR;
-	s->scalar.str.value=(char*)malloc(t->len ? t->len : 1);
-	memmove(s->scalar.str.value, t->value, t->len);
-	s->scalar.str.len=t->len;
+	s->type = SCALAR_STR;
+	s->scalar.str.value = (char*)malloc(t->len ? t->len : 1);
+	memcpy(s->scalar.str.value, t->value, t->len);
+	s->scalar.str.len = t->len;
 }
 
 void scalar_create_str_c(eval_scalar *s, const char *cstr)
@@ -420,22 +419,20 @@ void scalar_context_int(const eval_scalar *s, eval_int *t)
 void scalar_context_float(const eval_scalar *s, eval_float *t)
 {
 	switch (s->type) {
-		case SCALAR_INT: {
-			t->value = QWORD_GET_FLOAT(s->scalar.integer.value);
-			break;
-		}
-		case SCALAR_STR:  {
-			char *x = binstr2cstr(s->scalar.str.value, s->scalar.str.len);
-			t->value = strtod(x, (char**)NULL);
-			free(x);
-			break;
-		}			
-		case SCALAR_FLOAT: {
-			*t = s->scalar.floatnum;
-			break;
-		}
-		default:
-			break;
+	case SCALAR_INT:
+		t->value = s->scalar.integer.value;
+		break;
+	case SCALAR_STR:  {
+		char *x = binstr2cstr(s->scalar.str.value, s->scalar.str.len);
+		t->value = strtod(x, (char**)NULL);
+		free(x);
+		break;
+	}			
+	case SCALAR_FLOAT:
+		*t = s->scalar.floatnum;
+		break;
+	default: 
+		break;
 	}					
 }
 
@@ -511,20 +508,21 @@ int scalar_strop(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *xb, 
 	scalar_context_str(xa, &as);
 	scalar_context_str(xb, &bs);
 	
-	c=string_compare(&as, &bs);
+	c = string_compare(&as, &bs);
+
 	switch (op) {
-		case EVAL_STR_EQ: r=(c==0); break;
-		case EVAL_STR_NE: r=(c!=0); break;
-		case EVAL_STR_GT: r=(c>0); break;
-		case EVAL_STR_GE: r=(c>=0); break;
-		case EVAL_STR_LT: r=(c<0); break;
-		case EVAL_STR_LE: r=(c>=0); break;
-		default: 
-			return 0;
+	case EVAL_STR_EQ: r=(c==0); break;
+	case EVAL_STR_NE: r=(c!=0); break;
+	case EVAL_STR_GT: r=(c>0); break;
+	case EVAL_STR_GE: r=(c>=0); break;
+	case EVAL_STR_LT: r=(c<0); break;
+	case EVAL_STR_LE: r=(c>=0); break;
+	default: 
+		return 0;
 	}
-	xr->type=SCALAR_INT;
-	xr->scalar.integer.value=to_qword(r);
-	xr->scalar.integer.type=TYPE_UNKNOWN;
+	xr->type = SCALAR_INT;
+	xr->scalar.integer.value = r;
+	xr->scalar.integer.type = TYPE_UNKNOWN;
 	return 1;
 }
 
@@ -553,15 +551,15 @@ int scalar_float_op(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *x
 		default: {
 			uint64 ri;
 			switch (op) {
-				case EVAL_EQ: ri=to_qword(a==b); break;
-				case EVAL_NE: ri=to_qword(a!=b); break;
-				case EVAL_GT: ri=to_qword(a>b); break;
-				case EVAL_GE: ri=to_qword(a>=b); break;
-				case EVAL_LT: ri=to_qword(a<b); break;
-				case EVAL_LE: ri=to_qword(a<=b); break;
-				case EVAL_LAND: ri=to_qword(a && b); break;
-				case EVAL_LXOR: ri=to_qword((a && !b) || (!a && b)); break;
-				case EVAL_LOR: ri=to_qword(a||b); break;
+				case EVAL_EQ: ri = a==b; break;
+				case EVAL_NE: ri = a!=b; break;
+				case EVAL_GT: ri = a>b; break;
+				case EVAL_GE: ri = a>=b; break;
+				case EVAL_LT: ri = a<b; break;
+				case EVAL_LE: ri = a<=b; break;
+				case EVAL_LAND: ri = a && b; break;
+				case EVAL_LXOR: ri = !a != !b; break;
+				case EVAL_LOR: ri = a || b ; break;
 				default:
 					set_eval_error("invalid operator");
 					return 0;
@@ -610,19 +608,19 @@ int scalar_int_op(eval_scalar *xr, const eval_scalar *xa, const eval_scalar *xb,
 		case '|': r=a|b; break;
 		case '^': r=a^b; break;
 		// FIXME
-		case EVAL_POW: r=ipow(a, b); break;
-//		case EVAL_POW: r=to_qword((int)pow(QWORD_GET_INT(a),QWORD_GET_INT(b))); break;
-		case EVAL_SHL: r=a<<QWORD_GET_LO(b); break;
-		case EVAL_SHR: r=a>>QWORD_GET_LO(b); break;
-		case EVAL_EQ: r=to_qword(a==b); break;
-		case EVAL_NE: r=to_qword(a!=b); break;
-		case EVAL_GT: r=to_qword(a>b); break;
-		case EVAL_GE: r=to_qword(a>=b); break;
-		case EVAL_LT: r=to_qword(a<b); break;
-		case EVAL_LE: r=to_qword(a<=b); break;
-		case EVAL_LAND: r=to_qword(uint64_cmp(a, to_qword(0)) && qword_cmp(b, to_qword(0))); break;
-		case EVAL_LXOR: r=to_qword((uint64_cmp(a,to_qword(0)) && !qword_cmp(b,to_qword(0))) || (!qword_cmp(a,to_qword(0)) && qword_cmp(b,to_qword(0)))); break;
-		case EVAL_LOR: r=to_qword(uint64_cmp(a,to_qword(0)) || qword_cmp(b,to_qword(0))); break;
+		case EVAL_POW: r = ipow(a, b); break;
+//		case EVAL_POW: r = to_qword((int)pow(QWORD_GET_INT(a),QWORD_GET_INT(b))); break;
+		case EVAL_SHL: r = a << b; break;
+		case EVAL_SHR: r = a >> b; break;
+		case EVAL_EQ: r = a==b; break;
+		case EVAL_NE: r = a!=b; break;
+		case EVAL_GT: r = a>b; break;
+		case EVAL_GE: r = a>=b; break;
+		case EVAL_LT: r = a<b; break;
+		case EVAL_LE: r = a<=b; break;
+		case EVAL_LAND: r = a && b; break;
+		case EVAL_LXOR: r = !a != !b; break;
+		case EVAL_LOR: r = a || b; break;
 		default: 
 			set_eval_error("invalid operator");
 			return 0;
@@ -682,9 +680,9 @@ void scalar_lnotset(eval_scalar *xr, eval_scalar *xa)
 	eval_int a;
 	scalar_context_int(xa, &a);
 
-	xr->type=SCALAR_INT;
-	xr->scalar.integer.value=to_qword(!a.value);
-	xr->scalar.integer.type=TYPE_UNKNOWN;
+	xr->type = SCALAR_INT;
+	xr->scalar.integer.value = !a.value;
+	xr->scalar.integer.type = TYPE_UNKNOWN;
 
 	scalar_destroy(xa);
 }
@@ -693,7 +691,7 @@ void scalar_miniif(eval_scalar *xr, eval_scalar *xa, eval_scalar *xb, eval_scala
 {
 	eval_int a;
 	scalar_context_int(xa, &a);
-	if (a.value != to_qword(0)) {
+	if (a.value != 0) {
 		*xr = *xb;
 	} else {
 		*xr = *xc;
@@ -758,51 +756,51 @@ int func_is_float(eval_scalar *r, eval_scalar *s)
 int func_char(eval_scalar *r, eval_int *i)
 {
 	eval_str s;
-	char c = QWORD_GET_LO(i->value);
-	s.value=&c;
-	s.len=1;
+	char c = i->value;
+	s.value = &c;
+	s.len = 1;
 	scalar_create_str(r, &s);
 	return 1;
 }
 
 int func_byte(eval_scalar *r, eval_int *i)
 {
-	uint c = QWORD_GET_LO(i->value);
-	scalar_create_int_c(r, c&0xff);
+	uint c = i->value;
+	scalar_create_int_c(r, c & 0xff);
 	return 1;
 }
 
 int func_word(eval_scalar *r, eval_int *i)
 {
-	uint c = QWORD_GET_LO(i->value);
-	scalar_create_int_c(r, c&0xffff);
+	uint c = i->value;
+	scalar_create_int_c(r, c & 0xffff);
 	return 1;
 }
 
 int func_dword(eval_scalar *r, eval_int *i)
 {
-	uint c = QWORD_GET_LO(i->value);
-	scalar_create_int_q(r, to_qword(c));
+	uint c = i->value;
+	scalar_create_int_q(r, c & 0xffffffff);
 	return 1;
 }
 
 int func_sbyte(eval_scalar *r, eval_int *i)
 {
-	uint c = QWORD_GET_LO(i->value);
+	uint c = i->value;
 	scalar_create_int_c(r, (signed char)c);
 	return 1;
 }
 
 int func_short(eval_scalar *r, eval_int *i)
 {
-	uint c = QWORD_GET_LO(i->value);
+	uint c = i->value;
 	scalar_create_int_c(r, (short)c);
 	return 1;
 }
 
 int func_long(eval_scalar *r, eval_int *i)
 {
-	int c = QWORD_GET_LO(i->value);
+	int c = i->value;
 	scalar_create_int_c(r, c);
 	return 1;
 }
@@ -857,8 +855,8 @@ int func_min(eval_scalar *r, eval_int *p1, eval_int *p2)
 
 int func_random(eval_scalar *r, eval_int *p1)
 {
-	uint64 d = to_qword(rand());
-	scalar_create_int_q(r, (p1->value != to_qword(0)) ? (d % p1->value):to_qword(0));
+	uint64 d = rand();
+	scalar_create_int_q(r, (p1->value != 0) ? (d % p1->value):0);
 	return 1;
 }
 
@@ -942,11 +940,11 @@ int func_strstr(eval_scalar *r, eval_str *p1, eval_str *p2)
 
 int func_substr(eval_scalar *r, eval_str *p1, eval_int *p2, eval_int *p3)
 {
-	if (p2->value >= to_qword(0) && p3->value > to_qword(0)) {
-		if (p2->value < to_qword(p1->len)) {
+	if (p2->value >= 0 && p3->value > 0) {
+		if (p2->value < p1->len) {
 			eval_str s;
-			s.len = QWORD_GET_LO(MIN(p3->value, to_qword(p1->len)-p2->value));
-			s.value = &p1->value[QWORD_GET_LO(p2->value)];
+			s.len = MIN(p3->value, p1->len - p2->value);
+			s.value = &p1->value[p2->value];
 			scalar_create_str(r, &s);
 		} else {
 			scalar_create_str_c(r, "");
