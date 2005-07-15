@@ -38,6 +38,17 @@ public:
 		line = l;
 		ofs = o;
 	}
+
+	virtual int compareTo(const Object *data_b) const
+	{
+		info_pos *b = (info_pos*)data_b;
+		uint32 da = line;
+		uint32 db = delinearize(b->line);
+		if (da == db) {
+			return delinearize(ofs) - delinearize(b->ofs);
+		}
+		return da - db;
+	}
 };
 
 int compare_keys_info_pos_delinear(Object *data_a, Object *data_b)
@@ -136,14 +147,14 @@ bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool 
 
 	char *p = name;
 	info_xref *x = new info_xref(thetarget, *o);
-	t->insert(new info_pos(*line, *o), x);
+	t->insert(new KeyValue(new info_pos(*line, *o), x));
 	while (*p) {
 		if (*p=='\n') {
 			x->len =  *o - x->len;
 			*o = 0;
 			(*line)++;
 			x = new info_xref(thetarget, *o);
-			t->insert(new info_pos(*line, *o), x);
+			t->insert(new KeyValue(new info_pos(*line, *o), x));
 		} else {
 			(*o)++;
 		}
@@ -164,15 +175,14 @@ bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool 
 	return true;
 }
 
-ht_tree *parse_info_node(File *fl, char *infotext)
+Container *parse_info_node(File *fl, char *infotext)
 {
 	char *n = infotext;
 	bool linestart = true;
 	FileOfs f = 0;
 	uint o = 0;
 	uint l = 0;
-	ht_stree *t = new ht_stree();
-	t->init(compare_keys_info_pos_delinear);
+	Container *t = new AVLTree(true);
 
 	while (*n && (*n != 0x1f)) {
 		char *on = n;
@@ -229,7 +239,7 @@ fallback2:
 			}
 		}
 	}
-	t->set_compare_keys(compare_keys_info_pos);
+//	t->set_compare_keys(compare_keys_info_pos);
 	return t;
 }
 /*
@@ -320,7 +330,7 @@ void ht_info_lexer::set_cursor(uint x, uint y)
 	cy = y;
 }
 
-void ht_info_lexer::set_xrefs(ht_tree *x)
+void ht_info_lexer::set_xrefs(Container *x)
 {
 	xrefs = x;
 }
@@ -358,11 +368,11 @@ public:
 	}
 };
  
-void ht_info_textfile::init(File *s, bool own_s, ht_syntax_lexer *l)
+ht_info_textfile::ht_info_textfile(File *s, bool own_s, ht_syntax_lexer *l)
+	:ht_ltextfile(s, own_s, l)
 {
 	start = 0;
 	end = 0;
-	ht_ltextfile::init(s, own_s, l);
 }
 
 ht_ltextfile_line *ht_info_textfile::fetch_line(uint line)
@@ -394,31 +404,22 @@ void ht_info_textfile::set_node(uint ofs, uint len)
 
 void ht_info_viewer::init(bounds *b)
 {
-	ht_mem_file *f = new ht_mem_file();
-	f->init();
+	MemoryFile *f = new MemoryFile();
 
-	ht_info_textfile *s = new ht_info_textfile();
-	s->init(f, true, NULL);
+	ht_info_textfile *s = new ht_info_textfile(f, true, NULL);
 
 	ht_text_viewer::init(b, true, s, NULL);
 	cwd = NULL;
 	file = NULL;
 	node = NULL;
 	xrefs = NULL;
-	history = new ht_clist();
-	((ht_clist*)history)->init();
+	history = new Array(true);
 }
 
 void ht_info_viewer::done()
 {
-	if (history) {
-		history->destroy();
-		delete history;
-	}
-	if (xrefs) {
-		xrefs->destroy();
-		delete xrefs;
-	}
+	delete history;
+	delete xrefs;
 	if (cwd) free(cwd);
 	if (node) free(node);
 	if (file) free(file);
@@ -476,7 +477,7 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 	return -1;
 }
 
-ht_tree *ht_info_viewer::get_xrefs()
+Container *ht_info_viewer::get_xrefs()
 {
 	return xrefs;
 }
@@ -537,12 +538,10 @@ bool ht_info_viewer::igotonode(char *f, char *n, bool add2hist)
 			return false;
 		}
 
-		ht_mem_file *m = new ht_mem_file();
-		m->init();
+		MemoryFile *m = new MemoryFile();
 		
-		ht_tree *x = parse_info_node(m, infotext+o);
+		Container *x = parse_info_node(m, infotext+o);
 		if (x == NULL) {
-			m->done();
 			delete m;
 			free(infotext);
 			return false;
@@ -556,20 +555,16 @@ bool ht_info_viewer::igotonode(char *f, char *n, bool add2hist)
 				xofs, top_line));
 		}			
 		/* now modify text_viewer's state */
-		if (xrefs) {
-			xrefs->destroy();
-			delete xrefs;
-		}
+		delete xrefs;
 		xrefs = x;
 
-		ht_info_textfile *infofile=new ht_info_textfile();
-		infofile->init(m, true, NULL);
+		ht_info_textfile *infofile = new ht_info_textfile(m, true, NULL);
 
 		ht_info_lexer *infolexer = new ht_info_lexer();
 		infolexer->init(this);
 
 		infolexer->set_xrefs(xrefs);
-		infofile->set_node(0, m->get_size());
+		infofile->set_node(0, m->getSize());
 		set_textfile(infofile, true);
 		set_lexer(infolexer, true);
 
@@ -605,92 +600,95 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
-			case K_Space:
-			case K_Return: 
-				if (get_xrefs()) {
-					info_pos p(top_line + cursory, xofs + physical_cursorx());
-					info_xref *x = (info_xref*)get_xrefs()->get(&p);
-					if (!x) {
-						uint cx = physical_cursorx();
-						info_pos *q = (info_pos*)get_xrefs()->enum_prev((ht_data**)&x, &p);
-						if ((q) && ((q->line != top_line+cursory) ||
-						(cx < q->ofs) || (cx >= q->ofs + x->len))) {
-							x = NULL;
+		case K_Space:
+		case K_Return: {
+			Container *xrefs = get_xrefs();
+			if (xrefs) {
+				KeyValue p(new info_pos(top_line + cursory, xofs + physical_cursorx()), NULL);
+				KeyValue *kv = (KeyValue*)xrefs->get(xrefs->findLE(&p));
+				info_xref *x = (info_xref*)kv->mValue;
+				if (kv && kv->compareTo(&p)) {
+					uint cx = physical_cursorx();
+					info_pos *q = (info_pos*)kv->mKey;
+					if (((q->line != top_line+cursory) ||
+					(cx < q->ofs) || (cx >= q->ofs + x->len))) {
+						kv = NULL;
+					}
+				}
+				if (kv) {
+					char *p = NULL, *q = NULL;
+					char *a = x->target;
+					if (*a == '(') {
+						char *b = strchr(a, ')');
+						if (b) {
+							p = memndup(a+1, b-a-1);
+							q = ht_strdup(b+1);
 						}
 					}
-					if (x) {
-						char *p = NULL, *q = NULL;
-						char *a = x->target;
-						if (*a == '(') {
-							char *b = strchr(a, ')');
-							if (b) {
-								p = memndup(a+1, b-a-1);
-								q = ht_strdup(b+1);
-							}
-						}
-						if (!p)	p = ht_strdup(file);
-						if (!q)	q = ht_strdup(x->target);
-						if (!igotonode(p, q, true))
-							errorbox("help topic '(%s)%s' not found", p, q);
-						if (p) free(p);
-						if (q) free(q);
-					}
+					if (!p)	p = ht_strdup(file);
+					if (!q)	q = ht_strdup(x->target);
+					if (!igotonode(p, q, true))
+						errorbox("help topic '(%s)%s' not found", p, q);
+					if (p) free(p);
+					if (q) free(q);
+				}
+				clearmsg(msg);
+				dirtyview();
+				return;
+			}
+			break;
+		}
+		case K_Alt_Backspace:
+		case K_Backspace: {
+			int c;
+			if ((c = history->count())) {
+				info_history_entry *e = (info_history_entry*) (*history)[c-1];
+//				fprintf(stderr, "backspace: %s, %s\n", e->file, e->node);
+				if (e->node) {
+					if (igotonode(e->file, e->node, false)) {
+						cursorx = e->cursorx;
+						cursory = e->cursory;
+						xofs = e->xofs;
+						top_line = e->top_line;
+					} else {
+						errorbox("help topic '(%s)%s' not found", e->file, e->node);
+					}						
+					*history -= c-1;
 					clearmsg(msg);
 					dirtyview();
 					return;
+				}						
+			}
+			break;					
+		}
+		case K_Tab: {
+			if (get_xrefs()) {
+				KeyValue p(new info_pos(top_line + cursory, xofs + physical_cursorx()), NULL);
+				KeyValue *kv = (KeyValue *)get_xrefs()->findG(&p);
+				if (kv) {
+					info_pos *q = (info_pos*)kv->mKey;
+					goto_line(q->line);
+					cursor_pput(q->ofs);
 				}
-				break;
-			case K_Alt_Backspace:
-			case K_Backspace: {
-				int c;
-				if ((c = history->count())) {
-					info_history_entry *e = (info_history_entry*)history->get(c-1);
-//					fprintf(stderr, "backspace: %s, %s\n", e->file, e->node);
-					if (e->node) {
-						if (igotonode(e->file, e->node, false)) {
-							cursorx = e->cursorx;
-							cursory = e->cursory;
-							xofs = e->xofs;
-							top_line = e->top_line;
-						} else {
-							errorbox("help topic '(%s)%s' not found", e->file, e->node);
-						}						
-						history->del(c-1);
-						clearmsg(msg);
-						dirtyview();
-						return;
-					}						
+			}					
+			clearmsg(msg);
+			dirtyview();
+			return;
+		}
+		case K_BackTab: {
+			if (get_xrefs()) {
+				KeyValue p(new info_pos(top_line + cursory, xofs + physical_cursorx()), NULL);
+				KeyValue *kv = (KeyValue *)get_xrefs()->findL(&p);
+				if (kv) {
+					info_pos *q = (info_pos*)kv->mKey;
+					goto_line(q->line);
+					cursor_pput(q->ofs);
 				}
-				break;					
-			}
-			case K_Tab: {
-				if (get_xrefs()) {
-					info_pos p(top_line + cursory, xofs + physical_cursorx());
-					info_xref *r;
-					info_pos *q = (info_pos*)get_xrefs()->enum_next((ht_data**)&r, &p);
-					if (q) {
-						goto_line(q->line);
-						cursor_pput(q->ofs);
-					}
-				}					
-				clearmsg(msg);
-				dirtyview();
-				return;
-			}
-			case K_BackTab: {
-				if (get_xrefs()) {
-					info_pos p(top_line + cursory, xofs + physical_cursorx());
-					info_xref *r;
-					info_pos *q = (info_pos*)get_xrefs()->enum_prev((ht_data**)&r, &p);
-					if (q) {
-						goto_line(q->line);
-						cursor_pput(q->ofs);
-					}
-				}					
-				clearmsg(msg);
-				dirtyview();
-				return;
-			}
+			}					
+			clearmsg(msg);
+			dirtyview();
+			return;
+		}
 		}
 	}
 	ht_text_viewer::handlemsg(msg);
