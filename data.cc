@@ -32,7 +32,7 @@
 #include "except.h"
 
 #include "data.h"
-#include "debug.h"
+#include "htdebug.h"
 #include "snprintf.h"
 #include "stream.h"
 
@@ -52,10 +52,6 @@ int autoCompare(const Object *a, const Object *b)
 /*
  *	Object
  */
-
-Object::Object(BuildCtorArg)
-{
-}
 
 Object::Object()
 {
@@ -138,10 +134,6 @@ void	Object::store(ObjectStream &s) const
 /*
  *	Enumerator
  */
-Enumerator::Enumerator(BuildCtorArg a) : Object(a)
-{
-}
-
 Enumerator::Enumerator()
 {
 }
@@ -264,10 +256,6 @@ int Enumerator::toString(char *buf, int buflen) const
 /*
  *	Container
  */
-Container::Container(BuildCtorArg a) : Enumerator(a)
-{
-}
-
 Container::Container()
 {
 	hom_objid = OBJID_TEMP;
@@ -308,10 +296,6 @@ Object *Container::removeObj(const Object *sig)
 /*
  *	List
  */
-List::List(BuildCtorArg a) : Container(a)
-{
-}
-
 List::List()
 {
 }
@@ -330,10 +314,6 @@ List::List()
 #define ARRAY_ALLOC_GROW_DENOM	2
 
 #define ARRAY_ALLOC_GROW_ABSMAX	64*1024
-
-Array::Array(BuildCtorArg a) : List(a)
-{
-}
 
 Array::Array(bool oo, int prealloc)
 {
@@ -412,7 +392,7 @@ void Array::store(ObjectStream &s) const
 	PUT_INT32D(s, ecount);
 	PUT_INT32X(s, hom_objid);
 
-	ASSERT((ecount == 0) || (hom_objid != OBJID_TEMP));
+	assert((ecount == 0) || (hom_objid != OBJID_TEMP));
 	for (uint i = 0; i<ecount; i++) {
 		s.putObject(elems[i], "element", hom_objid);
 	}
@@ -460,7 +440,7 @@ void Array::freeObj(Object *obj)
 void Array::realloc(int n)
 {
 	if (n == 0) n = 1;	/* alloc'ing 0 bytes not allowed */
-	ASSERT((uint)n >= ecount);
+	assert((uint)n >= ecount);
 	elems = (Object**)::realloc(elems, sizeof (*elems) * n);
 	acount = n;
 	memset(elems+ecount, 0, (acount-ecount)*sizeof(*elems));
@@ -490,7 +470,7 @@ int Array::compareObjects(const Object *a, const Object *b) const
 void Array::forceSetByIdx(int i, Object *obj)
 {
 	// FIXME: sanity check, better idea ?
-	if (i<0) ASSERT(0);
+	if (i<0) assert(0);
 	prepareWriteAccess(i);
 	freeObj(elems[i]);
 	elems[i] = obj;
@@ -622,10 +602,6 @@ void Array::insertAt(ObjHandle h, Object *obj)
 /*
  *	Stack
  */
-Stack::Stack(BuildCtorArg a) : Array(a)
-{
-}
-
 Stack::Stack(bool own_objects) : Array(own_objects)
 {
 }
@@ -653,10 +629,6 @@ ObjectID Stack::getObjectID() const
 /*
  *	SLinkedList
  */
-SLinkedList::SLinkedList(BuildCtorArg a) : List(a)
-{
-}
-
 SLinkedList::SLinkedList(bool oo)
 {
 	own_objects = oo;
@@ -747,7 +719,7 @@ void SLinkedList::store(ObjectStream &s) const
 	PUT_INT32X(s, hom_objid);
 
 	ObjHandle h = findFirst();
-	ASSERT((h == invObjHandle) || (hom_objid != OBJID_TEMP));
+	assert((h == invObjHandle) || (hom_objid != OBJID_TEMP));
 	while (h != invObjHandle) {
 		Object *o = get(h);
 
@@ -956,10 +928,6 @@ ObjHandle SLinkedList::nativeToHandle(SLinkedListNode *n) const
 /*
  *	DLinkedList
  */
-DLinkedList::DLinkedList(BuildCtorArg a) : List(a)
-{
-}
-
 DLinkedList::DLinkedList(bool oo)
 {
 	own_objects = oo;
@@ -1050,7 +1018,7 @@ void DLinkedList::store(ObjectStream &s) const
 	PUT_INT32X(s, hom_objid);
 
 	ObjHandle h = findFirst();
-	ASSERT((h == invObjHandle) || (hom_objid != OBJID_TEMP));
+	assert((h == invObjHandle) || (hom_objid != OBJID_TEMP));
 	while (h != invObjHandle) {
 		Object *o = get(h);
 
@@ -1226,10 +1194,6 @@ ObjHandle DLinkedList::nativeToHandle(DLinkedListNode *n) const
 /*
  *	Queue
  */
-Queue::Queue(BuildCtorArg a) : SLinkedList(a)
-{
-}
-
 Queue::Queue(bool own_objects) : SLinkedList(own_objects)
 {
 }
@@ -1248,10 +1212,6 @@ ObjectID Queue::getObjectID() const
 /*
  *	BinaryTree
  */
-BinaryTree::BinaryTree(BuildCtorArg a) : Container(a)
-{
-}
-
 BinaryTree::BinaryTree(bool oo, Comparator comp)
 {
 	root = NULL;
@@ -1510,7 +1470,7 @@ void	BinaryTree::store(ObjectStream &s) const
 	PUT_INT32D(s, ecount);
 	PUT_INT32X(s, hom_objid);
 
-	ASSERT(hom_objid != OBJID_TEMP);
+	assert(hom_objid != OBJID_TEMP);
 	storeR(s, root);
 }
 
@@ -1691,10 +1651,6 @@ void BinaryTree::setNodeIdentity(BinTreeNode *node, BinTreeNode *newident)
 /*
  *	AVLTree
  */
-AVLTree::AVLTree(BuildCtorArg a) : BinaryTree(a)
-{
-}
-
 AVLTree::AVLTree(bool aOwnObjects, Comparator aComparator)
  : BinaryTree(aOwnObjects, aComparator)
 {
@@ -1920,7 +1876,7 @@ ObjHandle AVLTree::insert(Object *obj)
 		// finalization
 		*t = p;
 	}
-	ASSERT(root);
+	assert(root);
 	return nativeToHandle(retval);
 }
 
@@ -2159,7 +2115,7 @@ Object *MRUCache::remove(ObjHandle h)
 	}
 //	checkList();
 	Object *o = AVLTree::remove(h);
-	if ((h != invObjHandle) && (o == NULL)) ASSERT(0);
+	if ((h != invObjHandle) && (o == NULL)) assert(0);
 //	checkList();
 	return o;
 }
@@ -2229,12 +2185,12 @@ ObjHandle MRUCache::getLRU()
 
 void MRUCache::checkList() const
 {
-	ASSERT(expensiveCheck());
+	assert(expensiveCheck());
 	DPRINTF("======================================================\n");
 	if (!mostRU || !leastRU) {
 		DPRINTF("empty\n");
-		ASSERT(!mostRU);
-		ASSERT(!leastRU);
+		assert(!mostRU);
+		assert(!leastRU);
 		return;
 	}
 	DPRINTF("list: \n");
@@ -2267,34 +2223,30 @@ void MRUCache::checkList() const
 			DPRINTF("mostRU: %08x, leastRU: %08x\n", mostRU, leastRU);
 			DPRINTF("i: %08x, i->lessRU: %08x, i->np: %08x\n", i, i->lessRU, i->lessRU->moreRU);
 		}
-		ASSERT(i->lessRU->moreRU == i);
-		ASSERT(((i == mostRU) && (i->moreRU == NULL)) || ((i != mostRU) && (i->moreRU != NULL)));
+		assert(i->lessRU->moreRU == i);
+		assert(((i == mostRU) && (i->moreRU == NULL)) || ((i != mostRU) && (i->moreRU != NULL)));
 		i = i->lessRU;
 		c1++;
-		ASSERT(c1<=ecount);
+		assert(c1<=ecount);
 	}
-	ASSERT(i == leastRU);
+	assert(i == leastRU);
 	uint c2 = 1;
 	i = leastRU;
 	while (i->moreRU) {
-		ASSERT(i->moreRU->lessRU == i);
-		ASSERT(((i == leastRU) && (i->lessRU == NULL)) || ((i != leastRU) && (i->lessRU != NULL)));
+		assert(i->moreRU->lessRU == i);
+		assert(((i == leastRU) && (i->lessRU == NULL)) || ((i != leastRU) && (i->lessRU != NULL)));
 		i = i->moreRU;
 		c2++;
-		ASSERT(c2<=ecount);
+		assert(c2<=ecount);
 	}
-	ASSERT(i == mostRU);
-//	ASSERT(c1 == ecount);
-//	ASSERT(c2 == ecount);
+	assert(i == mostRU);
+//	assert(c1 == ecount);
+//	assert(c2 == ecount);
 }
 
 /*
  *	Set
  */
-Set::Set(BuildCtorArg a) : AVLTree(a)
-{
-}
-
 Set::Set(bool oo)
 : AVLTree(oo)
 {
@@ -2327,10 +2279,6 @@ void Set::unionWith(Set *b)
 /*
  *
  */
-
-KeyValue::KeyValue(BuildCtorArg a) : Object(a)
-{
-}
 
 KeyValue::KeyValue(Object *aKey, Object *aValue)
 {
@@ -2386,10 +2334,6 @@ void KeyValue::store(ObjectStream &s) const
 /*
  *	SInt
  */
-SInt::SInt(BuildCtorArg a) : Object(a)
-{
-}
-
 SInt::SInt(signed int i)
 {
 	value = i;
@@ -2485,10 +2429,6 @@ void SInt64::store(ObjectStream &s) const
 /*
  *	UInt
  */
-UInt::UInt(BuildCtorArg a) : Object(a)
-{
-}
-
 UInt::UInt(unsigned int i)
 {
 	value = i;
@@ -2642,10 +2582,6 @@ Pointer::Pointer(void *p)
 /**
  *	A memory area.
  */
-
-MemArea::MemArea(BuildCtorArg)
-{
-}
 
 MemArea::MemArea(const void *p, uint s, bool d)
 {
@@ -2908,26 +2844,26 @@ char *matchhash(int value, int_hash *hash_table)
  *	Module Init/Done
  */
 
-BUILDER(OBJID_OBJECT, Object);
+BUILDER2(OBJID_OBJECT, Object);
 
-BUILDER(OBJID_ARRAY, Array);
-BUILDER(OBJID_STACK, Stack);
+BUILDER(OBJID_ARRAY, Array, List);
+BUILDER(OBJID_STACK, Stack, Array);
 
-BUILDER(OBJID_BINARY_TREE, BinaryTree);
-BUILDER(OBJID_AVL_TREE, AVLTree);
-BUILDER(OBJID_SET, Set);
+BUILDER(OBJID_BINARY_TREE, BinaryTree, Container);
+BUILDER(OBJID_AVL_TREE, AVLTree, BinaryTree);
+BUILDER(OBJID_SET, Set, AVLTree);
 
-BUILDER(OBJID_SLINKED_LIST, SLinkedList);
-BUILDER(OBJID_QUEUE, Queue);
-BUILDER(OBJID_DLINKED_LIST, DLinkedList);
+BUILDER(OBJID_SLINKED_LIST, SLinkedList, List);
+BUILDER(OBJID_QUEUE, Queue, SLinkedList);
+BUILDER(OBJID_DLINKED_LIST, DLinkedList, List);
 
-BUILDER(OBJID_KEYVALUE, KeyValue);
-BUILDER(OBJID_SINT, SInt);
-BUILDER(OBJID_UINT, UInt);
-BUILDER(OBJID_MEMAREA, MemArea);
+BUILDER(OBJID_KEYVALUE, KeyValue, Object);
+BUILDER(OBJID_SINT, SInt, Object);
+BUILDER(OBJID_UINT, UInt, Object);
+BUILDER(OBJID_MEMAREA, MemArea, Object);
 
-BUILDER(OBJID_STRING, String);
-BUILDER(OBJID_ISTRING, IString);
+BUILDER(OBJID_STRING, String, Object);
+BUILDER(OBJID_ISTRING, IString, String);
 
 bool initData()
 {
