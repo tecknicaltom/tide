@@ -38,7 +38,7 @@ protected:
 	int mLength;
 	byte *mContent;
 public:
-				String(BuildCtorArg);
+				String(BuildCtorArg&);
 				String();
 				String(const char *s);
 				String(const String *s);
@@ -124,7 +124,7 @@ String operator +(const char *s1, const String &s2);
  */
 class IString: public String {
 public:
-				IString(BuildCtorArg);
+				IString(BuildCtorArg&);
 				IString();
 
 	virtual	Object *	clone() const;
