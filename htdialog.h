@@ -26,6 +26,7 @@
 #include "htdebug.h"
 #include "htobj.h"
 #include "htstring.h"
+#include "io/keyb.h"
 
 /*
  *	CLASS ht_dialog
