@@ -79,7 +79,6 @@
 
 #define DPRINTF(msg...)
 
-#endif /* __cplusplus */
 
 /*
  *	steves strucs
@@ -103,5 +102,6 @@ struct htmsg {
 	htmsg_param data1;
 	htmsg_param data2;
 };
+#endif /* __cplusplus */
 
 #endif
