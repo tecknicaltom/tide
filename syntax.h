@@ -22,7 +22,6 @@
 #define __SYNTAX_H__
 
 #include "data.h"
-#include "htio.h"
 #include "htobj.h"
 
 #define HT_HTML_SYNTAX_LEXER
