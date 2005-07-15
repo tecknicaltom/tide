@@ -21,7 +21,7 @@
 #ifndef __SYMMATH_H__
 #define __SYMMATH_H__
 
-#include "htdata.h"
+#include "data.h"
 
 enum c_op {
     c_invalid,
@@ -101,13 +101,13 @@ protected:
 	bool simplify_reduce_inverse(b_op oa, sym_int_token *a, b_op ob, sym_int_token *b, sym_int_token **repl);
 	bool simplify_reduce_neutral(b_op o, sym_int_token *x);
 public:
-	ht_list *tokens;
+	Container *tokens;
 
 	sym_int();
 	~sym_int();
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
@@ -132,7 +132,7 @@ public:
 	~sym_int_symbol();
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
@@ -149,7 +149,7 @@ public:
 	sym_int_const(uint value);
 /* overwritten */
 	virtual bool compare_eq(sym_int_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
@@ -180,7 +180,7 @@ public:
 	~sym_bool_symbol();
 /* overwritten */
 	virtual bool compare_eq(sym_bool_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(bool *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
@@ -214,7 +214,7 @@ public:
 	sym_bool_intcmp(sym_int_token *int1, c_op cop, sym_int_token *int2);
 /* overwritten */	
 	virtual bool compare_eq(sym_bool_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(bool *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
@@ -227,7 +227,7 @@ public:
 
 class sym_bool: public sym_bool_token {
 protected:
-	ht_list *tokens;
+	Container *tokens;
 
 	void clear();
 public:
@@ -235,7 +235,7 @@ public:
 	~sym_bool();
 /* overwritten */
 	virtual bool compare_eq(sym_bool_token *t);
-	virtual Object *clone();
+	virtual Object *clone() const;
 	virtual bool evaluate(bool *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
