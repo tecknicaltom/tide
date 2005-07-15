@@ -22,7 +22,6 @@
 #define __HTTAG_H__
 
 #include "io/types.h"
-#include "htio.h"
 #include "stream.h"
 
 /* SELECTION-TAG */
