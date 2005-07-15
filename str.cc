@@ -24,7 +24,7 @@
 #include <cstring>
 
 #include "except.h"
-#include "debug.h"
+#include "htdebug.h"
 #include "snprintf.h"
 #include "str.h"
 #include "stream.h"
@@ -43,10 +43,6 @@ extern "C" {
  *	CLASS String
  */
 
-String::String(BuildCtorArg a)
-{
-}
- 
 /**
  *	creates empty string
  */
@@ -79,7 +75,7 @@ String::String(const String *s)
  */
 String::String(const String &s)
 {
-	ASSERT(&s != this);
+	assert(&s != this);
 	mContent = NULL;
 	assign(s);
 }
@@ -261,7 +257,7 @@ int String::compare(const String &s, int aMax) const
 
 int String::compareTo(const Object *o) const
 {
-	ASSERT(getObjectID() == o->getObjectID());
+	assert(getObjectID() == o->getObjectID());
 	return compare(*((String *)o));
 }
 
@@ -387,7 +383,7 @@ notfound:;
  */
 int String::findStringBwd(String &s, int start, int ith_match) const
 {
-	ASSERT("not yet implemented" && 0);
+	assert("not yet implemented" && 0);
 	if (!mLength) return -1;
 	return -1;
 }
@@ -558,7 +554,7 @@ void String::transformCase(StringCase c)
  */
 void String::translate(const String &inAlpha, const String &outAlpha)
 {
-	ASSERT(inAlpha.mLength == outAlpha.mLength);
+	assert(inAlpha.mLength == outAlpha.mLength);
 	if (inAlpha.isEmpty() || isEmpty()) return;
 	byte tr[256];
 	for (int i=0; i<256; i++) tr[i] = i;
@@ -673,10 +669,6 @@ String operator +(const char *s1, const String &s2)
 /*
  *	CLASS IString
  */
-
-IString::IString(BuildCtorArg)
-{
-}
 
 IString::IString()
 {
