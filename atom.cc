@@ -63,10 +63,10 @@ uint getAtomId(void *value)
 	return invalid_atom_id;
 }
 
-#include "debug.h"
+#include "htdebug.h"
 bool registerAtom(uint id, void *value)
 {
-	ASSERT(value);
+	assert(value);
 	atoms.insert(new Atom(id, value));
 	return true;
 }
