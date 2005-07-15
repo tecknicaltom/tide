@@ -20,7 +20,6 @@
 
 #include "analy.h"
 #include "analy_names.h"
-#include "global.h"
 #include "htdebug.h"
 #include "htstring.h"
 #include "snprintf.h"
@@ -38,7 +37,7 @@
 //#define DPRINTF(msg...) printf(##msg)
 //#define DPRINTF2(msg...) printf(##msg)
 
-int compare_keys_addresses_delinear(ht_data *key_a, Object *key_b)
+int compare_keys_addresses_delinear(Object *key_a, Object *key_b)
 {
 	return ((Address*)key_a)->compareDelinear((Address*)key_b);
 }
@@ -67,8 +66,7 @@ OutAddr::OutAddr(Address *Addr, uint Time)
 {
 	addr = DUP_ADDR(Addr);
 	updateTime(Time);
-	lines = new ht_clist();
-	lines->init();
+	lines = new Array(true);
 	size = 0;
 	bytes = 0;
 	
@@ -77,7 +75,6 @@ OutAddr::OutAddr(Address *Addr, uint Time)
 OutAddr::~OutAddr()
 {
 	delete addr;
-	lines->destroy();
 	delete lines;
 }
 
@@ -90,14 +87,14 @@ void OutAddr::appendLine(OutLine *l)
 
 void OutAddr::clear()
 {
-	lines->empty();
+	lines->delAll();
 	bytes = 0;
 	size = 0;
 }
 
 OutLine *OutAddr::getLine(int i)
 {
-	return (OutLine*)lines->get(i);
+	return (OutLine*) (*lines)[i];
 }
 
 void OutAddr::updateTime(uint Time)
@@ -114,8 +111,7 @@ void	AnalyserOutput::init(Analyser *Analy)
 	addr = new InvalidAddress();
 	cur_addr = NULL;
 	cur_out_addr = NULL;
-	out_addrs = new ht_dtree();
-	out_addrs->init(compare_keys_addresses_delinear);
+	out_addrs = new AVLTree(true);
 	bytes_addr = 0;
 	bytes_line = 0;
 	size = 0;
@@ -129,7 +125,6 @@ void	AnalyserOutput::init(Analyser *Analy)
 
 void AnalyserOutput::done()
 {
-	out_addrs->destroy();
 	delete out_addrs;
 	delete addr;
 	free(work_buffer_start);
@@ -216,7 +211,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 	cur_addr = analy->getLocationByAddress(addr);
 	cur_out_addr = oa;
 	cur_out_addr->clear();
-	
+
 	beginAddr();
 
 	if (cur_addr) {
@@ -266,23 +261,23 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 				} else {
 					uint64 d;
 					Addr->putIntoArray((byte*)&d);
-					t = externalLink(b, d.hi, d.lo, 0, 1, NULL);
+					t = externalLink(b, d >> 32, d, 0, 1, NULL);
 				}
 				write(t);
 			} else {
-				ht_tree *x_tree = cur_addr->xrefs;
-				if (x_tree) {
+				Container *xr = cur_addr->xrefs;
+				if (xr) {
 					int i=0;
-					AddrXRef *x;
-					Address *xa = (Address*)x_tree->enum_next((ht_data**)&x, NULL);
-					while (xa) {
+					ObjHandle xh = xr->findFirst();
+					while (xh != invObjHandle) {
 						if ((i % (MAX_XREF_COLS+1))!=0) {
+							AddrXRef *x = (AddrXRef *)xr->get(xh);
 							char buf3[90];
 							sprintf(buf3, " %c", xref_type_short(x->type));
 							write(buf3);
-							xa->stringify(buf3, 1024, ADDRESS_STRING_FORMAT_COMPACT);
-							write(link(buf3, xa));
-							xa = (Address*)x_tree->enum_next((ht_data**)&x, xa);
+							x->addr->stringify(buf3, 1024, ADDRESS_STRING_FORMAT_COMPACT);
+							write(link(buf3, x->addr));
+							xh = xr->findNext(xh);
 						} else {
 							if (i!=0) {
 								endLine();
@@ -488,7 +483,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 	endAddr();
 }
 
-ht_stream *AnalyserOutput::getGenerateStream()
+Stream *AnalyserOutput::getGenerateStream()
 {
 	return NULL;
 }
@@ -497,7 +492,7 @@ int	AnalyserOutput::generateFile(Address *from, Address *to)
 {
 	if (analy->active) return OUTPUT_GENERATE_ERR_ANALYSER_NOT_FINISHED;
 	if (!from->isValid() || !to->isValid()) return OUTPUT_GENERATE_ERR_INVAL;
-	ht_stream *out = getGenerateStream();
+	Stream *out = getGenerateStream();
 	if (!out) return OUTPUT_GENERATE_ERR_INVAL;
 	header();
 	int line = 0;
@@ -539,7 +534,7 @@ OutAddr *AnalyserOutput::getAddr(Address *Addr)
 		DPRINTF("not cached1 --");
 		delete addr;
 		addr = DUP_ADDR(Addr);
-		OutAddr *oa = (OutAddr*)out_addrs->get(Addr);
+		OutAddr *oa = (OutAddr*)out_addrs->get(out_addrs->find(Addr));
 		if (!oa) {
 			DPRINTF("generate\n");
 			if (out_addrs->count() > 1024) {
@@ -548,7 +543,7 @@ OutAddr *AnalyserOutput::getAddr(Address *Addr)
 			}
 			oa = new OutAddr(Addr, current_time);
 			generateAddr(Addr, oa);
-			out_addrs->insert(DUP_ADDR(Addr), oa);
+			out_addrs->insert(oa);
 		} else {
 			DPRINTF("but cached2 ");
 			if (oa->time != current_time) {
@@ -624,7 +619,7 @@ char *AnalyserOutput::link(char *s, Address *Addr)
 	return (char*)temp_buffer;
 }
 
-char *AnalyserOutput::externalLink(char *s, int type1, int type2, int type3, int type4, void *special)
+char *AnalyserOutput::externalLink(char *s, uint32 type1, uint32 type2, uint32 type3, uint32 type4, void *special)
 {
 	strcpy((char*)temp_buffer, s);
 	return (char*)temp_buffer;
@@ -846,7 +841,7 @@ void	AnalyserOutput::reset()
 	delete addr;
 	addr = new InvalidAddress;
 	cur_out_addr = NULL;
-	out_addrs->empty();
+	out_addrs->delAll();
 }
 
 void	AnalyserOutput::write(const char *s)
