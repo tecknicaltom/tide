@@ -101,7 +101,7 @@ struct ImageSymDescriptor {
 #define MAX_BYTES_PER_SEGMENT		0xff00
 #define MAX_SYMBOLS_PER_SEGMENT	0x4000
 
-static void write_sym(ht_stream *stream, uint32 addr, char *name, uint *bytes_written)
+static void write_sym(Stream *stream, uint32 addr, char *name, uint *bytes_written)
 {
 	ImageSymDescriptor desc;
 	desc.address = addr;
@@ -110,7 +110,7 @@ static void write_sym(ht_stream *stream, uint32 addr, char *name, uint *bytes_wr
 	*bytes_written += sizeof desc + 1 + strlen(name);
 }
 
-static void g(ht_stream *stream, Symbol *s, uint *bytes_written, uint *symbols_written, uint16 *ptr_table)
+static void g(Stream *stream, Symbol *s, uint *bytes_written, uint *symbols_written, uint16 *ptr_table)
 {
 	if (*bytes_written >= MAX_BYTES_PER_SEGMENT) return;
 	if (*symbols_written >= MAX_SYMBOLS_PER_SEGMENT) return;
