@@ -18,7 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "htatom.h"
+#include "atom.h"
 #include "htiobox.h"
 #include "srt.h"
 #include "symmath.h"
@@ -26,8 +26,8 @@
 /* FIXME: ... find a better way ... */
 #include "srt_x86.h"
 
-#define ATOM_SYM_INT_REG		MAGICD("SRT\x00")
-#define ATOM_SYM_INT_MEM		MAGICD("SRT\x01")
+#define ATOM_SYM_INT_REG		MAGIC32("SRT\x00")
+#define ATOM_SYM_INT_MEM		MAGIC32("SRT\x01")
 
 /*
  *	CLASS state_mod
@@ -63,12 +63,12 @@ bool sym_int_reg::compare_eq(sym_int_token *t)
 	return (regidx == s->regidx);
 }
 
-Object *sym_int_reg::clone()
+Object *sym_int_reg::clone() const
 {
 	return new sym_int_reg(regidx);
 }
 
-bool sym_int_reg::evaluate(bool *i)
+bool sym_int_reg::evaluate(uint *i)
 {
 	return false;
 }
@@ -100,12 +100,12 @@ bool sym_int_mem::compare_eq(sym_int_token *t)
 	return false;
 }
 
-Object *sym_int_mem::clone()
+Object *sym_int_mem::clone() const
 {
 	return new sym_int_mem((sym_int*)addr->clone(), size, endian);
 }
 
-bool sym_int_mem::evaluate(bool *i)
+bool sym_int_mem::evaluate(uint *i)
 {
 	return false;
 }
