@@ -1,3 +1,7 @@
+asdf
+as
+fa
+s
 /* 
  *	HT Editor
  *	htcurses.h (WIN32 implementation)
