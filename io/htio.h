@@ -1,3 +1,9 @@
+asfasfas
+a
+sfa
+sf
+as
+f
 /*
  *	HT Editor
  *	io.h
