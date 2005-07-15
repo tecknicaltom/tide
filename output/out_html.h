@@ -30,6 +30,6 @@
 #define HTML_OUTPUT_ERR_STREAM 2
 #define HTML_OUTPUT_ERR_ANALY_NOT_FINISHED 3
 
-int generate_html_output(Analyser *analy, ht_stream *stream, Address *from, Address *to);
+int generate_html_output(Analyser *analy, Stream *stream, Address *from, Address *to);
 
 #endif
