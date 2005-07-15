@@ -19,7 +19,7 @@
  */
 
 #include "analy.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htctrl.h"
 #include "htdebug.h"
 #include "httag.h"
@@ -124,7 +124,7 @@ void	AnalyserHTOutput::endLine()
 		if (analy->validAddress(addr, scinitialized)) {
 
 			// FIXME: bufferbla? and ugly
-			FILEOFS a=analy->addressToFileofs(addr);
+			FileOfs a = analy->addressToFileofs(addr);
 			assert(a != INVALID_FILE_OFS);
 
 			char workbuf2[1024];
@@ -149,7 +149,7 @@ void	AnalyserHTOutput::endLine()
 	AnalyserOutput::endLine();
 }
 
-char *AnalyserHTOutput::externalLink(char *s, int type1, int type2, int type3, int type4, void *special)
+char *AnalyserHTOutput::externalLink(char *s, uint32 type1, uint32 type2, uint32 type3, uint32 type4, void *special)
 {
 	*(tag_make_ref(tmpbuffer, type1, type2, type3, type4, s)) = 0;
 	return tmpbuffer;
@@ -166,7 +166,7 @@ char *AnalyserHTOutput::link(char *s, Address *Addr)
 	} else {
 		uint64 d;
 		Addr->putIntoArray((byte*)&d);
-		*(tag_make_ref(tmpbuffer, d.hi, d.lo, 0, 0, s)) = 0;
+		*(tag_make_ref(tmpbuffer, d>>32, d, 0, 0, s)) = 0;
 	}
 	return tmpbuffer;
 }
