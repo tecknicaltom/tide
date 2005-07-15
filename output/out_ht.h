@@ -60,7 +60,7 @@ public:
 		virtual	void	endLine();
 		virtual	void putElement(int element_type, const char *element);
 		virtual	char *link(char *s, Address *Addr);
-		virtual	char *externalLink(char *s, int type1, int type2, int type3, int type4, void *special);
+		virtual	char *externalLink(char *s, uint32 type1, uint32 type2, uint32 type3, uint32 type4, void *special);
 private:
 				void reloadPalette();
 };
