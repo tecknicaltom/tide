@@ -20,16 +20,17 @@
 
 #include "cstream.h"
 #include "htdebug.h"
+#include "except.h"
 #include "endianess.h"
 #include "minilzo.h"
 #include "tools.h"
 
 #include <string.h>
 
-void	ht_compressed_stream::init(ht_stream *stream, bool own_stream, uint granularity)
+ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream, uint granularity)
+	: StreamLayer(stream, own_stream)
 {
-	ht_layer_stream::init(stream, own_stream);
-	if ((get_access_mode() & (FAM_READ | FAM_WRITE)) == (FAM_READ | FAM_WRITE)) {
+	if ((stream->getAccessMode() & (IOAM_READ | IOAM_WRITE)) == (IOAM_READ | IOAM_WRITE)) {
 		// ht_compressed_stream cant be used for read and write access simultaneously
 		assert(0);
 	}
@@ -38,16 +39,15 @@ void	ht_compressed_stream::init(ht_stream *stream, bool own_stream, uint granula
 	buffersize = granularity;
 }
 
-void	ht_compressed_stream::done()
+ht_compressed_stream::~ht_compressed_stream()
 {
-	if (get_access_mode() & FAM_WRITE) {
+	if (getAccessMode() & IOAM_WRITE) {
 		flush_compressed();
 	}
 	if (buffer) free(buffer);
-	ht_layer_stream::done();
 }
 
-bool ht_compressed_stream::flush_compressed()
+void ht_compressed_stream::flush_compressed()
 {
 	if (bufferpos) {
 		byte *cbuf = (byte *)smalloc(bufferpos + bufferpos / 64 + 16 + 3);
@@ -59,31 +59,25 @@ bool ht_compressed_stream::flush_compressed()
 
 		free(workbuf);
 
-		create_foreign_int(n, bufferpos, 4, big_endian);
-		if (stream->write(n, 4)!=4) {
+		try {
+			createForeignInt(n, bufferpos, 4, big_endian);
+			writex(n, 4);
+			createForeignInt(n, cbuf_len, 4, big_endian);
+			writex(n, 4);
+			writex(cbuf, cbuf_len);
+		} catch (const IOException &) {
 			free(cbuf);
-			return false;
-		}			
-		create_foreign_int(n, cbuf_len, 4, big_endian);
-		if (stream->write(n, 4)!=4) {
-			free(cbuf);
-			return false;
-		}			
-		if (stream->write(cbuf, cbuf_len)!=cbuf_len) {
-			free(cbuf);
-			return false;
-		}			
-
+			throw;
+		}
 		free(cbuf);
 		
 		bufferpos = 0;
 	}
-	return true;
 }
 
-bool ht_compressed_stream::flush_uncompressed()
+void ht_compressed_stream::flush_uncompressed()
 {
-	if (bufferpos==0) {
+	if (bufferpos == 0) {
 		free(buffer);
 		buffer = NULL;
 
@@ -91,28 +85,29 @@ bool ht_compressed_stream::flush_uncompressed()
 		uint uncompressed_len;
 		byte n[4];
 
-		if (stream->read(n, 4)!=4) return false;
+		readx(n, 4);
 		uncompressed_len = createHostInt(n, 4, big_endian);
-		if (stream->read(n, 4)!=4) return false;
+		readx(n, 4);
 		cbuf_len = createHostInt(n, 4, big_endian);
 
 		buffer = (byte *)smalloc(uncompressed_len);
 		byte *cbuf = (byte *)smalloc(cbuf_len);
-		if (stream->read(cbuf, cbuf_len)!=cbuf_len) {
+		
+		try {
+			readx(cbuf, cbuf_len);
+			lzo_uint dummy;
+			lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
+			assert(dummy == uncompressed_len);
+		} catch (const IOException &) {
 			free(cbuf);
-			return false;
+			throw;
 		}
-
-		lzo_uint dummy;
-		lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
-		assert(dummy == uncompressed_len);
-
 		free(cbuf);
+
 
 		buffersize = uncompressed_len;
 		bufferpos = uncompressed_len;          
 	}
-	return true;
 }
 
 uint	ht_compressed_stream::read(void *aBuf, uint size)
@@ -125,7 +120,11 @@ uint	ht_compressed_stream::read(void *aBuf, uint size)
 		size -= bufferpos;
 		bufferpos = 0;
 		if (size) {
-			if (!flush_uncompressed()) return ssize - size;
+			try {
+				flush_uncompressed();
+			} catch (const IOException &) {
+				return ssize - size;
+			}
 		} else break;
 	}
 	if (size) {
@@ -145,7 +144,11 @@ uint	ht_compressed_stream::write(const void *aBuf, uint size)
 		buf += buffersize-bufferpos;
 		bufferpos = buffersize;
 		if (size) {
-			if (!flush_compressed()) return ssize - size;
+			try {
+				flush_compressed();
+			} catch (const IOException &) {
+				return ssize - size;
+			}
 		} else break;
 	}
 	if (size) {
