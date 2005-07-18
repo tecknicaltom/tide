@@ -23,7 +23,7 @@
 #include "atom.h"
 #include "htcoff.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hthex.h"
 #include "htiobox.h"
 #include "htnewexe.h"
@@ -80,7 +80,7 @@ static ht_view *htpeil_init(bounds *b, File *file, ht_format_group *group)
 	file->seek(sec_ofs);
 	if (file->read(&dir, sizeof dir) != sizeof dir) goto read_error;
 
-	create_host_struct(&dir, PE_IL_DIRECTORY_struct, little_endian);
+	createHostStruct(&dir, PE_IL_DIRECTORY_struct, little_endian);
 	
 	if (sec_size != dir.size) goto read_error;
 	
@@ -113,7 +113,7 @@ static ht_view *htpeil_init(bounds *b, File *file, ht_format_group *group)
 		IL_METADATA_SECTION metadata;
 		file->seek(metadata_ofs);
 		if (file->read(&metadata, sizeof metadata) == sizeof metadata) {
-			create_host_struct(&metadata, IL_METADATA_SECTION_struct, little_endian);
+			createHostStruct(&metadata, IL_METADATA_SECTION_struct, little_endian);
 			pe_shared->il->metadata = metadata;
 			uint32 add = 2;
 			if (metadata.minor_version == 1) {
@@ -121,14 +121,14 @@ static ht_view *htpeil_init(bounds *b, File *file, ht_format_group *group)
 				uint32 version_string_length;
 				file->read(&version_string_length, 4); // dummy
 				file->read(&version_string_length, 4);
-				version_string_length = create_host_int(&version_string_length, 4, little_endian);
+				version_string_length = createHostInt(&version_string_length, 4, little_endian);
 				add += version_string_length + 8;
 			}
 			FileOfs ofs = metadata_ofs + sizeof metadata + add;
 			file->seek(ofs);
 			uint16 count;
 			file->read(&count, 2);
-			count = create_host_int(&count, 2, little_endian);
+			count = createHostInt(&count, 2, little_endian);
 			pe_shared->il->entries = new ht_clist();
 			pe_shared->il->entries->init();
 			for (uint i=0; i<count; i++) {
@@ -136,7 +136,7 @@ static ht_view *htpeil_init(bounds *b, File *file, ht_format_group *group)
 				ht_il_metadata_entry *entry;
 				// FIXME: error handling
 				file->read(&sec_entry, sizeof sec_entry);
-				create_host_struct(&sec_entry, IL_METADATA_SECTION_ENTRY_struct, little_endian);
+				createHostStruct(&sec_entry, IL_METADATA_SECTION_ENTRY_struct, little_endian);
 				char *name = fgetstrz(file);
 				int nlen = strlen(name)+1;
 				uint32 dummy;
