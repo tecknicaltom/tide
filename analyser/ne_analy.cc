@@ -125,7 +125,7 @@ void NEAnalyser::beginAnalysis()
 			if (validAddress(bllaa, scinitialized) && bufPtr(bllaa, buf, 4)==4) {
 				ht_snprintf(buffer, sizeof buffer, "; pointer to %s", blla->c);
 				addComment(bllaa, 0, buffer);
-				addr = create_host_int(buf, 4, little_endian);
+				addr = createHostInt(buf, 4, little_endian);
 				Address *a = createAddress1616(NE_ADDR_SEG(addr), NE_ADDR_OFS(addr));
 				addComment(a, 0, "");
 				assignSymbol(a, blla->c, label_func);
