@@ -251,13 +251,13 @@ static void do_eval(ht_strinputfield *s, ht_statictext *t, char *b)
 				int i = lo;
 				/* big-endian string */
 				x += sprintf(x, "%s", "string \"");
-				create_foreign_int(bb, i, 4, big_endian);
+				createForeignInt(bb, i, 4, big_endian);
 				bin2str(x, bb, 4);
 				x += 4;
 				x += sprintf(x, "%s", "\" 32bit big-endian (e.g. network)\n");
 				/* little-endian string */
 				x += sprintf(x, "string \"");
-				create_foreign_int(bb, i, 4, little_endian);
+				createForeignInt(bb, i, 4, little_endian);
 				bin2str(x, bb, 4);
 				x += 4;
 				x += sprintf(x, "%s", "\" 32bit little-endian (e.g. x86)\n");
