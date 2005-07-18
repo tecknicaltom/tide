@@ -19,7 +19,7 @@
  */
 
 #include "machostruc.h"
-#include "htendian.h"
+#include "endianess.h"
 
 byte MACHO_HEADER_struct[]= {
 	STRUCT_ENDIAN_DWORD | STRUCT_ENDIAN_HOST,
