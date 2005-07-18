@@ -21,7 +21,7 @@
 #include "errno.h"
 #include <stdlib.h>
 
-#include "htendian.h"
+#include "endianess.h"
 #include "htle.h"
 #include "htlehead.h"
 #include "htleimg.h"
@@ -90,7 +90,7 @@ void ht_le::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	/* read LE header */
 	file->seek(h);
 	file->read(&le_shared->hdr, sizeof le_shared->hdr);
-	create_host_struct(&le_shared->hdr, LE_HEADER_struct, le_shared->byteorder);
+	createHostStruct(&le_shared->hdr, LE_HEADER_struct, le_shared->byteorder);
 
 	le_shared->is_vxd = (le_shared->hdr.winresoff) ||
 		(le_shared->hdr.winreslen) ||
@@ -150,7 +150,7 @@ void ht_le::do_fixups()
 	for (uint i=0; i<le_shared->hdr.pagecnt+1; i++) {
 		char buf[4];
 		file->read(buf, 4);
-		uint32 ofs = create_host_int(buf, 4, little_endian);
+		uint32 ofs = createHostInt(buf, 4, little_endian);
 		page_fixup_ofs[i] = ofs;
 	}
 
@@ -178,7 +178,7 @@ void ht_le::do_fixups()
 			if (sizeof f > size) { error = true; break; }
 			size -= sizeof f;
 			file->read(&f, sizeof f);
-			create_host_struct(&f, LE_FIXUP_struct, le_shared->byteorder);
+			createHostStruct(&f, LE_FIXUP_struct, le_shared->byteorder);
 			/* only internal references (16/32) supported for now... */
 			if ((f.reloc_type != 0) && (f.reloc_type != 16)) {
 				error = true;
@@ -210,14 +210,14 @@ void ht_le::do_fixups()
 				if (sizeof buf > size) { error = true; break; }
 				size -= sizeof buf;
 				file->read(buf, sizeof buf);
-				multi_count = create_host_int(buf, 1, little_endian);
+				multi_count = createHostInt(buf, 1, little_endian);
 			} else {
 				// single source offset
 				char buf[2];
 				if (sizeof buf > size) { error = true; break; }
 				size -= sizeof buf;
 				file->read(buf, sizeof buf);
-				src_ofs = create_host_int(buf, 2, little_endian);
+				src_ofs = createHostInt(buf, 2, little_endian);
 			}
 
 			switch (f.reloc_type & LE_FIXUP_RELOC_TYPE_MASK) {
@@ -229,7 +229,7 @@ void ht_le::do_fixups()
 						if (sizeof x > size) { error = true; break; }
 						size -= sizeof x;
 						file->read(&x, sizeof x);
-						create_host_struct(&x, LE_FIXUP_INTERNAL32_struct, le_shared->byteorder);
+						createHostStruct(&x, LE_FIXUP_INTERNAL32_struct, le_shared->byteorder);
 						target_seg = x.seg-1;
 						target_ofs = x.ofs;
 					} else {
@@ -237,7 +237,7 @@ void ht_le::do_fixups()
 						if (sizeof x > size) { error = true; break; }
 						size -= sizeof x;
 						file->read(&x, sizeof x);
-						create_host_struct(&x, LE_FIXUP_INTERNAL16_struct, le_shared->byteorder);
+						createHostStruct(&x, LE_FIXUP_INTERNAL16_struct, le_shared->byteorder);
 						target_seg = x.seg-1;
 						target_ofs = x.ofs;
 					}
@@ -248,7 +248,7 @@ void ht_le::do_fixups()
 							if (sizeof buf > size) { error = true; break; }
 							size -= sizeof buf;
 							file->read(buf, sizeof buf);
-							src_ofs = create_host_int(buf, sizeof buf, little_endian);
+							src_ofs = createHostInt(buf, sizeof buf, little_endian);
 							rfile->insert_reloc(obj_ofs + src_ofs, new ht_le_reloc_entry(obj_ofs + src_ofs, target_seg, LE_MAKE_ADDR(le_shared, target_seg, target_ofs), f.address_type, f.reloc_type));
 						}
 					} else {
@@ -299,7 +299,7 @@ void ht_le::check_vxd()
 		(b.flags & LE_ENTRYPOINT_BUNDLE_32BIT) && (b.obj_index == 1)) {
 			LE_ENTRYPOINT32 e;
 			file->read(&e, sizeof e);
-			create_host_struct(&e, LE_ENTRYPOINT32_struct, le_shared->byteorder);
+			createHostStruct(&e, LE_ENTRYPOINT32_struct, le_shared->byteorder);
 			if (e.flags & LE_ENTRYPOINT_EXPORTED) {
 				/* linearized address for ht_le_page_file */
 				uint32 vxd_desc_ofs = (le_shared->objmap.header[0].
@@ -307,7 +307,7 @@ void ht_le::check_vxd()
 
 				le_shared->reloc_file->seek(vxd_desc_ofs);
 				le_shared->reloc_file->read(&le_shared->vxd_desc, sizeof le_shared->vxd_desc);
-				create_host_struct(&le_shared->vxd_desc, LE_VXD_DESCRIPTOR_struct, le_shared->byteorder);
+				createHostStruct(&le_shared->vxd_desc, LE_VXD_DESCRIPTOR_struct, le_shared->byteorder);
 
 				le_shared->vxd_desc_linear_ofs = vxd_desc_ofs;
 				le_shared->is_vxd = true;
@@ -331,7 +331,7 @@ void ht_le::read_pagemap()
 		LE_PAGE_MAP_ENTRY e;
 		file->seek(h+le_shared->hdr.pagemap+i*4);
 		file->read(&e, sizeof e);
-		create_host_struct(&e, LE_PAGE_MAP_ENTRY_struct, le_shared->byteorder);
+		createHostStruct(&e, LE_PAGE_MAP_ENTRY_struct, le_shared->byteorder);
 		
 		/* FIXME: is this formula correct ? it comes straight from my docs... */
 		uint32 eofs=(e.high+e.low-1)*le_shared->hdr.pagesize+le_shared->hdr.datapage;
@@ -365,7 +365,7 @@ void ht_le::read_objects()
 	for (uint i=0; i<le_shared->hdr.objcnt; i++) {
 		file->seek(h+le_shared->hdr.objtab+i*24);
 		file->read(&le_shared->objmap.header[i], sizeof *le_shared->objmap.header);
-		create_host_struct(&le_shared->objmap.header[i], LE_OBJECT_HEADER_struct, le_shared->byteorder);
+		createHostStruct(&le_shared->objmap.header[i], LE_OBJECT_HEADER_struct, le_shared->byteorder);
 
 		/* sum up page sizes to find object's physical size */
 		uint psize = 0;
