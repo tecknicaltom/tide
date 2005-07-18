@@ -22,7 +22,7 @@
 
 #include "class.h"
 #include "classimg.h"
-#include "htatom.h"
+#include "atom.h"
 #include "httag.h"
 #include "snprintf.h"
 #include "stream.h"
