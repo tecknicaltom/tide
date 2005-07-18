@@ -224,7 +224,7 @@ static int func_readint(eval_scalar *result, eval_int *offset, int size, Endiane
 	try {
 		f->seek(offset->value);
 		f->readx(buf, size);
-	} catch (IOException) {
+	} catch (const IOException&) {
 		set_eval_error("i/o error (couldn't read %d bytes from ofs %qd (0x%qx))", size, offset->value, offset->value);
 		return 0;
 	}
@@ -280,7 +280,7 @@ static int func_readstring(eval_scalar *result, eval_int *offset, eval_int *len)
 		try {
 			f->seek(offset->value);
 			f->readx(buf, l);
-		} catch (IOException) {
+		} catch (const IOException&) {
 			free(buf);
 			set_eval_error("i/o error (couldn't read %d bytes from ofs %d (0x%qx))", l, c, offset->value, offset->value);
 			return 0;
@@ -579,10 +579,10 @@ bool format_string_to_offset_if_avail(ht_format_viewer *format, byte *string, in
 void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 {
 	bounds b;
-	b.w=65;
-	b.h=15;
-	b.x=(screen->size.w-b.w)/2;
-	b.y=(screen->size.h-b.h)/2;
+	b.w = 65;
+	b.h = 15;
+	b.x = (screen->w - b.w)/2;
+	b.y = (screen->h - b.h)/2;
 	
 	ht_blockop_dialog *d=new ht_blockop_dialog();
 	d->init(&b, pstart, pend, 0);
@@ -602,7 +602,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 
 		baseview->sendmsg(cmd_edit_mode_i, file, NULL);
 		
-		if (file->get_access_mode() & FAM_WRITE) {
+		if (file->getAccessMode() & IOAM_WRITE) {
 			FileOfs start=pstart, end=pend;
 
 			if (format_string_to_offset_if_avail(format, t.start.text, t.start.textlen, "start", &start) &&
@@ -619,13 +619,13 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 						case 2: {
 							char a[4096];
 							bin2str(a, t.action.text, MIN(sizeof a, t.action.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_EVAL_EXPR), a, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_EVAL_EXPR), a, NULL);
 						
 							char addr[128];
 							bin2str(addr, t.start.text, MIN(sizeof addr, t.start.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
 							bin2str(addr, t.end.text, MIN(sizeof addr, t.end.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
 						
 							esize = esizes[esize];
 							Object *ctx = NULL;
@@ -644,13 +644,13 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 						case 3: {
 							char a[256];
 							bin2str(a, t.action.text, MIN(sizeof a, t.action.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_EVAL_EXPR), a, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_EVAL_EXPR), a, NULL);
 
 							char addr[128];
 							bin2str(addr, t.start.text, MIN(sizeof addr, t.start.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
 							bin2str(addr, t.end.text, MIN(sizeof addr, t.end.textlen));
-							insert_history_entry((ht_list*)find_atom(HISTATOM_GOTO), addr, NULL);
+							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
 
 							Object *ctx = NULL;
 							try {
