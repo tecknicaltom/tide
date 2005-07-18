@@ -18,7 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "htatom.h"
+#include "atom.h"
 #include "htdata.h"
 #include "hthist.h"
 #include "htstring.h"
@@ -71,25 +71,19 @@ bool insert_history_entry(ht_list *history, char *name, ht_view *view)
 
 ht_history_entry::ht_history_entry(char *s, ht_object_stream_bin *d, ht_mem_file *df)
 {
-	if (s) desc=ht_strdup(s);
-	data=d;
-	datafile=df;
+	desc = ht_strdup(s);
+	data = d;
+	datafile = df;
 }
 
 ht_history_entry::~ht_history_entry()
 {
 	if (desc) free(desc);
-	if (data) {
-		data->done();
-		delete data;
-	}
-	if (datafile) {
-		datafile->done();
-		delete datafile;
-	}
+	delete data;
+	delete datafile;
 }
 
-int ht_history_entry::load(ObjectStream &s)
+void ht_history_entry::load(ObjectStream &s)
 {
 	desc=s->getString(NULL);
 
@@ -113,7 +107,7 @@ int ht_history_entry::load(ObjectStream &s)
 	return 0;
 }
 
-void ht_history_entry::store(ObjectStream &s)
+void ht_history_entry::store(ObjectStream &s) const
 {
 	s->putString(desc, NULL);
 
