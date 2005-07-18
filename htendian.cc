@@ -19,7 +19,7 @@
  */
 
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include <string.h>
 
 void create_foreign_int(void *buf, int i, int size, endianess to_endianess)
@@ -60,7 +60,7 @@ void create_foreign_int(void *buf, int i, int size, endianess to_endianess)
 	}
 }
 
-int create_host_int(const void *buf, int size, endianess from_endianess)
+int createHostInt(const void *buf, int size, endianess from_endianess)
 {
 	byte *b=(byte*)buf;
 	switch (size) {
@@ -133,7 +133,7 @@ uint64 create_host_int64(const void *buf, endianess from_endianess)
 	return q;
 }
 
-void create_host_struct(void *buf, const byte *table, endianess from)
+void createHostStruct(void *buf, const byte *table, endianess from)
 {
 	byte *buf2 = (byte *)buf;
 	while (*table) {
@@ -141,17 +141,17 @@ void create_host_struct(void *buf, const byte *table, endianess from)
 		if (*table & STRUCT_ENDIAN_HOST) {
 			switch (table2) {
 				case STRUCT_ENDIAN_BYTE: {
-					byte a = create_host_int(buf2, STRUCT_ENDIAN_BYTE, from);
+					byte a = createHostInt(buf2, STRUCT_ENDIAN_BYTE, from);
 					memcpy(buf2, &a, STRUCT_ENDIAN_BYTE);
 					break;
 				}
 				case STRUCT_ENDIAN_WORD: {
-					uint16 a = create_host_int(buf2, STRUCT_ENDIAN_WORD, from);
+					uint16 a = createHostInt(buf2, STRUCT_ENDIAN_WORD, from);
 					memcpy(buf2, &a, STRUCT_ENDIAN_WORD);
 					break;
 				}
 				case STRUCT_ENDIAN_DWORD: {
-					uint32 a = create_host_int(buf2, STRUCT_ENDIAN_DWORD, from);
+					uint32 a = createHostInt(buf2, STRUCT_ENDIAN_DWORD, from);
 					memcpy(buf2, &a, STRUCT_ENDIAN_DWORD);
 					break;
 				}
