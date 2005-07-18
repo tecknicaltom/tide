@@ -23,7 +23,7 @@
 #include <string.h>
 
 #include "defreg.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htctrl.h"
 #include "htdialog.h"
 #include "htio.h"
