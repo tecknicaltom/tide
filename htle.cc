@@ -595,27 +595,27 @@ void ht_le_reloc_file::reloc_apply(ht_data *reloc, byte *data)
 
 	switch (e->address_type & LE_FIXUP_ADDR_TYPE_MASK) {
 		case LE_FIXUP_ADDR_TYPE_0_8:
-			create_foreign_int(data, e->addr, 1, little_endian);
+			createForeignInt(data, e->addr, 1, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_16_0:
-			create_foreign_int(data, e->seg, 2, little_endian);
+			createForeignInt(data, e->seg, 2, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_16_16:
-			create_foreign_int(data, e->addr, 2, little_endian);
-			create_foreign_int(data, e->seg, 2, little_endian);
+			createForeignInt(data, e->addr, 2, little_endian);
+			createForeignInt(data, e->seg, 2, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_0_16:
-			create_foreign_int(data, e->addr, 2, little_endian);
+			createForeignInt(data, e->addr, 2, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_16_32:
-			create_foreign_int(data, e->addr, 4, little_endian);
-			create_foreign_int(data, e->seg, 2, little_endian);
+			createForeignInt(data, e->addr, 4, little_endian);
+			createForeignInt(data, e->seg, 2, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_0_32:
-			create_foreign_int(data, e->addr, 4, little_endian);
+			createForeignInt(data, e->addr, 4, little_endian);
 			break;
 		case LE_FIXUP_ADDR_TYPE_REL32:
-			create_foreign_int(data, e->addr - LE_BASE_ADDR - e->ofs - 4, 4, little_endian);
+			createForeignInt(data, e->addr - LE_BASE_ADDR - e->ofs - 4, 4, little_endian);
 			break;
 	}
 }
