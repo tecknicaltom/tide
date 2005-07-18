@@ -66,11 +66,12 @@ class ht_aviewer;
 
 class AnalyserInformation: public ht_statictext {
 	ht_aviewer	*analy;     
-	char			buf[1024];
-	int			addrs, labels;
-	const char	*aname, *atype, *adis;
+	char		buf[1024];
+	int		addrs, labels;
+	const char	*atype, *adis;
+	String		*aname;
 public:
-			void	init(bounds *b, ht_aviewer *a);
+		void	init(bounds *b, ht_aviewer *a);
 	virtual	void done();
 	virtual	char *gettext();
 	virtual	bool idle();
