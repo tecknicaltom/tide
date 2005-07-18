@@ -29,20 +29,20 @@
  
 #define COMPRESSED_STREAM_DEFAULT_GRANULARITY 10240
 
-class ht_compressed_stream: public ht_layer_stream {
+class ht_compressed_stream: public StreamLayer {
 protected:
 	byte *buffer;
 	uint buffersize;
 	uint bufferpos;
 public:
-			void	init(ht_stream *stream, bool own_stream, uint granularity=COMPRESSED_STREAM_DEFAULT_GRANULARITY);
-	virtual	void	done();
+			ht_compressed_stream(Stream *stream, bool own_stream, uint granularity=COMPRESSED_STREAM_DEFAULT_GRANULARITY);
+	virtual		~ht_compressed_stream();
 /* overwritten */
 	virtual	uint	read(void *buf, uint size);
 	virtual	uint	write(const void *buf, uint size);
 protected:
-			bool flush_compressed();
-			bool flush_uncompressed();
+			void flush_compressed();
+			void flush_uncompressed();
 };
 
 #endif
