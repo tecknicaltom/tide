@@ -19,7 +19,7 @@
  */
 
 #include "pefstruc.h"
-#include "htendian.h"
+#include "endianess.h"
 
 byte PEF_CONTAINER_HEADER_struct[]= {
 	STRUCT_ENDIAN_BYTE | STRUCT_ENDIAN_HOST,
