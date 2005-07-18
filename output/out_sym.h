@@ -23,7 +23,6 @@
 #define __OUT_SYM_H__
 
 #include "analy.h"
-#include "common.h"
 #include "io/types.h"
 #include "stream.h"
 
