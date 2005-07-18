@@ -24,7 +24,7 @@
 #include "pefstruc.h"
 #include "htpefimp.h"
 #include "formats.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htformat.h"
 
 #define DESC_PEF		"pef"
@@ -51,7 +51,7 @@ struct pef_section_headers {
 struct ht_pef_shared_data {
 	FileOfs header_ofs;
 	PEF_CONTAINER_HEADER contHeader;
-	endianess byte_order;
+	Endianess byte_order;
 	pef_section_headers sheaders;
 	PEF_ARCH arch;
 	FileOfs loader_info_header_ofs; 	// 0 if not loader_info_header
