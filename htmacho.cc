@@ -23,7 +23,7 @@
 #include "htmacho.h"
 #include "htmachohd.h"
 #include "htmachoimg.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "stream.h"
 #include "tools.h"
 
@@ -87,7 +87,7 @@ void ht_macho::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	/* read header */
 	file->seek(header_ofs);
 	file->read(&macho_shared->header, sizeof macho_shared->header);
-	create_host_struct(&macho_shared->header, MACHO_HEADER_struct, image_endianess);
+	createHostStruct(&macho_shared->header, MACHO_HEADER_struct, image_endianess);
 
 	/* read commands */
 	uint nsections = 0;
@@ -98,7 +98,7 @@ void ht_macho::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 		MACHO_COMMAND cmd;
 		file->seek(ofs);
 		file->read(&cmd, sizeof cmd);
-		create_host_struct(&cmd, MACHO_COMMAND_struct, image_endianess);
+		createHostStruct(&cmd, MACHO_COMMAND_struct, image_endianess);
 		if (cmd.cmdsize>1024) break;
 		macho_shared->cmds.cmds[i] = (MACHO_COMMAND_U*)malloc(cmd.cmdsize);
 		file->seek(ofs);
@@ -110,29 +110,29 @@ void ht_macho::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 		}
 		switch (cmd.cmd) {
 			case LC_SEGMENT:
-				create_host_struct(macho_shared->cmds.cmds[i], MACHO_SEGMENT_COMMAND_struct, image_endianess);
+				createHostStruct(macho_shared->cmds.cmds[i], MACHO_SEGMENT_COMMAND_struct, image_endianess);
 				// already count sections (needed for reading sections, see below)
 				nsections += macho_shared->cmds.cmds[i]->segment.nsects;
 				break;
 			case LC_SYMTAB:
-				create_host_struct(macho_shared->cmds.cmds[i], MACHO_SYMTAB_COMMAND_struct, image_endianess);
+				createHostStruct(macho_shared->cmds.cmds[i], MACHO_SYMTAB_COMMAND_struct, image_endianess);
 				break;
 			case LC_THREAD:
 			case LC_UNIXTHREAD: {
 				MACHO_THREAD_COMMAND *c = (MACHO_THREAD_COMMAND*)macho_shared->cmds.cmds[i];
-				create_host_struct(macho_shared->cmds.cmds[i], MACHO_THREAD_COMMAND_struct, image_endianess);
+				createHostStruct(macho_shared->cmds.cmds[i], MACHO_THREAD_COMMAND_struct, image_endianess);
 				switch (macho_shared->header.cputype) {
 				case MACHO_CPU_TYPE_I386:
 					switch (c->flavor) {
 					case -1:
-						create_host_struct(&c->state, MACHO_I386_THREAD_STATE_struct, image_endianess);
+						createHostStruct(&c->state, MACHO_I386_THREAD_STATE_struct, image_endianess);
 						break;
 					}
 					break;
 				case MACHO_CPU_TYPE_POWERPC:
 					switch (c->flavor) {
 					case FLAVOR_PPC_THREAD_STATE:
-						create_host_struct(&c->state, MACHO_PPC_THREAD_STATE_struct, image_endianess);
+						createHostStruct(&c->state, MACHO_PPC_THREAD_STATE_struct, image_endianess);
 						break;
 					}
 					break;
@@ -140,7 +140,7 @@ void ht_macho::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 				break;
 			}
 			default:
-				create_host_struct(macho_shared->cmds.cmds[i], MACHO_COMMAND_struct, image_endianess);
+				createHostStruct(macho_shared->cmds.cmds[i], MACHO_COMMAND_struct, image_endianess);
 		}
 		ofs += cmd.cmdsize;
 		macho_shared->cmds.count ++;
@@ -157,7 +157,7 @@ void ht_macho::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 			file->seek(sofs);
 			for (uint j=0; j<macho_shared->cmds.cmds[i]->segment.nsects; j++) {
 				file->read(&macho_shared->sections.sections[sec], sizeof (MACHO_SECTION));
-				create_host_struct(&macho_shared->sections.sections[sec], MACHO_SECTION_struct, image_endianess);
+				createHostStruct(&macho_shared->sections.sections[sec], MACHO_SECTION_struct, image_endianess);
 				sec++;
 			}
 		}
