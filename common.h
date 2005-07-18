@@ -43,7 +43,7 @@
 /** used to define OBJECT_IDs */
 #define MAGICD(magic) (unsigned long)(((unsigned char)magic[0]<<24) | ((unsigned char)magic[1]<<16) | ((unsigned char)magic[2]<<8) | (unsigned char)magic[3])
 
-#define ATOM_OBJECT MAGICD("OBJ0")
+#define ATOM_OBJECT MAGIC32("OBJ0")
 
 class ht_object_stream;
 
