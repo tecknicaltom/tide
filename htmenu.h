@@ -81,7 +81,7 @@ public:
 
 class ht_static_context_menu: public ht_context_menu {
 protected:
-	ht_list *context_menu_entry;
+	List *context_menu_entry;
 	int enum_idx;
 
 public:
@@ -105,7 +105,7 @@ public:
 class ht_menu: public ht_view {
 protected:
 	int lastmenux;
-	ht_list *menu;
+	List *menu;
 	int curmenu;
 	int localmenu;
 	bool context_menu_hack2;
