@@ -19,7 +19,7 @@
  */
 
 
-#include "htendian.h"
+#include "endianess.h"
 #include "xbestruct.h"
 
 /* we do not need to swap the digital signature anyway */
