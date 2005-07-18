@@ -20,7 +20,7 @@
 
 #include "formats.h"
 #include "htapp.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htcoff.h"
 #include "htctrl.h"
 #include "htendian.h"
