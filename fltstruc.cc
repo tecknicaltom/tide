@@ -19,7 +19,7 @@
  */
 
 #include "fltstruc.h"
-#include "htendian.h"
+#include "endianess.h"
 
 byte FLAT_HEADER_struct[]= {
 	STRUCT_ENDIAN_BYTE,
