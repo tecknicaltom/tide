@@ -19,7 +19,7 @@
  */
 
 
-#include "htendian.h"
+#include "endianess.h"
 #include "mzstruct.h"
 #include "coff_s.h"
 
