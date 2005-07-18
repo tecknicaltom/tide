@@ -23,7 +23,7 @@
 
 #include "elfstruc.h"
 #include "formats.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htformat.h"
 #include "relfile.h"
 
@@ -114,7 +114,7 @@ struct ht_elf_reloc_section32 {
 struct ht_elf_shared_data {
 	FileOfs header_ofs;
 	ELF_HEADER ident;
-	endianess byte_order;
+	Endianess byte_order;
 	union {
 		ELF_HEADER32 header32;
 		ELF_HEADER64 header64;
