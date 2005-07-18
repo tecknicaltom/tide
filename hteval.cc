@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#include "htatom.h"
+#include "atom.h"
 #include "htctrl.h"
 #include "htendian.h"
 #include "hthist.h"
