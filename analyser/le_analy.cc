@@ -32,7 +32,7 @@
 
 #include "htctrl.h"
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htle.h"
 #include "htstring.h"
