@@ -165,7 +165,7 @@ public:
 	virtual	void		config_changed();
 	virtual	int		countselectables();
 		void		databuf_freedup(void *handle);
-		void 		atabuf_get(void *buf, int bufsize);
+		void 		databuf_get(void *buf, int bufsize);
 		void		*databuf_getdup(void *buf, int bufsize);
 		void		databuf_set(void *buf, int bufsize);
 	virtual	int		datasize();
