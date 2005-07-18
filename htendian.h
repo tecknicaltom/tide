@@ -31,7 +31,7 @@ asfas
 #define STRUCT_ENDIAN_HOST  128
 
 enum endianess {big_endian, little_endian};
-void create_foreign_int(void *buf, int i, int size, endianess to_endianess);
+void createForeignInt(void *buf, int i, int size, endianess to_endianess);
 void create_foreign_int64(void *buf, const uint64 i, int size, endianess to_endianess);
 int createHostInt(const void *buf, int size, endianess from_endianess);
 uint64 create_host_int64(const void *buf, endianess from_endianess);
