@@ -23,7 +23,7 @@
 
 #include "fltstruc.h"
 #include "formats.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htformat.h"
 #include "relfile.h"
 
