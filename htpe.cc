@@ -19,7 +19,7 @@
  */
 
 #include "log.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htnewexe.h"
 #include "htpe.h"
 #include "htpehead.h"
@@ -105,28 +105,28 @@ void ht_pe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	/* read header */
 	file->seek(header_ofs+4);
 	file->read(&pe_shared->coffheader, sizeof pe_shared->coffheader);
-	create_host_struct(&pe_shared->coffheader, COFF_HEADER_struct, little_endian);
+	createHostStruct(&pe_shared->coffheader, COFF_HEADER_struct, little_endian);
 	file->read(&pe_shared->opt_magic, sizeof pe_shared->opt_magic);
-	pe_shared->opt_magic = create_host_int(&pe_shared->opt_magic, sizeof pe_shared->opt_magic, little_endian);
+	pe_shared->opt_magic = createHostInt(&pe_shared->opt_magic, sizeof pe_shared->opt_magic, little_endian);
 	file->seek(header_ofs+4+sizeof pe_shared->coffheader);
 	switch (pe_shared->opt_magic) {
 		case COFF_OPTMAGIC_PE32: {
 			file->read(&pe_shared->pe32.header, sizeof pe_shared->pe32.header);
-			create_host_struct(&pe_shared->pe32.header, COFF_OPTIONAL_HEADER32_struct, little_endian);
+			createHostStruct(&pe_shared->pe32.header, COFF_OPTIONAL_HEADER32_struct, little_endian);
 			file->read(&pe_shared->pe32.header_nt, sizeof pe_shared->pe32.header_nt);
-			create_host_struct(&pe_shared->pe32.header_nt, PE_OPTIONAL_HEADER32_NT_struct, little_endian);
+			createHostStruct(&pe_shared->pe32.header_nt, PE_OPTIONAL_HEADER32_NT_struct, little_endian);
 			for (uint i=0; i<PE_NUMBEROF_DIRECTORY_ENTRIES; i++) {
-				create_host_struct(&pe_shared->pe32.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
+				createHostStruct(&pe_shared->pe32.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
 			}
 			break;
 		}
 		case COFF_OPTMAGIC_PE64: {
 			file->read(&pe_shared->pe64.header, sizeof pe_shared->pe64.header);
-			create_host_struct(&pe_shared->pe64.header, COFF_OPTIONAL_HEADER64_struct, little_endian);
+			createHostStruct(&pe_shared->pe64.header, COFF_OPTIONAL_HEADER64_struct, little_endian);
 			file->read(&pe_shared->pe64.header_nt, sizeof pe_shared->pe64.header_nt);
-			create_host_struct(&pe_shared->pe64.header_nt, PE_OPTIONAL_HEADER64_NT_struct, little_endian);
+			createHostStruct(&pe_shared->pe64.header_nt, PE_OPTIONAL_HEADER64_NT_struct, little_endian);
 			for (uint i=0; i<PE_NUMBEROF_DIRECTORY_ENTRIES; i++) {
-				create_host_struct(&pe_shared->pe64.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
+				createHostStruct(&pe_shared->pe64.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
 			}
 			break;
 		}
@@ -141,7 +141,7 @@ void ht_pe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	file->read(pe_shared->sections.sections, pe_shared->sections.section_count*sizeof *pe_shared->sections.sections);
 
 	for (uint i=0; i<pe_shared->sections.section_count; i++) {
-		create_host_struct(&pe_shared->sections.sections[i], COFF_SECTION_HEADER_struct, little_endian);
+		createHostStruct(&pe_shared->sections.sections[i], COFF_SECTION_HEADER_struct, little_endian);
 		/*
 		 *	To make those uninitialized/initialized flags
 		 *	correct we guess a little
