@@ -21,7 +21,7 @@
 #include "htnewexe.h"
 
 #include "mzstruct.h"
-#include "htendian.h"
+#include "endianess.h"
 
 FileOfs get_newexe_header_ofs(File *file)
 {
@@ -35,12 +35,12 @@ FileOfs get_newexe_header_ofs(File *file)
 	uint16 reloc_ofs;
 	file->seek(24);
 	file->read(&reloc_ofs, 2);
-	reloc_ofs = create_host_int(&reloc_ofs, 2, little_endian);
+	reloc_ofs = createHostInt(&reloc_ofs, 2, little_endian);
 	if (reloc_ofs && reloc_ofs < 0x40) return 0;
 	/* ok seems to be a newexe */
 	FileOfs newexe_ofs;
 	file->seek(60);
 	file->read(&newexe_ofs, 4);
-	newexe_ofs = create_host_int(&newexe_ofs, 4, little_endian);
+	newexe_ofs = createHostInt(&newexe_ofs, 4, little_endian);
 	return newexe_ofs;
 }
