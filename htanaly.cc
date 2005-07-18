@@ -28,7 +28,7 @@
 #include "hthist.h"
 #include "htidle.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htmenu.h"
 #include "htsearch.h"
 #include "htstring.h"
@@ -80,7 +80,7 @@ char *AnalyserInformation::gettext()
 	ht_snprintf(buf, sizeof buf,
 		"Analyser statistics:\n"
 		"====================\n\n"          
-		"Type: %s\nFile: %s\n"
+		"Type: %s\nFile: %y\n"
 		"Using disassembler: %s\n\n"
 		"Known locations: %d\n"
 		"Known symbols: %d\n\n",
@@ -96,7 +96,7 @@ bool AnalyserInformation::idle()
 		addrs = analy->analy->getLocationCount();
 		labels = analy->analy->getSymbolCount();
 		atype = analy->analy->getType();
-		aname = analy->analy->getName();
+		analy->analy->getName(*aname);
 		if (analy->analy->disasm) {
 			adis = analy->analy->disasm->getName();
 		} else {
