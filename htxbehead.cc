@@ -23,7 +23,7 @@
 #include "atom.h"
 #include "htcoff.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hthex.h"
 #include "htiobox.h"
 #include "htnewexe.h"
