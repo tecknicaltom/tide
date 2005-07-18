@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include "data.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "ia64dis.h"
 #include "ia64opc.h"
 #include "snprintf.h"
