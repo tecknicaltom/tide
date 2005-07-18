@@ -31,7 +31,7 @@
 
 #include "htctrl.h"
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htne.h"
 #include "htneent.h"
