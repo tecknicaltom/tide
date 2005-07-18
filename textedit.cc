@@ -39,7 +39,7 @@
 #include <unistd.h>
 
 /**/
-#include "htatom.h"
+#include "atom.h"
 #include "hthist.h"
 #include "htsearch.h"
 
