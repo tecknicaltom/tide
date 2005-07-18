@@ -22,7 +22,7 @@
 #include "htapp.h"
 #include "htctrl.h"
 #include "htdialog.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hthex.h"
 #include "htiobox.h"
 #include "htkeyb.h"
@@ -90,19 +90,19 @@ static void read_resource_dir(void *node, int ofs, int level)
 // get directory
 	peresource_file->seek(peresource_dir_ofs+ofs);
 	if (peresource_file->read(&dir, sizeof dir) != (sizeof dir)) return;
-	create_host_struct(&dir, PE_RESOURCE_DIRECTORY_struct, little_endian);
+	createHostStruct(&dir, PE_RESOURCE_DIRECTORY_struct, little_endian);
 // get entries
 	PE_RESOURCE_DIRECTORY_ENTRY entry;
 	for (int i=0; i<dir.name_count+dir.id_count; i++) {
 		peresource_file->seek(peresource_dir_ofs+ofs+sizeof dir+i*8);
 		peresource_file->read(&entry, sizeof entry);
-		create_host_struct(&entry, PE_RESOURCE_DIRECTORY_ENTRY_struct, little_endian);
+		createHostStruct(&entry, PE_RESOURCE_DIRECTORY_ENTRY_struct, little_endian);
 		if (entry.offset_to_directory & 0x80000000) {
 			bool hasname = entry.name & 0x80000000;
 			PE_RESOURCE_DIRECTORY subdir;
 			peresource_file->seek(peresource_dir_ofs+entry.offset_to_directory & 0x7fffffff);
 			peresource_file->read(&subdir, sizeof subdir);
-			create_host_struct(&subdir, PE_RESOURCE_DIRECTORY_struct, little_endian);
+			createHostStruct(&subdir, PE_RESOURCE_DIRECTORY_struct, little_endian);
 			if (hasname) {
 				peresource_file->seek(peresource_dir_ofs+entry.name & 0x7fffffff);
 				char *name = getstrw(peresource_file);
@@ -131,7 +131,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 			PE_RESOURCE_DATA_ENTRY data;
 			peresource_file->seek(peresource_dir_ofs+entry.offset_to_directory);
 			peresource_file->read(&data, sizeof data);
-			create_host_struct(&data, PE_RESOURCE_DATA_ENTRY_struct, little_endian);
+			createHostStruct(&data, PE_RESOURCE_DATA_ENTRY_struct, little_endian);
 			
 			ht_pe_resource_leaf *xdata = NULL;
 			FileOfs dofs=0;
