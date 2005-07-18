@@ -23,7 +23,7 @@
 
 #include "machostruc.h"
 #include "formats.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htformat.h"
 
 #define DESC_MACHO "Mach-O - Mach exe/link format"
@@ -106,7 +106,7 @@ struct ht_macho_shared_data {
 	MACHO_HEADER header;
 	macho_commands cmds;
 	macho_sections sections;
-	endianess image_endianess;
+	Endianess image_endianess;
 /*	ELF_HEADER ident;
 	endianess byte_order;
 	union {
@@ -129,7 +129,7 @@ struct ht_macho_shared_data {
 
 class ht_macho: public ht_format_group {
 public:
-		void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, endianess image_endianess);
+		void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess image_endianess);
 	virtual	void done();
 };
 
