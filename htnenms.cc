@@ -19,7 +19,7 @@
  */
 
 #include "htatom.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htne.h"
 #include "htnenms.h"
 #include "httag.h"
@@ -61,7 +61,7 @@ static ht_view *htnenames_init(bounds *b, File *file, ht_format_group *group)
 	while (*(n=getstrp(file))) {
 		char buf[2];
 		file->read(buf, 2);
-		uint16 ent = create_host_int(buf, 2, little_endian);
+		uint16 ent = createHostInt(buf, 2, little_endian);
 		if (!i) {
 			ht_snprintf(line, sizeof line, "description: %s", n);
 		} else {
@@ -83,7 +83,7 @@ static ht_view *htnenames_init(bounds *b, File *file, ht_format_group *group)
 	while (*(n=getstrp(file))) {
 		char buf[2];
 		file->read(buf, 2);
-		uint16 ent = create_host_int(buf, 2, little_endian);
+		uint16 ent = createHostInt(buf, 2, little_endian);
 		if (!i) {
 			ht_snprintf(line, sizeof line, "description: %s", n);
 		} else {
