@@ -23,7 +23,7 @@
 #include "log.h"
 #include "mfile.h"
 #include "htapp.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htcfg.h"
 #include "htclipboard.h"
 #include "htdialog.h"
