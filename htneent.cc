@@ -20,7 +20,7 @@
 
 #include "atom.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htne.h"
 #include "htneent.h"
@@ -60,7 +60,7 @@ static ht_view *htneentrypoints_init(bounds *b, File *file, ht_format_group *gro
 	while (o + sizeof e < h+ne_shared->hdr.enttab+ne_shared->hdr.cbenttab) {
 		file->seek(o);
 		file->read(&e, sizeof e);
-		create_host_struct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
+		createHostStruct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
 		o += sizeof e;
 
 		if (e.seg_index==0) {
@@ -133,13 +133,13 @@ int ht_ne_entrypoint_viewer::ref_sel(LINE_ID *id)
 		NE_ENTRYPOINT_MOVABLE e;
 		file->seek(o);
 		file->read(&e, sizeof e);
-		create_host_struct(&e, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
+		createHostStruct(&e, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
 		a = NE_MAKE_ADDR(e.seg, e.offset);
 	} else {
 		NE_ENTRYPOINT_FIXED e;
 		file->seek(o);
 		file->read(&e, sizeof e);
-		create_host_struct(&e, NE_ENTRYPOINT_FIXED_struct, little_endian);
+		createHostStruct(&e, NE_ENTRYPOINT_FIXED_struct, little_endian);
 		a = NE_MAKE_ADDR(seg, e.offset);
 	}
 
