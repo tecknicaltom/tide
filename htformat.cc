@@ -31,7 +31,7 @@
 #include "htatom.h"
 #include "htclipboard.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hteval.h"
 #include "hthist.h"
 #include "htiobox.h"
