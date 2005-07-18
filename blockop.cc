@@ -23,14 +23,14 @@
 
 #include "blockop.h"
 #include "cmds.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hteval.h"
 #include "htexcept.h"
 #include "hthist.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htstring.h"
 #include "process.h"
 #include "snprintf.h"
@@ -41,25 +41,25 @@
  *	CLASS ht_blockop_dialog
  */
 
-void ht_blockop_dialog::init(bounds *b, FileOfs pstart, FileOfs pend, ht_list *history)
+void ht_blockop_dialog::init(bounds *b, FileOfs pstart, FileOfs pend, List *history)
 {
 	ht_dialog::init(b, "operate on block", FS_TITLE | FS_KILLER | FS_MOVE);
 	bounds c;
 
-	bool prerange=(pend>pstart);
+	bool prerange = (pend > pstart);
 
 	ht_statictext *text;
 
 	ht_label *s;
 	
-	ht_list *addrhist=(ht_list*)find_atom(HISTATOM_GOTO);
+	List *addrhist = (List*)getAtomValue(HISTATOM_GOTO);
 /* start */
 	c=*b;
 	c.h=1;
 	c.w=13;
 	c.x=7;
 	c.y=1;
-	start=new ht_strinputfield();
+	start = new ht_strinputfield();
 	start->init(&c, 64, addrhist);
 	insert(start);
 	if (prerange) {
@@ -137,7 +137,7 @@ void ht_blockop_dialog::init(bounds *b, FileOfs pstart, FileOfs pend, ht_list *h
 	insert(text);
 	
 /* action */
-	ht_list *ehist=(ht_list*)find_atom(HISTATOM_EVAL_EXPR);
+	List *ehist=(List*)getAtomValue(HISTATOM_EVAL_EXPR);
 
 	c=*b;
 	c.h=1;
@@ -203,31 +203,32 @@ static int blockop_symbol_eval(eval_scalar *r, char *symbol)
 {
 	if (strcmp(symbol, "i")==0) {
 		r->type=SCALAR_INT;
-		r->scalar.integer.value=to_qword(blockop_i);
-		r->scalar.integer.type=TYPE_UNKNOWN;
-		blockop_expr_is_const=false;
+		r->scalar.integer.value = blockop_i;
+		r->scalar.integer.type = TYPE_UNKNOWN;
+		blockop_expr_is_const = false;
 		return 1;
 	} else if (strcmp(symbol, "o")==0) {
 		r->type=SCALAR_INT;
-		r->scalar.integer.value=to_qword(blockop_o);
-		r->scalar.integer.type=TYPE_UNKNOWN;
-		blockop_expr_is_const=false;
+		r->scalar.integer.value = blockop_o;
+		r->scalar.integer.type = TYPE_UNKNOWN;
+		blockop_expr_is_const = false;
 		return 1;
 	}
 	return 0;
 }
 
-static int func_readint(eval_scalar *result, eval_int *offset, int size, endianess e)
+static int func_readint(eval_scalar *result, eval_int *offset, int size, Endianess e)
 {
 	File *f=(File*)eval_get_context();
-	byte buf[4];
-	int read = 0;
-	if ((f->seek(QWORD_GET_INT(offset->value))!=0) ||
-	((read = f->read(buf, size)) != size)) {
-		set_eval_error("i/o error (requested %d, read %d from ofs %08x)", size, read, offset->value);
+	byte buf[8];
+	try {
+		f->seek(offset->value);
+		f->readx(buf, size);
+	} catch (IOException) {
+		set_eval_error("i/o error (couldn't read %d bytes from ofs %qd (0x%qx))", size, offset->value, offset->value);
 		return 0;
 	}
-	scalar_create_int_c(result, create_host_int(buf, size, e));
+	scalar_create_int_q(result, createHostInt64(buf, size, e));
 	return 1;
 }
 
@@ -246,6 +247,11 @@ static int func_read32le(eval_scalar *result, eval_int *offset)
 	return func_readint(result, offset, 4, little_endian);
 }
 
+static int func_read64le(eval_scalar *result, eval_int *offset)
+{
+	return func_readint(result, offset, 8, little_endian);
+}
+
 static int func_read16be(eval_scalar *result, eval_int *offset)
 {
 	return func_readint(result, offset, 2, big_endian);
@@ -256,19 +262,27 @@ static int func_read32be(eval_scalar *result, eval_int *offset)
 	return func_readint(result, offset, 4, big_endian);
 }
 
+static int func_read64be(eval_scalar *result, eval_int *offset)
+{
+	return func_readint(result, offset, 8, big_endian);
+}
+
 static int func_readstring(eval_scalar *result, eval_int *offset, eval_int *len)
 {
 	File *f=(File*)eval_get_context();
 
-	uint l=QWORD_GET_INT(len->value);
-	void *buf=malloc(l);	/* FIXME: may be too slow... */
+	uint l = len->value;
+	void *buf = malloc(l);	/* FIXME: may be too slow... */
 
 	if (buf) {
 		eval_str s;
 		uint c = 0;
-		if ((f->seek(QWORD_GET_INT(offset->value))!=0) || ( (c=f->read(buf, l)) !=l)) {
+		try {
+			f->seek(offset->value);
+			f->readx(buf, l);
+		} catch (IOException) {
 			free(buf);
-			set_eval_error("i/o error (requested %d, read %d from ofs %08x)", l, c, offset->value);
+			set_eval_error("i/o error (couldn't read %d bytes from ofs %d (0x%qx))", l, c, offset->value, offset->value);
 			return 0;
 		}
 		s.value=(char*)buf;
@@ -365,7 +379,7 @@ Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size,
 }
 
 #define BLOCKOP_STR_MAX_ITERATIONS 1024
-bool blockop_str_process(ht_data *context, ht_text *progress_indicator)
+bool blockop_str_process(Object *context, ht_text *progress_indicator)
 {
 	char status[64];
 	ht_blockop_str_context *ctx = (ht_blockop_str_context*)context;
@@ -432,7 +446,7 @@ public:
 	uint len;
 
 	uint size;
-	endianess endian;
+	Endianess endian;
 
 	char *action;
 
@@ -448,7 +462,7 @@ public:
 	}
 };
 
-Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size, endianess endian, char *action)
+Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size, Endianess endian, char *action)
 {
 	ht_blockop_int_context *ctx = new ht_blockop_int_context();
 	ctx->file = file;
@@ -479,34 +493,34 @@ Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size,
 	
 	if (ctx->expr_const) {
 		scalar_context_int(&r, &ir);
-		ctx->v = QWORD_GET_INT(ir.value);
+		ctx->v = ir.value;
 	}
 	scalar_destroy(&r);
 	return ctx;
 }
 
 #define BLOCKOP_INT_MAX_ITERATIONS	1024
-bool blockop_int_process(ht_data *context, ht_text *progress_indicator)
+bool blockop_int_process(Object *context, ht_text *progress_indicator)
 {
 	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
 	char status[64];
 	if (ctx->expr_const) {		
 		ht_snprintf(status, sizeof status, "operating (constant integer)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));
 		progress_indicator->settext(status);
-		byte ibuf[4];
-		create_foreign_int(ibuf, ctx->v, ctx->size, ctx->endian);
+		byte ibuf[8];
+		createForeignInt64(ibuf, ctx->v, ctx->size, ctx->endian);
 		ctx->file->seek(ctx->o);
-		for (uint i=0; i < BLOCKOP_INT_MAX_ITERATIONS; i++)
-		if (ctx->o < ctx->ofs + ctx->len) {
-			uint s = ctx->size;
-			if (ctx->o + s > ctx->ofs + ctx->len) s = ctx->ofs + ctx->len - ctx->o;
-			if (ctx->file->write(ibuf, s)!=s) {
-				throw ht_io_exception("blockop_int(): write error at pos %08x, size %08x", ctx->o, s);
+		for (uint i=0; i < BLOCKOP_INT_MAX_ITERATIONS; i++) {
+			if (ctx->o < ctx->ofs + ctx->len) {
+				uint s = ctx->size;
+				if (ctx->o + s > ctx->ofs + ctx->len) s = ctx->ofs + ctx->len - ctx->o;
+				ctx->file->writex(ibuf, s);
+				ctx->o += s;
+			} else {
+				return false;
 			}
-			ctx->o += s;
-		} else {
-			return false;
 		}
+		
 	} else {
 		ht_snprintf(status, sizeof status, "operating (variable integer)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));
 		progress_indicator->settext(status);
@@ -524,16 +538,15 @@ bool blockop_int_process(ht_data *context, ht_text *progress_indicator)
 			}
 			scalar_context_int(&r, &ir);
 			scalar_destroy(&r);
-			ctx->v=QWORD_GET_INT(ir.value);
+			ctx->v = ir.value;
 
 			uint s = ctx->size;
 			if (ctx->o+s > ctx->ofs+ctx->len) s = ctx->ofs+ctx->len-ctx->o;
 
-			byte ibuf[4];
-			create_foreign_int(ibuf, ctx->v, ctx->size, ctx->endian);
-			if ((ctx->file->seek(ctx->o) != 0) || (ctx->file->write(ibuf, s)!=s)) {
-				throw ht_io_exception("blockop_int(): write error at pos %08x, size %08x", ctx->o, s);
-			}
+			byte ibuf[8];
+			createForeignInt64(ibuf, ctx->v, ctx->size, ctx->endian);
+			ctx->file->seek(ctx->o);
+			ctx->file->writex(ibuf, s);
 			ctx->o += s;
 			ctx->i++;
 		} else {
@@ -551,7 +564,7 @@ bool format_string_to_offset_if_avail(ht_format_viewer *format, byte *string, in
 {
 	if (string && *string && stringlen<64) {
 		char str[64];
-		memmove(str, string, stringlen);
+		memcpy(str, string, stringlen);
 		str[stringlen]=0;
 		if (!format->string_to_offset(str, ofs)) {
 			errorbox("%s: '%s' doesn't seem to be a valid offset", string_desc, &str);
