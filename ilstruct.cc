@@ -19,7 +19,7 @@
  */
 
 
-#include "htendian.h"
+#include "endianess.h"
 #include "ilstruct.h"
 
 byte IL_METADATA_SECTION_struct[] = {
