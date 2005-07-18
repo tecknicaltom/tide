@@ -19,7 +19,7 @@
  */
 
 #include "log.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htxbe.h"
 #include "htxbehead.h"
 #include "htxbeimg.h"
@@ -76,7 +76,7 @@ void ht_xbe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 /* read header */
 	file->seek(0);
 	file->read(&xbe_shared->header, sizeof xbe_shared->header);
-	create_host_struct(&xbe_shared->header.base_address, XBE_IMAGE_HEADER_struct, little_endian);
+	createHostStruct(&xbe_shared->header.base_address, XBE_IMAGE_HEADER_struct, little_endian);
 	
 	/* decode entrypoint - XXX: only RETAILs*/
 	xbe_shared->header.entry_point ^= 0xA8FC57AB;
@@ -94,7 +94,7 @@ void ht_xbe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 /* read certificate */	
 	file->seek(xbe_shared->header.certificate_address-xbe_shared->header.base_address);
 	file->read(&xbe_shared->certificate, sizeof xbe_shared->certificate);
-	create_host_struct(&xbe_shared->certificate, XBE_CERTIFICATE_struct, little_endian);
+	createHostStruct(&xbe_shared->certificate, XBE_CERTIFICATE_struct, little_endian);
 
 /* read library versions */
 	file->seek(xbe_shared->header.library_versions_address-xbe_shared->header.base_address);
@@ -103,7 +103,7 @@ void ht_xbe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	file->read(xbe_shared->libraries, xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
 
 	for (uint i=0; i<xbe_shared->header.number_of_library_versions; i++) {
-		create_host_struct(&xbe_shared->libraries[i], XBE_LIBRARY_VERSION_struct, little_endian);
+		createHostStruct(&xbe_shared->libraries[i], XBE_LIBRARY_VERSION_struct, little_endian);
 	}
 
 /* read section headers */
@@ -116,7 +116,7 @@ void ht_xbe::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	xbe_shared->sections.base_address=xbe_shared->header.base_address;
 
 	for (uint i=0; i<xbe_shared->header.number_of_sections; i++) {
-		create_host_struct(&xbe_shared->sections.sections[i], XBE_SECTION_HEADER_struct, little_endian);
+		createHostStruct(&xbe_shared->sections.sections[i], XBE_SECTION_HEADER_struct, little_endian);
 		
 		// XXX: this is crashable!!!
 		xbe_shared->sections.sections[i].section_name_address += (uint) xbe_shared->headerspace - xbe_shared->header.base_address;
