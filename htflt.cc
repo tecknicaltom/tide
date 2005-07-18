@@ -22,7 +22,7 @@
 #include "htflt.h"
 #include "htflthd.h"
 #include "htfltimg.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "stream.h"
 #include "tools.h"
 
@@ -72,7 +72,7 @@ void ht_flt::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	/* read header */
 	file->seek(header_ofs);
 	file->read(&flt_shared->header, sizeof flt_shared->header);
-	create_host_struct(&flt_shared->header, FLAT_HEADER_struct, big_endian);
+	createHostStruct(&flt_shared->header, FLAT_HEADER_struct, big_endian);
 
 	flt_shared->code_start = sizeof flt_shared->header;
 	flt_shared->code_end = flt_shared->header.data_start;
