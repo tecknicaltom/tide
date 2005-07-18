@@ -25,7 +25,7 @@
 #include "analy_register.h"
 #include "asm.h"
 #include "htapp.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htcfg.h"
 #include "htclipboard.h"
 #include "htcurses.h"
