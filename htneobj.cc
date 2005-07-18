@@ -19,7 +19,7 @@
  */
 
 #include "htatom.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htnewexe.h"
 #include "htne.h"
 #include "htneobj.h"
@@ -85,7 +85,7 @@ static ht_view *htnesegments_init(bounds *b, File *file, ht_format_group *group)
 	for (uint32 i=0; i<ne_shared->hdr.cseg; i++) {
 		NE_SEGMENT s;
 		file->read(&s, sizeof s);
-		create_host_struct(&s, NE_SEGMENT_struct, little_endian);
+		createHostStruct(&s, NE_SEGMENT_struct, little_endian);
 		ht_snprintf(t, sizeof t, "--- segment %d (%s) ---", i+1, (s.flags & NE_DATA) ? "data" : "code");
 		m->add_mask(t);
 		m->add_staticmask_ptable(neobj, h+ne_shared->hdr.segtab+i*8, false);
