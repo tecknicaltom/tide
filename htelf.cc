@@ -715,13 +715,13 @@ void	ht_elf32_reloc_file::reloc_apply(ht_data *reloc, byte *buf)
 		case ELF_R_386_32: {
 			uint32 v = createHostInt(buf, 4, data->byte_order);
 			v += e->relocs.r_32;
-			create_foreign_int(buf, v, 4, data->byte_order);
+			createForeignInt(buf, v, 4, data->byte_order);
 			break;
 		}
 		case ELF_R_386_PC32: {
 			uint32 v = createHostInt(buf, 4, data->byte_order);
 			v += e->relocs.r_pc32;
-			create_foreign_int(buf, v, 4, data->byte_order);
+			createForeignInt(buf, v, 4, data->byte_order);
 			break;
 		}
 	}
