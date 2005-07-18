@@ -36,7 +36,7 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 	uint32 op;
 	int dialect = -1;
 
-	insn.data = create_host_int(code, 4, big_endian);
+	insn.data = createHostInt(code, 4, big_endian);
 	
 	if (maxlen<4) {
 		insn.valid = false;
