@@ -22,7 +22,7 @@
 #include "htcfg.h"
 #include "htctrl.h"
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htreg.h"
 #include "htstring.h"
 #include "stream.h"
