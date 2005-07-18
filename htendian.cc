@@ -22,7 +22,7 @@
 #include "endianess.h"
 #include <string.h>
 
-void create_foreign_int(void *buf, int i, int size, endianess to_endianess)
+void createForeignInt(void *buf, int i, int size, endianess to_endianess)
 {
 	byte *b=(byte*)buf;
 	switch (size) {
