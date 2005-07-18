@@ -21,7 +21,7 @@
 #ifndef __HTSEARCH_H__
 #define __HTSEARCH_H__
 
-#include "htatom.h"
+#include "atom.h"
 #include "htdialog.h"
 #include "htexcept.h"
 #include "htformat.h"
@@ -53,7 +53,7 @@ extern "C" {
 
 #define ST_EXPR		3         // search stops when expression evals to non-zero
 
-typedef ht_view* (*create_form_func)(bounds *b, HT_ATOM histid);
+typedef ht_view* (*create_form_func)(bounds *b, uint histid);
 typedef void (*create_desc_func)(char *buf, int buflen, ht_view *form);
 
 /*
@@ -67,7 +67,7 @@ public:
 			ht_fxbin_search_request(uint search_class, uint flags, uint data_size, byte *data);
 	virtual	~ht_fxbin_search_request();
 	/* overwritten */
-	virtual	Object *clone();
+	virtual	Object *clone() const;
 };
 
 /*
@@ -89,7 +89,7 @@ public:
 			ht_regex_search_request(uint search_class, uint flags, char *regex);
 	virtual	~ht_regex_search_request();
 	/* overwritten */
-	virtual	Object *clone();
+	virtual	Object *clone() const;
 };
 
 /*
@@ -102,7 +102,7 @@ public:
 			ht_expr_search_request(uint search_class, uint flags, char *Expr);
 	virtual	~ht_expr_search_request();
 	/* overwritten */
-	virtual	Object *clone();
+	virtual	Object *clone() const;
 };
 
 /* binary search function */
@@ -125,7 +125,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void init(bounds *b, int options, ht_list *history=0);
+			void init(bounds *b, int options, List *history=0);
 };
 
 /*
@@ -145,7 +145,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, ht_list *history=0);
+			void	init(bounds *b, int options, List *history=0);
 };
 
 /*
@@ -165,7 +165,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, ht_list *history=0);
+			void	init(bounds *b, int options, List *history=0);
 };
 
 /*
@@ -185,7 +185,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, ht_list *history=0);
+			void	init(bounds *b, int options, List *history=0);
 };
 
 /*
@@ -200,7 +200,7 @@ class ht_replace_hexascii_search_form: public ht_group {
 protected:
 	ht_strinputfield *str;
 public:
-			void init(bounds *b, int options, ht_list *history=0);
+			void init(bounds *b, int options, List *history=0);
 };
 
 /*
@@ -305,10 +305,10 @@ public:
 // flags
 #define SFBIN_CASEINSENSITIVE	1
 
-ht_data* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success);
-bool search_bin_process(ht_data *context, ht_text *progress_indicator);
+Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success);
+bool search_bin_process(Object *context, ht_text *progress_indicator);
 
-ht_view* create_form_hexascii(bounds *b, HT_ATOM histid);
+ht_view* create_form_hexascii(bounds *b, uint histid);
 void create_desc_hexascii(char *buf, int buflen, ht_view *f);
 
 ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, uint32 fsize);
@@ -335,7 +335,7 @@ public:
 	~ht_replace_bin_context();
 };
  
-ht_data* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen);
-bool replace_bin_process(ht_data *context, ht_text *progress_indicator);
+Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen);
+bool replace_bin_process(Object *context, ht_text *progress_indicator);
 
 #endif /* __HTSEARCH_H__ */
