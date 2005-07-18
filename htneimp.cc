@@ -19,7 +19,7 @@
  */
 
 #include "htatom.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htne.h"
 #include "htneent.h"
 #include "httag.h"
