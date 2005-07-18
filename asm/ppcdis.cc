@@ -20,7 +20,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "htendian.h"
+#include "endianess.h"
 #include "ppcdis.h"
 #include "ppcopc.h"
 #include "tools.h"
