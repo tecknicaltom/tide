@@ -24,7 +24,7 @@
 #include "formats.h"
 #include "coff_s.h"
 #include "htcoffhd.h"
-#include "htendian.h"
+#include "endianess.h"
 
 #define DESC_COFF			"coff - unix common obj file"
 #define DESC_COFF_HEADER		"coff/header"
@@ -57,7 +57,7 @@ struct ht_coff_shared_data {
 	uint32 hdr_ofs;
 	COFF_HEADER coffheader;
 	uint16 opt_magic;
-	endianess endian;
+	Endianess endian;
 	union {
 		COFF_OPTIONAL_HEADER32 coff32header;
 	};
@@ -74,7 +74,7 @@ class ht_coff: public ht_format_group {
 private:
 	ht_coff_shared_data *coff_shared;
 public:
-		void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, endianess end);
+		void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess end);
 	virtual	void done();
 };
 
