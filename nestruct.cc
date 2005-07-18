@@ -19,7 +19,7 @@
  */
 
 
-#include "htendian.h"
+#include "endianess.h"
 #include "nestruct.h"
 
 byte NE_HEADER_struct[] = {
