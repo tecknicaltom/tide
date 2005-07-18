@@ -23,7 +23,7 @@ ht_LIBS		= @HT_LIBS@
 
 ht_SOURCES	= atom.cc atom.h data.cc data.h str.cc str.h \
 htdoc.c htdoc.h blockop.cc blockop.h coff_s.h \
-config.h cstream.cc cstream.h demangle.h elfstruc.h htendian.cc \
+config.h cstream.cc cstream.h demangle.h elfstruc.h \
 htendian.h formats.cc formats.h global.h htanaly.cc htanaly.h htapp.cc \
 htapp.h htcfg.cc htcfg.h htclipboard.cc htclipboard.h \
 htcoff.cc htcoff.h htcoffhd.cc htcoffhd.h htctrl.cc htctrl.h \
