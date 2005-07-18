@@ -23,7 +23,7 @@
 #include "htctrl.h"
 #include "htdata.h"
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htnewexe.h"
 #include "htpal.h"
@@ -92,7 +92,7 @@ static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
 	PE_EXPORT_DIRECTORY edir;
 	file->seek(eofs);
 	file->read(&edir, sizeof edir);
-	create_host_struct(&edir, PE_EXPORT_DIRECTORY_struct, little_endian);
+	createHostStruct(&edir, PE_EXPORT_DIRECTORY_struct, little_endian);
 /* get export filename */
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_address, &ename_ofs)) goto pe_read_error;
 	file->seek(ename_ofs);
@@ -104,7 +104,7 @@ static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
 	file->seek(efunct_ofs);
 	file->read(efunct, edir.function_count*sizeof *efunct);
 	for (uint i=0; i<edir.function_count;i++) {
-		efunct[i] = create_host_int(efunct+i, sizeof *efunct, little_endian);
+		efunct[i] = createHostInt(efunct+i, sizeof *efunct, little_endian);
 	}
 /* read in name address table */
 	FileOfs enamet_ofs;
@@ -113,7 +113,7 @@ static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
 	file->seek(enamet_ofs);
 	file->read(enamet, edir.name_count*sizeof *enamet);
 	for (uint i=0; i<edir.name_count; i++) {
-		enamet[i] = create_host_int(enamet+i, sizeof *enamet, little_endian);
+		enamet[i] = createHostInt(enamet+i, sizeof *enamet, little_endian);
 	}
 /* read in ordinal table */
 	FileOfs eordt_ofs;
@@ -122,7 +122,7 @@ static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
 	file->seek(eordt_ofs);
 	file->read(eordt, edir.name_count*sizeof *eordt);
 	for (uint i=0; i<edir.name_count; i++) {
-		eordt[i] = create_host_int(eordt+i, sizeof *eordt, little_endian);
+		eordt[i] = createHostInt(eordt+i, sizeof *eordt, little_endian);
 	}
 
 	lord=(bool*)malloc(sizeof *lord*edir.function_count);
