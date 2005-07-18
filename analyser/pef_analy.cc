@@ -149,7 +149,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 			if (entropy[i] == 0) continue;
 			file->seek(h+entropy[i]*sizeof (PEF_SYMBOL32));
 			file->read(&sym, sizeof sym);
-			create_host_struct(&sym, PEF_SYMBOL32_struct, pef_shared->byte_order);
+			createHostStruct(&sym, PEF_SYMBOL32_struct, pef_shared->byte_order);
 
 			file->seek(sto+sym.st_name);
 			char *name = fgetstrz(file);
@@ -253,7 +253,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 			if (entropy[i] == 0) continue;
 			file->seek(h+entropy[i]*sizeof (PEF_SYMBOL64));
 			file->read(&sym, sizeof sym);
-			create_host_struct(&sym, PEF_SYMBOL64_struct, pef_shared->byte_order);
+			createHostStruct(&sym, PEF_SYMBOL64_struct, pef_shared->byte_order);
 
 			file->seek(sto+sym.st_name);
 			char *name = fgetstrz(file);
