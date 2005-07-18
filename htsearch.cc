@@ -44,7 +44,7 @@ uint lastreplacemodeid=0;
 
 typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, ht_view *form, ht_format_viewer *format, uint search_class);
 
-typedef ht_data* (*create_replace_context_func)(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen);
+typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen);
 
 struct ht_search_method {
 	char *name;
@@ -474,7 +474,7 @@ ht_search_bin_context::~ht_search_bin_context()
 	free(pat);
 }
 
-ht_data* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success)
+Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success)
 {
 	if (patlen > SEARCH_BUF_SIZE) return NULL;
 	
@@ -506,7 +506,7 @@ ht_data* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat,
 	return ctx;
 }
 
-bool search_bin_process(ht_data *context, ht_text *progress_indicator)
+bool search_bin_process(Object *context, ht_text *progress_indicator)
 {
 	ht_search_bin_context *ctx = (ht_search_bin_context*)context;
 
@@ -876,7 +876,7 @@ ht_view* create_form_replace_hexascii(bounds *b, HT_ATOM histid)
 	return form;
 }
 
-ht_data* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen)
+Object* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen)
 {
 	ht_replace_hexascii_search_form_data d;
 	form->databuf_get(&d, sizeof d);
@@ -1184,7 +1184,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 }
 
 #define REPLACE_COPY_BUF_SIZE	64*1024
-ht_data* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen)
+Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen)
 {
 	ht_replace_bin_context *ctx = new ht_replace_bin_context();
 	ctx->file = file;
@@ -1205,7 +1205,7 @@ ht_data* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *rep
 	return ctx;
 }
 
-bool replace_bin_process(ht_data *context, ht_text *progress_indicator)
+bool replace_bin_process(Object *context, ht_text *progress_indicator)
 {
 	progress_indicator->settext("replacing...\n");
 	
