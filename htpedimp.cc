@@ -21,7 +21,7 @@
 #include "formats.h"
 #include "htanaly.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htnewexe.h"
 #include "htpal.h"
@@ -87,7 +87,7 @@ static ht_view *htpedelayimports_init(bounds *b, File *file, ht_format_group *gr
 	while (1) {
 		file->seek(iofs);
 		file->read(&dimport, sizeof dimport);
-		create_host_struct(&dimport, PE_DELAY_IMPORT_DESCRIPTOR_struct, little_endian);
+		createHostStruct(&dimport, PE_DELAY_IMPORT_DESCRIPTOR_struct, little_endian);
 		if (!dimport.name) break;
 		uint32 base = dimport.attributes & 1 ? 0 : pe_shared->pe32.header_nt.image_base;
 
@@ -107,12 +107,12 @@ static ht_view *htpedelayimports_init(bounds *b, File *file, ht_format_group *gr
 			ht_pe_import_function *func;
 			file->seek(ntofs);
 			file->read(&nva, 4);
-			nva = create_host_int(&nva, 4, little_endian);
+			nva = createHostInt(&nva, 4, little_endian);
 			if (!nva) break;
 			function_count++;
 			file->seek(atofs);
 			file->read(&ava, 4);
-			ava = create_host_int(&ava, 4, little_endian);
+			ava = createHostInt(&ava, 4, little_endian);
 			if (nva & 0x80000000) {
 /* import by ordinal */
 				func=new ht_pe_import_function(dll_index, ava, nva&0xffff);
@@ -123,7 +123,7 @@ static ht_view *htpedelayimports_init(bounds *b, File *file, ht_format_group *gr
 				uint16 hint=0;
 				file->seek(nofs);
 				file->read(&hint, 2);
-				hint = create_host_int(&hint, 2, little_endian);
+				hint = createHostInt(&hint, 2, little_endian);
 				char *name=fgetstrz(file);
 				func=new ht_pe_import_function(dll_index, ava, name, hint);
 				free(name);
