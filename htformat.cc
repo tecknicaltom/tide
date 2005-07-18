@@ -3474,7 +3474,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 				if (edit()) {
 					byte buf[4];
 					uint v = desc[i].value;
-					create_foreign_int(buf, v, size, end);
+					createForeignInt(buf, v, size, end);
 					pwrite(offset, buf, size);
 					dirtyview();
 				}					
