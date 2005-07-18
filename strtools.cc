@@ -40,7 +40,7 @@ char *ht_strdup(const char *str)
 	if (str) {
 		int len = strlen(str)+1;
 		char *s = (char*)smalloc(len);
-		memmove(s, str, len);
+		memcpy(s, str, len);
 		return s;
 	} else {
 		return NULL;
