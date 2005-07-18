@@ -19,7 +19,7 @@
  */
 
 #include "elfstruc.h"
-#include "htendian.h"
+#include "endianess.h"
 
 byte ELF_HEADER32_struct[]= {
 	STRUCT_ENDIAN_WORD | STRUCT_ENDIAN_HOST,
