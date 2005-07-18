@@ -20,7 +20,7 @@
 
 #include "cstream.h"
 #include "htdebug.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "minilzo.h"
 #include "tools.h"
 
@@ -92,9 +92,9 @@ bool ht_compressed_stream::flush_uncompressed()
 		byte n[4];
 
 		if (stream->read(n, 4)!=4) return false;
-		uncompressed_len = create_host_int(n, 4, big_endian);
+		uncompressed_len = createHostInt(n, 4, big_endian);
 		if (stream->read(n, 4)!=4) return false;
-		cbuf_len = create_host_int(n, 4, big_endian);
+		cbuf_len = createHostInt(n, 4, big_endian);
 
 		buffer = (byte *)smalloc(uncompressed_len);
 		byte *cbuf = (byte *)smalloc(cbuf_len);
