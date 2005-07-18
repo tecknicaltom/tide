@@ -330,9 +330,9 @@ void scalar_create_int_c(eval_scalar *s, const int i)
 
 void scalar_create_int_q(eval_scalar *s, const uint64 q)
 {
-	s->type=SCALAR_INT;
-	s->scalar.integer.value=q;
-	s->scalar.integer.type=TYPE_UNKNOWN;
+	s->type = SCALAR_INT;
+	s->scalar.integer.value = q;
+	s->scalar.integer.type = TYPE_UNKNOWN;
 }
 
 void scalar_create_str(eval_scalar *s, const eval_str *t)
