@@ -19,7 +19,7 @@
  */
 
 #include "log.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htne.h"
 #include "htneent.h"
@@ -123,7 +123,7 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 
 	file->seek(h);
 	file->read(&ne_shared->hdr, sizeof ne_shared->hdr);
-	create_host_struct(&ne_shared->hdr, NE_HEADER_struct, little_endian);
+	createHostStruct(&ne_shared->hdr, NE_HEADER_struct, little_endian);
 
 /* read segment descriptors */
 	ne_shared->segments.segment_count = ne_shared->hdr.cseg;
@@ -134,7 +134,7 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	file->seek(h+ne_shared->hdr.segtab);
 	for (uint32 i = 0; i < ne_shared->segments.segment_count; i++) {
 		file->read(s, sizeof *s);
-		create_host_struct(s, NE_SEGMENT_struct, little_endian);
+		createHostStruct(s, NE_SEGMENT_struct, little_endian);
 		if (s->flags & NE_HASRELOC) reloc_needed = true;
 		s++;
 	}
@@ -143,7 +143,7 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	NE_ENTRYPOINT_HEADER e;
 	file->seek(o);
 	file->read(&e, sizeof e);
-	create_host_struct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
+	createHostStruct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
 	o += sizeof e;
 
 	ht_clist *ep = new ht_clist();
@@ -158,7 +158,7 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 				
 				NE_ENTRYPOINT_MOVABLE me;
 				file->read(&me, sizeof me);
-				create_host_struct(&me, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
+				createHostStruct(&me, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
 
 				ep->set(index, new ht_ne_entrypoint(index, me.seg, me.offset, 0));
 			} else {
@@ -167,14 +167,14 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 				NE_ENTRYPOINT_FIXED fe;
 				file->seek(o);
 				file->read(&fe, sizeof fe);
-				create_host_struct(&fe, NE_ENTRYPOINT_FIXED_struct, little_endian);
+				createHostStruct(&fe, NE_ENTRYPOINT_FIXED_struct, little_endian);
 				ep->set(index, new ht_ne_entrypoint(index, e.seg_index, fe.offset, 0));
 			}
 			index++;
 		}
 		file->seek(o);
 		file->read(&e, sizeof e);
-		create_host_struct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
+		createHostStruct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
 		o += sizeof e;
 	}
 
@@ -190,7 +190,7 @@ void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 		char buf[2];
 		file->seek(o+i*2);
 		if (file->read(buf, 2) != 2) break;
-		int w = create_host_int(buf, 2, little_endian);
+		int w = createHostInt(buf, 2, little_endian);
 		file->seek(no+w);
 		ne_shared->modnames[i] = getstrp(file);
 	}
@@ -303,18 +303,18 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 			file->seek(f);
 			file->read(buf, 2);
 			f += 2;
-			int c = create_host_int(buf, 2, little_endian);
+			int c = createHostInt(buf, 2, little_endian);
 			for (int j = 0; j < c; j++) {
 				NE_RELOC_HEADER reloc;
 				file->seek(f);
 				file->read(&reloc, sizeof reloc);
-				create_host_struct(&reloc, NE_RELOC_HEADER_struct, little_endian);
+				createHostStruct(&reloc, NE_RELOC_HEADER_struct, little_endian);
 				f += sizeof reloc;
 				switch (reloc.flags & NE_RF_RT_MASK) {
 				case NE_RF_INTERNAL: {
 					NE_RELOC_INTERNAL sreloc;
 					file->read(&sreloc, sizeof sreloc);
-					create_host_struct(&sreloc, NE_RELOC_INTERNAL_struct, little_endian);
+					createHostStruct(&sreloc, NE_RELOC_INTERNAL_struct, little_endian);
 					f += sizeof sreloc;
 					if (sreloc.seg == 0xff) {
 //		                              	ne_shared->entrypoint->;
@@ -327,7 +327,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				case NE_RF_IMPORT_ORD: {
 					NE_RELOC_IMPORT sreloc;
 					file->read(&sreloc, sizeof sreloc);
-					create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
+					createHostStruct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
 					f += sizeof sreloc;
 					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, false, sreloc.ord), NULL)) {
 //						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf2, sreloc.ord)) return false;
@@ -339,7 +339,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				case NE_RF_IMPORT_NAME: {
 					NE_RELOC_IMPORT sreloc;
 					file->read(&sreloc, sizeof sreloc);
-					create_host_struct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
+					createHostStruct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
 					f += sizeof sreloc;
 					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, true, sreloc.name_ofs), NULL)) {
 //						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf3, sreloc.name_ofs)) return false;
@@ -351,7 +351,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				case NE_RF_OSFIXUP: {
 					NE_RELOC_FIXUP sreloc;
 					file->read(&sreloc, sizeof sreloc);
-					create_host_struct(&sreloc, NE_RELOC_FIXUP_struct, little_endian);
+					createHostStruct(&sreloc, NE_RELOC_FIXUP_struct, little_endian);
 					f += sizeof sreloc;
 					if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xdead, 0xcafebabe)) return false;
 					break;
@@ -389,7 +389,7 @@ bool ht_ne::relocate_single(ht_reloc_file *rf, uint seg, FileOfs ofs, uint type,
 		char buf[2];
 		file->seek(ofs);
 		file->read(buf, 2);
-		uint16 r = create_host_int(buf, 2, little_endian);
+		uint16 r = createHostInt(buf, 2, little_endian);
 		if (r == 0xffff) break;
 		NEAddress a = NE_MAKE_ADDR(seg+1, r);
 		if (!NE_addr_to_ofs(ne_shared, a, &ofs)) {
