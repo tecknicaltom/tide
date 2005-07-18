@@ -24,7 +24,7 @@
 #include "htpefhd.h"
 #include "htpefimp.h"
 #include "htpefimg.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "stream.h"
 #include "tools.h"
 
@@ -89,7 +89,7 @@ void ht_pef::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	/* read (container) header */
 	file->seek(header_ofs);
 	file->read(&pef_shared->contHeader, sizeof pef_shared->contHeader);
-	create_host_struct(&pef_shared->contHeader, PEF_CONTAINER_HEADER_struct, pef_shared->byte_order);
+	createHostStruct(&pef_shared->contHeader, PEF_CONTAINER_HEADER_struct, pef_shared->byte_order);
 
 	if (memcmp(pef_shared->contHeader.architecture, "pwpc", 4) == 0) {
 		pef_shared->arch = PEFARCH_PowerPC;
@@ -104,7 +104,7 @@ void ht_pef::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 			malloc(pef_shared->sheaders.count*sizeof (PEF_SECTION_HEADER));
 		for (uint i=0; i<pef_shared->sheaders.count; i++) {
 			file->read(&pef_shared->sheaders.sheaders[i], sizeof pef_shared->sheaders.sheaders[i]);
-			create_host_struct(&pef_shared->sheaders.sheaders[i], PEF_SECTION_HEADER_struct, pef_shared->byte_order);
+			createHostStruct(&pef_shared->sheaders.sheaders[i], PEF_SECTION_HEADER_struct, pef_shared->byte_order);
 			// FIXME: hack
 			pef_shared->sheaders.sheaders[i].defaultAddress = i*0x100000;
 			if (!pef_shared->loader_info_header_ofs
@@ -117,7 +117,7 @@ void ht_pef::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	if (pef_shared->loader_info_header_ofs) {
 		file->seek(pef_shared->loader_info_header_ofs);
 		file->read(&pef_shared->loader_info_header, sizeof pef_shared->loader_info_header);
-		create_host_struct(&pef_shared->loader_info_header, PEF_LOADER_INFO_HEADER_struct, pef_shared->byte_order);
+		createHostStruct(&pef_shared->loader_info_header, PEF_LOADER_INFO_HEADER_struct, pef_shared->byte_order);
 	}
 
 	/* init ifs */
