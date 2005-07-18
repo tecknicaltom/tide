@@ -18,7 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "htendian.h"
+#include "endianess.h"
 #include "htmz.h"
 #include "htmzhead.h"
 #include "htmzrel.h"
@@ -58,7 +58,7 @@ void ht_mz::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	shared_data = mz_shared;
 	file->seek(0);
 	file->read(&mz_shared->header, sizeof mz_shared->header);
-	create_host_struct(&mz_shared->header, MZ_HEADER_struct, little_endian);
+	createHostStruct(&mz_shared->header, MZ_HEADER_struct, little_endian);
 	shared_data = mz_shared;
 	ht_format_group::init_ifs(ifs);
 }
