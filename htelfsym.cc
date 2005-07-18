@@ -101,7 +101,7 @@ static ht_view *htelfsymboltable_init(bounds *b, File *file, ht_format_group *gr
 		ELF_SYMBOL32 sym;
 		file->seek(h+i*sizeof (ELF_SYMBOL32));
 		file->read(&sym, sizeof sym);
-		create_host_struct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
+		createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 		file->seek(sto+sym.st_name);          
 		char *name = fgetstrz(file);
 		/* FIXME: error handling (also in elf_analy.cc) */
