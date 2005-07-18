@@ -26,7 +26,7 @@
 #include "relfile.h"
 
 #include "lestruct.h"
-#include "htendian.h"
+#include "endianess.h"
 
 #define DESC_LE "le - win,os2 linear exe"
 #define DESC_LE_HEADER "le/header"
@@ -62,7 +62,7 @@
 class ht_le_page_file;
 
 struct ht_le_shared_data {
-	endianess byteorder;
+	Endianess byteorder;
 	uint32 hdr_ofs;
 	LE_HEADER hdr;
 	ht_viewer *v_header;
