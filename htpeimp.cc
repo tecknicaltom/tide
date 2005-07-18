@@ -22,7 +22,7 @@
 #include "htanaly.h"
 #include "htctrl.h"
 #include "htdata.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htnewexe.h"
 #include "htpal.h"
@@ -112,7 +112,7 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 	while (1) {
 		file->seek(dofs);
 		file->read(&import, sizeof import);
-		create_host_struct(&import, PE_IMPORT_DESCRIPTOR_struct, little_endian);
+		createHostStruct(&import, PE_IMPORT_DESCRIPTOR_struct, little_endian);
 		if ((!import.characteristics) && (!import.name)) break;
 		dofs = file->tell();
 		/* get name of dll */
@@ -161,11 +161,11 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 		while (1) {
 			if (pe32) {
 				file->read(&thunk, sizeof thunk);
-				create_host_struct(&thunk, PE_THUNK_DATA_struct, little_endian);
+				createHostStruct(&thunk, PE_THUNK_DATA_struct, little_endian);
 				if (!thunk.ordinal) break;
 			} else {
 				file->read(&thunk64, sizeof thunk64);
-				create_host_struct(&thunk64, PE_THUNK_DATA_64_struct, little_endian);
+				createHostStruct(&thunk64, PE_THUNK_DATA_64_struct, little_endian);
 				if (!QWORD_GET_LO(thunk64.ordinal)) break;
 			}
 			thunk_count++;
@@ -180,14 +180,14 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 				file->read(thunk_table, sizeof *thunk_table * thunk_count);
 				// FIXME: ?
 				for (uint i=0; i<thunk_count; i++) {
-					create_host_struct(thunk_table+i, PE_THUNK_DATA_struct, little_endian);
+					createHostStruct(thunk_table+i, PE_THUNK_DATA_struct, little_endian);
 				}
 			} else {
 				thunk_table64=(PE_THUNK_DATA_64*)malloc(sizeof *thunk_table64 * thunk_count);
 				file->read(thunk_table64, sizeof *thunk_table64 * thunk_count);
 				// FIXME: ?
 				for (uint i=0; i<thunk_count; i++) {
-					create_host_struct(thunk_table64+i, PE_THUNK_DATA_64_struct, little_endian);
+					createHostStruct(thunk_table64+i, PE_THUNK_DATA_64_struct, little_endian);
 				}
 			}
 		}
@@ -210,7 +210,7 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 						if (file->seek(thunk.function_desc_address)) goto pe_read_error;
 					}
 					file->read(&hint, 2);
-					hint = create_host_int(&hint, 2, little_endian);
+					hint = createHostInt(&hint, 2, little_endian);
 					char *name = fgetstrz(file);
 					func = new ht_pe_import_function(dll_index, fthunk_rva, name, hint);
 					free(name);
@@ -229,7 +229,7 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 					if (!pe_rva_to_ofs(&pe_shared->sections, QWORD_GET_LO(thunk64.function_desc_address), &function_desc_ofs)) goto pe_read_error;
 					file->seek(function_desc_ofs);
 					file->read(&hint, 2);
-					hint = create_host_int(&hint, 2, little_endian);
+					hint = createHostInt(&hint, 2, little_endian);
 					char *name = fgetstrz(file);
 					func = new ht_pe_import_function(dll_index, fthunk_rva, name, hint);
 					free(name);
