@@ -22,7 +22,7 @@
 #include "htanaly.h"
 #include "htctrl.h"
 #include "htdata.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htpal.h"
 #include "htpef.h"
@@ -78,7 +78,7 @@ ht_view *htpefimports_init(bounds *b, File *file, ht_format_group *group)
 
 		PEF_ImportedLibrary lib;
 		file->read(&lib, sizeof lib);
-		create_host_struct(&lib, PEF_ImportedLibrary_struct, pef_shared->byte_order);
+		createHostStruct(&lib, PEF_ImportedLibrary_struct, pef_shared->byte_order);
 
 		file->seek(nametable + lib.nameOffset);
 		char *libname = fgetstrz(file);
@@ -90,7 +90,7 @@ ht_view *htpefimports_init(bounds *b, File *file, ht_format_group *group)
 			file->seek(functions_offset + 4 * (lib.firstImportedSymbol+j));
 			uint32 entry;
 			file->read(&entry, 4);
-			entry = create_host_int(&entry, 4, pef_shared->byte_order);
+			entry = createHostInt(&entry, 4, pef_shared->byte_order);
 			
 			uint32 symbol_ofs = entry & 0x00ffffff;
 			uint32 symbol_class = entry >> 24;
