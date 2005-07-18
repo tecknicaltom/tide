@@ -22,7 +22,7 @@
 #include "htanaly.h"
 #include "htctrl.h"
 #include "htdata.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "htiobox.h"
 #include "htpal.h"
 #include "xbestruct.h"
@@ -450,7 +450,7 @@ static ht_view *htxbeimports_init(bounds *b, File *file, ht_format_group *group)
 	for (; *thunktable; thunktable++, thunktablerva+=4) {
 		uint ordinal;
 
-		ordinal = create_host_int(thunktable, 4, little_endian);
+		ordinal = createHostInt(thunktable, 4, little_endian);
 		ht_xbe_import_function *func = new ht_xbe_import_function(thunktablerva, (char *)xbox_exports[ordinal & 0xfff], ordinal);
     		xbe_shared->imports.funcs->insert(func);
 		function_count++;
