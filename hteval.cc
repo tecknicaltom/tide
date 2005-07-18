@@ -22,7 +22,7 @@
 
 #include "atom.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hthist.h"
 #include "htiobox.h"
 #include "htpal.h"
