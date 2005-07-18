@@ -23,7 +23,7 @@
 #include "atom.h"
 #include "htcoff.h"
 #include "htctrl.h"
-#include "htendian.h"
+#include "endianess.h"
 #include "hthex.h"
 #include "htiobox.h"
 #include "htnewexe.h"
@@ -204,7 +204,7 @@ static ht_view *htpeheader_init(bounds *b, File *file, ht_format_group *group)
 	uint16 opt;
 	file->seek(h+24);
 	file->read(&opt, 2);
-	opt = create_host_int(&opt, 2, little_endian);
+	opt = createHostInt(&opt, 2, little_endian);
 	switch (opt) {
 		case COFF_OPTMAGIC_PE32:
 		case COFF_OPTMAGIC_PE64: {
