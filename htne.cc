@@ -445,24 +445,24 @@ void ht_ne_reloc_file::reloc_apply(ht_data *reloc, byte *data)
 
 	switch (e->mode & NE_RT_MASK) {
 		case NE_RT_OFS8:
-			create_foreign_int(data, e->ofs, 1, little_endian);
+			createForeignInt(data, e->ofs, 1, little_endian);
 			break;
 		case NE_RT_SEG16:
-			create_foreign_int(data, e->seg, 2, little_endian);
+			createForeignInt(data, e->seg, 2, little_endian);
 			break;
 		case NE_RT_OFS16:
-			create_foreign_int(data, e->ofs, 2, little_endian);
+			createForeignInt(data, e->ofs, 2, little_endian);
 			break;
 		case NE_RT_PTR32:
-			create_foreign_int(data, e->ofs, 2, little_endian);
-			create_foreign_int(data+2, e->seg, 2, little_endian);
+			createForeignInt(data, e->ofs, 2, little_endian);
+			createForeignInt(data+2, e->seg, 2, little_endian);
 			break;
 		case NE_RT_OFS32:
-			create_foreign_int(data, e->ofs, 4, little_endian);
+			createForeignInt(data, e->ofs, 4, little_endian);
 			break;
 		case NE_RT_PTR48:
-			create_foreign_int(data, e->ofs, 4, little_endian);
-			create_foreign_int(data+4, e->seg, 2, little_endian);
+			createForeignInt(data, e->ofs, 4, little_endian);
+			createForeignInt(data+4, e->seg, 2, little_endian);
 			break;
 	}
 }
