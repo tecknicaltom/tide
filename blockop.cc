@@ -27,7 +27,7 @@
 #include "htctrl.h"
 #include "endianess.h"
 #include "hteval.h"
-#include "htexcept.h"
+#include "except.h"
 #include "hthist.h"
 #include "htiobox.h"
 #include "keyb.h"
@@ -366,7 +366,7 @@ Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size,
 		char *s;
 		int p;
 		get_eval_error(&s, &p);
-		throw ht_io_exception("error evaluating '%s': %s at %d", action, s, p);
+		throw MsgfException("error evaluating '%s': %s at %d", action, s, p);
 	}
 
 	ctx->expr_const = blockop_expr_is_const;
@@ -392,9 +392,10 @@ bool blockop_str_process(Object *context, ht_text *progress_indicator)
 			if (ctx->o + s > ctx->ofs + ctx->len) s = ctx->ofs + ctx->len - ctx->o;
 			
 			ctx->file->seek(ctx->o);
-			if (ctx->file->write(ctx->v.value, s)!=s) {
+			ctx->file->writex(ctx->v.value, s);
+/*			!=s) {
 				throw ht_io_exception("blockop_str(): write error at pos %08x, size %08x", ctx->o, s);
-			}
+			}*/
 			ctx->o += s;
 		} else {
 			return false;
@@ -412,7 +413,7 @@ bool blockop_str_process(Object *context, ht_text *progress_indicator)
 				char *s;
 				int p;
 				get_eval_error(&s, &p);
-				throw ht_io_exception("error evaluating '%s': %s at %d", ctx->action, s, p);
+				throw MsgfException("error evaluating '%s': %s at %d", ctx->action, s, p);
 			}
 			scalar_context_str(&r, &sr);
 			scalar_destroy(&r);
@@ -421,9 +422,10 @@ bool blockop_str_process(Object *context, ht_text *progress_indicator)
 			if (ctx->o+s > ctx->ofs+ctx->len) s = ctx->ofs+ctx->len-ctx->o;
 
 			ctx->file->seek(ctx->o);
-			if (ctx->file->write(sr.value, s)!=s) {
+			ctx->file->writex(sr.value, s);
+/*			!=s) {
 				throw ht_io_exception("blockop_str(): write error at pos %08x, size %08x", ctx->o, s);
-			}
+			}*/
 			string_destroy(&sr);
 			ctx->o += s;
 			ctx->i++;
@@ -486,7 +488,7 @@ Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size,
 		char *s;
 		int p;
 		get_eval_error(&s, &p);
-		throw ht_io_exception("error evaluating '%s': %s at %d", action, s, p);
+		throw MsgfException("error evaluating '%s': %s at %d", action, s, p);
 	}
 
 	ctx->expr_const = blockop_expr_is_const;
@@ -534,7 +536,7 @@ bool blockop_int_process(Object *context, ht_text *progress_indicator)
 				char *s;
 				int p;
 				get_eval_error(&s, &p);
-				throw ht_io_exception("error evaluating '%s': %s at %d", ctx->action, s, p);
+				throw MsgfException("error evaluating '%s': %s at %d", ctx->action, s, p);
 			}
 			scalar_context_int(&r, &ir);
 			scalar_destroy(&r);
@@ -634,8 +636,9 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 								if (ctx) {
 									/*bool b = */execute_process(blockop_int_process, ctx);
 								}
-							} catch (const ht_exception &e) {
-								errorbox("error: %s", e.what());
+							} catch (const Exception &e) {
+								String res;
+								errorbox("error: %y", &e.reason(res));
 							}
 							if (ctx) delete ctx;
 							break;
@@ -658,8 +661,9 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 								if (ctx) {
 									/*bool b = */execute_process(blockop_str_process, ctx);
 								}
-							} catch (const ht_exception &e) {
-								errorbox("error: %s", e.what());
+							} catch (const Exception &e) {
+								String res;
+								errorbox("error: %y", &e.reason(res));
 							}
 							if (ctx) delete ctx;
 							break;
