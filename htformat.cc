@@ -3572,7 +3572,7 @@ ht_search_result *ht_uformat_viewer::psearch(ht_search_request *request, FileOfs
 {
 	if (request != last_search_request) {
 		if (last_search_request) delete last_search_request;
-		last_search_request = (ht_search_request*)request->clone();
+		last_search_request = request->clone();
 	}
 	last_search_physical = true;
 	last_search_end_ofs = end;
@@ -3590,7 +3590,7 @@ ht_search_result *ht_uformat_viewer::vsearch(ht_search_request *request, viewer_
 {
 	if (request != last_search_request) {
 		if (last_search_request) delete last_search_request;
-		last_search_request = (ht_search_request*)request->clone();
+		last_search_request = request->clone();
 	}
 	last_search_physical = false;
 	last_search_end_pos = end;
