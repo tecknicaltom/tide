@@ -23,7 +23,7 @@
 
 #include "atom.h"
 #include "htdialog.h"
-#include "htexcept.h"
+#include "except.h"
 #include "htformat.h"
 #include "htobj.h"
 #include "htstring.h"
@@ -65,20 +65,20 @@ public:
 	byte *data;
 	
 			ht_fxbin_search_request(uint search_class, uint flags, uint data_size, byte *data);
-	virtual	~ht_fxbin_search_request();
+	virtual		~ht_fxbin_search_request();
 	/* overwritten */
-	virtual	Object *clone() const;
+	virtual	ht_fxbin_search_request *clone() const;
 };
 
 /*
  *	CLASS ht_regex_search_request
  */
-class ht_regex_search_exception: public ht_exception {
+class ht_regex_search_exception: public Exception {
 protected:
 	char rxerr[128];
 public:	
 	ht_regex_search_exception(int e, regex_t *r);
-	virtual const char *what() const;
+	virtual String &reason(String &) const;
 };
 
 class ht_regex_search_request: public ht_search_request {
@@ -89,7 +89,7 @@ public:
 			ht_regex_search_request(uint search_class, uint flags, char *regex);
 	virtual	~ht_regex_search_request();
 	/* overwritten */
-	virtual	Object *clone() const;
+	virtual	 ht_regex_search_request* clone() const;
 };
 
 /*
@@ -102,7 +102,7 @@ public:
 			ht_expr_search_request(uint search_class, uint flags, char *Expr);
 	virtual	~ht_expr_search_request();
 	/* overwritten */
-	virtual	Object *clone() const;
+	virtual	ht_expr_search_request *clone() const;
 };
 
 /* binary search function */
