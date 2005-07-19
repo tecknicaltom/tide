@@ -90,9 +90,9 @@ bool InvalidAddress::difference(int &result, Address *to)
 	return false;
 }
 
-Object *InvalidAddress::clone() const
+InvalidAddress *InvalidAddress::clone() const
 {
-	return new InvalidAddress();
+	return new InvalidAddress(*this);
 }
 
 void InvalidAddress::getFromArray(const byte *array)
@@ -185,9 +185,9 @@ bool AddressFlat32::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressFlat32::clone() const
+AddressFlat32 *AddressFlat32::clone() const
 {
-	return new AddressFlat32(addr);
+	return new AddressFlat32(*this);
 }
 
 void AddressFlat32::getFromArray(const byte *array)
@@ -303,9 +303,9 @@ bool AddressFlat64::difference(int &result, Address *to)
 	return false;
 }
 
-Object *AddressFlat64::clone() const
+AddressFlat64 *AddressFlat64::clone() const
 {
-	return new AddressFlat64(addr);
+	return new AddressFlat64(*this);
 }
 
 void AddressFlat64::getFromArray(const byte *array)
@@ -399,10 +399,10 @@ void AddrXRef::store(ObjectStream &f) const
 /*
  *
  */
-AddressQueueItem::AddressQueueItem(Address *Addr, Address *Func)
+AddressQueueItem::AddressQueueItem(Address *aAddr, Address *aFunc)
 {
-	addr = DUP_ADDR(Addr);
-	func = DUP_ADDR(Func);
+	addr = aAddr->clone();
+	func = aFunc->clone();
 }
 
 AddressQueueItem::~AddressQueueItem()
@@ -508,7 +508,7 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 		throw IOException(0);
 	}
 	int m = (l+r)/2;
-	loc = (Location *) smalloc0(sizeof(Location));
+	loc = new Location;
 
 	loadlocations(st, loc->left, l, m-1);
 
@@ -524,7 +524,7 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 
 	// must be resolved later (thisfunc is of type Location not Address)
 	GETX_OBJECT(st, loc->thisfunc, "func");
-	loc->flags = GETX_INT(st, 4, "flags");
+	loc->flags = GETX_INT(st, 1, "flags");
 
 	loadlocations(st, loc->right, m+1, r);
 }
@@ -536,7 +536,7 @@ static void loadsymbols(Analyser *analy, ObjectStream &st, Symbol *&symbol, int 
 		throw IOException(0);
 	}
 	int m = (l+r)/2;
-	symbol = (Symbol *) smalloc0(sizeof(Symbol));
+	symbol = new Symbol;
 
 	loadsymbols(analy, st, symbol->left, l, m-1);
 
@@ -1139,7 +1139,7 @@ void	Analyser::doBranch(branch_enum_t branch, OPCODE *opcode, int len)
 			add_comment(a->addr, 0, "");
 		}
 	}*/
-	Address *next_addr = DUP_ADDR(addr);
+	Address *next_addr = addr->clone();
 	if (!next_addr->add(len)) {
 		delete next_addr;
 		next_addr = new InvalidAddress();
@@ -1412,7 +1412,7 @@ Location *Analyser::getLocationContextByAddress(Address *Addr)
 {
 	Location *res = enumLocationsReverse(Addr);
 	if (res && res->type.type != dt_unknown) {
-		Address *resaddr = DUP_ADDR(res->addr);
+		Address *resaddr = res->addr->clone();
 		resaddr->add(res->type.length);
 		if (resaddr->compareTo(Addr) > 0) {
 			delete resaddr;
@@ -1485,7 +1485,7 @@ const char *Analyser::getSymbolNameByLocation(Location *loc)
 Address *Analyser::fileofsToAddress(FileOfs fileaddr)
 {
 	// abstract / stub
-	return DUP_ADDR(invalid_addr);
+	return new InvalidAddress();
 }
 
 /**
@@ -1510,7 +1510,7 @@ void Analyser::freeLocation(Location *loc)
 		delete loc->xrefs;
 		freeComments(loc);
 		delete loc->addr;
-		free(loc);
+		delete loc;
 	}
 }
 
@@ -1542,7 +1542,7 @@ void Analyser::freeSymbol(Symbol *label)
 {
 	if (label) {
 		if (label->name) free(label->name);
-		free(label);
+		delete label;
 	}
 }
 
@@ -1721,9 +1721,9 @@ Container *Analyser::getXRefs(Address *Addr)
 /*
  *
  */
-bool	Analyser::gotoAddress(Address *Addr, Address *func)
+bool	Analyser::gotoAddress(Address *aAddr, Address *func)
 {
-	DPRINTF("goto(%y, %y)\n", Addr, func);
+	DPRINTF("goto(%y, %y)\n", aAddr, func);
 	int diff;
 	
 	if (first_explored->difference(diff, last_explored) && diff < 0) {
@@ -1734,9 +1734,9 @@ bool	Analyser::gotoAddress(Address *Addr, Address *func)
 	delete first_explored;
 	delete last_explored;
 	delete next_explored;
-	func = DUP_ADDR(func);
+	func = func->clone();
 	
-	if (!validCodeAddress(Addr) || explored->contains(Addr)) {
+	if (!validCodeAddress(aAddr) || explored->contains(aAddr)) {
 		DPRINTF("Address: %y Valid: %d Explored: %d\n", addr, validCodeAddress(addr), explored->contains(addr));
 		do {
 			delete addr;
@@ -1752,9 +1752,9 @@ bool	Analyser::gotoAddress(Address *Addr, Address *func)
 			DPRINTF("pop %y   (Valid: %d  Explored: %d)\n", addr, validCodeAddress(addr), explored->contains(addr));
 		} while ((explored->contains(addr)) || (!validCodeAddress(addr)));          
 	} else {
-		if (addr != Addr) {
+		if (addr != aAddr) {
 			delete addr;
-			addr = DUP_ADDR(Addr);
+			addr = aAddr->clone();
 		}
 	}
 
@@ -1767,10 +1767,10 @@ bool	Analyser::gotoAddress(Address *Addr, Address *func)
 	if (!next_explored) {
 		next_explored = new InvalidAddress();
 	} else {
-		next_explored = DUP_ADDR(next_explored);
+		next_explored = next_explored->clone();
 	}
-	first_explored = DUP_ADDR(addr);
-	last_explored = DUP_ADDR(addr);
+	first_explored = addr->clone();
+	last_explored = addr->clone();
 	return true;
 }
 
@@ -1819,7 +1819,7 @@ void Analyser::makeDirty()
 /*
  *
  */
-CPU_ADDR Analyser::mapAddr(Address *Addr)
+CPU_ADDR Analyser::mapAddr(Address *aAddr)
 {
 	/*
 	 * 	this function should map the independent address Addr to a
@@ -1828,18 +1828,19 @@ CPU_ADDR Analyser::mapAddr(Address *Addr)
 	 *   it is only used for relativ calls/jumps
 	 */
 	CPU_ADDR a;
-	Addr->putIntoCPUAddress(&a);
+	aAddr->putIntoCPUAddress(&a);
 	return a;
 }
 
-Location *Analyser::newLocation(Location *&locs, Address *Addr)
+Location *Analyser::newLocation(Location *&locs, Address *aAddr)
 {
 	if (locs) {
-		if (Addr->compareTo(locs->addr) < 0) return newLocation(locs->left, Addr);
-		if (Addr->compareTo(locs->addr) > 0) return newLocation(locs->right, Addr);
+		if (aAddr->compareTo(locs->addr) < 0) return newLocation(locs->left, aAddr);
+		if (aAddr->compareTo(locs->addr) > 0) return newLocation(locs->right, aAddr);
 	} else {
-		locs = (Location *) smalloc0(sizeof(Location));
-		locs->addr = DUP_ADDR(Addr);
+		locs = new Location;
+		memset(locs, 0, sizeof *locs);
+		locs->addr = aAddr->clone();
 		location_count++;
 	}
 	locs->flags &= ~AF_DELETED;
@@ -1863,15 +1864,17 @@ Symbol *Analyser::newSymbol(Symbol *&labels, const char *label, Location *loc, l
 		int i = strcmp(label, labels->name);
 		if (i < 0) return newSymbol(labels->left, label, loc, type);
 		if (i > 0) return newSymbol(labels->right, label, loc, type);
-		if (!(labels->location)) {
+		if (!labels->location) {
 			labels->location = loc;
 			if (type != label_unknown) labels->type = type;
 		}
 	} else {
-		labels = (Symbol *) smalloc0(sizeof(Symbol));
+		labels = new Symbol;
 		labels->name = ht_strdup(label);
 		labels->location = loc;
 		labels->type = type;
+		labels->left = NULL;
+		labels->right = NULL;
 		symbol_count++;
 	}
 	return labels;
@@ -1915,10 +1918,10 @@ bool Analyser::popAddress(Address **Addr, Address **func)
 {
 	if (!addr_queue->isEmpty()) {
 		AddressQueueItem *aqi = (AddressQueueItem *) addr_queue->deQueue();
-		*Addr = DUP_ADDR(aqi->addr);
-		*func = DUP_ADDR(aqi->func);
+		*Addr = aqi->addr->clone();
+		*func = aqi->func->clone();
 		delete aqi;
-		
+
 		DPRINTF("addr %y (from sub %y) poped\n", *Addr, *func);
 		return true;
 
@@ -1973,7 +1976,7 @@ static void saveaddrs(ObjectStream &st, Location *addr)
 				PUTX_OBJECT(st, invalid_addr, "func");
 				delete invalid_addr;
 			}
-			PUTX_INT32X(st, addr->flags, "flags");
+			PUTX_INT8X(st, addr->flags, "flags");
 		}
 
 		saveaddrs(st, addr->right);
