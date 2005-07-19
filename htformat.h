@@ -63,6 +63,7 @@ public:
 	uint flags;
 	
 			ht_search_request(uint search_class, uint type, uint flags);
+	virtual ht_search_request *clone() const = 0;
 };
 
 /*
