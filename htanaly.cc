@@ -287,7 +287,7 @@ CallChainNode *CallChain::createNode(Address *A)
 	n->prev = NULL;
 	n->child = NULL;
 	n->examined = false;
-	n->xa = (Address *)A->clone();
+	n->xa = A->clone();
 	n->faddr = analy->getFunctionByAddress(A);
 	assert(n->faddr);
 	n->fa = n->faddr->addr;
@@ -299,10 +299,9 @@ void CallChain::examineNode(CallChainNode *n)
 {
 	n->examined = true;
 	if (has_children(n)) {
-		ht_tree *x_tree = n->faddr->xrefs;
+		Container *x_tree = n->faddr->xrefs;
 		assert(x_tree);
-		AddrXRef *x;
-		Address *a = (Address *)x_tree->enum_next((ht_data**)&x, NULL);
+		AddrXRef *x = (AddrXRef *)x_tree->findFirst((ht_data**)&x, NULL);
 		assert(a);
 		CallChainNode *nn = n->child = createNode(a);
 		while ((a = (Address *)x_tree->enum_next((ht_data**)&x, a))) {
