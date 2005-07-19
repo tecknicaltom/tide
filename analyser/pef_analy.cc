@@ -96,7 +96,7 @@ void PEFAnalyser::beginAnalysis()
 
 			// mark end of sections
 			ht_snprintf(blub, sizeof blub, ";  end of section <%s>", getSegmentNameByAddress(secaddr));
-			Address *secend_addr = (Address *)secaddr->clone();
+			Address *secend_addr = secaddr->clone();
 			secend_addr->add(s32->totalSize);
 			newLocation(secend_addr)->flags |= AF_FUNCTION_END;
 			addComment(secend_addr, 0, "");
