@@ -159,7 +159,7 @@ void PEAnalyser::beginAnalysis()
 
 		// mark end of sections
 		ht_snprintf(blub, sizeof blub, ";  end of section <%s>", getSegmentNameByAddress(secaddr));
-		Address *secend_addr = (Address *)secaddr->clone();
+		Address *secend_addr = secaddr->clone();
 		secend_addr->add(MAX(s->data_size, s->data_vsize));
 		newLocation(secend_addr)->flags |= AF_FUNCTION_END;
 		addComment(secend_addr, 0, "");
@@ -168,7 +168,7 @@ void PEAnalyser::beginAnalysis()
 		addComment(secend_addr, 0, ";******************************************************************");
 
 		validarea->add(secaddr, secend_addr);
-		Address *seciniaddr = (Address *)secaddr->clone();
+		Address *seciniaddr = secaddr->clone();
 		seciniaddr->add(MIN(s->data_size, s->data_vsize));
 		if (validAddress(secaddr, scinitialized) && validAddress(seciniaddr, scinitialized)) {
 			initialized->add(secaddr, seciniaddr);
