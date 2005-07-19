@@ -280,15 +280,15 @@ void	CallChain::adjust(void *node, bool expand)
 	((CallChainNode*)node)->expanded = expand;
 }
 
-CallChainNode *CallChain::createNode(Address *A)
+CallChainNode *CallChain::createNode(Address *a)
 {
 	CallChainNode *n = (CallChainNode *)smalloc(sizeof(CallChainNode));
 	n->next = NULL;
 	n->prev = NULL;
 	n->child = NULL;
 	n->examined = false;
-	n->xa = A->clone();
-	n->faddr = analy->getFunctionByAddress(A);
+	n->xa = a->clone();
+	n->faddr = analy->getFunctionByAddress(a);
 	assert(n->faddr);
 	n->fa = n->faddr->addr;
 	n->expanded = false;
@@ -473,7 +473,7 @@ void AnalyInfoline::update(Address *cursor_addr, FileOfs ecursor_addr)
 	delete addr;
 	if (valid()) {
 		fofs = ecursor_addr;
-		addr = (Address *)cursor_addr->clone();
+		addr = cursor_addr->clone();
 	} else {
 		fofs = INVALID_FILE_OFS;
 		addr = new InvalidAddress();
@@ -2052,8 +2052,8 @@ void ht_analy_sub::init(File *file, ht_aviewer *A, Analyser *analyser, Address *
 	analy = analyser;
 	output = new AnalyserHTOutput();
 	((AnalyserHTOutput*)output)->init(analy);
-	lowestaddress = (Address *)Lowestaddress->clone();
-	highestaddress = (Address *)Highestaddress->clone();
+	lowestaddress = Lowestaddress->clone();
+	highestaddress = Highestaddress->clone();
 }
 
 void ht_analy_sub::done()
@@ -2151,7 +2151,7 @@ ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start,
 		viewer_pos vp_start, vp_end;
 		aviewer->convertAddressToViewerPos((Address *)s->start, &vp_start);
 		if (!aviewer->pos_to_offset(vp_start, &fstart)) assert(0);
-		Address *send = (Address *)s->end->clone();
+		Address *send = s->end->clone();
 		send->add(-1);
 		aviewer->convertAddressToViewerPos(send, &vp_end);
 		delete send;
