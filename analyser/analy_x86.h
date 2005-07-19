@@ -33,7 +33,7 @@ public:
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(Address *to);
 	virtual bool difference(int &result, Address *to);
-	virtual Object *clone() const;
+	virtual AddressX86Flat32 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(CPU_ADDR *ca);
 	virtual void load(ObjectStream &s);
@@ -58,7 +58,7 @@ public:
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(Address *to);
 	virtual bool difference(int &result, Address *to);
-	virtual Object *clone() const;
+	virtual AddressX86_1616 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(CPU_ADDR *ca);
 	virtual void load(ObjectStream &s);
@@ -83,7 +83,7 @@ public:
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(Address *obj);
 	virtual bool difference(int &result, Address *to);
-	virtual Object *clone() const;
+	virtual AddressX86_1632 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(CPU_ADDR *ca);
 	virtual void load(ObjectStream &s);
