@@ -59,7 +59,7 @@ ht_view *htclassimage_init(bounds *b, File *file, ht_format_group *group)
 	if (!high) {
 		high = a->createAddress32(0);
 	} else {
-		high = (Address *)high->clone();
+		high = high->clone();
 		high->add(-1);
 	}
 	analy->init(file, v, a, low, high);
