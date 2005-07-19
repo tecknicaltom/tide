@@ -1921,7 +1921,7 @@ ht_search_result *ht_text_viewer::search(ht_search_request *request, text_search
 {
 	if (request != last_search_request) {
 		if (last_search_request) delete last_search_request;
-		last_search_request = (ht_search_request*)request->clone();
+		last_search_request = request->clone();
 	}
 	last_search_end_ofs = e->offset;
 
