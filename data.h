@@ -173,6 +173,7 @@ public:
 				Enumerator(BuildCtorArg&);
 				Enumerator();
 	/* extends Object */
+	virtual Enumerator *	clone() const = 0;
 	virtual	int		toString(char *buf, int buflen) const;
 	/* new */
 
@@ -383,8 +384,11 @@ protected:
 public:
 				Container(BuildCtorArg&);
 				Container();
-/* new */
+				
+	/* extends Enumerator */
+	virtual Container *	clone() const = 0;
 
+	/* new */
 /**
  *	Delete all objects. (ie. remove and free all objects)
  */
@@ -470,7 +474,10 @@ class List: public Container {
 public:
 				List(BuildCtorArg&);
 				List();
-/* new */
+	/* extends Enumerator */
+	virtual List *		clone() const = 0;
+	
+	/* new */
 
 /**
  *	Insert object at position.
@@ -571,7 +578,7 @@ public:
 				Array(bool own_objects, int prealloc = ARRAY_CONSTR_ALLOC_DEFAULT);
 	virtual			~Array();
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	Array *		clone() const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -641,7 +648,7 @@ public:
 				SLinkedList(bool own_objects);
 	virtual			~SLinkedList();
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	SLinkedList *	clone() const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -733,7 +740,7 @@ public:
 				DLinkedList(bool own_objects);
 	virtual			~DLinkedList();
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	DLinkedList *	clone() const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -807,7 +814,7 @@ public:
 				BinaryTree(bool own_objects, Comparator comparator = autoCompare);
 	virtual			~BinaryTree();
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	BinaryTree *	clone() const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -857,7 +864,7 @@ public:
 		void		debugOut();
 		bool		expensiveCheck() const;
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	AVLTree *	clone() const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -891,7 +898,7 @@ public:
 				MRUCache(bool own_objects, Comparator comparator = autoCompare);
 
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	MRUCache *	clone() const;
 	virtual	void		store(ObjectStream &s) const;
 	/* extends Container */
 	virtual	ObjHandle	insert(Object *obj);
@@ -940,7 +947,7 @@ public:
 			IntSet(uint aMaxSetSize);
 	virtual		~IntSet();
 	/* extends Object */
-	virtual	Object *clone() const;
+	virtual	IntSet *clone() const;
 	virtual	int	compareTo(const Object *obj) const;
 	virtual	int	toString(char *buf, int buflen) const;
 	/* new */
@@ -968,7 +975,7 @@ public:
 				KeyValue(Object *aKey, Object *aValue);
 	virtual			~KeyValue();
 
-	virtual	Object *	clone() const;
+	virtual	KeyValue *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -987,7 +994,7 @@ public:
 				SInt(BuildCtorArg&);
 				SInt(signed int i);
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	SInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -1008,7 +1015,7 @@ public:
 				SInt64(BuildCtorArg&);
 				SInt64(sint64 i);
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	SInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -1027,7 +1034,7 @@ public:
 				UInt(BuildCtorArg&);
 				UInt(unsigned int i);
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	UInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -1046,7 +1053,7 @@ public:
 				UInt64(BuildCtorArg&);
 				UInt64(uint64 i);
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual UInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -1065,7 +1072,7 @@ public:
 				Float(BuildCtorArg&);
 				Float(double d);
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	Float *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -1098,7 +1105,7 @@ public:
 				MemArea(const void *p, uint size, bool duplicate = false);
 				~MemArea();
 	/* extends Object */
-	virtual	Object *	clone() const;
+	virtual	MemArea *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
 	virtual	bool		instanceOf(ObjectID id) const;
