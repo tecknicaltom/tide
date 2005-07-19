@@ -346,7 +346,7 @@ void Array::delAll()
 	elems = NULL;
 }
 
-Object *Array::clone() const
+Array *Array::clone() const
 {
 	Array *a = new Array(own_objects, ecount);
 	for (uint i = 0; i<ecount; i++) {
@@ -672,7 +672,7 @@ void SLinkedList::freeObj(Object *obj) const
 	}
 }
 
-Object *SLinkedList::clone() const
+SLinkedList *SLinkedList::clone() const
 {
 	SLinkedList *l = new SLinkedList(own_objects);
 	SLinkedListNode *n = first, *m;
@@ -971,7 +971,7 @@ void DLinkedList::freeObj(Object *obj) const
 	}
 }
 
-Object *DLinkedList::clone() const
+DLinkedList *DLinkedList::clone() const
 {
 	DLinkedList *l = new DLinkedList(own_objects);
 	DLinkedListNode *n = first, *m;
@@ -1405,7 +1405,7 @@ void BinaryTree::cloneR(BinTreeNode *node)
 	cloneR(node->right);
 }
 
-Object *BinaryTree::clone() const
+BinaryTree *BinaryTree::clone() const
 {
 	BinaryTree *c = new BinaryTree(own_objects, compare);
 	c->cloneR(root);
@@ -1724,7 +1724,7 @@ void AVLTree::cloneR(AVLTreeNode *node)
 	cloneR((AVLTreeNode *)node->right);
 }
 
-Object *AVLTree::clone() const
+AVLTree *AVLTree::clone() const
 {
 	AVLTree *c = new AVLTree(own_objects, compare);
 	c->cloneR((AVLTreeNode *)root);
@@ -2038,7 +2038,7 @@ MRUCacheNode *MRUCache::allocNode() const
 	return a;
 }
 
-Object *MRUCache::clone() const
+MRUCache *MRUCache::clone() const
 {
 	throw NotImplementedException(HERE);
 }
@@ -2294,7 +2294,7 @@ KeyValue::~KeyValue()
 	delete mValue;
 }
 
-Object *KeyValue::clone() const
+KeyValue *KeyValue::clone() const
 {
 	return new KeyValue(mKey->clone(), mValue->clone());
 }
@@ -2339,7 +2339,7 @@ SInt::SInt(signed int i)
 	value = i;
 }
 
-Object *SInt::clone() const
+SInt *SInt::clone() const
 {
 	return new SInt(value);
 }
@@ -2383,7 +2383,7 @@ SInt64::SInt64(sint64 i)
 	value = i;
 }
 
-Object *SInt64::clone() const
+SInt64 *SInt64::clone() const
 {
 	return new SInt64(value);
 }
@@ -2434,7 +2434,7 @@ UInt::UInt(unsigned int i)
 	value = i;
 }
 
-Object *UInt::clone() const
+UInt *UInt::clone() const
 {
 	return new UInt(value);
 }
@@ -2485,7 +2485,7 @@ UInt64::UInt64(uint64 i)
 	value = i;
 }
 
-Object *UInt64::clone() const
+UInt64 *UInt64::clone() const
 {
 	return new UInt64(value);
 }
@@ -2537,7 +2537,7 @@ Float::Float(double d)
 	value = d;
 }
 
-Object *Float::clone() const
+Float *Float::clone() const
 {
 	return new Float(value);
 }
@@ -2602,7 +2602,7 @@ MemArea::~MemArea()
 	if (duplicate) free(ptr);
 }
 
-Object *MemArea::clone() const
+MemArea *MemArea::clone() const
 {
 	return new MemArea(ptr, size, true);
 }
@@ -2668,7 +2668,7 @@ void IntSet::assign(const IntSet &from)
 	if (s) memcpy(mSet, from.mSet, s);
 }
 
-Object *IntSet::clone() const
+IntSet *IntSet::clone() const
 {
 	IntSet *s = new IntSet(mMaxSetSize);
 	s->assign(*this);
