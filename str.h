@@ -58,7 +58,7 @@ public:
 	inline	char &		at(int aIndex) const;
 	inline	bool		chop();
 		void		clear();
-	virtual	Object *	clone() const;
+	virtual	String *	clone() const;
 	virtual	int		compareChar(char c1, char c2) const;
 	virtual	int		compareTo(const Object *o) const;
 		int		compare(const String &s) const;
@@ -127,7 +127,7 @@ public:
 				IString(BuildCtorArg&);
 				IString();
 
-	virtual	Object *	clone() const;
+	virtual	IString *	clone() const;
 	virtual	int		compareChar(char c1, char c2) const;
 	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	ObjectID	getObjectID() const;
