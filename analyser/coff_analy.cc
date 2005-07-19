@@ -132,7 +132,7 @@ void CoffAnalyser::beginAnalysis()
 
 		// mark end of sections
 		sprintf(blub, ";  end of section <%s>", getSegmentNameByAddress(secaddr));
-		Address *secend_addr = (Address*)secaddr->clone();
+		Address *secend_addr = secaddr->clone();
 		secend_addr->add(MAX(s->data_size, s->data_vsize));
 		newLocation(secend_addr)->flags |= AF_FUNCTION_END;
 		addComment(secend_addr, 0, "");
@@ -141,7 +141,7 @@ void CoffAnalyser::beginAnalysis()
 		addComment(secend_addr, 0, ";******************************************************************");
 
 		validarea->add(secaddr, secend_addr);
-		Address *secini_addr = (Address *)secaddr->clone();
+		Address *secini_addr = secaddr->clone();
 		secini_addr->add(MIN(s->data_size, s->data_vsize));
 		if (validAddress(secaddr, scinitialized) && validAddress(secini_addr, scinitialized)) {
 			initialized->add(secaddr, secini_addr);
