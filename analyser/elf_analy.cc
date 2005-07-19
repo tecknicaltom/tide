@@ -120,7 +120,7 @@ void ElfAnalyser::beginAnalysis()
 
 			// mark end of sections
 			ht_snprintf(blub, sizeof blub, ";  end of section <%s>", getSegmentNameByAddress(secaddr));
-			Address *secend_addr = (Address *)secaddr->clone();
+			Address *secend_addr = secaddr->clone();
 			if (c32) {
 				secend_addr->add(s32->sh_size);
 			} else {
