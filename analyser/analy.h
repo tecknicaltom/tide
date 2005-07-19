@@ -40,13 +40,14 @@ class Analyser;
 #define ADDRESS_STRING_FORMAT_ADD_0X		    8
 #define ADDRESS_STRING_FORMAT_ADD_H		   16
 
-#define DUP_ADDR(a) ((Address*)(a)->clone())
+//#define DUP_ADDR(a) ((Address*)(a)->clone())
 class Address: public Object {
 public:
 				Address();
 				Address(BuildCtorArg&);
 	virtual	bool		add(int offset) = 0;
 	virtual	int		byteSize() = 0;
+	virtual Address	*	clone() const = 0;
 	virtual	int		compareDelinear(Address *to);
 	virtual	bool 		difference(int &result, Address *to) = 0;
 	virtual	void 		getFromArray(const byte *array) = 0;
@@ -68,7 +69,7 @@ public:
 	virtual	int		byteSize();
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	bool		difference(int &result, Address *to);
-	virtual	Object *	clone() const;
+	virtual	InvalidAddress *clone() const;
 	virtual	void 		getFromArray(const byte *array);
 	virtual	void		getFromCPUAddress(CPU_ADDR *ca);
 	virtual	bool		isValid();
@@ -90,7 +91,7 @@ public:
 				AddressFlat32(uint32 a=0);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
-	virtual	Object *	clone() const;
+	virtual	AddressFlat32 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		compareDelinear(Address *to);
 	virtual	void		getFromArray(const byte *array);
@@ -118,7 +119,7 @@ public:
 	virtual	void		getFromArray(const byte *array);
 	virtual	void		getFromCPUAddress(CPU_ADDR *ca);
 	virtual	bool		difference(int &result, Address *to);
-	virtual	Object *	clone() const;
+	virtual	AddressFlat64 *	clone() const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	int		parseString(const char *s, int length, Analyser *a);
