@@ -79,9 +79,9 @@ bool AddressX86Flat32::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86Flat32::clone() const
+AddressX86Flat32 *AddressX86Flat32::clone() const
 {
-	return new AddressX86Flat32(addr);
+	return new AddressX86Flat32(*this);
 }
 
 void AddressX86Flat32::getFromArray(const byte *array)
@@ -202,9 +202,9 @@ bool AddressX86_1632::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86_1632::clone() const
+AddressX86_1632 *AddressX86_1632::clone() const
 {
-	return new AddressX86_1632(seg, addr);
+	return new AddressX86_1632(*this);
 }
 
 void AddressX86_1632::getFromArray(const byte *array)
@@ -335,9 +335,9 @@ bool AddressX86_1616::difference(int &result, Address *to)
 	}
 }
 
-Object *AddressX86_1616::clone() const
+AddressX86_1616 *AddressX86_1616::clone() const
 {
-	return new AddressX86_1616(seg, addr);
+	return new AddressX86_1616(*this);
 }
 
 void AddressX86_1616::getFromArray(const byte *array)
