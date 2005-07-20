@@ -53,7 +53,7 @@ extern "C" {
 
 #define ST_EXPR		3         // search stops when expression evals to non-zero
 
-typedef ht_view* (*create_form_func)(bounds *b, uint histid);
+typedef ht_view* (*create_form_func)(Bounds *b, uint histid);
 typedef void (*create_desc_func)(char *buf, int buflen, ht_view *form);
 
 /*
@@ -125,7 +125,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void init(bounds *b, int options, List *history=0);
+			void init(Bounds *b, int options, List *history=0);
 };
 
 /*
@@ -145,7 +145,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, List *history=0);
+			void	init(Bounds *b, int options, List *history=0);
 };
 
 /*
@@ -165,7 +165,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, List *history=0);
+			void	init(Bounds *b, int options, List *history=0);
 };
 
 /*
@@ -185,7 +185,7 @@ protected:
 	ht_strinputfield *range_end;
 	ht_checkboxes *option_boxes;
 public:
-			void	init(bounds *b, int options, List *history=0);
+			void	init(Bounds *b, int options, List *history=0);
 };
 
 /*
@@ -200,7 +200,7 @@ class ht_replace_hexascii_search_form: public ht_group {
 protected:
 	ht_strinputfield *str;
 public:
-			void init(bounds *b, int options, List *history=0);
+			void init(Bounds *b, int options, List *history=0);
 };
 
 /*
@@ -226,7 +226,7 @@ protected:
 public:
 	ht_xgroup *search_mode_xgroup;
 	
-			void	init(bounds *b, const char *title);
+			void	init(Bounds *b, const char *title);
 	virtual	void	done();
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -255,7 +255,7 @@ protected:
 public:
 	ht_xgroup *replace_mode_xgroup;
 	
-			void	init(bounds *b);
+			void	init(Bounds *b);
 	virtual	void	done();
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -308,7 +308,7 @@ public:
 Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success);
 bool search_bin_process(Object *context, ht_text *progress_indicator);
 
-ht_view* create_form_hexascii(bounds *b, uint histid);
+ht_view* create_form_hexascii(Bounds *b, uint histid);
 void create_desc_hexascii(char *buf, int buflen, ht_view *f);
 
 ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, uint32 fsize);
