@@ -41,10 +41,10 @@
  *	CLASS ht_blockop_dialog
  */
 
-void ht_blockop_dialog::init(bounds *b, FileOfs pstart, FileOfs pend, List *history)
+void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *history)
 {
 	ht_dialog::init(b, "operate on block", FS_TITLE | FS_KILLER | FS_MOVE);
-	bounds c;
+	Bounds c;
 
 	bool prerange = (pend > pstart);
 
@@ -580,7 +580,7 @@ bool format_string_to_offset_if_avail(ht_format_viewer *format, byte *string, in
 		
 void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 {
-	bounds b;
+	Bounds b;
 	b.w = 65;
 	b.h = 15;
 	b.x = (screen->w - b.w)/2;
