@@ -39,7 +39,7 @@ protected:
 	char *olddesc;
 	
 public:
-			void	init(bounds *b, File *file);
+			void	init(Bounds *b, File *file);
 	virtual	void	done();
 /* overwritten */
 	virtual	char *gettext();
