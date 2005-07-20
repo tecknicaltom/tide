@@ -21,7 +21,7 @@
 #include "log.h"
 #include "htfltimg.h"
 #include "htpal.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "snprintf.h"
 #include "tools.h"
