@@ -36,7 +36,7 @@ extern "C" {
 #include "regex.h"
 }
 
-ht_view *htdisasm_init(bounds *b, File *file, ht_format_group *group)
+ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
 {
 	int t1632;
 #if 1
@@ -93,7 +93,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 		asm_code *chosen_ac = ac;
 		if (ac->next) {
 			// choose from list if ambigous
-			bounds b;
+			Bounds b;
 			b.w = 60;
 			b.h = 15;
 			center_bounds(&b);
@@ -175,7 +175,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
  *	CLASS ht_disasm_viewer
  */
 
-void ht_disasm_viewer::init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t)
+void ht_disasm_viewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, format_group);
 	assem = a;
