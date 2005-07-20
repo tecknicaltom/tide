@@ -29,7 +29,7 @@
 #include "htpe.h"
 #include "htpeimp.h"
 #include "stream.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "log.h"
 #include "pe_analy.h"
