@@ -71,7 +71,7 @@ class AnalyserInformation: public ht_statictext {
 	const char	*atype, *adis;
 	String		*aname;
 public:
-		void	init(bounds *b, ht_aviewer *a);
+		void	init(Bounds *b, ht_aviewer *a);
 	virtual	void done();
 	virtual	char *gettext();
 	virtual	bool idle();
@@ -87,7 +87,7 @@ public:
 	int		idle_count;
 	int		symbols;
 
-			void		init(bounds *b, Analyser *Analy);
+			void		init(Bounds *b, Analyser *Analy);
 	virtual   void		done();
 	virtual   int		calcCount();
 	virtual   int		cursorAdjust();
@@ -116,7 +116,7 @@ class CallChain: public ht_treeview {
 		Analyser		*analy;
 		CallChainNode *root;
 public:
-			   void	init(bounds *b, Analyser *analy, Address *a, char *desc);
+			   void	init(Bounds *b, Analyser *analy, Address *a, char *desc);
 		virtual void	done();
 		virtual void	adjust(void *node, bool expand);
 		virtual void   *get_child(void *node, int i);
@@ -148,7 +148,7 @@ public:
 	FileOfs		fofs;
 	Address		*addr;
 	char			*displayformat;
-			void	init(bounds *b, ht_aviewer *A, char *Format);
+			void	init(Bounds *b, ht_aviewer *A, char *Format);
 	virtual	void done();
 	virtual	char *gettext();
 			void update(Address *cursor_addr, FileOfs ecursor_addr);
@@ -193,7 +193,7 @@ public:
 	ht_analy_sub *analy_sub;
 	bool one_load_hack;
 	bool pause;
-			void init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy);
+			void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy);
 	virtual	void	done();
 			bool convertAddressToViewerPos(Address *a, viewer_pos *p);
 			bool convertViewerPosToAddress(const viewer_pos &p, Address **a);
