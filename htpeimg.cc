@@ -23,7 +23,7 @@
 #include "htnewexe.h"
 #include "htpal.h"
 #include "htpeimg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "pe_analy.h"
 #include "pestruct.h"
 #include "snprintf.h"
