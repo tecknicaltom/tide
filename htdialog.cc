@@ -36,7 +36,7 @@
  *	CLASS ht_dialog
  */
 
-void ht_dialog::init(bounds *b, const char *desc, uint framestyle)
+void ht_dialog::init(Bounds *b, const char *desc, uint framestyle)
 {
 	ht_window::init(b, desc, framestyle);
 	VIEW_DEBUG_NAME("ht_dialog");
@@ -170,7 +170,7 @@ void ht_dialog::setstate(int st, int retval)
  *	CLASS ht_cluster
  */
 
-void ht_cluster::init(bounds *b, ht_string_list *_strings)
+void ht_cluster::init(Bounds *b, ht_string_list *_strings)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, 0);
 	VIEW_DEBUG_NAME("ht_cluster");
@@ -203,7 +203,7 @@ char *ht_cluster::defaultpalette()
  *	CLASS ht_checkboxes
  */
 
-void ht_checkboxes::init(bounds *b, ht_string_list *strings)
+void ht_checkboxes::init(Bounds *b, ht_string_list *strings)
 {
 	ht_cluster::init(b, strings);
 	VIEW_DEBUG_NAME("ht_checkboxes");
@@ -328,7 +328,7 @@ void ht_checkboxes::setdata(ObjectStream &s)
  *	CLASS ht_radioboxes
  */
 
-void ht_radioboxes::init(bounds *b, ht_string_list *strings)
+void ht_radioboxes::init(Bounds *b, ht_string_list *strings)
 {
 	ht_cluster::init(b, strings);
 	VIEW_DEBUG_NAME("ht_radioboxes");
@@ -424,7 +424,7 @@ void ht_radioboxes::setdata(ObjectStream &s)
 /*
  *	CLASS ht_history_listbox
  */
-void ht_history_listbox::init(bounds *b, ht_list *hist)
+void ht_history_listbox::init(Bounds *b, ht_list *hist)
 {
 	history = hist;
 	ht_listbox::init(b);
@@ -534,7 +534,7 @@ char	*ht_history_listbox::quickfindCompletition(char *s)
  *	CLASS ht_history_popup_dialog
  */
 
-void ht_history_popup_dialog::init(bounds *b, ht_list *hist)
+void ht_history_popup_dialog::init(Bounds *b, ht_list *hist)
 {
 	history = hist;
 	ht_listpopup_dialog::init(b, "history");
@@ -551,7 +551,7 @@ void ht_history_popup_dialog::getdata(ObjectStream &s)
 	}
 }
 
-void ht_history_popup_dialog::init_text_listbox(bounds *b)
+void ht_history_popup_dialog::init_text_listbox(Bounds *b)
 {
 	listbox=new ht_history_listbox();
 	((ht_history_listbox *)listbox)->init(b, history);
@@ -566,7 +566,7 @@ void ht_history_popup_dialog::setdata(ObjectStream &s)
  *	CLASS ht_inputfield
  */
 
-void ht_inputfield::init(bounds *b, int Maxtextlen, ht_list *hist)
+void ht_inputfield::init(Bounds *b, int Maxtextlen, ht_list *hist)
 {
 	ht_view::init(b, VO_SELECTABLE, "some inputfield");
 	VIEW_DEBUG_NAME("ht_inputfield");
@@ -726,7 +726,7 @@ void ht_inputfield::setdata(ObjectStream &s)
  *	CLASS ht_strinputfield
  */
 
-void ht_strinputfield::init(bounds *b, int maxstrlen, ht_list *history)
+void ht_strinputfield::init(Bounds *b, int maxstrlen, ht_list *history)
 {
 	ht_inputfield::init(b, maxstrlen, history);
 	VIEW_DEBUG_NAME("ht_strinputfield");
@@ -988,7 +988,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 void ht_strinputfield::history_dialog()
 {
 	if (history && history->count()) {
-		bounds b;
+		Bounds b;
 		getbounds(&b);
 		b.y--;
 		b.h=8;
@@ -1049,7 +1049,7 @@ bool ht_strinputfield::setbyte(byte a)
  *	CLASS ht_hexinputfield
  */
 
-void ht_hexinputfield::init(bounds *b, int maxstrlen)
+void ht_hexinputfield::init(Bounds *b, int maxstrlen)
 {
 	ht_inputfield::init(b, maxstrlen);
 	VIEW_DEBUG_NAME("ht_strinputfield");
@@ -1246,7 +1246,7 @@ void ht_hexinputfield::setnibble(byte a)
  *	CLASS ht_button
  */
 
-void ht_button::init(bounds *b, const char *Text, int Value)
+void ht_button::init(Bounds *b, const char *Text, int Value)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, "some button");
 	VIEW_DEBUG_NAME("ht_button");
@@ -1332,7 +1332,7 @@ void ht_button::push()
 /*
  *	CLASS ht_listbox_title
  */
-void	ht_listbox_title::init(bounds *b)
+void	ht_listbox_title::init(Bounds *b)
 {
 	ht_view::init(b, VO_RESIZE, "ht_listbox_title");
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
@@ -1434,14 +1434,14 @@ public:
 	}
 };
 
-void ht_listbox::init(bounds *b, uint Listboxcaps)
+void ht_listbox::init(Bounds *b, uint Listboxcaps)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_RESIZE, 0);
 	cached_count = 0;
 
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 
-	bounds c=*b;
+	Bounds c=*b;
 	c.x=c.w-1;
 	c.y=0;
 	c.w=1;
@@ -1491,7 +1491,7 @@ void ht_listbox::adjustScrollbar()
 	if (scrollbar_pos(pos-cursor, size.h, cached_count, &pstart, &psize)) {
 		mScrollbarEnabled = true;
 		scrollbar->enable();
-		bounds c = size;
+		Bounds c = size;
 		c.x = c.w-1;
 		c.y = 0;
 		c.w = 1;
@@ -1977,7 +1977,7 @@ void ht_listbox::updateCursor()
  *	ht_text_listbox
  */
 
-void	ht_text_listbox::init(bounds *b, int aCols, int aKeycol, uint aListboxcaps)
+void	ht_text_listbox::init(Bounds *b, int aCols, int aKeycol, uint aListboxcaps)
 {
 	first = last = NULL;
 	count = 0;
@@ -2295,7 +2295,7 @@ void ht_text_listbox::update()
  *	CLASS ht_itext_listbox
  */
 
-void	ht_itext_listbox::init(bounds *b, int Cols, int Keycol)
+void	ht_itext_listbox::init(Bounds *b, int Cols, int Keycol)
 {
 	ht_text_listbox::init(b, Cols, Keycol);
 }
@@ -2336,7 +2336,7 @@ void ht_statictext_align(ht_statictext_linedesc *d, statictext_align align, int 
 	}
 }
 
-void ht_statictext::init(bounds *b, const char *t, statictext_align al, bool breakl, bool trans)
+void ht_statictext::init(Bounds *b, const char *t, statictext_align al, bool breakl, bool trans)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, "some statictext");
 	VIEW_DEBUG_NAME("ht_statictext");
@@ -2475,12 +2475,12 @@ void ht_statictext::settext(const char *_text)
  *	CLASS ht_listpopup_dialog
  */
 
-void ht_listpopup_dialog::init(bounds *b, char *desc)
+void ht_listpopup_dialog::init(Bounds *b, char *desc)
 {
 	ht_dialog::init(b, desc, FS_TITLE | FS_MOVE);
 	VIEW_DEBUG_NAME("ht_listpopup_dialog");
 
-	bounds c;
+	Bounds c;
 	getclientarea(&c);
 	c.x=0;
 	c.y=0;
@@ -2517,7 +2517,7 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 	}
 }
 
-void ht_listpopup_dialog::init_text_listbox(bounds *b)
+void ht_listpopup_dialog::init_text_listbox(Bounds *b)
 {
 	listbox=new ht_text_listbox();
 	((ht_text_listbox *)listbox)->init(b);
@@ -2552,13 +2552,13 @@ void ht_listpopup_dialog::setdata(ObjectStream &s)
  *	CLASS ht_listpopup
  */
 
-void	ht_listpopup::init(bounds *b)
+void	ht_listpopup::init(Bounds *b)
 {
 	ht_statictext::init(b, 0, align_left, 0);
 	setoptions(options|VO_SELECTABLE);
 	VIEW_DEBUG_NAME("ht_listpopup");
 
-	bounds c=*b;
+	Bounds c=*b;
 	c.x=0;
 	c.y=0;
 	c.h=8;
@@ -2669,7 +2669,7 @@ ht_listbox_ptr::~ht_listbox_ptr()
  *	CLASS ht_label
  */
 
-void ht_label::init(bounds *b, const char *_text, ht_view *_connected)
+void ht_label::init(Bounds *b, const char *_text, ht_view *_connected)
 {
 	ht_view::init(b, VO_POSTPROCESS, 0);
 	text = ht_strdup(_text);
@@ -2726,11 +2726,11 @@ void ht_label::handlemsg(htmsg *msg)
  *	CLASS ht_progress_indicator
  */
 
-void	ht_progress_indicator::init(bounds *b, char *hint)
+void	ht_progress_indicator::init(Bounds *b, char *hint)
 {
 	ht_window::init(b, NULL, 0);
 
-	bounds c=*b;
+	Bounds c=*b;
 
 	c.x=1;
 	c.y=1;
@@ -2763,7 +2763,7 @@ void ht_progress_indicator::settext(const char *t)
 
 int vcs[16]={VC_BLACK, VC_BLUE, VC_GREEN, VC_CYAN, VC_RED, VC_MAGENTA, VC_YELLOW, VC_WHITE,   VC_LIGHT(VC_BLACK), VC_LIGHT(VC_BLUE), VC_LIGHT(VC_GREEN), VC_LIGHT(VC_CYAN), VC_LIGHT(VC_RED), VC_LIGHT(VC_MAGENTA), VC_LIGHT(VC_YELLOW), VC_LIGHT(VC_WHITE)};
 
-void ht_color_block::init(bounds *b, int selected, int Flags)
+void ht_color_block::init(Bounds *b, int selected, int Flags)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
 	VIEW_DEBUG_NAME("ht_color_block");
@@ -2861,11 +2861,11 @@ void ht_color_block::setdata(ObjectStream &s)
 	dirtyview();
 }
 
-void center_bounds(bounds *b)
+void center_bounds(Bounds *b)
 {
-	bounds c;
+	Bounds c;
 	app->getbounds(&c);
-	b->x=(c.w-b->w)/2;
-	b->y=(c.h-b->h)/2;     
+	b->x = (c.w - b->w) / 2;
+	b->y = (c.h - b->h) / 2;     
 }
 
