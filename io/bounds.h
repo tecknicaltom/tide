@@ -24,7 +24,7 @@
 #include "types.h"
 
 /**
- *	Rectangular visual bounds
+ *	Rectangular visual Bounds
  */
 struct Bounds {
 	int x, y, w, h;
