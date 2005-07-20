@@ -76,9 +76,9 @@ public:
 	virtual int b_lprintw(int x, int y, int c, int l, int *text);
 	virtual void b_resize(int rw, int rh);
 	virtual void b_rmove(int rx, int ry);
-	virtual void b_setbounds(bounds *b);
+	virtual void b_setbounds(Bounds *b);
 /* new */
-	void drawbuffer(drawbuf *buf, int x, int y, bounds *clipping);
+	void drawbuffer(drawbuf *buf, int x, int y, Bounds *clipping);
 	void show();
 	void getcursor(int *x, int *y);
 	void hidecursor();
