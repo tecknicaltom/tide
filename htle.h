@@ -89,7 +89,7 @@ protected:
 			void read_pagemap();
 			void read_objects();
 public:
-			void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h);
+			void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h);
 	virtual	void done();
 /* overwritten */
 	virtual   void loc_enum_start();
