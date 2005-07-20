@@ -29,7 +29,7 @@
 #include "htpeimp.h"
 #include "htpedimp.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "log.h"
 #include "pe_analy.h"
 #include "snprintf.h"
