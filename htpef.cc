@@ -37,7 +37,7 @@ format_viewer_if *htpef_ifs[] = {
 	0
 };
 
-static ht_view *htpef_init(bounds *b, File *file, ht_format_group *format_group)
+static ht_view *htpef_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte id[12];
 	file->seek(0);
@@ -63,7 +63,7 @@ format_viewer_if htpef_if = {
 /*
  *	CLASS ht_pef
  */
-void ht_pef::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
 {
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_PEF, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_pef");
