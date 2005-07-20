@@ -36,8 +36,8 @@ private:
 			bool append(File *file);
 			
 public:
-			void init(File *in, File *out, File *err, int sys_ipc_handle);
-	virtual	void done();
+		Terminal(File *in, File *out, File *err, int sys_ipc_handle);
+	virtual	~Terminal();
 /* oerwritten */	
 	virtual	uint write(const void *buf, uint size);
 /* new */
