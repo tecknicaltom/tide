@@ -27,16 +27,16 @@
 
 #include <string.h>
 
-ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream, uint granularity)
+ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream)
 	: StreamLayer(stream, own_stream)
 {
 	if ((stream->getAccessMode() & (IOAM_READ | IOAM_WRITE)) == (IOAM_READ | IOAM_WRITE)) {
 		// ht_compressed_stream cant be used for read and write access simultaneously
 		assert(0);
 	}
-	buffer = (byte *)smalloc(granularity);
 	bufferpos = 0;
-	buffersize = granularity;
+	buffersize = COMPRESSED_STREAM_DEFAULT_GRANULARITY;
+	buffer = (byte *)smalloc(buffersize);
 }
 
 ht_compressed_stream::~ht_compressed_stream()
@@ -50,26 +50,18 @@ ht_compressed_stream::~ht_compressed_stream()
 void ht_compressed_stream::flush_compressed()
 {
 	if (bufferpos) {
-		byte *cbuf = (byte *)smalloc(bufferpos + bufferpos / 64 + 16 + 3);
-		byte *workbuf = (byte *)smalloc(LZO1X_1_MEM_COMPRESS);
+		byte cbuf[bufferpos + bufferpos / 64 + 16 + 3];
+		byte workbuf[LZO1X_1_MEM_COMPRESS];
 		lzo_uint cbuf_len;
 		byte n[4];
 		
 		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
 
-		free(workbuf);
-
-		try {
-			createForeignInt(n, bufferpos, 4, big_endian);
-			writex(n, 4);
-			createForeignInt(n, cbuf_len, 4, big_endian);
-			writex(n, 4);
-			writex(cbuf, cbuf_len);
-		} catch (const IOException &) {
-			free(cbuf);
-			throw;
-		}
-		free(cbuf);
+		createForeignInt(n, bufferpos, 4, big_endian);
+		writex(n, 4);
+		createForeignInt(n, cbuf_len, 4, big_endian);
+		writex(n, 4);
+		writex(cbuf, cbuf_len);
 		
 		bufferpos = 0;
 	}
@@ -89,21 +81,17 @@ void ht_compressed_stream::flush_uncompressed()
 		uncompressed_len = createHostInt(n, 4, big_endian);
 		readx(n, 4);
 		cbuf_len = createHostInt(n, 4, big_endian);
+		
+		if (uncompressed_len > COMPRESSED_STREAM_DEFAULT_GRANULARITY
+		 || cbuf_len > 2*COMPRESSED_STREAM_DEFAULT_GRANULARITY) throw IOException(EIO);
 
 		buffer = (byte *)smalloc(uncompressed_len);
-		byte *cbuf = (byte *)smalloc(cbuf_len);
-		
-		try {
-			readx(cbuf, cbuf_len);
-			lzo_uint dummy;
-			lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
-			assert(dummy == uncompressed_len);
-		} catch (const IOException &) {
-			free(cbuf);
-			throw;
-		}
-		free(cbuf);
+		byte cbuf[cbuf_len];
 
+		readx(cbuf, cbuf_len);
+		lzo_uint dummy;
+		lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
+		if (dummy != uncompressed_len) throw IOException(EIO);
 
 		buffersize = uncompressed_len;
 		bufferpos = uncompressed_len;          
