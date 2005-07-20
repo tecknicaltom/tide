@@ -32,12 +32,12 @@
 #include "htidle.h"
 #include "htinfo.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htmenu.h"
 #include "htpal.h"
 #include "htsearch.h"
 #include "htstring.h"
-#include "htsys.h"
+#include "sys.h"
 #include "httree.h"
 #include "infoview.h"
 #include "snprintf.h"
@@ -1164,9 +1164,9 @@ ht_log_msg::~ht_log_msg()
  *	CLASS ht_log
  */
 
-void ht_log::init(compare_keys_func_ptr compare_keys)
+ht_log::ht_log()
+	: Array(true)
 {
-	ht_clist::init(compare_keys);
 	maxlinecount = 128;
 }
 
@@ -1452,7 +1452,7 @@ void ht_app::init(bounds *pq)
 	file->insert_entry("Open/Create ~project...", NULL, cmd_project_open, 0, 1);
 	file->insert_entry("Close p~roject", NULL, cmd_project_close, 0, 1);
 	file->insert_separator();
-	file->insert_entry("~Execute", "Alt+Z", cmd_file_exec_cmd, K_Alt_Z, 1);
+	file->insert_entry("~Execute", "Alt+Z", cmd_file_exec_cmd, K_Meta_Z, 1);
 	file->insert_entry("~Quit", "F10", cmd_quit, 0, 1);
 	m->insert_menu(file);
 
@@ -1478,10 +1478,10 @@ void ht_app::init(bounds *pq)
 
 	ht_static_context_menu *windows=new ht_static_context_menu();
 	windows->init("~Windows");
-	windows->insert_entry("~Size/Move", "Alt+F5", cmd_window_resizemove, K_Alt_F5, 1);
-	windows->insert_entry("~Close", "Alt+F3", cmd_window_close, K_Alt_F3, 1);
+	windows->insert_entry("~Size/Move", "Alt+F5", cmd_window_resizemove, K_Meta_F5, 1);
+	windows->insert_entry("~Close", "Alt+F3", cmd_window_close, K_Meta_F3, 1);
 	windows->insert_entry("~Close (alt)", "Ctrl+W", cmd_window_close, K_Control_W, 1);
-	windows->insert_entry("~List", "Alt+0", cmd_popup_dialog_window_list, K_Alt_0, 1);
+	windows->insert_entry("~List", "Alt+0", cmd_popup_dialog_window_list, K_Meta_0, 1);
 	windows->insert_separator();
 	windows->insert_entry("Lo~g window", NULL, cmd_popup_window_log, 0, 1);
 	windows->insert_entry("~Options", NULL, cmd_popup_window_options, 0, 1);
@@ -2424,15 +2424,15 @@ void ht_app::handlemsg(htmsg *msg)
 		case msg_keypressed: {
 			int i=0;
 			switch (msg->data1.integer) {
-				case K_Alt_9: i++;
-				case K_Alt_8: i++;
-				case K_Alt_7: i++;
-				case K_Alt_6: i++;
-				case K_Alt_5: i++;
-				case K_Alt_4: i++;
-				case K_Alt_3: i++;
-				case K_Alt_2: i++;
-				case K_Alt_1: i++;
+				case K_Meta_9: i++;
+				case K_Meta_8: i++;
+				case K_Meta_7: i++;
+				case K_Meta_6: i++;
+				case K_Meta_5: i++;
+				case K_Meta_4: i++;
+				case K_Meta_3: i++;
+				case K_Meta_2: i++;
+				case K_Meta_1: i++;
 					focus(get_window_by_number(i));
 					clearmsg(msg);
 					return;
@@ -2466,7 +2466,7 @@ void ht_app::handlemsg(htmsg *msg)
 					((ht_app*)app)->create_window_term("main.exe");
 					clearmsg(msg);
 					return;
-				case K_Alt_R: {
+				case K_Meta_R: {
 					char *n = "./ht.reg";
 					ht_file *f = new ht_file();
 					f->init(n, FAM_WRITE, FOM_CREATE);
@@ -2487,7 +2487,7 @@ void ht_app::handlemsg(htmsg *msg)
 					clearmsg(msg);
 					return;
 				}
-				case K_Alt_T:
+				case K_Meta_T:
 					create_window_ofm("reg:/", "local:/");
 					clearmsg(msg);
 					return;*/
@@ -3152,7 +3152,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 	switch (msg->msg) {
 		case msg_keypressed:
 			switch (msg->data1.integer) {
-				case K_Alt_Backspace:
+				case K_Meta_Backspace:
 				case K_Backspace: {
 					sendmsg(cmd_vstate_restore);
 					clearmsg(msg);
