@@ -26,7 +26,7 @@
 #include "hthist.h"
 #include "htiobox.h"
 #include "htpal.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "syntax.h"
 #include "textedit.h"
