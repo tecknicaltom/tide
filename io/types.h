@@ -88,6 +88,7 @@
 
 union htmsg_param {
 	int integer;
+	uint64 q;
 	void *ptr;
 	char *str;
 };
