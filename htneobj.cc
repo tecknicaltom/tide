@@ -24,7 +24,7 @@
 #include "htne.h"
 #include "htneobj.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "snprintf.h"
 
