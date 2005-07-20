@@ -178,7 +178,7 @@ public:
 	virtual	int		enum_start();
 	virtual	ht_view 	*enum_next(int *handle);
 		bool		exposed();
-		void		fill(int x, int y, int w, int h, int c, int chr);
+		void		fill(int x, int y, int w, int h, int c, char chr, Codepage cp = CP_DEVICE);
 	virtual	int		focus(ht_view *view);
 		void		getbounds(Bounds *b);
 	virtual	void		getminbounds(int *width, int *height);
