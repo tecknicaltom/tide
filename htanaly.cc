@@ -31,7 +31,7 @@
 #include "keyb.h"
 #include "htmenu.h"
 #include "htsearch.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "httree.h"
 #include "language.h"
