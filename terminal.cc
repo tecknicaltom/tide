@@ -46,14 +46,10 @@ void Terminal::init(File *_in, File *_out, File *_err, int _sys_ipc_handle)
 
 void Terminal::done()
 {
-	in->done();
 	delete in;
-	out->done();
 	delete out;
-	err->done();
 	delete err;
 	sys_ipc_terminate(sys_ipc_handle);
-	ht_ltextfile::done();
 }
 
 bool Terminal::append(File *file)
