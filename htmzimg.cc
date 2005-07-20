@@ -22,7 +22,7 @@
 #include "htmz.h"
 #include "htmzimg.h"
 #include "htpal.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "htformat.h"
 #include "formats.h"
 #include "snprintf.h"
