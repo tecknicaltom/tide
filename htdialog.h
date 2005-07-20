@@ -61,7 +61,7 @@ protected:
 	virtual	char *defaultpalette();
 			ht_queued_msg *dequeuemsg();
 public:
-			void	init(bounds *b, const char *desc, uint framestyle);
+			void	init(Bounds *b, const char *desc, uint framestyle);
 	virtual	void	done();
 /* overwritten */
 	virtual	int aclone();
@@ -87,7 +87,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, ht_string_list *strings);
+			void	init(Bounds *b, ht_string_list *strings);
 	virtual	void	done();
 };
 
@@ -103,7 +103,7 @@ class ht_checkboxes: public ht_cluster {
 protected:
 			uint32 state;
 public:
-			void	init(bounds *b, ht_string_list *strings);
+			void	init(Bounds *b, ht_string_list *strings);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -123,7 +123,7 @@ struct ht_radioboxes_data {
 
 class ht_radioboxes: public ht_cluster {
 public:
-			void	init(bounds *b, ht_string_list *strings);
+			void	init(Bounds *b, ht_string_list *strings);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -163,7 +163,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-		void	init(bounds *b, int maxtextlen, List *history = NULL);
+		void	init(Bounds *b, int maxtextlen, List *history = NULL);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -192,7 +192,7 @@ protected:
 			bool inputbyte(byte a);
 			bool setbyte(byte a);
 public:
-		void	init(bounds *b, int maxtextlen, List *history = NULL);
+		void	init(Bounds *b, int maxtextlen, List *history = NULL);
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -212,7 +212,7 @@ protected:
 
 			void correct_viewpoint();
 public:
-			void	init(bounds *b, int maxtextlen);
+			void	init(Bounds *b, int maxtextlen);
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -238,7 +238,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, const char *text, int value);
+			void	init(Bounds *b, const char *text, int value);
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -264,7 +264,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b);               
+			void	init(Bounds *b);               
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -306,7 +306,7 @@ public:
 	ht_listbox_title *title;
 
 public:
-			void		init(bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
+			void		init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
 	virtual	void		done();
 			void		attachTitle(ht_listbox_title *title);
 			void		adjustPosHack();
@@ -370,7 +370,7 @@ protected:
 	int					Cursor_adjust;
 
 public:
-			void		init(bounds *b, int Cols=1, int Keycol=0, uint Listboxcaps=LISTBOX_QUICKFIND);
+			void		init(Bounds *b, int Cols=1, int Keycol=0, uint Listboxcaps=LISTBOX_QUICKFIND);
 	virtual	void		done();
 	virtual   int		calcCount();
 	virtual	int		compare_strn(char *s1, char *s2, int l);
@@ -401,7 +401,7 @@ protected:
 
 class ht_itext_listbox: public ht_text_listbox {
 public:
-			void	init(bounds *b, int Cols=1, int Keycol=0);
+			void	init(Bounds *b, int Cols=1, int Keycol=0);
 	virtual	void	done();
 	virtual	int	compare_strn(char *s1, char *s2, int l);
 	virtual	int	compare_ccomm(char *s1, char *s2);
@@ -439,7 +439,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, const char *text, statictext_align align, bool breaklines=true, bool transparent=false);
+			void	init(Bounds *b, const char *text, statictext_align align, bool breaklines=true, bool transparent=false);
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -461,9 +461,9 @@ struct ht_listpopup_dialog_data {
 class ht_listpopup_dialog: public ht_dialog {
 protected:
 	ht_listbox *listbox;
-	virtual	void init_text_listbox(bounds *b);
+	virtual	void init_text_listbox(Bounds *b);
 public:
-			void init(bounds *b, char *desc);
+			void init(Bounds *b, char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	char *defaultpalette();
@@ -488,7 +488,7 @@ protected:
 /* new */	
 			int	run_listpopup();
 public:
-			void	init(bounds *b);
+			void	init(Bounds *b);
 	virtual	void	done();
 /* overwritten */
 	virtual	int  datasize();
@@ -509,7 +509,7 @@ public:
 class ht_history_listbox: public ht_listbox {
 	List	*history;
 public:
-		void init(bounds *b, List *hist);
+		void init(Bounds *b, List *hist);
 	virtual int  calcCount();
 	virtual void *getFirst();
 	virtual void *getLast();
@@ -528,9 +528,9 @@ public:
 class ht_history_popup_dialog: public ht_listpopup_dialog {
 protected:
 	List	*history;
-	virtual	void init_text_listbox(bounds *b);
+	virtual	void init_text_listbox(Bounds *b);
 public:
-		void init(bounds *b, List *hist);
+		void init(Bounds *b, List *hist);
 	virtual	void getdata(ObjectStream &s);
 	virtual	void setdata(ObjectStream &s);
 };
@@ -549,7 +549,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, const char *text, ht_view *connected);
+			void	init(Bounds *b, const char *text, ht_view *connected);
 	virtual	void	done();
 /* overwritten */
 	virtual	void draw();
@@ -567,7 +567,7 @@ protected:
 public:
 	ht_statictext *text;
 	
-			void	init(bounds *b, char *hint);
+			void	init(Bounds *b, char *hint);
 /* new */
 			void settext(const char *text);
 };
@@ -592,7 +592,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, int selected, int flags);
+			void	init(Bounds *b, int selected, int flags);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -614,7 +614,7 @@ public:
 	~ht_listbox_ptr();
 };
 
-void center_bounds(bounds *b);
+void center_bounds(Bounds *b);
 
 #endif /* !__HTDIALOG_H__ */
 
