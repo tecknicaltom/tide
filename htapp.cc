@@ -37,7 +37,7 @@
 #include "htmenu.h"
 #include "htpal.h"
 #include "htsearch.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "sys.h"
 #include "httree.h"
 #include "infoview.h"
@@ -93,7 +93,7 @@ void ht_help_window::handlemsg(htmsg *msg)
 			case K_Escape: {
 				htmsg m;
 				m.msg = cmd_window_close;
-				((ht_app*)app)->queuemsg(app, &m);
+				((ht_app*)app)->queuemsg(app, m);
 				clearmsg(msg);
 				return;
 			}				
