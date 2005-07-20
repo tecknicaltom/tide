@@ -35,7 +35,7 @@ protected:
 	ht_listpopup *mode;
 	ht_strinputfield *action;
 public:
-		void init(bounds *b, FileOfs pstart, FileOfs pend, List *history = NULL);
+		void init(Bounds *b, FileOfs pstart, FileOfs pend, List *history = NULL);
 	virtual	void done();
 };
 
