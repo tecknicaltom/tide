@@ -27,7 +27,7 @@
 #include "htstring.h"
 #include "stream.h"
 #include "store.h"
-#include "htsys.h"
+#include "sys.h"
 #include "tools.h"
 
 #include <errno.h>
@@ -41,28 +41,23 @@
    
 #define object_stream_bin			0
 #define object_stream_txt			1
-#define object_stream_bin_compressed	2
+#define object_stream_bin_compressed		2
 
-ObjectStream &create_object_stream(ht_stream *f, int object_stream_type)
+ObjectStream *create_object_stream(Stream &f, int object_stream_type)
 {
-	ObjectStream &s;
+	ObjectStream *s;
 	switch (object_stream_type) {
 		case object_stream_bin: {
-			s=new ht_object_stream_bin();
-			((ht_object_stream_bin*)s)->init(f);
+			s = new ObjectStreamBin(&f, false);
 			break;
 		}
 		case object_stream_txt: {
-			s=new ht_object_stream_txt();
-			((ht_object_stream_txt*)s)->init(f);
+			s = new ObjectStreamText(&f, false);
 			break;
 		}
 		case object_stream_bin_compressed: {
-			ht_compressed_stream *cs=new ht_compressed_stream();
-			cs->init(f, false);
-			s=new ht_object_stream_bin();
-			((ht_object_stream_bin*)s)->init(cs);
-			s->set_stream_ownership(true);
+			ht_compressed_stream *cs=new ht_compressed_stream(&f, false);
+			s = new ObjectStreamBin(cs, true);
 			break;
 		}
 		default: {
@@ -88,255 +83,196 @@ char *systemconfig_file;
 
 loadstore_result save_systemconfig()
 {
-	ht_file *f = new ht_file();
-	f->init(systemconfig_file, FAM_WRITE, FOM_CREATE);
-	if (f->get_error()) {
-		f->done();
-		delete f;
-		return LS_ERROR_WRITE;
-	}
+	try {
+		LocalFile f((String)systemconfig_file, IOAM_WRITE, FOM_CREATE);
 	
-	/* write project config header */
-	config_header h;
+		/* write project config header */
+		config_header h;
 
-	memmove(h.magic, ht_systemconfig_magic, sizeof h.magic);
+		memcpy(h.magic, ht_systemconfig_magic, sizeof h.magic);
 
-	char q[16];
+		char q[16];
 
-	int system_ostream_type = get_config_dword("misc/config format");
+		int system_ostream_type = get_config_dword("misc/config format");
 	
-	sprintf(q, "%04x", ht_systemconfig_fileversion);
-	memmove(h.version, q, sizeof h.version);
+		sprintf(q, "%04x", ht_systemconfig_fileversion);
+		memcpy(h.version, q, sizeof h.version);
 
-	sprintf(q, "%02x", system_ostream_type);
-	memmove(h.stream_type, q, sizeof h.stream_type);
+		sprintf(q, "%02x", system_ostream_type);
+		memcpy(h.stream_type, q, sizeof h.stream_type);
 
-	f->write(&h, sizeof h);
+		f.writex(&h, sizeof h);
 	
-	/* write object stream type */
-	ObjectStream &d = create_object_stream(f, system_ostream_type);
+		/* write object stream type */
+		ObjectStream *d = create_object_stream(f, system_ostream_type);
 	   
-	switch (system_ostream_type) {
+		switch (system_ostream_type) {
 		case object_stream_bin:
 			break;
 		case object_stream_txt:
-			f->write((void*)"\n#\n#\tThis is a generated file!\n#\n", 33);
+			f.writex((void*)"\n#\n#\tThis is a generated file!\n#\n", 33);
 			break;
-	}
-	/* write config */
-	app->store(d);
-	if (d->get_error()) return LS_ERROR_WRITE;
+		}
+		/* write config */
+		app->store(*d);
 		
-	d->done();
-	delete d;
-
-	f->done();
-	delete f;
-	
+		delete d;
+	} catch (const IOException &) {
+		return LS_ERROR_WRITE;
+	}
 	return LS_OK;
 }
 
 bool load_systemconfig(loadstore_result *result, int *error_info)
 {
-	ht_file *f = new ht_file();
-	f->init(systemconfig_file, FAM_READ, FOM_EXISTS);
-	switch (f->get_error()) {
-		case 0:break;
-		case STERR_SYSTEM | ENOENT:
-			f->done();
-			delete f;
-			*result = LS_ERROR_NOT_FOUND;
+	uint8 object_stream_type = 128;
+	ObjectStream *d = NULL;
+	*error_info = 0;
+	try {
+		LocalFile f((String)systemconfig_file, IOAM_READ, FOM_EXISTS);
+		/* read project config header */
+		config_header h;
+
+		if (f.read(&h, sizeof h) != sizeof h
+		 || memcmp(h.magic, ht_systemconfig_magic, sizeof h.magic) != 0) {
+			*result = LS_ERROR_MAGIC;
 			return false;
-		default:
-			f->done();
-			delete f;
-			*result = LS_ERROR_READ;
-			return false;
-	}
-	/* read project config header */
-	config_header h;
-
-	if (f->read(&h, sizeof h)!=sizeof h) {
-		*result = LS_ERROR_MAGIC;
-		f->done();
-		delete f;
-		return false;
-	}
-	
-	if (memcmp(h.magic, ht_systemconfig_magic, sizeof h.magic)!=0) {
-		*result = LS_ERROR_MAGIC;
-		f->done();
-		delete f;
-		return false;
-	}
-
-	uint16 readver;
-	if (!hexw_ex(readver, (char*)h.version) || (readver != ht_systemconfig_fileversion)) {
-		*result = LS_ERROR_VERSION;
-		*error_info = readver;
-		f->done();
-		delete f;
-		return false;
-	}
-
-	/* object stream type */
-	uint8 object_stream_type;
-	if (!hexb_ex(object_stream_type, (char*)h.stream_type)) {
-		*result = LS_ERROR_FORMAT;
-		f->done();
-		delete f;
-		return false;
-	}
-
-	ObjectStream &d = create_object_stream(f, object_stream_type);
-	if (!d) {
-		*result = LS_ERROR_FORMAT;
-		f->done();
-		delete f;
-		return false;
-	}
-
-	/* read config */
-	if (app->load(d)!=0) {
-		*result = LS_ERROR_CORRUPTED;
-		*error_info = 0;
-		if (d->get_error()) {
-			if (object_stream_type==object_stream_txt)
-				*error_info = ((ht_object_stream_txt*)d)->getErrorLine();
 		}
-		f->done();
-		delete f;
+	
+
+		uint16 readver;
+		if (!hexw_ex(readver, (char*)h.version) || (readver != ht_systemconfig_fileversion)) {
+			*result = LS_ERROR_VERSION;
+			*error_info = readver;
+			return false;
+		}
+
+		/* object stream type */
+		if (!hexb_ex(object_stream_type, (char*)h.stream_type)) {
+			*result = LS_ERROR_FORMAT;
+			return false;
+		}
+
+		d = create_object_stream(f, object_stream_type);
+		if (!d) {
+			*result = LS_ERROR_FORMAT;
+			return false;
+		}
+
+		/* read config */
+		app->load(*d);
+	} catch (const ObjectNotRegisteredException &) {
+		*result = LS_ERROR_CORRUPTED;
+		if (object_stream_type==object_stream_txt && d) {
+			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		}
+		delete d;
+		return false;
+	} catch (const IOException &e) {
+		*result = LS_ERROR_READ;
+		if (object_stream_type==object_stream_txt && d) {
+			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		}
+		delete d;
 		return false;
 	}
-	
-	d->done();
 	delete d;
-
-	f->done();
-	delete f;	
-
 	*result = LS_OK;
 	return true;
 }
 
 /**/
 
-loadstore_result save_fileconfig(char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context)
+loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context)
 {
-	ht_file *f=new ht_file();
-	f->init(fileconfig_file, FAM_WRITE, FOM_CREATE);
-	if (f->get_error()) {
-		f->done();
-		delete f;
-		return LS_ERROR_WRITE;
-	}
+	try {
+		LocalFile f((String)systemconfig_file, IOAM_WRITE, FOM_CREATE);
 	
-	/* write file config header */
-	config_header h;
+		/* write file config header */
+		config_header h;
 
-	memmove(h.magic, magic, sizeof h.magic);
+		memcpy(h.magic, magic, sizeof h.magic);
 
-	char q[16];
+		char q[16];
 
-	int file_ostream_type = get_config_dword("misc/config format");
+		int file_ostream_type = get_config_dword("misc/config format");
 	
-	sprintf(q, "%04x", version);
-	memmove(h.version, q, sizeof h.version);
+		sprintf(q, "%04x", version);
+		memmove(h.version, q, sizeof h.version);
 
-	sprintf(q, "%02x", file_ostream_type);
-	memmove(h.stream_type, q, sizeof h.stream_type);
+		sprintf(q, "%02x", file_ostream_type);
+		memmove(h.stream_type, q, sizeof h.stream_type);
 
-	f->write(&h, sizeof h);
+		f.writex(&h, sizeof h);
 
-	/* object stream type */
-	ObjectStream &d = create_object_stream(f, file_ostream_type);
+		/* object stream type */
+		ObjectStream *d = create_object_stream(f, file_ostream_type);
 	   
-	switch (file_ostream_type) {
+		switch (file_ostream_type) {
 		case object_stream_bin:
 			break;
 		case object_stream_txt:
-			f->write((void*)"\n#\n#\tThis is a generated file!\n#\n", 33);
+			f.writex((void*)"\n#\n#\tThis is a generated file!\n#\n", 33);
 			break;
+		}
+		/* write config */
+		store_func(*d, context);
+
+		delete d;
+	} catch (const IOException &) {
+		return LS_ERROR_WRITE;
 	}
-	/* write config */
-	store_func(d, context);
-
-	d->done();
-	delete d;
-
-	f->done();
-	delete f;
-		
 	return LS_OK;
 }
 
-loadstore_result load_fileconfig(char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info)
+loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info)
 {
-	ht_file *f=new ht_file();
-	f->init(fileconfig_file, FAM_READ, FOM_EXISTS);
-	switch (f->get_error()) {
-		case 0:break;
-		case STERR_SYSTEM | ENOENT:
-			f->done();
-			delete f;
-			return LS_ERROR_NOT_FOUND;
-		default:
-			f->done();
-			delete f;
-			return LS_ERROR_READ;
-	}
-	/* read file config header */
-	config_header h;
+	uint8 object_stream_type = 128;
+	ObjectStream *d = NULL;
+	*error_info = 0;
+	try {
+		LocalFile f((String)systemconfig_file, IOAM_READ, FOM_EXISTS);
+		/* read file config header */
+		config_header h;
 
-	if (f->read(&h, sizeof h)!=sizeof h) {
-		f->done();
-		delete f;
-		return LS_ERROR_MAGIC;
-	}
-	
-	if (memcmp(h.magic, magic, sizeof h.magic)!=0) return LS_ERROR_MAGIC;
-
-	uint16 readver;
-	if (!hexw_ex(readver, (char*)h.version) || (readver != version)) {
-		f->done();
-		delete f;
-		*error_info = readver;
-		return LS_ERROR_VERSION;
-	}
-	
-	uint8 object_stream_type;
-	if (!hexb_ex(object_stream_type, (char*)h.stream_type)) {
-		f->done();
-		delete f;
-		return LS_ERROR_FORMAT;
-	}
-
-	/* object stream type */
-	ObjectStream &d = create_object_stream(f, object_stream_type);
-	if (!d) {
-		f->done();
-		delete f;
-		return LS_ERROR_FORMAT;
-	}		
-	   
-	/* read config */
-	if (load_func(d, context)) {
-		*error_info = 0;
-		if (d->get_error()) {
-			if (object_stream_type==object_stream_txt)
-				*error_info = ((ht_object_stream_txt*)d)->getErrorLine();
+		if (f.read(&h, sizeof h) != sizeof h 
+		 || memcmp(h.magic, magic, sizeof h.magic) != 0) {
+			return LS_ERROR_MAGIC;
 		}
-		f->done();
-		delete f;
-		return LS_ERROR_CORRUPTED;
-	}
 	
-	d->done();
-	delete d;
 
-	f->done();
-	delete f;
+		uint16 readver;
+		if (!hexw_ex(readver, (char*)h.version) || (readver != version)) {
+			*error_info = readver;
+			return LS_ERROR_VERSION;
+		}
 	
+		if (!hexb_ex(object_stream_type, (char*)h.stream_type)) {
+			return LS_ERROR_FORMAT;
+		}
+
+		/* object stream type */
+		ObjectStream *d = create_object_stream(f, object_stream_type);
+		if (!d) {
+			return LS_ERROR_FORMAT;
+		}		
+	   
+		load_func(*d, context);
+		
+	} catch (const ObjectNotRegisteredException &) {
+		if (object_stream_type==object_stream_txt && d) {
+			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		}
+		delete d;
+		return LS_ERROR_CORRUPTED;
+	} catch (const IOException &e) {
+		if (object_stream_type==object_stream_txt && d) {
+			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		}
+		delete d;
+		return LS_ERROR_READ;
+	}
+	delete d;
 	return LS_OK;
 }
 
