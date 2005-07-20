@@ -23,7 +23,7 @@
 #include "htle.h"
 #include "htleobj.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "snprintf.h"
 
