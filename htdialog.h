@@ -25,7 +25,7 @@
 
 #include "htdebug.h"
 #include "htobj.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "io/keyb.h"
 
 /*
@@ -48,6 +48,7 @@ class ht_queued_msg: public Object {
 public:
 	ht_view *target;
 	htmsg msg;
+		    ht_queued_msg(ht_view *target, htmsg &msg);
 };
 
 class ht_dialog: public ht_window {
@@ -67,10 +68,10 @@ public:
 	virtual	void	done();
 /* overwritten */
 	virtual	int aclone();
-	virtual 	void draw();
+	virtual void draw();
 	virtual	void handlemsg(htmsg *msg);
-			void queuemsg(ht_view *target, htmsg *msg);
 /* new */
+		void queuemsg(ht_view *target, htmsg &msg);
 	virtual	int getstate(int *return_val);
 	virtual	int run(bool modal);
 	virtual	void setstate(int state, int return_val);
