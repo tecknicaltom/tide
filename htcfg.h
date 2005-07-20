@@ -46,10 +46,11 @@ enum loadstore_result {
  *	Version 3: HT 0.4.5
  *	Version 4: HT 0.5.0
  *	Version 5: HT 0.6.0
+ *	Version 6: HT 1.0.0pre
  */
 
 #define ht_systemconfig_magic				"HTCP"
-#define ht_systemconfig_fileversion		5
+#define ht_systemconfig_fileversion			6
 
 
 
@@ -57,19 +58,21 @@ enum loadstore_result {
  *	Version 1: HT 0.5.0
  *	Version 2: HT 0.6.0
  *	Version 3: HT 0.7.0
+ *	Version 4: HT 1.0.0pre
  */
 
 #define ht_fileconfig_magic				"HTCF"
-#define ht_fileconfig_fileversion			3
+#define ht_fileconfig_fileversion			4
 
 
 
 /*	PROJECT CONFIG FILE VERSION HISTORY
  *	Version 1: HT 0.7.0
+ *	Version 2: HT 1.0.0pre
  */
 
-#define ht_projectconfig_magic			"HTPR"
-#define ht_projectconfig_fileversion		1
+#define ht_projectconfig_magic				"HTPR"
+#define ht_projectconfig_fileversion			2
 
 
 
@@ -79,11 +82,11 @@ extern char *systemconfig_file;
 loadstore_result save_systemconfig();
 bool load_systemconfig(loadstore_result *result, int *error_info);
 
-typedef int (*load_fcfg_func)(ObjectStream &f, void *context);
+typedef void (*load_fcfg_func)(ObjectStream &f, void *context);
 typedef void (*store_fcfg_func)(ObjectStream &f, void *context);
 
-loadstore_result save_fileconfig(char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context);
-loadstore_result load_fileconfig(char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info);
+loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context);
+loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info);
 
 /*
  *	INIT
