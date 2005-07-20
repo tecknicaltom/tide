@@ -71,7 +71,7 @@ protected:
 	int		indent;
 public:
 	   
-					ObjectStreamText(Stream *s, bool own_stream);
+				ObjectStreamText(Stream *s, bool own_stream);
 	/* extends ObjectStreamInter */
 	virtual void		getObject(Object *&object, const char *name, ObjectID id = OBJID_INVALID);
 	virtual void		putObject(const Object *object, const char *name, ObjectID id = OBJID_INVALID);
