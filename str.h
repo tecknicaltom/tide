@@ -82,10 +82,12 @@ public:
 	virtual	void		store(ObjectStream &s) const;
 	inline	char		lastChar() const;
 	inline	int		length() const;
+		bool		leftSplit(char chr, String &initial, String &rem) const;
 		void		prepend(const String &s);
 		bool		regexMatch(const String &aRegEx, Container *resultStrings = NULL) const;
 //		bool		regexReplace(const String &aRegEx, Container *resultStrings = NULL) const;
 		int		replace(String &what, String &with);
+		bool		rightSplit(char chr, String &initial, String &rem) const;
 		int		subString(int aStart, int aLength, String &result) const;
 		void		transformCase(StringCase c);
 		void		translate(const String &inAlpha, const String &outAlpha);
