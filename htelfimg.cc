@@ -28,7 +28,7 @@
 #include "elfstruc.h"
 #include "elf_analy.h"
 
-static ht_view *htelfimage_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
@@ -38,7 +38,7 @@ static ht_view *htelfimage_init(bounds *b, File *file, ht_format_group *group)
 	ElfAnalyser *p = new ElfAnalyser();
 	p->init(elf_shared, file);
 
-	bounds c=*b;
+	Bounds c=*b;
 	ht_group *g=new ht_group();
 	g->init(&c, VO_RESIZE, DESC_ELF_IMAGE"-g");
 	AnalyInfoline *head;
@@ -152,7 +152,7 @@ format_viewer_if htelfimage_if = {
 /*
  *	CLASS ht_elf_aviewer
  */
-void ht_elf_aviewer::init(bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_elf_shared_data *ELF_shared)
+void ht_elf_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_elf_shared_data *ELF_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	elf_shared = ELF_shared;
