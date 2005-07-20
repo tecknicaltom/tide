@@ -22,7 +22,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "vfsview.h"
 
