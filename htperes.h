@@ -34,7 +34,7 @@ private:
 			bool vstate_save();
 	virtual	void vstate_restore(ht_data *d);
 public:
-			void init(bounds *b, char *desc);
+			void init(Bounds *b, char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	void	handlemsg(htmsg *msg);
