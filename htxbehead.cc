@@ -30,7 +30,7 @@
 #include "htxbe.h"
 #include "htxbehead.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 
 #include "xbestruct.h"
