@@ -80,14 +80,22 @@ IOException::IOException(int aPosixErrno)
 //	raise(SIGTRAP);
 }
 
-IOException::~IOException()
-{
-}
-
 String &IOException::reason(String &result) const
 {
 	result = "I/O error: " + errstr;
 	return result;
+}
+
+/*
+ *	EOFException
+ */
+EOFException::EOFException()
+{
+}
+
+String &EOFException::reason(String &result) const
+{
+	return result="unexpected end of file";
 }
 
 /*
