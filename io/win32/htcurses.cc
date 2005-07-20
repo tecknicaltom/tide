@@ -41,7 +41,7 @@ HANDLE output;
  */
 screendrawbuf::screendrawbuf(char *title)
 {
-	bounds b;
+	Bounds b;
 	CONSOLE_SCREEN_BUFFER_INFO screen_info;
 
 	buf = NULL;
@@ -97,7 +97,7 @@ bool screendrawbuf::init_console()
 	return true;
 }
 
-void screendrawbuf::drawbuffer(drawbuf *b, int x, int y, bounds *clipping)
+void screendrawbuf::drawbuffer(drawbuf *b, int x, int y, Bounds *clipping)
 {
 	drawbufch *ch=b->buf;
 	for (int iy=0; iy<b->size.h; iy++) {
@@ -170,7 +170,7 @@ void screendrawbuf::b_rmove(int rx, int ry)
 	/* screens are not movable */
 }
 
-void screendrawbuf::b_setbounds(bounds *b)
+void screendrawbuf::b_setbounds(Bounds *b)
 {
 	genericdrawbuf::b_setbounds(b);
 	if (buf) free(buf);
