@@ -31,7 +31,7 @@
 #include "htpehead.h"
 #include "htpeil.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 
 #include "pestruct.h"
