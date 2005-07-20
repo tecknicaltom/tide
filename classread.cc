@@ -24,7 +24,7 @@
 
 #include "analy.h"
 #include "class.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "stream.h"
 
