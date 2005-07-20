@@ -86,7 +86,7 @@ int ne_import_rec::compareTo(const Object *obj) const
 	return module - b->module;
 }
 
-static ht_view *htne_init(bounds *b, File *file, ht_format_group *format_group)
+static ht_view *htne_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte nemagic[2];
 	FileOfs h = get_newexe_header_ofs(file);
@@ -105,7 +105,7 @@ format_viewer_if htne_if = {
 	0
 };
 
-void ht_ne::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
+void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
 {
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_NE, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_ne");
