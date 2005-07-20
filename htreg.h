@@ -22,7 +22,7 @@
 #define __HTREG_H__
 
 #include "data.h"
-#include "htstring.h"
+#include "strtools.h"
 
 /*
  *	CLASS ht_registry_data
