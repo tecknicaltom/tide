@@ -53,7 +53,7 @@ char *htcopyrights[]=
 
 static void add_file_history_entry(char *n)
 {
-	ht_clist *hist=(ht_clist*)find_atom(HISTATOM_FILE);
+	ht_clist *hist=(ht_clist*)getAtomValue(HISTATOM_FILE);
 	if (hist) insert_history_entry(hist, n, 0);
 }
 
