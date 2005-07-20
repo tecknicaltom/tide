@@ -28,7 +28,7 @@
 #include "htpef.h"
 #include "htpefimp.h"
 #include "stream.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "log.h"
 #include "pef_analy.h"
