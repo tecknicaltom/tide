@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-ht_view *htpefimports_init(bounds *b, File *file, ht_format_group *group)
+ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
@@ -53,7 +53,7 @@ ht_view *htpefimports_init(bounds *b, File *file, ht_format_group *group)
 				* sizeof(PEF_ImportedLibrary);
 
 	ht_group *g;
-	bounds c;
+	Bounds c;
 
 	c=*b;
 	g=new ht_group();
@@ -185,7 +185,7 @@ ht_pef_import_function::~ht_pef_import_function()
  *	CLASS ht_pef_import_viewer
  */
 
-void ht_pef_import_viewer::init(bounds *b, char *Desc, ht_format_group *fg)
+void ht_pef_import_viewer::init(Bounds *b, char *Desc, ht_format_group *fg)
 {
 	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
