@@ -35,7 +35,7 @@ class ht_pe_export_viewer: public ht_itext_listbox {
 protected:
 	ht_format_group *format_group;
 public:
-			void	init(bounds *b, ht_format_group *fg);
+			void	init(Bounds *b, ht_format_group *fg);
 	virtual	void	done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
