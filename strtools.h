@@ -60,4 +60,15 @@ bool hexb_ex(uint8 &result, const char *s);
 bool hexw_ex(uint16 &result, const char *s);
 bool hexd_ex(uint32 &result, const char *s);
 
+/*
+ *	ht_string_list
+ */
+class ht_string_list: public Array {
+public:
+		ht_string_list();
+	/* new */
+		const char *get_string(uint i);
+		void insert_string(const char *s);
+};
+
 #endif /* !__STRTOOLS_H__ */
