@@ -156,7 +156,7 @@ void create_hist_atom(uint atom)
 
 void destroy_hist_atom(uint atom)
 {
-	ht_clist *c=(ht_clist*)find_atom(atom);
+	ht_clist *c=(ht_clist*)getAtomValue(atom);
 	if (c) {
 		unregister_atom(atom);
 		c->destroy();
@@ -170,7 +170,7 @@ void store_history(ObjectStream &s)
 	s->putIntDec(count, 4, NULL);
 	for (uint i=0; i<count; i++) {
 		s->putIntHex(hist_atoms[i], 4, NULL);
-		ht_clist *c=(ht_clist*)find_atom(hist_atoms[i]);
+		ht_clist *c=(ht_clist*)getAtomValue(hist_atoms[i]);
 		s->putObject(c, NULL);
 	}
 }
