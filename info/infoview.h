@@ -97,7 +97,7 @@ protected:
 			bool igotonode(char *file, char *node, bool add2hist);
 			uint readfile(char *fn, char **text);
 public:
-			void init(bounds *b);
+			void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
