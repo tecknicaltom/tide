@@ -136,7 +136,8 @@ void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_grou
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_COFF, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_coff");
 
-	LOG("%s: COFF: found header at %08x", file->get_filename(), h);
+	String fn;
+	LOG("%y: COFF: found header at 0x%08qx", &file->getFilename(fn), h);
 	coff_shared = (ht_coff_shared_data *)malloc(sizeof(*coff_shared));
 	coff_shared->hdr_ofs = h;
 	coff_shared->sections.hdr_ofs = h;
@@ -146,16 +147,16 @@ void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_grou
 
 	/* headers */
 	file->seek(h);
-	file->read(&coff_shared->coffheader, sizeof coff_shared->coffheader);
+	file->readx(&coff_shared->coffheader, sizeof coff_shared->coffheader);
 	createHostStruct(&coff_shared->coffheader, COFF_HEADER_struct, end);
 	coff_shared->opt_magic = 0;
 	if (coff_shared->coffheader.optional_header_size >= 2) {
-		file->read(&coff_shared->opt_magic, sizeof coff_shared->opt_magic);
+		file->readx(&coff_shared->opt_magic, sizeof coff_shared->opt_magic);
 		file->seek(h + sizeof coff_shared->coffheader);
 		coff_shared->opt_magic = createHostInt(&coff_shared->opt_magic, 2, end);
 		switch (coff_shared->opt_magic) {
 			case COFF_OPTMAGIC_COFF32:
-				file->read(&coff_shared->coff32header, sizeof coff_shared->coff32header);
+				file->readx(&coff_shared->coff32header, sizeof coff_shared->coff32header);
 				createHostStruct(&coff_shared->coff32header, COFF_OPTIONAL_HEADER32_struct, end);
 				break;
 		}
