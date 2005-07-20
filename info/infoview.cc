@@ -24,7 +24,7 @@
 #include "htdoc.h"
 #include "htiobox.h"
 #include "htpal.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "infoview.h"
 #include "tools.h"
 
