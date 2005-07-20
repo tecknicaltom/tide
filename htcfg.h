@@ -21,7 +21,7 @@
 #ifndef __HTCFG_H__
 #define __HTCFG_H__
 
-#include "common.h"
+#include "data.h"
 #include "stream.h"
 
 #if defined(WIN32) || defined(__WIN32__) || defined(MSDOS) || defined(DJGPP)
