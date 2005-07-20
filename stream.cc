@@ -30,7 +30,7 @@
 #include <sys/types.h>	/* for mode definitions */
 #include <unistd.h>
 
-#include "debug.h"
+#include "htdebug.h"
 #include "except.h"
 #include "snprintf.h"
 #include "stream.h"
@@ -99,9 +99,9 @@ FileOfs Stream::copyAllTo(Stream *stream)
 	do {
 		uint k = STREAM_COPYBUF_SIZE;
 		r = read(buf, k);
-		ASSERT(r <= k);
+		assert(r <= k);
 		t = stream->write(buf, r);
-		ASSERT(t <= r);
+		assert(t <= r);
 		result += t;
 		if (t != k) break;
 	} while (t);
@@ -115,7 +115,7 @@ FileOfs Stream::copyAllTo(Stream *stream)
  *	@param count maximum number of bytes to copy
  *	@returns number of bytes copied
  */
-FileOfs Stream::copyTo(Stream *stream, uint count)
+FileOfs Stream::copyTo(Stream *stream, FileOfs count)
 {
 	byte *buf = new byte[STREAM_COPYBUF_SIZE];
 	FileOfs result = 0;
@@ -123,9 +123,9 @@ FileOfs Stream::copyTo(Stream *stream, uint count)
 		uint k = STREAM_COPYBUF_SIZE;
 		if (k > count) k = count;
 		uint r = read(buf, k);
-		ASSERT(r <= k);
+		assert(r <= k);
 		uint t = stream->write(buf, r);
-		ASSERT(t <= r);
+		assert(t <= r);
 		count -= t;
 		result += t;
 		if (t != k) break;
@@ -206,7 +206,7 @@ void	Stream::readx(void *buf, uint size)
 	if (read(buf, size) != size) {
 //		FileOfs sz = f ? f->getSize() : mkfofs(0);
 //		ht_printf("readx failed, ofs = 0x%qx, size = %d (file size 0x%qx)\n", &t, size, &sz);
-		throw new IOException(EIO);
+		throw new EOFException();
 	}	    
 }
 /*
@@ -214,7 +214,7 @@ void Stream::removeEventListener(StreamEventListener *l)
 {
 	Listener t(l, SEV_NULL);
 	bool b = (*mListeners -= &t);
-	ASSERT(b);
+	assert(b);
 }
 */
 /**
@@ -244,7 +244,7 @@ uint	Stream::write(const void *buf, uint size)
  */
 void	Stream::writex(const void *buf, uint size)
 {
-	if (write(buf, size) != size) throw new IOException(EIO);
+	if (write(buf, size) != size) throw new EOFException();
 }
 
 /*
@@ -1064,7 +1064,7 @@ int LocalFile::vcntl(uint cmd, va_list vargs)
 				return 0;
 			}*/
 			// FIXME:
-			ASSERT(0);
+			assert(0);
 			break;
 		}
 	}
@@ -1308,7 +1308,7 @@ void MemoryFile::resizeBuf(uint newsize)
 {
 	bufsize = newsize;
 
-	ASSERT(dsize <= bufsize);
+	assert(dsize <= bufsize);
 
 	buf = (byte*)realloc(buf, bufsize ? bufsize : 1);
 	if (!buf) throw std::bad_alloc();
@@ -1442,7 +1442,7 @@ void CroppedFile::seek(FileOfs offset)
 FileOfs CroppedFile::tell() const
 {
 	FileOfs offset = FileLayer::tell();
-	if (offset<mCropStart) throw new IOException(EIO);
+	if (offset < mCropStart) throw new IOException(EIO);
 	return offset - mCropStart;
 }
 
