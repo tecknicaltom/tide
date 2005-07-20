@@ -29,7 +29,7 @@
 #include "htdebug.h"
 #include "htiobox.h"
 #include "htmacho.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "pestruct.h"
 #include "snprintf.h"
 //#include "x86asm.h"
