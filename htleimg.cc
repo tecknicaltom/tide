@@ -23,7 +23,7 @@
 #include "htpal.h"
 #include "htleimg.h"
 #include "htsearch.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "tools.h"
 
