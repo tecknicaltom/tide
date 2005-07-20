@@ -68,7 +68,13 @@ public:
 	int mPosixErrno;
 
 		IOException(int aPosixErrno);
-	virtual	~IOException();
+	/* new */
+	virtual	String &reason(String &result) const;
+};
+
+class EOFException: public IOException {
+public:
+		EOFException();
 	/* new */
 	virtual	String &reason(String &result) const;
 };
