@@ -102,7 +102,7 @@ static char *format_property[VFSV_FORMAT_PROPERTIES]={
 #define GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt) ((dfmt) & 0x80000000)
 #define GET_DISPLAY_FORMAT_IS_MIN_SIZE(dfmt) (!GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt))
 
-void VfsListbox::init(bounds *b, ht_list *vl, ht_text *sp)
+void VfsListbox::init(Bounds *b, ht_list *vl, ht_text *sp)
 {
 	cvfs = NULL;
 	show_pos = sp;
