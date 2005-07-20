@@ -26,10 +26,10 @@
 
 #include <string.h>
 
-#define ATOM_HT_HISTORY_ENTRY				MAGICD("HIS\0")
-#define ATOM_COMPARE_KEYS_HISTORY_ENTRY		MAGICD("HIS\1")
+#define ATOM_HT_HISTORY_ENTRY			MAGIC32("HIS\0")
+#define ATOM_COMPARE_KEYS_HISTORY_ENTRY		MAGIC32("HIS\1")
 
-#define MAX_HISTORY_ENTRY_COUNT		40
+#define MAX_HISTORY_ENTRY_COUNT			40
 
 bool insert_history_entry(ht_list *history, char *name, ht_view *view)
 {
