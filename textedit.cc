@@ -86,7 +86,7 @@ static ht_text_search_method text_search_methods[] =
 ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmodes, const text_viewer_pos *end_pos)
 {
 	ht_search_request *result = NULL;
-	bounds b;
+	Bounds b;
 	b.w = 50;
 	b.h = 15;
 	b.x = (screen->size.w-b.w)/2;
@@ -94,7 +94,7 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 	ht_search_dialog *dialog = new ht_search_dialog();
 	dialog->init(&b, "search");
 
-	bounds k;
+	Bounds k;
 	dialog->search_mode_xgroup->getbounds(&k);
 
 	k.x = 0;
@@ -105,7 +105,7 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 	ht_text_search_method *q = text_search_methods;
 	while (q->name) {
 		if (q->search_mode_mask & searchmodes) {
-			bounds v = k;
+			Bounds v = k;
 			ht_view *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 			modes++;
@@ -955,7 +955,7 @@ int text_viewer_pos_compare(text_viewer_pos *a, text_viewer_pos *b)
  *	CLASS ht_text_viewer
  */
 
-void ht_text_viewer::init(bounds *b, bool own_t, ht_textfile *t, ht_list *l)
+void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, ht_list *l)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE | VO_RESIZE, "text viewer");
 	VIEW_DEBUG_NAME("ht_text_viewer");
@@ -1738,7 +1738,7 @@ uint ht_text_viewer::physical_cursorx()
 
 void ht_text_viewer::popup_change_highlight()
 {
-	bounds b, c;
+	Bounds b, c;
 	
 	app->getbounds(&b);
 
@@ -2040,7 +2040,7 @@ bool ht_text_viewer::show_search_result(ht_search_result *result)
  *	CLASS ht_text_editor
  */
 
-void ht_text_editor::init(bounds *b, bool own_t, ht_textfile *t, ht_list *l, uint e)
+void ht_text_editor::init(Bounds *b, bool own_t, ht_textfile *t, ht_list *l, uint e)
 {
 	ht_text_viewer::init(b, own_t, t, l);
 	edit_options=e;
@@ -2558,7 +2558,7 @@ bool ht_text_editor::save()
 
 void ht_text_editor::show_protocol()
 {
-	bounds c, b;
+	Bounds c, b;
 	app->getbounds(&c);
 	b.w=c.w*5/6;
 	uint bh=b.h=c.h*5/6;
