@@ -130,7 +130,7 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, form);
-				insert_history_entry((ht_list*)find_atom(s->histid), hist_desc, form);
+				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, form);
 			}
 /* search */
 			switch (s->search_class) {
