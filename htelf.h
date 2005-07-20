@@ -143,7 +143,7 @@ protected:
 		uint find_reloc_section_for(uint si);
 		void relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a);
 public:
-		void init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
 	virtual	void done();
 	/* extends ? */
 	virtual	void loc_enum_start();
