@@ -668,7 +668,7 @@ void srt_x86(Analyser *analy, Address *addr)
 /**/
 	char str[256];
 	sprintf(str, "symbolic register trace (x86)");
-	bounds b, c, d;
+	Bounds b, c, d;
 	app->getbounds(&c);
 	b.w = 3*c.w/4;
 	b.h = 3*c.h/4;
