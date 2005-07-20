@@ -26,7 +26,7 @@
 #include "except.h"
 #include "htformat.h"
 #include "htobj.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "stream.h"
 
 #include <sys/types.h>
