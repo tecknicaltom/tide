@@ -401,7 +401,7 @@ void ht_info_textfile::set_node(uint ofs, uint len)
  *	CLASS ht_info_viewer
  */
 
-void ht_info_viewer::init(bounds *b)
+void ht_info_viewer::init(Bounds *b)
 {
 	MemoryFile *f = new MemoryFile();
 
