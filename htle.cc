@@ -48,7 +48,7 @@ static format_viewer_if *htle_ifs[] = {
 	0
 };
 
-static ht_view *htle_init(bounds *b, File *file, ht_format_group *format_group)
+static ht_view *htle_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte lemagic[2];
 	FileOfs h=get_newexe_header_ofs(file);
@@ -66,7 +66,7 @@ format_viewer_if htle_if = {
 	0
 };
 
-void ht_le::init(bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
+void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
 {
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_LE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_le");
