@@ -35,7 +35,7 @@
 #include "htiobox.h"
 #include "htxbeimp.h"
 #include "htxbe.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "ilopc.h"
 #include "xbe_analy.h"
 #include "xbestruct.h"
