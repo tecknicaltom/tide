@@ -19,7 +19,7 @@
  */
 
 #include "htdebug.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "tools.h"
 
