@@ -35,7 +35,7 @@ protected:
 	uint buffersize;
 	uint bufferpos;
 public:
-			ht_compressed_stream(Stream *stream, bool own_stream, uint granularity=COMPRESSED_STREAM_DEFAULT_GRANULARITY);
+			ht_compressed_stream(Stream *stream, bool own_stream);
 	virtual		~ht_compressed_stream();
 /* overwritten */
 	virtual	uint	read(void *buf, uint size);
