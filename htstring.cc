@@ -20,7 +20,7 @@
 
 #include "atom.h"
 #include "htdebug.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "stream.h"
 #include "tools.h"
