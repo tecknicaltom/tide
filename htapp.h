@@ -160,13 +160,14 @@ public:
 
 class ht_file_window: public ht_window {
 protected:
-	List *vstate_history;
+	Array vstate_history;
 	int vstate_history_pos;
 	
-			void add_vstate_history(ht_vstate_history_entry *e);
+		void add_vstate_history(ht_vstate_history_entry *e);
 public:
 	File	*file;
 
+		    ht_file_window();
 		void init(Bounds *b, char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
 /* overwritten */
@@ -177,18 +178,19 @@ public:
  *	CLASS ht_project
  */
 
-class ht_project: public ht_sorted_list {
+class ht_project: public AVLTree {
 protected:
 	char *filename;
 public:
-		   void init(char *filename);
-	virtual void done();
+	explicit ht_project(const char *filename);
+		ht_project(BuildCtorArg&);
+	virtual ~ht_project();
 /* overwritten */
 	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
 	virtual void store(ObjectStream &s) const;
 /* new */
-		   char *get_filename();
+		const char *get_filename();
 };
 
 /*
@@ -200,15 +202,17 @@ protected:
 	char *filename;
 	char *path;
 public:
-		   void init(char *filename, char *path);
-	virtual void done();
+		ht_project_item(const char *filename, const char *path);
+		ht_project_item(BuildCtorArg&);
+	virtual ~ht_project_item();
 /* overwritten */
 	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
 	virtual void store(ObjectStream &s) const;
+	virtual int compareTo(const Object *) const;
 /* new */
-	const char *get_filename();
-	const char *get_path();
+	const char *get_filename() const;
+	const char *get_path() const;
 };
 
 /*
@@ -221,7 +225,7 @@ protected:
 	uint colwidths[4];
 	
 public:
-			void		init(Bounds *b, ht_project *project);
+		void		init(Bounds *b, ht_project *project);
 			
 	virtual	int		calcCount();
 	virtual	void		draw();
@@ -276,10 +280,10 @@ public:
 	bool minimized;
 	uint number;
 	bool isfile;
-	ht_layer_streamfile *layer;
+	FileLayer *layer;
 
-	ht_app_window_entry(ht_window *window, uint number, uint type, bool minimized, bool isfile, ht_layer_streamfile *layer);
-	~ht_app_window_entry();
+	ht_app_window_entry(ht_window *window, uint number, uint type, bool minimized, bool isfile, FileLayer *layer);
+	virtual int compareTo(const Object *) const;
 };
 
 /*
@@ -288,9 +292,9 @@ public:
 
 class ht_app: public ht_dialog {
 protected:
-	ht_sorted_list *windows;
+	Container *windows;
 
-	ht_list *syntax_lexers;
+	Container *syntax_lexers;
 
 	ht_keyline *keyline;
 	ht_desktop *desktop;
@@ -300,25 +304,28 @@ protected:
 	bool exit_program;
 
 /* new */
-			ht_window *create_window_file_bin(Bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
-			ht_window *create_window_file_text(Bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
+			ht_window *create_window_file_bin(Bounds *b, FileLayer *file, char *title, bool isfile);
+			ht_window *create_window_file_text(Bounds *b, FileLayer *file, char *title, bool isfile);
 			
 			bool accept_close_all_windows();
 			uint find_free_window_number();
 			
 			uint get_window_number(ht_window *window);
-			uint get_window_listindex(ht_window *window);
+			ObjHandle get_window_listindex(ht_window *window);
 
 			void get_stdbounds_file(Bounds *b);
 			void get_stdbounds_tool(Bounds *b);
 			
-			int popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, ht_list *structure, int depth, int *currenti, ht_view *currentv);
+			int popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *structure, int depth, int *currenti, ht_view *currentv);
 /* overwritten */
 	virtual	char *defaultpalette();
 	virtual	char *defaultpaletteclass();
 public:
 	ht_view *menu;
-		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, ht_layer_streamfile *layer);
+
+		ht_app();
+		ht_app(BuildCtorArg &);
+		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, FileLayer *layer);
 
 		void init(Bounds *b);
 	virtual	void done();
