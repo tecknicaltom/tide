@@ -39,7 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -61,7 +61,7 @@ static ht_view *htpeimports_init(bounds *b, File *file, ht_format_group *group)
 	start_timer(h0);
 
 	ht_group *g;
-	bounds c;
+	Bounds c;
 
 	c=*b;
 	g=new ht_group();
@@ -352,7 +352,7 @@ ht_pe_import_function::~ht_pe_import_function()
  *	CLASS ht_pe_import_viewer
  */
 
-void	ht_pe_import_viewer::init(bounds *b, char *Desc, ht_format_group *fg)
+void	ht_pe_import_viewer::init(Bounds *b, char *Desc, ht_format_group *fg)
 {
 	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
