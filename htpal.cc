@@ -37,8 +37,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ATOM_PALETTE_ENTRY			MAGICD("PAL\x00")
-#define ATOM_HT_CREATE_PALETTE_ENTRY	MAGICD("PAL\x10")
+#define ATOM_PALETTE_ENTRY		MAGIC32("PAL\x00")
+#define ATOM_HT_CREATE_PALETTE_ENTRY	MAGIC32("PAL\x10")
 
 struct pal_layout {
 	int idx;
@@ -223,7 +223,7 @@ palette_entry::palette_entry(uint _idx, vcp _color)
 bool palette_entry::editdialog(const char *keyname)
 {
 	bool r=0;
-	bounds b;
+	Bounds b;
 	b.w=50;
 	b.h=15;
 	b.x=(screen->size.w-b.w)/2;
