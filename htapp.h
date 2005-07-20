@@ -109,16 +109,16 @@ public:
 
 typedef unsigned int LogColor;
 
-class ht_log: public ht_clist {
+class ht_log: public Array {
 protected:
 	uint maxlinecount;
 
 	void deletefirstline();
 	void	insertline(LogColor c, char *line);
 public:
-			void init(compare_keys_func_ptr compare_keys = 0);
+	ht_log();
 /* new */
-			void log(LogColor c, char *line);
+	void log(LogColor c, char *line);
 };
 
 class ht_logviewer: public ht_viewer {
@@ -160,14 +160,14 @@ public:
 
 class ht_file_window: public ht_window {
 protected:
-	ht_list *vstate_history;
+	List *vstate_history;
 	int vstate_history_pos;
 	
 			void add_vstate_history(ht_vstate_history_entry *e);
 public:
 	File	*file;
 
-			void	init(bounds *b, char *desc, uint framestyle, uint number, File *file);
+		void init(bounds *b, char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -184,9 +184,9 @@ public:
 		   void init(char *filename);
 	virtual void done();
 /* overwritten */
-	virtual int	load(ObjectStream &s);
+	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
-	virtual void	store(ObjectStream &s);
+	virtual void store(ObjectStream &s) const;
 /* new */
 		   char *get_filename();
 };
@@ -203,9 +203,9 @@ public:
 		   void init(char *filename, char *path);
 	virtual void done();
 /* overwritten */
-	virtual int	load(ObjectStream &s);
+	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
-	virtual void	store(ObjectStream &s);
+	virtual void store(ObjectStream &s) const;
 /* new */
 	const char *get_filename();
 	const char *get_path();
@@ -327,10 +327,10 @@ public:
 	virtual	int focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
-	virtual	int load(ObjectStream &f);
+	virtual	void load(ObjectStream &f);
 	virtual ObjectID getObjectID() const;
 	virtual	int run(bool modal);
-	virtual	void store(ObjectStream &f);
+	virtual	void store(ObjectStream &f) const;
 /* new */
 			ht_window *create_window_clipboard();
 			ht_window *create_window_file(char *filename, uint mode, bool allow_duplicates);
