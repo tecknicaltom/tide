@@ -37,7 +37,7 @@
 
 #include <stdlib.h>
 
-static ht_view *htpedelayimports_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -54,7 +54,7 @@ static ht_view *htpedelayimports_init(bounds *b, File *file, ht_format_group *gr
 	uint function_count=0;
 
 	ht_group *g;
-	bounds c;
+	Bounds c;
 	ht_statictext *head;
 
 	c=*b;
