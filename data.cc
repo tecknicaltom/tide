@@ -346,6 +346,24 @@ void Array::delAll()
 	elems = NULL;
 }
 
+int Array::delRange(int start, int end)
+{
+	if (!ecount) return 0;
+	if (start < 0) start = 0;
+	if (start > end) return 0;
+	if ((uint)end > ecount-1) end = ecount - 1;
+	if (own_objects) {
+		uint ende = end;
+		for (uint i = start; i <= ende; i++) {
+			freeObj(elems[i]);
+		}
+	}
+	memmove(elems+start, elems+end+1, sizeof (*elems) * (end-start+1));
+	ecount -= end-start+1;
+	checkShrink();
+	return end-start+1;
+}
+
 Array *Array::clone() const
 {
 	Array *a = new Array(own_objects, ecount);
@@ -470,7 +488,7 @@ int Array::compareObjects(const Object *a, const Object *b) const
 void Array::forceSetByIdx(int i, Object *obj)
 {
 	// FIXME: sanity check, better idea ?
-	if (i<0) assert(0);
+	if (i < 0) assert(0);
 	prepareWriteAccess(i);
 	freeObj(elems[i]);
 	elems[i] = obj;
