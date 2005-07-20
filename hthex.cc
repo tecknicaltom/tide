@@ -35,7 +35,7 @@ extern "C" {
 #include "regex.h"
 }
 
-ht_view *hthex_init(bounds *b, File *file, ht_format_group *group)
+ht_view *hthex_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_hex_viewer *v=new ht_hex_viewer();
 	v->init(b, DESC_HEX, VC_EDIT | VC_GOTO | VC_SEARCH | VC_REPLACE | VC_RESIZE, file, group);
