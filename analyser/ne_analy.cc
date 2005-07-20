@@ -35,7 +35,7 @@
 #include "htiobox.h"
 #include "htne.h"
 #include "htneent.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "nestruct.h"
 #include "snprintf.h"
 #include "x86asm.h"
