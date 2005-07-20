@@ -149,7 +149,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 	}
 }
 
-static ht_view *htperesources_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -215,7 +215,7 @@ format_viewer_if htperesources_if = {
  *	CLASS ht_pe_resource_viewer
  */
 
-void ht_pe_resource_viewer::init(bounds *b, char *desc)
+void ht_pe_resource_viewer::init(Bounds *b, char *desc)
 {
 	ht_static_treeview::init(b, desc);
 	VIEW_DEBUG_NAME("ht_pe_resource_viewer");
