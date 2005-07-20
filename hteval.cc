@@ -326,7 +326,7 @@ void eval_dialog()
 
 	d->init(&b, "evaluate", FS_TITLE | FS_MOVE | FS_RESIZE);
 
-	ht_list *ehist=(ht_list*)find_atom(HISTATOM_EVAL_EXPR);
+	ht_list *ehist=(ht_list*)getAtomValue(HISTATOM_EVAL_EXPR);
 
 	/* input line */
 	BOUNDS_ASSIGN(b, 1, 1, c.w-14, 1);
