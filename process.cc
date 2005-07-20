@@ -26,7 +26,7 @@
 
 bool execute_process(process_func pp, Object *context)
 {
-	bounds b;
+	Bounds b;
 	get_std_progress_indicator_metrics(&b);
 	
 	ht_progress_indicator *pi=new ht_progress_indicator();
