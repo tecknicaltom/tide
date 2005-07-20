@@ -22,7 +22,7 @@
 #include "htnewexe.h"
 #include "htpal.h"
 #include "htneimg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "tools.h"
 
