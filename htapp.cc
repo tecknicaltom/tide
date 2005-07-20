@@ -64,10 +64,10 @@ extern "C" {
 #include "regex.h"
 }
 
-#define ATOM_HT_APP			MAGICD("APP\x00")
-#define ATOM_HT_PROJECT			MAGICD("APP\x01")
-#define ATOM_HT_PROJECT_ITEM		MAGICD("APP\x02")
-#define ATOM_COMPARE_KEYS_PROJECT_ITEM	MAGICD("APP\x10")
+#define ATOM_HT_APP			MAGIC32("APP\x00")
+#define ATOM_HT_PROJECT			MAGIC32("APP\x01")
+#define ATOM_HT_PROJECT_ITEM		MAGIC32("APP\x02")
+#define ATOM_COMPARE_KEYS_PROJECT_ITEM	MAGIC32("APP\x10")
 
 #define HT_PROJECT_CONFIG_SUFFIX     	".htprj"
 #define HT_FILE_CONFIG_SUFFIX 		".htcfg"
@@ -102,7 +102,7 @@ void ht_help_window::handlemsg(htmsg *msg)
 
 bool file_new_dialog(uint *mode)
 {
-	bounds b, c;
+	Bounds b, c;
 	
 	app->getbounds(&b);
 
@@ -175,7 +175,7 @@ class FileBrowserVfsListbox: public VfsListbox {
 protected:
 	FileBrowser *file_browser;
 public:
-			void	init(bounds *b, ht_list *vfs_list, ht_text *show_pos, FileBrowser *file_browser);
+			void	init(Bounds *b, ht_list *vfs_list, ht_text *show_pos, FileBrowser *file_browser);
 /* overwritten */
 	virtual	void stateChanged();
 };
@@ -194,14 +194,14 @@ protected:
 	ht_strinputfield *name_input;
 	FileBrowserVfsListbox *listbox;
 public:
-	virtual	void init(bounds *b, bounds *clientarea, const char *title, const char *starturl);
+	virtual	void init(Bounds *b, Bounds *clientarea, const char *title, const char *starturl);
 /* new */
 	virtual	bool extract_url(char *buf);
 	virtual	void listbox_changed();
 };
 
 /**/
-void	FileBrowserVfsListbox::init(bounds *b, ht_list *vfs_list, ht_text *show_pos, FileBrowser *fb)
+void	FileBrowserVfsListbox::init(Bounds *b, ht_list *vfs_list, ht_text *show_pos, FileBrowser *fb)
 {
 	file_browser = NULL;
 	VfsListbox::init(b, vfs_list, show_pos);
@@ -215,10 +215,10 @@ void FileBrowserVfsListbox::stateChanged()
 }
 
 /**/
-void FileBrowser::init(bounds *n, bounds *clientarea, const char *title, const char *starturl)
+void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const char *starturl)
 {
 	ht_dialog::init(n, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
-	bounds b = *clientarea, c;
+	Bounds b = *clientarea, c;
 
 	/* name (input) */
 	c = b;
@@ -305,7 +305,7 @@ void FileBrowser::listbox_changed()
 
 bool file_chooser(const char *title, char *buf, int bufsize)
 {
-	bounds b, c;
+	Bounds b, c;
 	
 	app->getbounds(&b);
 
@@ -357,7 +357,7 @@ bool file_chooser(const char *title, char *buf, int bufsize)
 
 bool file_open_dialog(char **name, uint *mode)
 {
-	bounds b, c;
+	Bounds b, c;
 	
 	app->getbounds(&b);
 
@@ -708,7 +708,7 @@ void ht_project_item::store(ObjectStream &s)
  *	CLASS ht_project_list
  */
 
-void	ht_project_listbox::init(bounds *b, ht_project *p)
+void	ht_project_listbox::init(Bounds *b, ht_project *p)
 {
 	project = p;
 	ht_listbox::init(b);
@@ -902,12 +902,12 @@ void ht_project_listbox::set_project(ht_project *p)
  *	CLASS ht_project_window
  */
 
-void	ht_project_window::init(bounds *b, char *desc, uint framestyle, uint number, ht_project **p)
+void	ht_project_window::init(Bounds *b, char *desc, uint framestyle, uint number, ht_project **p)
 {
 	ht_window::init(b, desc, framestyle, number);
 	project = p;
 
-	bounds c = *b;
+	Bounds c = *b;
 	c.x = 0;
 	c.y = 0;
 	c.w -= 2;
@@ -953,7 +953,7 @@ void ht_project_window::handlemsg(htmsg *msg)
  *	CLASS ht_status
  */
 
-void ht_status::init(bounds *b)
+void ht_status::init(Bounds *b)
 {
 	ht_view::init(b, VO_TRANSPARENT_CHARS, 0);
 	VIEW_DEBUG_NAME("ht_status");
@@ -1071,7 +1071,7 @@ void ht_status::render()
  *	CLASS ht_keyline
  */
 
-void ht_keyline::init(bounds *b)
+void ht_keyline::init(Bounds *b)
 {
 	ht_view::init(b, 0, 0);
 	VIEW_DEBUG_NAME("ht_keyline");
@@ -1124,7 +1124,7 @@ void ht_keyline::handlemsg(htmsg *msg)
  *	CLASS ht_desktop
  */
 
-void ht_desktop::init(bounds *b)
+void ht_desktop::init(Bounds *b)
 {
 	ht_view::init(b, VO_OWNBUFFER, 0);
 	VIEW_DEBUG_NAME("ht_desktop");
@@ -1197,7 +1197,7 @@ void ht_log::log(LogColor c, char *line)
  *	CLASS ht_logviewer
  */
 
-void ht_logviewer::init(bounds *b, ht_window *w, ht_log *l, bool ol)
+void ht_logviewer::init(Bounds *b, ht_window *w, ht_log *l, bool ol)
 {
 	ht_viewer::init(b, "log", 0);
 	VIEW_DEBUG_NAME("ht_logviewer");
@@ -1405,7 +1405,7 @@ int cur_timing=0, max_timing=0;
 int h0;
 /**/
 
-void ht_app::init(bounds *pq)
+void ht_app::init(Bounds *pq)
 {
 	ht_dialog::init(pq, 0, 0);
 	menu = NULL;
@@ -1413,7 +1413,7 @@ void ht_app::init(bounds *pq)
 	VIEW_DEBUG_NAME("ht_app");
 	exit_program = false;
 	focused = true;
-	bounds b;
+	Bounds b;
 
 	windows = new ht_sorted_list();
 	windows->init(compare_keys_app_window_entry);
@@ -1502,7 +1502,7 @@ void ht_app::init(bounds *pq)
 	insert(menu);
 	
 	/* create status */
-	/* the status should have the same bounds as the menu */
+	/* the status should have the same Bounds as the menu */
 	ht_status *status = new ht_status();
 	status->init(&b);
 	status->setpalette(menu->getpalette());
@@ -1575,7 +1575,7 @@ ht_window *ht_app::create_window_log()
 	if (w) {
 		focus(w);
 	} else {
-		bounds b;
+		Bounds b;
 /*		battlefield->getbounds(&b);
 		b.x = 0;
 		b.y = 0;*/
@@ -1584,7 +1584,7 @@ ht_window *ht_app::create_window_log()
 		ht_window *logwindow=new ht_window();
 		logwindow->init(&b, "log window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 		
-		bounds k=b;
+		Bounds k=b;
 		k.x=b.w-2;
 		k.y=0;
 		k.w=1;
@@ -1613,13 +1613,13 @@ ht_window *ht_app::create_window_term(const char *cmd)
 	if (w) {
 		focus(w);
 	} else {
-		bounds b;
+		Bounds b;
 		get_stdbounds_file(&b);
 
 		ht_window *termwindow=new ht_window();
 		termwindow->init(&b, "terminal", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 		
-		bounds k=b;
+		Bounds k=b;
 		k.x=3;
 		k.y=k.h-2;
 		k.w-=7;
@@ -1672,14 +1672,14 @@ ht_window *ht_app::create_window_clipboard()
 		focus(w);
 		return w;
 	} else {
-		bounds b;
+		Bounds b;
 		get_stdbounds_file(&b);
 /*		ht_file_window *window=new ht_file_window();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, clipboard);*/
 		ht_window *window=new ht_window();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 		
-/*		bounds k=b;
+/*		Bounds k=b;
 		k.x=b.w-2;
 		k.y=0;
 		k.w=1;
@@ -1689,7 +1689,7 @@ ht_window *ht_app::create_window_clipboard()
 
 		window->setvscrollbar(hs);*/
 
-		bounds k;
+		Bounds k;
 		k = b;
 		k.x=3;
 		k.y=k.h-2;
@@ -1729,7 +1729,7 @@ ht_window *ht_app::create_window_file(char *filename, uint mode, bool allow_dupl
 
 ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 {
-	bounds b;
+	Bounds b;
 	get_stdbounds_file(&b);
 	int e;
 	char fullfilename[FILENAME_MAX];
@@ -1770,12 +1770,12 @@ ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 	return create_window_file_bin(&b, file, fullfilename, true);
 }
 
-ht_window *ht_app::create_window_file_bin(bounds *b, ht_layer_streamfile *file, char *title, bool isfile)
+ht_window *ht_app::create_window_file_bin(Bounds *b, ht_layer_streamfile *file, char *title, bool isfile)
 {
 	ht_file_window *window = new ht_file_window();
 	window->init(b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
-	bounds k=*b;
+	Bounds k=*b;
 	k.x=b->w-2;
 	k.y=0;
 	k.w=1;
@@ -1849,7 +1849,7 @@ ht_window *ht_app::create_window_file_bin(bounds *b, ht_layer_streamfile *file, 
 
 ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates)
 {
-	bounds b, c;
+	Bounds b, c;
 	get_stdbounds_file(&c);
 	b = c;
 	int e;
@@ -1892,9 +1892,9 @@ ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates
 	return create_window_file_text(&b, file, fullfilename, true);
 }
 
-ht_window *ht_app::create_window_file_text(bounds *c, ht_layer_streamfile *f, char *title, bool isfile)
+ht_window *ht_app::create_window_file_text(Bounds *c, ht_layer_streamfile *f, char *title, bool isfile)
 {
-	bounds b=*c;
+	Bounds b=*c;
 
 	ht_layer_textfile *file = (ht_layer_textfile *)f;
 	
@@ -1923,7 +1923,7 @@ ht_window *ht_app::create_window_file_text(bounds *c, ht_layer_streamfile *f, ch
 #endif
 	}
 
-	bounds k=*c;
+	Bounds k=*c;
 	k.x=k.w-2;
 	k.y=0;
 	k.w=1;
@@ -1960,13 +1960,13 @@ ht_window *ht_app::create_window_help(char *file, char *node)
 		focus(w);
 		return w;
 	} else {
-		bounds b, c;
+		Bounds b, c;
 		battlefield->getbounds(&c);
 		b.w=c.w*7/8;
 		b.h=c.h*7/8;
 		b.x=(c.w-b.w)/2;
 		b.y=(c.h-b.h)/2;
-		bounds k = b;
+		Bounds k = b;
 
 		ht_help_window *window=new ht_help_window();
 		window->init(&b, "help", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
@@ -2030,13 +2030,13 @@ ht_window *ht_app::create_window_project()
 		focus(w);
 		return w;
 	} else {
-		bounds b;
+		Bounds b;
 		get_stdbounds_tool(&b);
 
 		ht_project_window *project_window=new ht_project_window();
 		project_window->init(&b, "project window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, (ht_project**)&project);
 
-		bounds k = b;
+		Bounds k = b;
 		k.x = b.w-2;
 		k.y = 0;
 		k.w = 1;
@@ -2062,14 +2062,14 @@ ht_window *ht_app::create_window_project()
 }
 
 #if 0
-ht_view *create_ofm_single(bounds *c, char *url, ht_vfs_viewer **x)
+ht_view *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
 {
-	bounds b=*c;
+	Bounds b=*c;
 	b.h-=2;
 	ht_group *g=new ht_group();
 	g->init(&b, VO_SELECTABLE, 0);
 
-	bounds d=b;
+	Bounds d=b;
 	
 	b.x=0;
 	b.y=0;
@@ -2101,7 +2101,7 @@ ht_view *create_ofm_single(bounds *c, char *url, ht_vfs_viewer **x)
 
 ht_window *ht_app::create_window_ofm(char *url1, char *url2)
 {
-	bounds b;
+	Bounds b;
 	get_stdbounds_file(&b);
 
 	ht_window *window=new ht_window();
@@ -2118,7 +2118,7 @@ ht_window *ht_app::create_window_ofm(char *url1, char *url2)
 
 	window->insert(l);
 #else
-	bounds b1, b2, b3;
+	Bounds b1, b2, b3;
 
 	ht_vfs_viewer *v1, *v2=NULL;
 
@@ -2239,10 +2239,10 @@ char *ht_app::func(uint i, bool execute)
 	return 0;
 }
 
-void ht_app::get_stdbounds_file(bounds *b)
+void ht_app::get_stdbounds_file(Bounds *b)
 {
 	if (project) {
-		bounds c;
+		Bounds c;
 		get_stdbounds_tool(&c);
 		battlefield->getbounds(b);
 		b->x = 0;
@@ -2255,7 +2255,7 @@ void ht_app::get_stdbounds_file(bounds *b)
 	}
 }
 
-void ht_app::get_stdbounds_tool(bounds *b)
+void ht_app::get_stdbounds_tool(Bounds *b)
 {
 	uint h = MAX(size.h/4, 3);
 	battlefield->getbounds(b);
@@ -2597,7 +2597,7 @@ void ht_app::handlemsg(htmsg *msg)
 			return;
 		}
 		case cmd_file_new: {
-			bounds b;
+			Bounds b;
 			get_stdbounds_file(&b);
 			
 			uint mode;
@@ -2811,7 +2811,7 @@ static int my_compare_func(const char *a, const char *b)
 ht_view *ht_app::popup_view_list(char *dialog_title)
 {
 	if (!battlefield->current) return NULL;
-	bounds b, c;
+	Bounds b, c;
 	getbounds(&b);
 	b.x=b.w/4;
 	b.y=b.h/4;
@@ -2903,7 +2903,7 @@ int ht_app::popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, ht_lis
 
 ht_window *ht_app::popup_window_list(char *dialog_title)
 {
-	bounds b, c;
+	Bounds b, c;
 	getbounds(&b);
 	c=b;
 	b.w=b.w*2/3;
@@ -3044,7 +3044,7 @@ ht_vstate_history_entry::~ht_vstate_history_entry()
  *	CLASS ht_file_window
  */
 
-void ht_file_window::init(bounds *b, char *desc, uint framestyle, uint number, File *f)
+void ht_file_window::init(Bounds *b, char *desc, uint framestyle, uint number, File *f)
 {
 	ht_window::init(b, desc, framestyle, number);
 	file = f;
@@ -3209,7 +3209,7 @@ BUILDER(ATOM_HT_PROJECT_ITEM, ht_project_item);
 
 bool init_app()
 {
-	bounds b;
+	Bounds b;
 	screen = new screendrawbuf(ht_name" "ht_version);
 
 	loglines = new ht_log();
