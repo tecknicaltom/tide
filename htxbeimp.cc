@@ -29,7 +29,7 @@
 #include "htxbe.h"
 #include "htxbeimp.h"
 #include "stream.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "log.h"
 #include "xbe_analy.h"
