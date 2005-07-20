@@ -34,7 +34,7 @@
 #include "htdebug.h"
 #include "htiobox.h"
 #include "htpe.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "ilopc.h"
 #include "pe_analy.h"
 #include "pestruct.h"
