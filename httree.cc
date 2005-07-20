@@ -25,7 +25,7 @@
 #include "htdialog.h"
 #include "htpal.h"
 #include "htkeyb.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httree.h"
 #include "stream.h"
 
