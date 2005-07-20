@@ -33,7 +33,7 @@
  *	class RegNodeFile
  */
 
-class RegNodeFile: public ht_mem_file {
+class RegNodeFile: public MemoryFile {
 protected:
 	char *nodename;
 	uint access_mode0;
@@ -43,8 +43,8 @@ protected:
 		   int		load_node(ObjectStream &s, ht_registry_node_type *type, ht_registry_data **data);
 		   void		store_node(ObjectStream &s, ht_registry_node_type type, ht_registry_data *data);
 public:
-		   void		init(const char *nodename, uint am, uint om);
-	virtual void		done();
+		RegNodeFile(const char *nodename, uint am, uint om);
+	virtual ~RegNodeFile();
 /* overwritten */
 	virtual bool		set_access_mode(uint access_mode);
 };
