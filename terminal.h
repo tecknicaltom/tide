@@ -56,7 +56,7 @@ private:
 			void do_update();
 			void get_pindicator_str(char *buf);
 public:
-			void init(bounds *b, Terminal *term, bool own_term);
+			void init(Bounds *b, Terminal *term, bool own_term);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
