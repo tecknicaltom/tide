@@ -24,7 +24,7 @@
 
 #include <string.h>
 
-ht_view *httext_init(bounds *b, File *file, ht_format_group *group)
+ht_view *httext_init(Bounds *b, File *file, ht_format_group *group)
 {
 	/* no httext for file > 5 MiB */
 	if (file->get_size() > 5*1024*1024) {
