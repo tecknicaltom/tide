@@ -24,7 +24,7 @@
 #include "htdebug.h"
 #include "endianess.h"
 #include "htreg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "stream.h"
 #include "store.h"
 #include "sys.h"
