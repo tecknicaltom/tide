@@ -71,7 +71,7 @@ protected:
     
 		void	dosort();
 public:
-		void	init(bounds *b, char *desc, ht_format_group *fg);
+		void	init(Bounds *b, char *desc, ht_format_group *fg);
 	virtual	void	done();
 	/* overwritten */
 	virtual	void	handlemsg(htmsg *msg);
