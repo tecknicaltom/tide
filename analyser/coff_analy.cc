@@ -35,7 +35,7 @@
 #include "htdebug.h"
 #include "htiobox.h"
 #include "htcoff.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "x86asm.h"
 
