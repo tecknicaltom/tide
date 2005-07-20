@@ -28,7 +28,7 @@
 #include "htdebug.h"
 #include "htiobox.h"
 #include "htpef.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "pestruct.h"
 #include "snprintf.h"
 #include "x86asm.h"
