@@ -93,7 +93,7 @@ struct drawbufch {
 
 class genericdrawbuf {
 public:
-	bounds size;
+	Bounds size;
 
 	genericdrawbuf();
 	virtual ~genericdrawbuf();
@@ -107,7 +107,7 @@ public:
 	virtual int b_lprintw(int x, int y, int c, int l, int *text);
 	virtual void b_resize(int rw, int rh);
 	virtual void b_rmove(int rx, int ry);
-	virtual void b_setbounds(bounds *b);
+	virtual void b_setbounds(Bounds *b);
 /* graphical extension */
 	virtual void b_line(int px1, int py1, int px2, int py2, int c);
 	virtual void b_putpixel(int px, int py, int c);
@@ -123,7 +123,7 @@ class drawbuf: public genericdrawbuf {
 public:
 	drawbufch *buf;
 
-	drawbuf(bounds *b);
+	drawbuf(Bounds *b);
 	~drawbuf();
 	
 /* overwritten */
@@ -131,7 +131,7 @@ public:
 	virtual void b_printchar(int x, int y, int c, int ch);
 	virtual int b_lprint(int x, int y, int c, int l, char *text);
 	virtual int b_lprintw(int x, int y, int c, int l, int *text);
-	virtual void b_setbounds(bounds *b);
+	virtual void b_setbounds(Bounds *b);
 };
 
 /*
