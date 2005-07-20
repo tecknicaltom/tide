@@ -78,7 +78,7 @@ void	ObjectStreamInter::putObject(const Object *object, const char *name, Object
 		} else {
 			throw new IllegalArgumentException(HERE);
 		}
-	}		
+	}
 	if (id == OBJID_INVALID) {
 		id = object->getObjectID();
 		char buf[64];
