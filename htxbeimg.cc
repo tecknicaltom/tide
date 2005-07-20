@@ -22,7 +22,7 @@
 #include "formats.h"
 #include "htpal.h"
 #include "htxbeimg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "xbe_analy.h"
 #include "xbestruct.h"
 #include "snprintf.h"
