@@ -36,7 +36,7 @@ public:
 	ht_le_shared_data *le_shared;
 	File *file;
 	
-		   void init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_le_shared_data *le_shared);
+		   void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_le_shared_data *le_shared);
 /* overwritten */
 	virtual char *func(uint i, bool execute);
 	virtual void setAnalyser(Analyser *a);
