@@ -22,7 +22,7 @@
 #include "formats.h"
 #include "htpal.h"
 #include "htpefimg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "pef_analy.h"
 #include "pefstruc.h"
 #include "snprintf.h"
