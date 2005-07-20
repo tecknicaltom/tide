@@ -49,10 +49,10 @@ bool execute_submenu(int x, int y, ht_context_menu *m)
 {
 	int curentry=0;
 	bool term=false;
-	bounds scr;
+	Bounds scr;
 	app->getbounds(&scr);
 	do {
-		bounds b;
+		Bounds b;
 		b.x=x+m->xpos-1;
 		b.y=y;
 		b.w=m->width+4;
@@ -236,7 +236,7 @@ ht_context_menu_entry::~ht_context_menu_entry()
  *	CLASS ht_menu
  */
 
-void ht_menu::init(bounds *b)
+void ht_menu::init(Bounds *b)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_POSTPROCESS, "menu");
 	VIEW_DEBUG_NAME("ht_menu");
@@ -303,7 +303,7 @@ void ht_menu::execute_menu(int i)
 	dirtyview();
 	do {
 		ht_context_menu *m = get_context_menu(curmenu);
-		bounds b;
+		Bounds b;
 		b.x=m->xpos-1;
 		b.y=1;
 		b.w=m->width+4;
@@ -501,7 +501,7 @@ bool ht_menu::set_local_menu(ht_context_menu *m)
  *	CLASS ht_menu_frame
  */
 
-void ht_menu_frame::init(bounds *b, char *desc, uint style, uint number)
+void ht_menu_frame::init(Bounds *b, char *desc, uint style, uint number)
 {
 	ht_frame::init(b, desc, style, number);
 	VIEW_DEBUG_NAME("ht_menu_frame");
@@ -536,7 +536,7 @@ int ht_menu_frame::getcurcol_killer()
  *	CLASS ht_context_menu_window_body
  */
 
-void ht_context_menu_window_body::init(bounds *b, ht_context_menu *Menu)
+void ht_context_menu_window_body::init(Bounds *b, ht_context_menu *Menu)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
 	VIEW_DEBUG_NAME("ht_context_menu_window_body");
@@ -718,12 +718,12 @@ void ht_context_menu_window_body::setdata(ObjectStream &s)
  *	CLASS ht_menu_window
  */
 
-void ht_menu_window::init(bounds *b, ht_context_menu *m)
+void ht_menu_window::init(Bounds *b, ht_context_menu *m)
 {
 	ht_dialog::init(b, 0, 0);
 	VIEW_DEBUG_NAME("ht_menu_window");
 
-	bounds c=*b;
+	Bounds c=*b;
 	c.x=0;
 	c.y=0;
 	c.w-=2;
@@ -782,7 +782,7 @@ void ht_menu_window::setdata(ObjectStream &s)
  *	CLASS ht_menu_window_body
  */
 
-void ht_menu_window_body::init(bounds *b, ht_context_menu *menu)
+void ht_menu_window_body::init(Bounds *b, ht_context_menu *menu)
 {
 	ht_context_menu_window_body::init(b, menu);
 	VIEW_DEBUG_NAME("ht_menu_window_body");
