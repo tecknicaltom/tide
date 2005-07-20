@@ -333,7 +333,7 @@ protected:
 		int		setAccessModeInternal(IOAccessMode mode);
 public:
 				LocalFile(const String &aFilename, IOAccessMode mode, FileOpenMode aOpenMode);
-				LocalFile(FILE *file, bool own_file, IOAccessMode mode);
+				LocalFile(SYS_FILE *file, bool own_file, IOAccessMode mode);
 	virtual			~LocalFile();
 	/* extends File */
 	virtual String &	getDesc(String &result) const;
