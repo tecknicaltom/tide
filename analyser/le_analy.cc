@@ -35,7 +35,7 @@
 #include "endianess.h"
 #include "htiobox.h"
 #include "htle.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "nestruct.h"
 #include "snprintf.h"
 #include "x86asm.h"
