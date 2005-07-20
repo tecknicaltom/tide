@@ -110,7 +110,7 @@ bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *
 ht_view* create_form_hexascii(Bounds *b, HT_ATOM histid)
 {
 	ht_hexascii_search_form *form=new ht_hexascii_search_form();
-	form->init(b, 0, (ht_list*)find_atom(histid));
+	form->init(b, 0, (ht_list*)getAtomValue(histid));
 	return form;
 }
 
@@ -172,7 +172,7 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 ht_view* create_form_evalstr(Bounds *b, HT_ATOM histid)
 {
 	ht_evalstr_search_form *form=new ht_evalstr_search_form();
-	form->init(b, 0, (ht_list*)find_atom(histid));
+	form->init(b, 0, (ht_list*)getAtomValue(histid));
 	return form;
 }
 
@@ -272,7 +272,7 @@ Object *ht_fxbin_search_request::clone()
 ht_view* create_form_vregex(Bounds *b, HT_ATOM histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
-	form->init(b, 0, (ht_list*)find_atom(histid));
+	form->init(b, 0, (ht_list*)getAtomValue(histid));
 	return form;
 }
 
@@ -376,7 +376,7 @@ const char* ht_regex_search_exception::what() const
 ht_view* create_form_expr(Bounds *b, HT_ATOM histid)
 {
 	ht_expr_search_form *form = new ht_expr_search_form();
-	form->init(b, 0, (ht_list*)find_atom(histid));
+	form->init(b, 0, (ht_list*)getAtomValue(histid));
 	return form;
 }
 
@@ -872,7 +872,7 @@ ht_replace_bin_context::~ht_replace_bin_context()
 ht_view* create_form_replace_hexascii(Bounds *b, HT_ATOM histid)
 {
 	ht_replace_hexascii_search_form *form=new ht_replace_hexascii_search_form();
-	form->init(b, 0, (ht_list*)find_atom(histid));
+	form->init(b, 0, (ht_list*)getAtomValue(histid));
 	return form;
 }
 
@@ -991,7 +991,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, form);
-				insert_history_entry((ht_list*)find_atom(s->histid), hist_desc, form);
+				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, form);
 			}
 			/* create request */
 			switch (s->search_class) {
@@ -1105,7 +1105,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, sform);
-				insert_history_entry((ht_list*)find_atom(s->histid), hist_desc, sform);
+				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, sform);
 			}
 			/* search */
 			start.offset=0;
