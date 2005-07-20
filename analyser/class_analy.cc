@@ -29,7 +29,7 @@
 #include "htctrl.h"
 #include "htdebug.h"
 #include "htiobox.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "pestruct.h"
 
