@@ -21,7 +21,7 @@
 #include "analy.h"
 #include "analy_names.h"
 #include "htdebug.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "tools.h"
 #include "out.h"
