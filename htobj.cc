@@ -23,7 +23,7 @@
 #include "htapp.h"
 #include "htctrl.h"
 #include "htdebug.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htmenu.h"
 #include "htobj.h"
 #include "htpal.h"
@@ -37,17 +37,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ATOM_HT_VIEW		MAGICD("OBJ\0")
-#define ATOM_HT_GROUP		MAGICD("OBJ\1")
-#define ATOM_HT_XGROUP		MAGICD("OBJ\2")
-#define ATOM_HT_WINDOW		MAGICD("OBJ\3")
-#define ATOM_HT_FRAME		MAGICD("OBJ\4")
-#define ATOM_HT_SCROLLBAR	MAGICD("OBJ\5")
+#define ATOM_HT_VIEW		MAGIC32("OBJ\0")
+#define ATOM_HT_GROUP		MAGIC32("OBJ\1")
+#define ATOM_HT_XGROUP		MAGIC32("OBJ\2")
+#define ATOM_HT_WINDOW		MAGIC32("OBJ\3")
+#define ATOM_HT_FRAME		MAGIC32("OBJ\4")
+#define ATOM_HT_SCROLLBAR	MAGIC32("OBJ\5")
 
 #define DEFAULT_VIEW_MIN_WIDTH 	25
 #define DEFAULT_VIEW_MIN_HEIGHT	6
 
-void bounds_and(bounds *a, bounds *b)
+void bounds_and(Bounds *a, Bounds *b)
 {
 	if (b->x>a->x) {
 		a->w-=b->x-a->x;
@@ -63,7 +63,7 @@ void bounds_and(bounds *a, bounds *b)
 	if (a->h<0) a->h=0;
 }
 
-void put_bounds(ObjectStream &s, bounds *b)
+void put_bounds(ObjectStream &s, Bounds *b)
 {
 	s->putIntDec(b->x, 4, NULL);
 	s->putIntDec(b->y, 4, NULL);
@@ -89,7 +89,7 @@ void ht_text::settext(const char *text)
  *	CLASS ht_view
  */
 
-void ht_view::init(bounds *b, int o, const char *d)
+void ht_view::init(Bounds *b, int o, const char *d)
 {
 	Object::init();
 	VIEW_DEBUG_NAME("ht_view");
@@ -247,9 +247,9 @@ void ht_view::clear(int c)
 	buf->b_fill(vsize.x, vsize.y, vsize.w, vsize.h, c, ' ');
 }
 
-void ht_view::clipbounds(bounds *b)
+void ht_view::clipbounds(Bounds *b)
 {
-	bounds c;
+	Bounds c;
 	getbounds(&c);
 	bounds_and(b, &c);
 	bounds_and(b, &vsize);
@@ -382,7 +382,7 @@ bool ht_view::exposed()
 
 void ht_view::fill(int x, int y, int w, int h, int c, int chr)
 {
-	bounds b;
+	Bounds b;
 	b.x=size.x+x;
 	b.y=size.y+y;
 	b.w=w;
@@ -400,7 +400,7 @@ int ht_view::focus(ht_view *view)
 	return 0;
 }
 
-void ht_view::getbounds(bounds *b)
+void ht_view::getbounds(Bounds *b)
 {
 	*b=size;
 }
@@ -629,7 +629,7 @@ void ht_view::reloadpalette()
 
 void ht_view::relocate_to(ht_view *view)
 {
-	bounds b;
+	Bounds b;
 	view->getbounds(&b);
 	move(b.x, b.y);
 }
@@ -685,13 +685,13 @@ void ht_view::sendmsg(int msg, int data1, int data2)
 	sendmsg(&m);
 }
 
-void ht_view::setbounds(bounds *b)
+void ht_view::setbounds(Bounds *b)
 {
 	size=*b;
 	setvisualbounds(&size);
 }
 
-void ht_view::setvisualbounds(bounds *b)
+void ht_view::setvisualbounds(Bounds *b)
 {
 	vsize=*b;
 	if (options & VO_OWNBUFFER) {
@@ -762,7 +762,7 @@ void	ht_view::store(ObjectStream &s)
 
 void ht_view::unrelocate_to(ht_view *view)
 {
-	bounds b;
+	Bounds b;
 	view->getbounds(&b);
 	b.x=-b.x;
 	b.y=-b.y;
@@ -773,7 +773,7 @@ void ht_view::unrelocate_to(ht_view *view)
  *	CLASS ht_group
  */
 
-void ht_group::init(bounds *b, int options, const char *desc)
+void ht_group::init(Bounds *b, int options, const char *desc)
 {
 	first=0;
 	current=0;
@@ -1033,7 +1033,7 @@ void ht_group::insert(ht_view *view)
 	view->g_hdist=size.w - (view->size.x+view->size.w);
 	view->g_vdist=size.h - (view->size.y+view->size.h);
 
-	bounds c;
+	Bounds c;
 	getbounds(&c);
 	view->move(c.x, c.y);
 
@@ -1129,7 +1129,7 @@ void ht_group::remove(ht_view *view)
 		current=0;
 	}
 	
-	bounds c;
+	Bounds c;
 	getbounds(&c);
 	view->move(-c.x, -c.y);
 	
@@ -1261,7 +1261,7 @@ void ht_group::store(ObjectStream &s)
  *	CLASS ht_xgroup
  */
 
-void ht_xgroup::init(bounds *b, int options, const char *desc)
+void ht_xgroup::init(Bounds *b, int options, const char *desc)
 {
 	ht_group::init(b, options, desc);
 	VIEW_DEBUG_NAME("ht_xgroup");
@@ -1347,7 +1347,7 @@ bool scrollbar_pos(int start, int size, int all, int *pstart, int *psize)
 	return true;
 }
 
-void	ht_scrollbar::init(bounds *b, palette *p, bool isv)
+void	ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 {
 	ht_view::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_scrollbar");
@@ -1438,7 +1438,7 @@ void	ht_scrollbar::store(ObjectStream &s)
  *	CLASS ht_frame
  */
 
-void ht_frame::init(bounds *b, const char *desc, uint s, uint n)
+void ht_frame::init(Bounds *b, const char *desc, uint s, uint n)
 {
 	ht_view::init(b, VO_RESIZE, desc);
 	VIEW_DEBUG_NAME("ht_frame");
@@ -1614,7 +1614,7 @@ void ht_frame::store(ObjectStream &s)
  *	CLASS ht_window
  */
 
-void	ht_window::init(bounds *b, const char *desc, uint framestyle, uint num)
+void	ht_window::init(Bounds *b, const char *desc, uint framestyle, uint num)
 {
 	ht_group::init(b, VO_SELECTABLE | VO_SELBOUND | VO_BROWSABLE, desc);
 	VIEW_DEBUG_NAME("ht_window");
@@ -1622,7 +1622,7 @@ void	ht_window::init(bounds *b, const char *desc, uint framestyle, uint num)
 	hscrollbar=NULL;
 	vscrollbar=NULL;
 	pindicator=NULL;
-	bounds c=*b;
+	Bounds c=*b;
 	c.x=0;
 	c.y=0;
 	frame=0;
@@ -1646,7 +1646,7 @@ void ht_window::draw()
 	clear(c);
 }
 
-void ht_window::getclientarea(bounds *b)
+void ht_window::getclientarea(Bounds *b)
 {
 	getbounds(b);
 	if (frame) {
