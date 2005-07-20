@@ -95,7 +95,7 @@ static void dialog_fhelp(File *f)
 	ht_ltextfile *t = new ht_ltextfile();
 	t->init(f, true, NULL);
 
-	bounds b, c;
+	Bounds b, c;
 	app->getbounds(&c);
 	b = c;
 //	b.w = 70;
@@ -314,7 +314,7 @@ static void do_eval(ht_strinputfield *s, ht_statictext *t, char *b)
 
 void eval_dialog()
 {
-	bounds b, c;
+	Bounds b, c;
 	app->getbounds(&c);
 	b.w=70;
 	b.h=17;
