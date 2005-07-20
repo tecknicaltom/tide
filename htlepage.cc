@@ -22,7 +22,7 @@
 #include "htle.h"
 #include "htlepage.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 #include "snprintf.h"
 
