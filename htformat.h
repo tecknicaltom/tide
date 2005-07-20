@@ -26,7 +26,7 @@ class ht_format_group;
 #include "evalx.h"
 #include "data.h"
 #include "htobj.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "formats.h"
 
 class ht_sub;
