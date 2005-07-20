@@ -32,7 +32,7 @@
 #include "except.h"
 #include "htctrl.h"
 #include "htdebug.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "language.h"
 #include "snprintf.h"
 #include "tools.h"
