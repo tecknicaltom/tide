@@ -351,7 +351,7 @@ for (ObjHandle temp0815 = (E).findLast(); temp0815 != invObjHandle;) {\
 
 #define firstThat(XTYPE, X, E, condition) \
 {                                         \
-	Object *Y = NULL;                 \
+	XTYPE *Y = NULL;                  \
 	foreach(XTYPE, X, E,              \
 		if (condition) {          \
 			Y = X;            \
@@ -363,7 +363,7 @@ for (ObjHandle temp0815 = (E).findLast(); temp0815 != invObjHandle;) {\
 
 #define lastThat(XTYPE, X, E, condition)  \
 {                                         \
-	Object *Y = NULL;                 \
+	XTYPE *Y = NULL;                  \
 	foreachbwd(XTYPE, X, E,           \
 		if (condition) {          \
 			Y = X;            \
@@ -604,6 +604,12 @@ public:
 	virtual	bool		moveTo(ObjHandle from, ObjHandle to);
 	virtual	bool		set(ObjHandle h, Object *obj);
 	virtual	bool		swap(ObjHandle h, ObjHandle i);
+	/* new */
+/**
+ *	Delete range of objects. (ie. remove and free all objects)
+ *	@return number of objects deleted
+ */
+	virtual	int		delRange(int start, int end);
 };
 
 /**
