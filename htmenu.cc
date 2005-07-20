@@ -24,7 +24,7 @@
 #include "htmenu.h"
 #include "htpal.h"
 #include "htreg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "stream.h"
 #include "tools.h"
 
