@@ -24,6 +24,7 @@
 #include "htstring.h"
 #include "snprintf.h"
 #include "tools.h"
+#include "io/file.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -32,58 +33,60 @@ ht_clipboard *clipboard;
 
 class ht_clipboard_copy_history: public Object {
 public:
+	char *source;
+	FileOfs start;
+	FileOfs size;
+	time_t time;
+
+	ht_clipboard_copy_history(const char *aSource, FileOfs aStart, FileOfs aSize, time_t aTime)
+	{
+		aSource = ht_strdup(source);
+		start = aStart;
+		size = aSize;
+		time = aTime;
+	}
+	
 	virtual ~ht_clipboard_copy_history() {
 		if (source) free(source);
 	}
-
-	char *source;
-	uint32 start;
-	uint32 size;
-	time_t time;
 };
 
 /*
  *	CLASS ht_clipboard
  */
 
-void ht_clipboard::init()
+ht_clipboard::ht_clipboard()
+	: MemoryFile(0, 16, IOAM_READ | IOAM_WRITE)
 {
-	ht_mem_file::init(0, 16, FAM_READ | FAM_WRITE);
-	copy_history=new ht_clist();
-	((ht_clist*)copy_history)->init();
-	select_start=0;
-	select_len=0;
+	copy_history = new Array(true);
+	select_start = 0;
+	select_len = 0;
 }
 
-void ht_clipboard::done()
+ht_clipboard::~ht_clipboard()
 {
-	copy_history->destroy();
 	delete copy_history;
-	ht_mem_file::done();
 }
 
 void ht_clipboard::clear()
 {
-	ht_mem_file::truncate(0);
-	copy_history->destroy();
-	delete copy_history;
-	copy_history=new ht_clist();
-	((ht_clist*)copy_history)->init();
+	truncate(0);
+	copy_history->delAll();
 	htmsg m;
-	m.msg=msg_file_changed;
-	m.data1.ptr=this;
-	m.type=mt_broadcast;
+	m.msg = msg_file_changed;
+	m.data1.ptr = this;
+	m.type = mt_broadcast;
 	app->sendmsg(&m);
 }
 
 uint	ht_clipboard::write(const void *buf, uint size)
 {
 	htmsg m;
-	m.msg=msg_file_changed;
-	m.data1.ptr=this;
-	m.type=mt_broadcast;
+	m.msg = msg_file_changed;
+	m.data1.ptr = this;
+	m.type = mt_broadcast;
 	app->sendmsg(&m);
-	return ht_mem_file::write(buf, size);
+	return MemoryFile::write(buf, size);
 }
 
 /*
@@ -94,9 +97,9 @@ void ht_clipboard_viewer::init(Bounds *b, char *desc, int caps, ht_clipboard *cl
 {
 	ht_uformat_viewer::init(b, desc, caps, clipboard, format_group);
 	
-	search_caps|=SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
+	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 
-	lastentrycount=999999999;
+	lastentrycount = 999999999;
 	update_content();
 }
 
@@ -140,16 +143,16 @@ void ht_clipboard_viewer::selection_changed()
 
 void ht_clipboard_viewer::update_content()
 {
-	if (clipboard->copy_history->count()==lastentrycount) return;
+	if (clipboard->copy_history->count() == lastentrycount) return;
 	clear_subs();
-	ht_clipboard *clipboard=(ht_clipboard*)file;
+	ht_clipboard *clipboard = (ht_clipboard*)file;
 	int c=clipboard->copy_history->count();
 	char title[512];	/* secure */
 
 	for (int i=0; i<c; i++) {
-		ht_clipboard_copy_history *j=(ht_clipboard_copy_history*)clipboard->copy_history->get(i);
+		ht_clipboard_copy_history *j=(ht_clipboard_copy_history*)(*clipboard->copy_history)[i];
 
-		tm *t=localtime(&j->time);
+		tm *t = localtime(&j->time);
 		ht_snprintf(title, sizeof title, "*** %02d:%02d:%02d, size %d(%xh), from %s", t->tm_hour, t->tm_min, t->tm_sec, j->size, j->size, j->source);
 
 		ht_mask_sub *m=new ht_mask_sub();
@@ -188,101 +191,96 @@ void ht_clipboard_viewer::get_pindicator_str(char *buf)
 
 /* clipboard functions */
 
-void clipboard_add_copy_history_entry(char *source, uint32 start, uint32 size, time_t time)
+void clipboard_add_copy_history_entry(char *source, FileOfs start, FileOfs size, time_t time)
 {
-	ht_clipboard_copy_history *h=new ht_clipboard_copy_history();
-	h->source=ht_strdup(source);
-	h->start=start;
-	h->size=size;
-	h->time=time;
-	clipboard->copy_history->insert(h);
+	clipboard->copy_history->insert(new ht_clipboard_copy_history(source, start, size, time));
 }
 
 #define CLIPBOARD_TRANSFER_BUF_SIZE	32*1024
 //#define CLIPBOARD_TRANSFER_BUF_SIZE	2
 
-int clipboard_copy(char *source_desc, void *buf, uint32 len)
+FileOfs clipboard_copy(char *source_desc, void *buf, uint len)
 {
-	int r=0;
+	uint r = 0;
 	if (len) {
-		uint32 size=clipboard->get_size();
+		FileOfs size = clipboard->getSize();
 		clipboard->seek(size);
-		r=clipboard->write(buf, len);
-		clipboard->select_start=size;
-		clipboard->select_len=r;
+		r = clipboard->write(buf, len);
+		clipboard->select_start = size;
+		clipboard->select_len = r;
 		clipboard_add_copy_history_entry(source_desc, size, r, time(0));
 	}		
 	return r;
 }
 
-int clipboard_copy(char *source_desc, File *file, uint32 offset, uint32 len)
+FileOfs clipboard_copy(char *source_desc, File *file, FileOfs offset, FileOfs len)
 {
 	if (!len) return 0;
 
-	uint32 size=clipboard->get_size();
-	uint32 temp=file->tell();
-	uint32 cpos=size, spos=offset;
-	byte *buf=(byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
-	uint32 l=len, r=0;
+	FileOfs size = clipboard->getSize();
+	FileOfs oldpos = file->tell();
+	FileOfs cpos = size;
+	FileOfs spos = offset;
+	byte *buf = (byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
+	FileOfs l = len, r = 0;
 
-	while ((len) && (l)) {
-		l=len;
-		if (l>CLIPBOARD_TRANSFER_BUF_SIZE) l=CLIPBOARD_TRANSFER_BUF_SIZE;
+	while (len && l) {
+		l = len;
+		if (l > CLIPBOARD_TRANSFER_BUF_SIZE) l = CLIPBOARD_TRANSFER_BUF_SIZE;
 		file->seek(spos);
-		l=file->read(buf, l);
-		spos+=l;
+		l = file->read(buf, l);
+		spos += l;
 		clipboard->seek(cpos);
 		clipboard->write(buf, l);
-		cpos+=l;
-		len-=l;
-		r+=l;
+		cpos += l;
+		len -= l;
+		r += l;
 	}
-	file->seek(temp);
-	clipboard->select_start=size;
-	clipboard->select_len=r;
+	file->seek(oldpos);
+	clipboard->select_start = size;
+	clipboard->select_len = r;
 	clipboard_add_copy_history_entry(source_desc, size, r, time(0));
 	free(buf);
-	
 	return r;
 }
 
-int clipboard_paste(void *buf, uint32 maxlen)
+FileOfs clipboard_paste(void *buf, FileOfs maxlen)
 {
 	clipboard->seek(clipboard->select_start);
 	return clipboard->read(buf, MIN(clipboard->select_len, maxlen));
 }
 
-int clipboard_paste(File *file, uint32 offset)
+FileOfs clipboard_paste(File *file, FileOfs offset)
 {
-	uint32 len=clipboard->select_len;
-	uint32 temp=file->tell();
-	uint32 cpos=clipboard->select_start, spos=offset;
-	byte *buf=(byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
-	uint32 l=len, r=0;
-	while ((len) && (l)) {
-		l=len;
-		if (l>CLIPBOARD_TRANSFER_BUF_SIZE) l=CLIPBOARD_TRANSFER_BUF_SIZE;
+	FileOfs len = clipboard->select_len;
+	FileOfs oldpos = file->tell();
+	FileOfs cpos = clipboard->select_start, spos=offset;
+	byte *buf = (byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
+	FileOfs l = len, r = 0;
+	while (len && l) {
+		l = len;
+		if (l > CLIPBOARD_TRANSFER_BUF_SIZE) l=CLIPBOARD_TRANSFER_BUF_SIZE;
 		clipboard->seek(cpos);
-		l=clipboard->read(buf, l);
-		cpos+=l;
+		l = clipboard->read(buf, l);
+		cpos += l;
 		file->seek(spos);
 		file->write(buf, l);
-		spos+=l;
-		len-=l;
-		r+=l;
+		spos += l;
+		len -= l;
+		r += l;
 	}
-	file->seek(temp);
+	file->seek(oldpos);
 	free(buf);
 	return r;
 }
 
-int clipboard_clear()
+bool clipboard_clear()
 {
 	clipboard->clear();
-	return 1;
+	return true;
 }
 
-uint32 clipboard_getsize()
+FileOfs clipboard_getsize()
 {
 	return clipboard->select_len;
 }
@@ -293,9 +291,8 @@ uint32 clipboard_getsize()
 
 bool init_clipboard()
 {
-	clipboard=new ht_clipboard();
-	clipboard->init();
-	return 1;
+	clipboard = new ht_clipboard();
+	return true;
 }
 
 /*
@@ -304,7 +301,6 @@ bool init_clipboard()
 
 void done_clipboard()
 {
-	clipboard->done();
 	delete clipboard;
 }
 
