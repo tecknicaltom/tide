@@ -1,3 +1,4 @@
+asdf
 /* 
  *	HT Editor
  *	htstring.h
