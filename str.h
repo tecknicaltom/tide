@@ -143,7 +143,7 @@ public:
 
 /**
  *   @returns char at position |aIndex|
- *	@throws exception if aIndex out of bounds
+ *	@throws exception if aIndex out of Bounds
  */
 inline char &String::at(int aIndex) const
 {
