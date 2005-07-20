@@ -128,7 +128,7 @@ static void load_file(char *fn, uint mode)
 static void show_help()
 {
 #ifdef SPLINE_TEST
-	bounds b;
+	Bounds b;
 	b.x = 0; b.y = 0; b.w = 80; b.h = 23;
 	ht_window *s=new ht_window();
 	s->init(&b, "spline", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE, 0);
