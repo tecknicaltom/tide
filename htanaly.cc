@@ -301,13 +301,13 @@ void CallChain::examineNode(CallChainNode *n)
 	if (has_children(n)) {
 		Container *x_tree = n->faddr->xrefs;
 		assert(x_tree);
-		AddrXRef *x = (AddrXRef *)x_tree->findFirst((ht_data**)&x, NULL);
-		assert(a);
-		CallChainNode *nn = n->child = createNode(a);
-		while ((a = (Address *)x_tree->enum_next((ht_data**)&x, a))) {
-			nn->next = createNode(a);
+		AddrXRef *x = (AddrXRef *)x_tree->get(x_tree->findFirst());
+		assert(x);
+		CallChainNode *nn = n->child = createNode(x->addr);
+		foreach(AddrXRef, x, *x_tree, {
+			nn->next = createNode(x->addr);
 			nn = nn->next;
-		}
+		});
 	}
 }
 
@@ -606,7 +606,7 @@ static int aviewer_func_addr(eval_scalar *result, eval_str *str)
 	int l = addr->parseString(str->value, str->len, aviewer->analy);
 	if (l) {
 		// FIXNEW
-		uint64 q = to_qword(0);          
+		uint64 q = 0;
 		addr->putIntoArray((byte*)&q);
 		scalar_create_int_q(result, q);
 		return 1;
@@ -626,7 +626,7 @@ static int aviewer_func_address_of(eval_scalar *result, eval_str *str)
 	Symbol *l;
 	if ((l = aviewer->analy->getSymbolByName(buffer))) {
 		// FIXNEW
-		uint64 q = to_qword(0);
+		uint64 q = 0;
 		l->location->addr->putIntoArray((byte*)&q);
 		scalar_create_int_q(result, q);
 		return 1;
@@ -641,9 +641,9 @@ static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 	// FIXNEW
 	ht_aviewer *aviewer = (ht_aviewer*)eval_get_context();
 	viewer_pos p;
-	if (aviewer->offset_to_pos(QWORD_GET_INT(i->value), &p)) {
+	if (aviewer->offset_to_pos(i->value, &p)) {
 		Address *a;
-		uint64 q = to_qword(0);
+		uint64 q = 0;
 		aviewer->convertViewerPosToAddress(p, &a);
 		a->putIntoArray((byte*)&q);
 		delete a;
@@ -756,17 +756,11 @@ void ht_aviewer::generateOutputDialog()
 	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
-	char pname[HT_NAME_MAX+16];
-	const char *filename = file->get_filename();
-	if (filename) {
-		pname[HT_NAME_MAX-1] = 0;
-		strncpy(pname, filename, HT_NAME_MAX-1);
-		char *suffix = sys_filename_suffix(pname);
-		if (suffix) {
-			strcpy(suffix, "out");
-			setdatastr(v1, pname);
-		}
-	}
+	String filename, basename, suffix;
+	file->getFilename(filename);
+	filename.rightSplit('.', basename, suffix);
+	basename += ".out";
+	setdatastr(v1, basename.contentChar());
 
 	BOUNDS_ASSIGN(b, 29, 2, 15, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
@@ -807,7 +801,7 @@ void ht_aviewer::generateOutputDialog()
 	BOUNDS_ASSIGN(b, 27, 11, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
-	while (dialog->run(false)==button_ok) {
+	while (dialog->run(false) == button_ok) {
 		char filename[260];
 		char start_str[1024], end_str[1024];
 		viewer_pos start, end;
@@ -837,29 +831,27 @@ void ht_aviewer::generateOutputDialog()
 			continue;
 		}
 		
-		ht_file *s = new ht_file();
-		s->init(filename, FAM_WRITE, FOM_CREATE);
-		if (s->get_error()) {
-			infobox("couldnt create file '%s'.", filename);
-			continue;
-		} else {
+		try {
+			String name(filename);
+			LocalFile s(name, IOAM_WRITE, FOM_CREATE);
 			AnalyserOutput *out;
 			switch (odd.lp.cursor_pos) {
 				case 0:
 					out = new AnalyserTxtOutput();
-					((AnalyserTxtOutput*)out)->init(analy, s);
+					((AnalyserTxtOutput*)out)->init(analy, &s);
 					break;
 				case 1:
 					out = new AnalyserTxtOutput();
-					((AnalyserTxtOutput*)out)->init(analy, s);
+					((AnalyserTxtOutput*)out)->init(analy, &s);
 					break;
 			}
 			out->generateFile(start_addr, end_addr);
 			out->done();
 			delete out;
+		} catch (const IOException &) {
+			infobox("couldnt create file '%y'.", &filename);
+			continue;
 		}
-		s->done();
-		delete s;
 		break;
 	}
 	dialog->done();
@@ -969,17 +961,11 @@ void ht_aviewer::exportFileDialog()
 	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
-	char pname[HT_NAME_MAX+16];
-	const char *filename = file->get_filename();
-	if (filename) {
-		pname[HT_NAME_MAX-1] = 0;
-		strncpy(pname, filename, HT_NAME_MAX-1);
-		char *suffix = sys_filename_suffix(pname);
-		if (suffix) {
-			strcpy(suffix, "exp");
-			setdatastr(v1, pname);
-		}
-	}
+	String filename, basename, suffix;
+	file->getFilename(filename);
+	filename.rightSplit('.', basename, suffix);
+	basename += ".exp";
+	setdatastr(v1, basename.contentChar());
 
 	BOUNDS_ASSIGN(b, 2, 5, 25, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
@@ -995,26 +981,24 @@ void ht_aviewer::exportFileDialog()
 	BOUNDS_ASSIGN(b, 27, 8, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
-	while (dialog->run(false)==button_ok) {
+	while (dialog->run(false) == button_ok) {
 		char filename[260];
 		export_dialog_data edd;
 		dialog->databuf_get(&edd, sizeof edd);
 		getdatastr(&edd.id1, filename);
 		
-		ht_file *s = new ht_file();
-		s->init(filename, FAM_WRITE, FOM_CREATE);
-		if (s->get_error()) {
+		String name(filename);
+		LocalFile s(name, IOAM_WRITE, FOM_CREATE);
+		try {
+			switch (edd.lp.cursor_pos) {
+			case 0:
+				export_to_sym(analy, &s);
+				break;
+			}
+		} catch (const IOException &) {
 			infobox("couldnt create file '%s'.", filename);
 			continue;
-		} else {
-			switch (edd.lp.cursor_pos) {
-				case 0:
-					export_to_sym(analy, s);
-					break;
-			}
 		}
-		s->done();
-		delete s;
 		break;
 	}
 	dialog->done();
@@ -1125,7 +1109,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		sub->insert_entry("Data ~byte 8", "b", cmd_analyser_data_byte, 0, 1);
 		m->insert_submenu(sub);
 		m->insert_separator();
-		m->insert_entry("Symbol reg trace (exp!)", "Alt-Q", cmd_analyser_srt, K_Alt_Q, 1);
+		m->insert_entry("Symbol reg trace (exp!)", "Alt-Q", cmd_analyser_srt, K_Meta_Q, 1);
 
 		msg->msg = msg_retval;
 		msg->data1.ptr = m;
@@ -1539,10 +1523,11 @@ void ht_aviewer::handlemsg(htmsg *msg)
 bool ht_aviewer::idle()
 {
 	if (!analy) return false;
-	last_active=analy->active;
+	last_active = analy->active;
 	if (!pause) analy->continueAnalysis();
 	if (last_active && !analy->active) {
-		LOG("%s: analyser finished after %d ops.", analy->getName(), analy->ops_parsed);
+		String name;
+		LOG("%y: analyser finished after %d ops.", &analy->getName(name), analy->ops_parsed);
 		dirtyview();
 		app->sendmsg(msg_draw, 0);
 	}
@@ -1686,8 +1671,7 @@ void ht_aviewer::showComments(Address *Addr)
 	CommentList *comment = analy->getComments(Addr);
 
 	// prepare mem_file
-	ht_mem_file *mem_file = new ht_mem_file();
-	mem_file->init();
+	MemoryFile *mem_file = new MemoryFile();
 	if (comment) {
 		int c1 = comment->count();
 		for (int i=0; i < c1; i++) {
@@ -1702,8 +1686,7 @@ void ht_aviewer::showComments(Address *Addr)
 	lexer->init();*/
 	
 	// prepare textfile
-	ht_ltextfile *text_file = new ht_ltextfile();
-	text_file->init(mem_file, true, NULL);
+	ht_ltextfile text_file(mem_file, true, NULL);
 
 	// create dialog
 	bounds b;
@@ -1715,7 +1698,7 @@ void ht_aviewer::showComments(Address *Addr)
 
 	BOUNDS_ASSIGN(b, 1, 1, 55, 10);
 	ht_text_editor *text_editor = new ht_text_editor();
-	text_editor->init(&b, false, text_file, NULL, TEXTEDITOPT_UNDO);
+	text_editor->init(&b, false, &text_file, NULL, TEXTEDITOPT_UNDO);
 	dialog->insert(text_editor);
 
 	/* FIXME: scrollbar
@@ -1730,21 +1713,21 @@ void ht_aviewer::showComments(Address *Addr)
 	NEW_OBJECT(b1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(b1);
 
-	if (dialog->run(false)==button_ok) {
-		Location *a=analy->getLocationByAddress(Addr);
+	if (dialog->run(false) == button_ok) {
+		Location *a = analy->getLocationByAddress(Addr);
 		if (a) analy->freeComments(a);
-		uint c=text_file->linecount();
+		uint c = text_file.linecount();
 		char buf[1024];
 		bool empty=false;
-		if (c==1) {
+		if (c == 1) {
 			uint l = 0;
-			text_file->getline(0, 0, buf, 1024, &l, NULL);
+			text_file.getline(0, 0, buf, 1024, &l, NULL);
 			empty=(l==0);
 		}
 		if (!empty) {
 			for (uint i=0; i<c; i++) {
 				uint l;
-				if (text_file->getline(i, 0, buf, 1024, &l, NULL)) {
+				if (text_file.getline(i, 0, buf, 1024, &l, NULL)) {
 					buf[l]=0;
 					analy->addComment(Addr, 0, buf);
 				}
@@ -1756,8 +1739,6 @@ void ht_aviewer::showComments(Address *Addr)
 
 	dialog->done();
 	delete dialog;
-	text_file->done();
-	delete text_file;
 }
 
 void ht_aviewer::showInfo(Address *Addr)
@@ -1834,7 +1815,7 @@ void ht_aviewer::showSymbols(Address *addr)
 
 void ht_aviewer::showXRefs(Address *Addr)
 {
-	ht_tree *x_tree = analy->getXRefs(Addr);
+	Container *x_tree = analy->getXRefs(Addr);
 	if (x_tree) {
 restart2:
 		bounds c, b;
@@ -1872,17 +1853,15 @@ restart:
 		NEW_OBJECT(new_xref, ht_button, &b, "~Add", 668);
 		new_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		char str2[1024];
-		AddrXRef *x;
-		Address *xa = (Address*)x_tree->enum_next((ht_data**)&x, NULL);
 		int xcount=0;
-		while (xa) {
+		foreach(AddrXRef, x, *x_tree, {
 			xcount++;
-			ht_snprintf(str, sizeof str, "%y", xa);
-			Location *a = analy->getFunctionByAddress(xa);
+			ht_snprintf(str, sizeof str, "%y", x->addr);
+			Location *a = analy->getFunctionByAddress(x->addr);
 			const char *func = analy->getSymbolNameByLocation(a);
 			if (func) {
 				int d=0;
-				xa->difference(d, a->addr);
+				x->addr->difference(d, a->addr);
 				char sign='+';
 				if (d<0) {
 					d=-d;
@@ -1892,9 +1871,8 @@ restart:
 			} else {
 				strcpy(str2, "?");
 			}
-			list->insert_str((int)xa, str, xref_type(x->type), str2);
-			xa = (Address*)x_tree->enum_next((ht_data**)&x, xa);
-		}
+			list->insert_str((long)x->addr, str, xref_type(x->type), str2);
+		});
 		list->attachTitle(text);
 		list->update();
 		dialog->insert(text);
@@ -1980,13 +1958,12 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 		name++;
 		if (bnstr(&name, &v, 10)) {
 			if (*name) return 0;
-			// FIXME: no QWORD_GET_LO
-			if (!offset_to_pos(QWORD_GET_LO(v), &vp)) {
+			if (!offset_to_pos(v, &vp)) {
 				set_eval_error("invalid offset: %08x", v);
 				return 0;
 			}
 			convertViewerPosToAddress(vp, &w);
-			uint64 b = to_qword(0);
+			uint64 b = 0;
 			w->putIntoArray((byte*)&b);
 			delete w;
 			scalar_create_int_q(result, b);
@@ -1996,7 +1973,7 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 	} else {
 		if (strcmp(name, "$")==0) {
 			if (getCurrentAddress(&w)) {
-				uint64 b = to_qword(0);
+				uint64 b = 0;
 				w->putIntoArray((byte*)&b);
 				scalar_create_int_q(result, b);
 				delete w;
@@ -2026,7 +2003,7 @@ bool ht_aviewer::qword_to_pos(uint64 q, viewer_pos *pos)
 	if (a->byteSize()==8) {
 		a->getFromArray((byte*)&q);
 	} else {
-		uint32 ii = QWORD_GET_INT(q);
+		uint32 ii = q;
 		a->getFromArray((byte*)&ii);
 	}
 	if (analy->validAddress(a, scvalid)) {
@@ -2151,7 +2128,7 @@ ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start,
 		viewer_pos vp_start, vp_end;
 		aviewer->convertAddressToViewerPos((Address *)s->start, &vp_start);
 		if (!aviewer->pos_to_offset(vp_start, &fstart)) assert(0);
-		Address *send = s->end->clone();
+		Address *send = (Address*)s->end->clone();
 		send->add(-1);
 		aviewer->convertAddressToViewerPos(send, &vp_end);
 		delete send;
