@@ -30,7 +30,7 @@ extern char *globalerror;
 extern ht_view *app;
 extern ht_view *baseview;
 extern SystemDisplay *screen;
-extern Enumerator *virtual_fs_list;
+extern List *virtual_fs_list;
 extern void *project;
 extern char appname[HT_NAME_MAX+1];
 extern int some_analyser_active;
