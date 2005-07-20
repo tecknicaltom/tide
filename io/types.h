@@ -84,11 +84,7 @@
  *	steves strucs
  */
 
-struct bounds {
-	int x, y, w, h;
-};
-
-#define BOUNDS_ASSIGN(b, X, Y, W, H) b.x=X; b.y=Y; b.w=W; b.h=H;
+//#define BOUNDS_ASSIGN(b, X, Y, W, H) b.x=X; b.y=Y; b.w=W; b.h=H;
 
 union htmsg_param {
 	int integer;
