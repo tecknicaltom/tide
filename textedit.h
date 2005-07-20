@@ -311,7 +311,7 @@ protected:
 			ht_search_result *search(ht_search_request *request, text_search_pos *start, text_search_pos *end);
 			bool show_search_result(ht_search_result *result);
 public:
-			void init(bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers);
+			void init(Bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers);
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();
@@ -380,7 +380,7 @@ protected:
 	virtual	vcp  get_bgcolor();
 			bool save();
 public:
-			void init(bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers, uint edit_options);
+			void init(Bounds *b, bool own_textfile, ht_textfile *textfile, Container *lexers, uint edit_options);
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();
