@@ -206,7 +206,7 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 	b2.h = 1;
 
 	ht_clist *hist = 0;
-	if (histid) hist = (ht_clist*)find_atom(histid);
+	if (histid) hist = (ht_clist*)getAtomValue(histid);
 	input = new ht_strinputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
