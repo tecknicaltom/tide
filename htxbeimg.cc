@@ -27,7 +27,7 @@
 #include "xbestruct.h"
 #include "snprintf.h"
 
-static ht_view *htxbeimage_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
@@ -35,7 +35,7 @@ static ht_view *htxbeimage_init(bounds *b, File *file, ht_format_group *group)
 	XBEAnalyser *p = new XBEAnalyser();
 	p->init(xbe_shared, file);
 
-	bounds c=*b;
+	Bounds c=*b;
 	ht_group *g=new ht_group();
 	g->init(&c, VO_RESIZE, DESC_XBE_IMAGE"-g");
 	AnalyInfoline *head;
@@ -174,7 +174,7 @@ static int xbe_viewer_func_section(eval_scalar *result, eval_scalar *q)
 /*
  *	ht_xbe_aviewer
  */
-void ht_xbe_aviewer::init(bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_xbe_shared_data *XBE_shared)
+void ht_xbe_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_xbe_shared_data *XBE_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	xbe_shared = XBE_shared;
