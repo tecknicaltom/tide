@@ -46,7 +46,7 @@ protected:
 /* new */
 	virtual	ht_disasm_sub *get_disasm_sub();
 public:
-			void init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
+			void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
 	virtual 	void done();
 /* overwritten */
 	virtual	char *func(uint i, bool execute);
