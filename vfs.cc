@@ -30,7 +30,7 @@
 #include "htreg.h"
 #include "htsys.h"
 #include "httag.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "store.h"
 #include "tools.h"
