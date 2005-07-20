@@ -922,7 +922,7 @@ LocalFile::LocalFile(const String &aFilename, IOAccessMode am, FileOpenMode om)
 	file = NULL;
 	own_file = false;
 	offset = 0;
-	int e = setAccessMode(am);
+	int e = LocalFile::setAccessMode(am);
 	if (e) throw new IOException(e);
 	mOpenMode = FOM_EXISTS;
 }
@@ -930,7 +930,7 @@ LocalFile::LocalFile(const String &aFilename, IOAccessMode am, FileOpenMode om)
 /**
  *	map a file stream [FILE*]
  */
-LocalFile::LocalFile(FILE *f, bool own_f, IOAccessMode am)
+LocalFile::LocalFile(SYS_FILE *f, bool own_f, IOAccessMode am)
  : File()
 {
 	mFilename = NULL;
