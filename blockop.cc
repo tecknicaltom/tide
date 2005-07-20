@@ -31,7 +31,7 @@
 #include "hthist.h"
 #include "htiobox.h"
 #include "keyb.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "process.h"
 #include "snprintf.h"
 
