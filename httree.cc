@@ -29,7 +29,7 @@
 #include "httree.h"
 #include "stream.h"
 
-void ht_treeview::init(bounds *b, char *d)
+void ht_treeview::init(Bounds *b, char *d)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_BROWSABLE/* <- FIXME */ | VO_RESIZE, d);
 	VIEW_DEBUG_NAME("ht_treeview");
@@ -353,7 +353,7 @@ void	ht_treeview::update()
 
 /****************************************************************************/
 
-void ht_static_treeview::init(bounds *b, char *desc)
+void ht_static_treeview::init(Bounds *b, char *desc)
 {
 	ht_treeview::init(b, desc);
 	VIEW_DEBUG_NAME("ht_static_treeview");
