@@ -60,7 +60,7 @@ extern "C" {
 /*
  *   AnalyserInformation
  */
-void	AnalyserInformation::init(bounds *b, ht_aviewer *a)
+void	AnalyserInformation::init(Bounds *b, ht_aviewer *a)
 {
 	analy = a;
 	assert(a);
@@ -111,7 +111,7 @@ bool AnalyserInformation::idle()
  *   SymbolBox
  */
 
-void SymbolBox::init(bounds *b, Analyser *Analy)
+void SymbolBox::init(Bounds *b, Analyser *Analy)
 {
 	analy = Analy;
 	ht_listbox::init(b);
@@ -251,7 +251,7 @@ char	*SymbolBox::quickfindCompletition(char *s)
 /*
  *	CLASS CallChain
  */
-void	CallChain::init(bounds *b, Analyser *Analy, Address *a, char *desc)
+void	CallChain::init(Bounds *b, Analyser *Analy, Address *a, char *desc)
 {
 	ht_treeview::init(b, desc);
 	VIEW_DEBUG_NAME("CallChain");
@@ -377,7 +377,7 @@ void	CallChain::select_node(void *node)
  *
  */
 #define ANALYINFOLINE_DISPLAYFORMAT_LENGTH 1024
-void AnalyInfoline::init(bounds *b, ht_aviewer *A, char *Format)
+void AnalyInfoline::init(Bounds *b, ht_aviewer *A, char *Format)
 {
 	ht_statictext::init(b, 0, align_left);
 	VIEW_DEBUG_NAME("AnalyInfoline");
@@ -490,7 +490,7 @@ bool AnalyInfoline::valid()
 /*
  *
  */
-void ht_aviewer::init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy)
+void ht_aviewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy)
 {
 	analy = Analy;
 	if (Analy) {
@@ -742,17 +742,17 @@ void ht_aviewer::generateOutputDialog()
 		if (analy->active) return;
 	}
 
-	bounds b;
+	Bounds b;
 	b.w=50;
 	b.h=15;
 	center_bounds(&b);
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "generate analyser output", FS_KILLER | FS_TITLE | FS_MOVE);
 	ht_view *v1, *v2;
-	BOUNDS_ASSIGN(b, 2, 2, 25, 1);
+	b.assign(2, 2, 25, 1);
 	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 2, 1, 25, 1);
+	b.assign(2, 1, 25, 1);
 	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
@@ -762,18 +762,18 @@ void ht_aviewer::generateOutputDialog()
 	basename += ".out";
 	setdatastr(v1, basename.contentChar());
 
-	BOUNDS_ASSIGN(b, 29, 2, 15, 1);
+	b.assign(29, 2, 15, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
 	((ht_listpopup*)v1)->insertstring("HTML");
 	((ht_listpopup*)v1)->insertstring("plain text");
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 29, 1, 15, 1);
+	b.assign(29, 1, 15, 1);
 	NEW_OBJECT(v2, ht_label, &b, "~output format:", v1);
 	dialog->insert(v2);
-	BOUNDS_ASSIGN(b, 2, 5, 35, 1);
+	b.assign(2, 5, 35, 1);
 	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 2, 4, 35, 1);
+	b.assign(2, 4, 35, 1);
 	NEW_OBJECT(v2, ht_label, &b, "~start address:", v1);
 	viewer_pos cur;
 	if (get_current_pos(&cur)) {
@@ -782,10 +782,10 @@ void ht_aviewer::generateOutputDialog()
 		setdatastr(v1, str);
 	}
 	dialog->insert(v2);
-	BOUNDS_ASSIGN(b, 2, 8, 35, 1);
+	b.assign(2, 8, 35, 1);
 	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 2, 7, 35, 1);
+	b.assign(2, 7, 35, 1);
 	NEW_OBJECT(v2, ht_label, &b, "~end address (or #numberoflines):", v1);
 	dialog->insert(v2);
 //	setdatastr(v1, "#1000");
@@ -795,10 +795,10 @@ void ht_aviewer::generateOutputDialog()
 		strcat(str, "+20");
 		setdatastr(v1, str);
 	}
-	BOUNDS_ASSIGN(b, 13, 11, 9, 2);
+	b.assign(13, 11, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "O~k", button_ok);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 27, 11, 9, 2);
+	b.assign(27, 11, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
 	while (dialog->run(false) == button_ok) {
@@ -897,7 +897,7 @@ void ht_aviewer::dataStringDialog()
 		return;
 	}
 /*
-	bounds b;
+	Bounds b;
 	b.w=50;
 	b.h=15;
 	center_bounds(&b);
@@ -947,17 +947,17 @@ void ht_aviewer::exportFileDialog()
 		if (analy->active) return;
 	}
 
-	bounds b;
+	Bounds b;
 	b.w=50;
 	b.h=12;
 	center_bounds(&b);
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "export analyser information", FS_KILLER | FS_TITLE | FS_MOVE);
 	ht_view *v1, *v2;
-	BOUNDS_ASSIGN(b, 2, 2, 35, 1);
+	b.assign(2, 2, 35, 1);
 	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 2, 1, 35, 1);
+	b.assign(2, 1, 35, 1);
 	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
@@ -967,18 +967,18 @@ void ht_aviewer::exportFileDialog()
 	basename += ".exp";
 	setdatastr(v1, basename.contentChar());
 
-	BOUNDS_ASSIGN(b, 2, 5, 25, 1);
+	b.assign(2, 5, 25, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
 	((ht_listpopup*)v1)->insertstring(".sym symbol file");
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 2, 4, 25, 1);
+	b.assign(2, 4, 25, 1);
 	NEW_OBJECT(v2, ht_label, &b, "~export format:", v1);
 	dialog->insert(v2);
 	
-	BOUNDS_ASSIGN(b, 13, 8, 9, 2);
+	b.assign(13, 8, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "O~k", button_ok);
 	dialog->insert(v1);
-	BOUNDS_ASSIGN(b, 27, 8, 9, 2);
+	b.assign(27, 8, 9, 2);
 	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
 	while (dialog->run(false) == button_ok) {
@@ -1622,7 +1622,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 {
 	Location *a = analy->getFunctionByAddress(Addr);
 	if (!a) return;
-	bounds b;
+	Bounds b;
 	b.w = 60;
 	b.h = 16;
 	center_bounds(&b);
@@ -1631,7 +1631,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 	ht_snprintf(str, sizeof str, "call chain of address %y", Addr);
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE);
-	BOUNDS_ASSIGN(b, 1, 0, 56, 10);
+	b.assign(1, 0, 56, 10);
 	ht_statictext *text = new ht_statictext();
 	if (a->label) {
 		ht_snprintf(str, sizeof str, "function %s %s", a->label->name, "is referenced by ..");
@@ -1640,16 +1640,16 @@ void ht_aviewer::showCallChain(Address *Addr)
 	}
 	text->init(&b, str, align_left);
 	dialog->insert(text);
-	BOUNDS_ASSIGN(b, 1, 1, 56, 10);
+	b.assign(1, 1, 56, 10);
 	CallChain *cc;
 	NEW_OBJECT(cc, CallChain, &b, analy, Addr, NULL);
 	cc->adjust(cc->get_root(), true);
 	dialog->insert(cc);
-	BOUNDS_ASSIGN(b, 15, 12, 9, 2);
+	b.assign(15, 12, 9, 2);
 	ht_button *bt;
 	NEW_OBJECT(bt, ht_button, &b, "O~k", button_ok);
 	dialog->insert(bt);
-	BOUNDS_ASSIGN(b, 35, 12, 9, 2);
+	b.assign(35, 12, 9, 2);
 	NEW_OBJECT(bt, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(bt);
 	int r = dialog->run(false);
@@ -1689,14 +1689,14 @@ void ht_aviewer::showComments(Address *Addr)
 	ht_ltextfile text_file(mem_file, true, NULL);
 
 	// create dialog
-	bounds b;
+	Bounds b;
 	b.w = 60;
 	b.h = 16;
 	center_bounds(&b);
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, "edit comments", FS_KILLER | FS_TITLE | FS_MOVE);
 
-	BOUNDS_ASSIGN(b, 1, 1, 55, 10);
+	b.assign(1, 1, 55, 10);
 	ht_text_editor *text_editor = new ht_text_editor();
 	text_editor->init(&b, false, &text_file, NULL, TEXTEDITOPT_UNDO);
 	dialog->insert(text_editor);
@@ -1706,10 +1706,10 @@ void ht_aviewer::showComments(Address *Addr)
 	*/
 	
 	ht_button *b1;
-	BOUNDS_ASSIGN(b, 18, 12, 9, 2);
+	b.assign(18, 12, 9, 2);
 	NEW_OBJECT(b1, ht_button, &b, "O~k", button_ok);
 	dialog->insert(b1);
-	BOUNDS_ASSIGN(b, 32, 12, 9, 2);
+	b.assign(32, 12, 9, 2);
 	NEW_OBJECT(b1, ht_button, &b, "~Cancel", button_cancel);
 	dialog->insert(b1);
 
@@ -1743,7 +1743,7 @@ void ht_aviewer::showComments(Address *Addr)
 
 void ht_aviewer::showInfo(Address *Addr)
 {
-	bounds c, b;
+	Bounds c, b;
 	app->getbounds(&c);
 	b.w=c.w*5/6;
 	b.h=c.h*5/6;
@@ -1752,7 +1752,7 @@ void ht_aviewer::showInfo(Address *Addr)
 	strcpy(str, "Analyser information");
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE);
-	BOUNDS_ASSIGN(b, 1, 0, b.w-4, 10);
+	b.assign(1, 0, b.w-4, 10);
 	AnalyserInformation *text = new AnalyserInformation();
 	text->init(&b, this);
 	dialog->insert(text);
@@ -1769,14 +1769,14 @@ void ht_aviewer::showSymbols(Address *addr)
 	
 	Location *loc = analy->getPreviousSymbolByAddress(addr);
 				
-	bounds b;
+	Bounds b;
 	b.w = 60;
 	b.h = 15;
 	center_bounds(&b);
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, "symbols", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 	/* pull down */
-	BOUNDS_ASSIGN(b, 30, 0, 20, 1);
+	b.assign(30, 0, 20, 1);
 /*				ht_listpopup *lp = new ht_listpopup();
 				lp->init(&b);
 				lp->insertstring("show all");
@@ -1786,12 +1786,12 @@ void ht_aviewer::showSymbols(Address *addr)
 				lp->insertstring("only data");
 				dialog->insert(lp);*/
 	/* text */
-	BOUNDS_ASSIGN(b, 1, 0, 56, 1);
+	b.assign(1, 0, 56, 1);
 	ht_listbox_title *text = new ht_listbox_title();
 	text->init(&b);
 	text->setText(3, "Address", "Type", "Name");
 	/* list */
-	BOUNDS_ASSIGN(b, 1, 1, 56, 12);
+	b.assign(1, 1, 56, 12);
 	SymbolBox *sym = new SymbolBox();
 	sym->init(&b, analy);
 	if (loc && loc->label) {
@@ -1818,7 +1818,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 	Container *x_tree = analy->getXRefs(Addr);
 	if (x_tree) {
 restart2:
-		bounds c, b;
+		Bounds c, b;
 		app->getbounds(&c);
 		b.w = c.w*5/6;
 		b.h = c.h*5/6;
@@ -1831,7 +1831,7 @@ restart:
 		ht_snprintf(str, sizeof str, "xrefs of address %y", Addr);
 		ht_dialog *dialog = new ht_dialog();
 		dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
-		BOUNDS_ASSIGN(b, 1, 0, bw-4, 1);
+		b.assign(1, 0, bw-4, 1);
 		ht_listbox_title *text = new ht_listbox_title();
 		text->init(&b);
 		text->setText(3, "xref to", "type", "from function");
@@ -1839,16 +1839,16 @@ restart:
 		b.h = bh-6;
 		ht_text_listbox *list;
 		NEW_OBJECT(list, ht_text_listbox, &b, 3, 2);
-		BOUNDS_ASSIGN(b, 2, bh-4, 26, 2);
+		b.assign(2, bh-4, 26, 2);
 		ht_button *search_for_xrefs;
 		NEW_OBJECT(search_for_xrefs, ht_button, &b, "~Search for more XRefs", 666);
 		search_for_xrefs->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
-		BOUNDS_ASSIGN(b, 29, bh-4, 11, 2);
+		b.assign(29, bh-4, 11, 2);
 		ht_button *delete_xref;
 		NEW_OBJECT(delete_xref, ht_button, &b, "~Delete", 667);
 		delete_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		// FIXME: disable button when possible
-		BOUNDS_ASSIGN(b, 41, bh-4, 10, 2);
+		b.assign(41, bh-4, 10, 2);
 		ht_button *new_xref;
 		NEW_OBJECT(new_xref, ht_button, &b, "~Add", 668);
 		new_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
