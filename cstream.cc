@@ -110,7 +110,7 @@ uint	ht_compressed_stream::read(void *aBuf, uint size)
 		if (size) {
 			try {
 				flush_uncompressed();
-			} catch (const IOException &) {
+			} catch (const EOFException &) {
 				return ssize - size;
 			}
 		} else break;
@@ -134,7 +134,7 @@ uint	ht_compressed_stream::write(const void *aBuf, uint size)
 		if (size) {
 			try {
 				flush_compressed();
-			} catch (const IOException &) {
+			} catch (const EOFException &) {
 				return ssize - size;
 			}
 		} else break;
