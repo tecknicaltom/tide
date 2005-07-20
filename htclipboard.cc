@@ -21,7 +21,7 @@
 #include "htclipboard.h"
 #include "htctrl.h"
 #include "htsearch.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "tools.h"
 #include "io/file.h"
