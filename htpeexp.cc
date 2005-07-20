@@ -29,7 +29,7 @@
 #include "htpal.h"
 #include "htpe.h"
 #include "htpeexp.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httag.h"
 #include "log.h"
 #include "pe_analy.h"
