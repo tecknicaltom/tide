@@ -132,7 +132,7 @@ protected:
 /* new */
 	virtual	char *func(uint i, bool execute);
 public:
-			void init(bounds *b, const char *desc, uint caps);
+			void init(Bounds *b, const char *desc, uint caps);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -164,7 +164,7 @@ protected:
 public:
 	ht_format_group *format_group;
 
-		void init(bounds *b, const char *desc, uint caps, File *file, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, uint caps, File *file, ht_format_group *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -251,13 +251,13 @@ protected:
 			
 			bool edit();
 public:
-		void init(bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, ht_format_group *format_group);
+		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, ht_format_group *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	int childcount();
 	virtual	int focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
-			void getbounds(bounds *b);
+			void getbounds(Bounds *b);
 	virtual 	ht_view *getfirstchild();
 	virtual	ht_view *getselected();
 	virtual	void get_pindicator_str(char *buf);
@@ -388,7 +388,7 @@ protected:
 public:
 	uint search_caps;
 	
-			void init(bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group);
+			void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	void clear_viewer_pos(viewer_pos *p);
