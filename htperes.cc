@@ -30,7 +30,7 @@
 #include "htobj.h"
 #include "htpe.h"
 #include "htperes.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "httree.h"
 #include "log.h"
 #include "pestruct.h"
