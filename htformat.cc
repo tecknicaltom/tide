@@ -114,7 +114,7 @@ ht_visual_search_result::ht_visual_search_result() :
  *	CLASS ht_format_group
  */
 
-void ht_format_group::init(bounds *b, int options, const char *desc, File *f, bool own_f, bool editable_f, format_viewer_if **i, ht_format_group *format_group)
+void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bool own_f, bool editable_f, format_viewer_if **i, ht_format_group *format_group)
 {
 	ht_format_viewer::init(b, desc, 0, f, format_group);
 	VIEW_DEBUG_NAME("ht_format_group");
@@ -192,7 +192,7 @@ char *ht_format_group::func(uint i, bool execute)
 	return ht_format_viewer::func(i, execute);
 }
 
-void ht_format_group::getbounds(bounds *b)
+void ht_format_group::getbounds(Bounds *b)
 {
 	xgroup->getbounds(b);
 }
@@ -297,14 +297,14 @@ void ht_format_group::handlemsg(htmsg *msg)
 
 bool ht_format_group::init_if(format_viewer_if *i)
 {
-	bounds b;
+	Bounds b;
 	getbounds(&b);
 	b.x=0;
 	b.y=0;
 	bool r=0;
 	ht_view *v=0;
 	
-/*     bounds c=*b;
+/*     Bounds c=*b;
 
 	c.x=c.w-1;
 	c.y=0;
@@ -380,7 +380,7 @@ void ht_format_group::setgroup(ht_group *_group)
  *	CLASS ht_viewer
  */
 
-void ht_viewer::init(bounds *b, const char *desc, uint c)
+void ht_viewer::init(Bounds *b, const char *desc, uint c)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_BROWSABLE | VO_SELECTABLE | VO_MOVE | VO_RESIZE, desc);
 	caps = c;
@@ -454,7 +454,7 @@ void ht_viewer::handlemsg(htmsg *msg)
  *	CLASS ht_format_viewer
  */
 
-void ht_format_viewer::init(bounds *b, const char *desc, uint caps, File *f, ht_format_group *fg)
+void ht_format_viewer::init(Bounds *b, const char *desc, uint caps, File *f, ht_format_group *fg)
 {
 	ht_viewer::init(b, desc, caps);
 	options |= VO_FORMAT_VIEW;
@@ -865,7 +865,7 @@ public:
 	FileOfs sel_end;
 };
 
-void ht_uformat_viewer::init(bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group)
+void ht_uformat_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group)
 {
 	tagpal.data=NULL;
 	tagpal.size=0;
@@ -900,7 +900,7 @@ void ht_uformat_viewer::done()
 
 int ht_uformat_viewer::address_input(const char *title, char *result, int limit, uint32 histid)
 {
-	bounds b;
+	Bounds b;
 	app->getbounds(&b);
 	b.x = (b.w - 60) / 2,
 	b.y = (b.h - 8) / 2;
@@ -913,7 +913,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	ht_strinputfield *input;
 	char *label = "~Address";
 
-	bounds  b2;
+	Bounds  b2;
 	b2.x = 3 + strlen(label);
 	b2.y = 1;
 	b2.w = b.w - 3 - b2.x;
@@ -3398,7 +3398,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 	endianess end = bigendian ? big_endian : little_endian;
 	int_hash *desc=(int_hash*)find_atom(id);
 	if (desc) {
-		bounds b;
+		Bounds b;
 		b.w=60;
 		b.h=14;
 		b.x=(screen->size.w-b.w)/2;
@@ -3492,7 +3492,7 @@ int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 {
 	ht_tag_flags_s *flags=(ht_tag_flags_s*)find_atom(id), *fl;
 	if (flags) {
-		bounds b;
+		Bounds b;
 		b.w=60;
 		b.h=14;
 		b.x=(screen->size.w-b.w)/2;
@@ -3599,7 +3599,7 @@ ht_search_result *ht_uformat_viewer::vsearch(ht_search_request *request, viewer_
 		if (!cursor.sub) return 0;
 		ht_regex_search_request *s=(ht_regex_search_request*)request;
 /* build progress indicator */
-		bounds b;
+		Bounds b;
 		get_std_progress_indicator_metrics(&b);
 		ht_progress_indicator *progress_indicator=new ht_progress_indicator();
 		progress_indicator->init(&b, "ESC to cancel");
