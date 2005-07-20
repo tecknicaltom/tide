@@ -32,7 +32,7 @@
 #include "htanaly.h"
 #include "le_analy.h"
 
-static ht_view *htleimage_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htleimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 
@@ -42,7 +42,7 @@ static ht_view *htleimage_init(bounds *b, File *file, ht_format_group *group)
 	LEAnalyser *p = new LEAnalyser();
 	p->init(le_shared, myfile);
 
-	bounds c = *b;
+	Bounds c = *b;
 	ht_group *g = new ht_group();
 	g->init(&c, VO_RESIZE, DESC_LE_IMAGE"-g");
 	AnalyInfoline *head;
@@ -100,7 +100,7 @@ format_viewer_if htleimage_if = {
  *	CLASS ht_le_aviewer
  */
 
-void ht_le_aviewer::init(bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_le_shared_data *LE_shared)
+void ht_le_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_le_shared_data *LE_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	le_shared = LE_shared;
