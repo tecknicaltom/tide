@@ -24,7 +24,7 @@
 #include "htdialog.h"
 #include "htpal.h"
 #include "htreg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "tools.h"
 
