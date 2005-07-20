@@ -29,13 +29,13 @@
  *	CLASS ht_clipboard
  */
 
-class ht_clipboard: public ht_mem_file {
+class ht_clipboard: public MemoryFile {
 public:
-	ht_list *copy_history;
-	uint32 select_start, select_len;
+	List *copy_history;
+	FileOfs select_start, select_len;
 
-			void init();
-	virtual	void done();
+		ht_clipboard();
+	virtual	~ht_clipboard();
 /* overwritten */
 	virtual	uint	write(const void *buf, uint size);
 /* new */
@@ -66,13 +66,13 @@ public:
 
 /* clipboard functions */
 
-void clipboard_add_copy_history_entry(char *source, uint32 start, uint32 size, time_t time);
-int clipboard_copy(char *source_desc, void *buf, uint32 len);
-int clipboard_copy(char *source_desc, File *streamfile, uint32 offset, uint32 len);
-int clipboard_paste(void *buf, uint32 maxlen);
-int clipboard_paste(File *streamfile, uint32 offset);
-int clipboard_clear();
-uint32 clipboard_getsize();
+void clipboard_add_copy_history_entry(char *source, FileOfs start, FileOfs size, time_t time);
+FileOfs clipboard_copy(char *source_desc, void *buf, uint len);
+FileOfs clipboard_copy(char *source_desc, File *streamfile, FileOfs offset, FileOfs len);
+FileOfs clipboard_paste(void *buf, uint32 maxlen);
+FileOfs clipboard_paste(File *streamfile, FileOfs offset);
+bool clipboard_clear();
+FileOfs clipboard_getsize();
 
 /*
  *	INIT
