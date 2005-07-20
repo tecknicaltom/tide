@@ -35,7 +35,7 @@ class ht_class_aviewer: public ht_aviewer {
 public:
 	ht_class_shared_data *class_shared;
 	File *file;
-		   void init(bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy, ht_class_shared_data *class_shared);
+		   void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy, ht_class_shared_data *class_shared);
 	virtual void setAnalyser(Analyser *a);
 };
 
