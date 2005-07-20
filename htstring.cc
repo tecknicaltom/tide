@@ -30,9 +30,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ATOM_HT_DATA_STRING			MAGICD("STR\x00")
-#define ATOM_COMPARE_KEYS_STRING		MAGICD("STR\x10")
-#define ATOM_ICOMPARE_KEYS_STRING		MAGICD("STR\x11")
+#define ATOM_HT_DATA_STRING			MAGIC32("STR\x00")
+#define ATOM_COMPARE_KEYS_STRING		MAGIC32("STR\x10")
+#define ATOM_ICOMPARE_KEYS_STRING		MAGIC32("STR\x11")
 
 char hexchars[17]="0123456789abcdef";
 
