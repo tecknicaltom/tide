@@ -27,10 +27,16 @@
 #include "htdialog.h"
 #include "hthist.h"
 #include "htidle.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htpal.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "tools.h"
+
+ht_queued_msg::ht_queued_msg(ht_view *aTarget, htmsg &aMsg)
+{
+	target = aTarget;
+	msg = aMsg;
+}
 
 /*
  *	CLASS ht_dialog
@@ -40,14 +46,12 @@ void ht_dialog::init(Bounds *b, const char *desc, uint framestyle)
 {
 	ht_window::init(b, desc, framestyle);
 	VIEW_DEBUG_NAME("ht_dialog");
-	options&=~VO_SELBOUND;
-	msgqueue=new ht_queue();
-	msgqueue->init();
+	options &= ~VO_SELBOUND;
+	msgqueue = new Queue(true);
 }
 
 void ht_dialog::done()
 {
-	msgqueue->done();
 	delete msgqueue;
 	ht_window::done();
 }
@@ -64,7 +68,7 @@ char *ht_dialog::defaultpalette()
 
 ht_queued_msg *ht_dialog::dequeuemsg()
 {
-	return (ht_queued_msg*)msgqueue->dequeue();
+	return (ht_queued_msg*)msgqueue->deQueue();
 }
 
 void ht_dialog::draw()
@@ -73,40 +77,39 @@ void ht_dialog::draw()
 	ht_group::draw();
 }
 
-int ht_dialog::getstate(int *_return_val)
+int ht_dialog::getstate(int *aReturn_val)
 {
-	if (_return_val) *_return_val=return_val;
+	if (aReturn_val) *aReturn_val = return_val;
 	return state;
 }
 
 void ht_dialog::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_button_pressed) {
+	if (msg->msg == msg_button_pressed) {
 		switch (msg->data1.integer) {
-			case button_cancel:
-				setstate(ds_term_cancel, msg->data1.integer);
-				clearmsg(msg);
-				return;
-			default:
-				setstate(ds_term_ok, msg->data1.integer);
-				clearmsg(msg);
-				return;
+		case button_cancel:
+			setstate(ds_term_cancel, msg->data1.integer);
+			clearmsg(msg);
+			return;
+		default:
+			setstate(ds_term_ok, msg->data1.integer);
+			clearmsg(msg);
+			return;
 		}
 	}
 	ht_window::handlemsg(msg);
-	if (msg->msg==msg_keypressed) {
+	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
-			case K_Escape:
-				setstate(ds_term_cancel, msg->data1.integer);
-				clearmsg(msg);
-				return;
-			case K_Return:
-				sendmsg(msg_button_pressed, button_ok);
-				clearmsg(msg);
-				return;
-			case K_Control_O: {
-
-			}
+		case K_Escape:
+			setstate(ds_term_cancel, msg->data1.integer);
+			clearmsg(msg);
+			return;
+		case K_Return:
+			sendmsg(msg_button_pressed, button_ok);
+			clearmsg(msg);
+			return;
+		case K_Control_O: {
+		}
 		}
 	}
 }
@@ -116,7 +119,7 @@ int ht_dialog::run(bool modal)
 	ht_view *orig_focused=app->getselected(), *orig_baseview=baseview;
 	int oldx, oldy;
 	ht_view *drawer=modal ? this : app;
-	screen->getcursor(&oldx, &oldy);
+	screen->getCursor(oldx, oldy);
 	setstate(ds_normal, 0);
 	((ht_group*)app)->insert(this);
 	((ht_group*)app)->focus(this);
@@ -124,15 +127,15 @@ int ht_dialog::run(bool modal)
 	drawer->sendmsg(msg_draw, 0);
 	screen->show();
 	while (getstate(0)==ds_normal) {
-		if (ht_keypressed()) {
-			ht_key k=ht_getkey();
+		if (keyb_keypressed()) {
+			ht_key k = keyb_getkey();
 			sendmsg(msg_keypressed, k);
 			drawer->sendmsg(msg_draw, 0);
 			screen->show();
 		}
 		ht_queued_msg *q;
-		while ((q=dequeuemsg())) {
-			htmsg m=q->msg;
+		while ((q = dequeuemsg())) {
+			htmsg m = q->msg;
 			q->target->sendmsg(&m);
 			sendmsg(msg_draw);
 			delete q;
@@ -141,7 +144,7 @@ int ht_dialog::run(bool modal)
 	}
 	int return_val;
 	int state=getstate(&return_val);
-	screen->setcursor(oldx, oldy);
+	screen->setCursor(oldx, oldy);
 	((ht_group*)app)->remove(this);
 	app->focus(orig_focused);
 	baseview=orig_baseview;
@@ -152,12 +155,9 @@ int ht_dialog::run(bool modal)
 	}
 }
 
-void ht_dialog::queuemsg(ht_view *target, htmsg *msg)
+void ht_dialog::queuemsg(ht_view *target, htmsg &msg)
 {
-	ht_queued_msg *q=new ht_queued_msg();
-	q->target=target;
-	q->msg=*msg;
-	msgqueue->enqueue(q);
+	msgqueue->enQueue(new ht_queued_msg(target, msg));
 }
 
 void ht_dialog::setstate(int st, int retval)
@@ -170,7 +170,7 @@ void ht_dialog::setstate(int st, int retval)
  *	CLASS ht_cluster
  */
 
-void ht_cluster::init(Bounds *b, ht_string_list *_strings)
+void ht_cluster::init(Bounds *b,  *_strings)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, 0);
 	VIEW_DEBUG_NAME("ht_cluster");
@@ -179,7 +179,7 @@ void ht_cluster::init(Bounds *b, ht_string_list *_strings)
 	if (scount>32) scount=32;			/* cant use more than 32... */
 	sel=0;
 	for (int i=0; i<scount; i++) {
-		char *s=strings->get_string(i);
+		char *s = strings->get_string(i);
 		s=strchr(s, '~');
 		if (s) {
 			shortcuts[i]=ht_metakey((ht_key)*(s+1));
@@ -789,7 +789,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 	if ((msg->type==mt_empty) && (msg->msg==msg_keypressed)) {
 		int k = msg->data1.integer;
 		switch (k) {
-			case K_Alt_S:
+			case K_Meta_S:
 				selectmode=!selectmode;
 				clearmsg(msg);
 				break;
@@ -923,10 +923,10 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				dirtyview();
 				clearmsg(msg);
 				return;
-			case K_Alt_X:
+			case K_Meta_X:
 			case K_Shift_Delete:
 				if (*selend>*selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
-			case K_Alt_D:
+			case K_Meta_D:
 			case K_Control_Delete:
 				if (*selend>*selstart) {
 					memmove(*selstart, *selend, *textlen-(*selend-*text));
@@ -940,14 +940,14 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				dirtyview();
 				clearmsg(msg);
 				return;
-			case K_Alt_C:
+			case K_Meta_C:
 			case K_Control_Insert:
 				if (*selend>*selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
 				is_virgin=0;
 				dirtyview();
 				clearmsg(msg);
 				return;
-			case K_Alt_V:
+			case K_Meta_V:
 			case K_Shift_Insert: {
 				int maxsize=MIN(*maxtextlen-*textlen, (int)clipboard_getsize());
 				byte *buf=(byte*)malloc(maxsize);
