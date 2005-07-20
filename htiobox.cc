@@ -30,12 +30,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-int imsgbox(bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, char *buf)
+int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, char *buf)
 {
 	ht_dialog *dialog=new ht_dialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | (modal ? 0 : FS_MOVE | FS_RESIZE));
 
-	bounds c;
+	Bounds c;
 
 	c.x=1;
 	c.y=0;
@@ -133,7 +133,7 @@ int imsgbox(bounds *b, int buttonmask, const char *title, bool modal, statictext
 		pos++;
 	}
 	if (!buttons) {
-		bounds x;
+		Bounds x;
 		text->getbounds(&x);
 		x.h+=2;
 		text->setbounds(&x);
@@ -161,7 +161,7 @@ int msgbox(int buttonmask, const char *title, bool modal, statictext_align align
 	}
 	int strl=strlen(buf);
 
-	bounds b;
+	Bounds b;
 	app->getbounds(&b);
 	b.w=55;
 	b.h=MAX(strl/(b.w-4), ns)+6;
@@ -170,7 +170,7 @@ int msgbox(int buttonmask, const char *title, bool modal, statictext_align align
 	return imsgbox(&b, buttonmask, title, modal, align, buf);
 }
 
-int msgboxrect(bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, const char *format, ...)
+int msgboxrect(Bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, const char *format, ...)
 {
 	char buf[1024];
 	va_list arg;
@@ -183,7 +183,7 @@ int msgboxrect(bounds *b, int buttonmask, const char *title, bool modal, statict
 
 bool inputbox(const char *title, const char *label, char *result, int limit, uint32 histid)
 {
-	bounds b;
+	Bounds b;
 	app->getbounds(&b);
 	b.x = (b.w - 60) / 2,
 	b.y = (b.h - 8) / 2;
@@ -192,14 +192,14 @@ bool inputbox(const char *title, const char *label, char *result, int limit, uin
 	return inputboxrect(&b, title, label, result, limit, histid);
 }
 
-bool inputboxrect(bounds *b, const char *title, const char *label, char *result, int limit, uint32 histid)
+bool inputboxrect(Bounds *b, const char *title, const char *label, char *result, int limit, uint32 histid)
 {
 	ht_dialog *dialog=new ht_dialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	ht_strinputfield *input;
 
-	bounds  b2;
+	Bounds  b2;
 	b2.x = 3 + strlen(label);
 	b2.y = 1;
 	b2.w = b->w - 3 - b2.x;
@@ -258,7 +258,7 @@ bool inputboxrect(bounds *b, const char *title, const char *label, char *result,
 	return false;
 }
 
-void get_std_progress_indicator_metrics(bounds *b)
+void get_std_progress_indicator_metrics(Bounds *b)
 {
 	app->getbounds(b);
 	b->w=b->w*2/3;
