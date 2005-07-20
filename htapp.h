@@ -58,7 +58,7 @@ protected:
 	int		clear_len;
 	int		analy_ani;
 public:
-			void init(bounds *b);
+			void init(Bounds *b);
 	virtual	void done();
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
@@ -74,7 +74,7 @@ private:
 
 class ht_keyline: public ht_view {
 public:
-			void init(bounds *b);
+			void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -88,7 +88,7 @@ public:
 
 class ht_desktop: public ht_view {
 public:
-			void init(bounds *b);
+			void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -134,7 +134,7 @@ private:
 	bool get_vscrollbar_pos(int *pstart, int *psize);
 	void update();
 public:
-			void init(bounds *b, ht_window *window, ht_log *log, bool own_log);
+			void init(Bounds *b, ht_window *window, ht_log *log, bool own_log);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -167,7 +167,7 @@ protected:
 public:
 	File	*file;
 
-		void init(bounds *b, char *desc, uint framestyle, uint number, File *file);
+		void init(Bounds *b, char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -221,7 +221,7 @@ protected:
 	uint colwidths[4];
 	
 public:
-			void		init(bounds *b, ht_project *project);
+			void		init(Bounds *b, ht_project *project);
 			
 	virtual	int		calcCount();
 	virtual	void		draw();
@@ -251,7 +251,7 @@ protected:
 	char wtitle[128];
 public:
 
-			void	init(bounds *b, char *desc, uint framestyle, uint number, ht_project **project);
+			void	init(Bounds *b, char *desc, uint framestyle, uint number, ht_project **project);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -300,8 +300,8 @@ protected:
 	bool exit_program;
 
 /* new */
-			ht_window *create_window_file_bin(bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
-			ht_window *create_window_file_text(bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
+			ht_window *create_window_file_bin(Bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
+			ht_window *create_window_file_text(Bounds *b, ht_layer_streamfile *file, char *title, bool isfile);
 			
 			bool accept_close_all_windows();
 			uint find_free_window_number();
@@ -309,8 +309,8 @@ protected:
 			uint get_window_number(ht_window *window);
 			uint get_window_listindex(ht_window *window);
 
-			void get_stdbounds_file(bounds *b);
-			void get_stdbounds_tool(bounds *b);
+			void get_stdbounds_file(Bounds *b);
+			void get_stdbounds_tool(Bounds *b);
 			
 			int popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, ht_list *structure, int depth, int *currenti, ht_view *currentv);
 /* overwritten */
@@ -320,7 +320,7 @@ public:
 	ht_view *menu;
 		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, ht_layer_streamfile *layer);
 
-		void init(bounds *b);
+		void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
