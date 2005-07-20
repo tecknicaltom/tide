@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -66,7 +66,7 @@ static ht_view *htpeexports_init(bounds *b, File *file, ht_format_group *group)
 	bool *lord;
 
 	ht_group *g = NULL;
-	bounds c;
+	Bounds c;
 	ht_statictext *head;
 	ht_pe_export_viewer *v = NULL;
 	
@@ -230,7 +230,7 @@ format_viewer_if htpeexports_if = {
  *	CLASS ht_pe_export_viewer
  */
 
-void	ht_pe_export_viewer::init(bounds *b, ht_format_group *fg)
+void	ht_pe_export_viewer::init(Bounds *b, ht_format_group *fg)
 {
 	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
