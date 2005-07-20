@@ -45,7 +45,7 @@ static format_viewer_if *htelf_ifs[] = {
 	0
 };
 
-static ht_view *htelf_init(bounds *b, File *file, ht_format_group *format_group)
+static ht_view *htelf_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	FileOfs header_ofs = 0;
 	ELF_HEADER header;
@@ -109,7 +109,7 @@ bool isValidELFSectionIdx(ht_elf_shared_data *elf_shared, int idx)
 /*
  *	CLASS ht_elf
  */
-void ht_elf::init(bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
 {
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_ELF, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_elf");
