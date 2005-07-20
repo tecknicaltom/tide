@@ -120,7 +120,7 @@ bool Terminal::update()
  *	CLASS TerminalViewer
  */
 
-void TerminalViewer::init(bounds *b, Terminal *t, bool ot)
+void TerminalViewer::init(Bounds *b, Terminal *t, bool ot)
 {
 	ht_text_viewer::init(b, ot, t, NULL);
 	term = t;
