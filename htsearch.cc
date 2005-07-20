@@ -25,7 +25,7 @@
 #include "htiobox.h"
 #include "htkeyb.h"
 #include "htsearch.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "process.h"
 #include "snprintf.h"
 
