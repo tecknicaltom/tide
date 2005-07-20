@@ -598,7 +598,7 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 			return;
 		case cmd_file_truncate: {
 			File *f = (File*)msg->data1.ptr;
-			FileOfs o = (FileOfs)msg->data2.integer;
+			FileOfs o = (FileOfs)msg->data2.q;
 			if (file == f) {
 				ht_format_loc loc;
 				loc_enum_start();
@@ -920,7 +920,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	b2.h = 1;
 
 	ht_clist *hist = 0;
-	if (histid) hist = (ht_clist*)find_atom(histid);
+	if (histid) hist = (ht_clist*)getAtomValue(histid);
 	input = new ht_strinputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
@@ -2685,50 +2685,50 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 		case cmd_file_resize: {
-			FileOfs o=0;
+			FileOfs o = 0;
 			if (get_current_offset(&o)) {
 				uint32 s;
 				get_current_tag_size(&s);
-				o+=s;
+				o += s;
 			}
-			
-			uint s=file->get_size();
+
+			FileOfs s = file->getSize();
 
 			char buf[32];
-			sprintf(buf, "%d", o);
+			sprintf(buf, "%qd", o);
 			if (inputbox("resize", "new file size", buf, sizeof buf, 0)==button_ok) {
 				eval_scalar r;
 				if (eval(&r, buf, NULL, NULL, NULL)) {
 					eval_int i;
 					scalar_context_int(&r, &i);
 					scalar_destroy(&r);
-					o=QWORD_GET_INT(i.value);
-					if (o<s) {
+					o = i.value;
+					if (o < s) {
 						/* truncate */
 						htmsg m;
 			
-						m.msg=cmd_file_truncate;
-						m.type=mt_broadcast;
-						m.data1.ptr=file;
-						m.data2.integer=o;
+						m.msg = cmd_file_truncate;
+						m.type = mt_broadcast;
+						m.data1.ptr = file;
+						m.data2.q = o;
 						baseview->sendmsg(&m);
 
-						m.msg=msg_filesize_changed;
-						m.type=mt_broadcast;
+						m.msg = msg_filesize_changed;
+						m.type = mt_broadcast;
 						sendsubmsg(&m);
 						sendmsg(&m);
 					} else if (o>s) {
 						/* extend */
 						htmsg m;
 			
-						m.msg=cmd_file_extend;
-						m.type=mt_broadcast;
-						m.data1.ptr=file;
-						m.data2.integer=o;
+						m.msg = cmd_file_extend;
+						m.type = mt_broadcast;
+						m.data1.ptr = file;
+						m.data2.q = o;
 						baseview->sendmsg(&m);
 
-						m.msg=msg_filesize_changed;
-						m.type=mt_broadcast;
+						m.msg = msg_filesize_changed;
+						m.type = mt_broadcast;
 						sendsubmsg(&m);
 						sendmsg(&m);
 					}
@@ -2890,7 +2890,7 @@ void ht_uformat_viewer::render_tagstring_desc(char **string, int *length, vcp *t
 	*tc=tag_color;
 	if (tag_get_desc_id(tag, &id)) {
 		int_hash *tbl;
-		if ((tbl=(int_hash*)find_atom(id))) {
+		if ((tbl=(int_hash*)getAtomValue(id))) {
 			char *str;
 			uint64 q;
 			q.hi = 0;
@@ -3396,7 +3396,7 @@ int ht_uformat_viewer::ref()
 int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian)
 {
 	endianess end = bigendian ? big_endian : little_endian;
-	int_hash *desc=(int_hash*)find_atom(id);
+	int_hash *desc=(int_hash*)getAtomValue(id);
 	if (desc) {
 		Bounds b;
 		b.w=60;
@@ -3490,7 +3490,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 
 int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 {
-	ht_tag_flags_s *flags=(ht_tag_flags_s*)find_atom(id), *fl;
+	ht_tag_flags_s *flags=(ht_tag_flags_s*)getAtomValue(id), *fl;
 	if (flags) {
 		Bounds b;
 		b.w=60;
