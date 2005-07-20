@@ -209,11 +209,11 @@ static ht_view *htcoffheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
-	register_atom(ATOM_COFF_MACHINES, coff_machines);
-	register_atom(ATOM_COFF_OPTIONAL_MAGICS, coff_optional_magics);
-	register_atom(ATOM_COFF_OPTIONAL_SIZES, coff_optional_sizes);
-	register_atom(ATOM_COFF_CHARACTERISTICS, coff_characteristics);
-	register_atom(ATOM_COFF_SECTION_CHARACTERISTICS, coff_section_characteristics);
+	registerAtom(ATOM_COFF_MACHINES, coff_machines);
+	registerAtom(ATOM_COFF_OPTIONAL_MAGICS, coff_optional_magics);
+	registerAtom(ATOM_COFF_OPTIONAL_SIZES, coff_optional_sizes);
+	registerAtom(ATOM_COFF_CHARACTERISTICS, coff_characteristics);
+	registerAtom(ATOM_COFF_SECTION_CHARACTERISTICS, coff_section_characteristics);
 	char info[128];
 	ht_snprintf(info, sizeof info, "* COFF header at offset %08x", h);
 	m->add_mask(info);
