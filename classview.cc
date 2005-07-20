@@ -489,7 +489,7 @@ static void mf_view(ht_group_sub *g, File *f,
 	g->insertsub (cs2);
 }
 
-static ht_view *class_view(bounds *b, File *file, ht_format_group *group)
+static ht_view *class_view(Bounds *b, File *file, ht_format_group *group)
 {
   ht_mask_sub *s;
   ht_collapsable_sub *cs, *cs2;
@@ -673,7 +673,7 @@ static ht_view *class_view(bounds *b, File *file, ht_format_group *group)
   }
 }
 
-void cview::init(bounds *b, File *f, format_viewer_if **ifs,
+void cview::init(Bounds *b, File *f, format_viewer_if **ifs,
 		  ht_format_group *g, FileOfs header_ofs, void *shared)
 {
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_JAVA, f, false, true, 0, g);
@@ -702,7 +702,7 @@ static format_viewer_if *htcls_ifs[] = {
 	0
 };
 
-static ht_view *class_init(bounds *b, File *file, ht_format_group *group)
+static ht_view *class_init(Bounds *b, File *file, ht_format_group *group)
 {
 	u1 magic[4];
 
