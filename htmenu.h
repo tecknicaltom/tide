@@ -119,7 +119,7 @@ protected:
 	virtual	char *defaultpalette();
 	virtual	char *defaultpaletteclass();
 public:
-			void init(bounds *b);
+			void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -148,7 +148,7 @@ protected:
 	virtual	char *defaultpalette();
 	virtual	char *defaultpaletteclass();
 public:
-			void init(bounds *b, ht_context_menu *menu);
+			void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -172,7 +172,7 @@ protected:
 	ht_menu_window_body *body;
 	ht_context_menu *menu;
 public:
-			void init(bounds *b, ht_context_menu *menu);
+			void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void getdata(ObjectStream &s);
@@ -186,7 +186,7 @@ public:
 
 class ht_menu_window_body: public ht_context_menu_window_body {
 public:
-			void init(bounds *b, ht_context_menu *menu);
+			void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -205,7 +205,7 @@ protected:
 	virtual	char *defaultpalette();
 	virtual	char *defaultpaletteclass();
 public:
-			void init(bounds *b, char *desc, uint style, uint number=0);
+			void init(Bounds *b, char *desc, uint style, uint number=0);
 	virtual 	void done();
 };
 
