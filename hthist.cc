@@ -21,7 +21,7 @@
 #include "atom.h"
 #include "htdata.h"
 #include "hthist.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "tools.h"
 
 #include <string.h>
