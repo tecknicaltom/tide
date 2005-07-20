@@ -61,7 +61,9 @@ protected:
 	virtual	char *defaultpalette();
 			ht_queued_msg *dequeuemsg();
 public:
-			void	init(Bounds *b, const char *desc, uint framestyle);
+			ht_dialog();
+			ht_dialog(BuildCtorArg&);
+		void	init(Bounds *b, const char *desc, uint framestyle);
 	virtual	void	done();
 /* overwritten */
 	virtual	int aclone();
