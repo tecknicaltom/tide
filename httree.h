@@ -36,7 +36,7 @@ public:
 		int			foc;
 		void			*selected;
 
-			   void	init(bounds *b, char *desc);
+			   void	init(Bounds *b, char *desc);
 		virtual void	done();
 		virtual void	adjust(void *node, bool expand) = 0;
 			   int 	create_graph(int *s, void *node, int level, int lines, int width, int endwidth, int *Chars);
@@ -79,7 +79,7 @@ struct static_node {
 class ht_static_treeview: public ht_treeview {
 public:
 		static_node	*root;
-			   void	init(bounds *b, char *desc);
+			   void	init(Bounds *b, char *desc);
 		virtual void	done();
 			   void	*add_child(void *node, char *text, Object *Data=NULL);
 			   void	*add_node(static_node **node, char *text, Object *Data=NULL);
