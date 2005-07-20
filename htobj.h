@@ -137,8 +137,8 @@ public:
 	Display *buf;
 	ht_view *prev, *next;
 
-	bounds size;
-	bounds vsize;	/* visual bounds */
+	Bounds size;
+	Bounds vsize;	/* visual Bounds */
 	uint growmode;
 	uint g_hdist, g_vdist;
 
@@ -148,7 +148,7 @@ public:
 
 /*debug:*/char *view_debug_name;
 
-		void		init(bounds *b, int options, const char *desc);
+		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 /* new */
 		void		*allocdatabuf(void *handle);
@@ -161,7 +161,7 @@ public:
 		int		buf_printw(int x, int y, int c, int *text);
 	virtual	int		childcount();
 		void		clear(int color);
-	virtual	void		clipbounds(bounds *b);
+	virtual	void		clipbounds(Bounds *b);
 	virtual	void		config_changed();
 	virtual	int		countselectables();
 		void		databuf_freedup(void *handle);
@@ -180,7 +180,7 @@ public:
 		bool		exposed();
 		void		fill(int x, int y, int w, int h, int c, int chr);
 	virtual	int		focus(ht_view *view);
-		void		getbounds(bounds *b);
+		void		getbounds(Bounds *b);
 	virtual	void		getminbounds(int *width, int *height);
 		vcp		getcolor(uint index);
 	virtual	void		getdata(ObjectStream &s);
@@ -207,8 +207,8 @@ public:
 		void		sendmsg(htmsg *msg);
 		void		sendmsg(int msg, int data1=0, int data2=0);
 		void		sendmsg(int msg, void *data1, void *data2=0);
-		void		setbounds(bounds *b);
-		void		setvisualbounds(bounds *b);
+		void		setbounds(Bounds *b);
+		void		setvisualbounds(Bounds *b);
 		void		setcursor(int x, int y, cursor_mode c=cm_normal);
 	virtual	void		setdata(ObjectStream &s);
 	virtual	void		setgroup(ht_group *group);
@@ -232,7 +232,7 @@ public:
 	ht_view 	*first, *current, *last;
 	void		*shared_data;
 
-		void	init(bounds *b, int options, const char *desc);
+		void	init(Bounds *b, int options, const char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	int childcount();
@@ -275,7 +275,7 @@ public:
 
 class ht_xgroup: public ht_group {
 public:
-		void		init(bounds *b, int options, const char *desc);
+		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 /* overwritten */
 	virtual	int		countselectables();
@@ -299,7 +299,7 @@ protected:
 	palette *gpal;
 	bool isvertical;
 public:
-		void	init(bounds *b, palette *gpal, bool isvertical);
+		void	init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
 /* overwritten */
 	virtual	void enable();
@@ -348,7 +348,7 @@ protected:
 	virtual	vcp getcurcol_normal();
 	virtual	vcp getcurcol_killer();
 public:
-		void		init(bounds *b, const char *desc, uint style, uint number=0);
+		void		init(Bounds *b, const char *desc, uint style, uint number=0);
 	virtual	void		done();
 /* overwritten */
 	virtual	void		draw();
@@ -384,7 +384,7 @@ protected:
 	
 			bool next_action_state();
 public:
-			void	init(bounds *b, const char *desc, uint framestyle, uint number=0);
+			void	init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -400,7 +400,7 @@ public:
 	virtual	void setnumber(uint number);
 	virtual	void store(ObjectStream &s) const;
 /* new */
-		void getclientarea(bounds *b);
+		void getclientarea(Bounds *b);
 		ht_frame *getframe();
 		void setframe(ht_frame *frame);
 		void sethscrollbar(ht_scrollbar *scrollbar);
