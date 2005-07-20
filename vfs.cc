@@ -170,10 +170,10 @@ int LocalFs::fileOpen(const char *filename, uint access_mode, uint open_mode, Fi
 
 #define REGNODE_FILE_MAGIC	"HTRG"
 
-void RegNodeFile::init(const char *nn, uint am, uint om)
+void RegNodeFile::RegNodeFile(const char *nn, uint am, uint om)
+	: MemoryFile(0, 1024, am)
 {
 	access_mode0 = am;
-	ht_mem_file::init(0, 1024, am);
 	open_mode = om;
 	nodename = ht_strdup(nn);
 	if ((access_mode & FAM_READ) && (access_mode & FAM_WRITE)) {
@@ -206,7 +206,7 @@ void RegNodeFile::init(const char *nn, uint am, uint om)
 	}
 }
 
-void RegNodeFile::done()
+RegNodeFile::~RegNodeFile()
 {
 	if (access_mode & FAM_WRITE) {
 		ht_registry_node_type type;
