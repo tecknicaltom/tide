@@ -28,7 +28,7 @@
 #include "htobj.h"
 #include "htpal.h"
 #include "htreg.h"
-#include "htstring.h"
+#include "strtools.h"
 #include "snprintf.h"
 #include "store.h"
 #include "tools.h"
