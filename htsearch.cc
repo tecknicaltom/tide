@@ -107,7 +107,7 @@ bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *
  *	CLASS ht_fxbin_search_request
  */
 
-ht_view* create_form_hexascii(bounds *b, HT_ATOM histid)
+ht_view* create_form_hexascii(Bounds *b, HT_ATOM histid)
 {
 	ht_hexascii_search_form *form=new ht_hexascii_search_form();
 	form->init(b, 0, (ht_list*)find_atom(histid));
@@ -169,7 +169,7 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 
 /***/
 
-ht_view* create_form_evalstr(bounds *b, HT_ATOM histid)
+ht_view* create_form_evalstr(Bounds *b, HT_ATOM histid)
 {
 	ht_evalstr_search_form *form=new ht_evalstr_search_form();
 	form->init(b, 0, (ht_list*)find_atom(histid));
@@ -269,7 +269,7 @@ Object *ht_fxbin_search_request::clone()
  *	CLASS ht_regex_search_request
  */
  
-ht_view* create_form_vregex(bounds *b, HT_ATOM histid)
+ht_view* create_form_vregex(Bounds *b, HT_ATOM histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
 	form->init(b, 0, (ht_list*)find_atom(histid));
@@ -373,7 +373,7 @@ const char* ht_regex_search_exception::what() const
  *	CLASS ht_expr_search_request
  */
 
-ht_view* create_form_expr(bounds *b, HT_ATOM histid)
+ht_view* create_form_expr(Bounds *b, HT_ATOM histid)
 {
 	ht_expr_search_form *form = new ht_expr_search_form();
 	form->init(b, 0, (ht_list*)find_atom(histid));
@@ -545,12 +545,12 @@ bool search_bin_process(Object *context, ht_text *progress_indicator)
 /*
  *	CLASS ht_hexascii_search_form
  */
-void ht_hexascii_search_form::init(bounds *b, int options, ht_list *history)
+void ht_hexascii_search_form::init(Bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_hexascii_search_form");
 
-	bounds c;
+	Bounds c;
 	/* ascii string */
 	c.x=6;
 	c.y=0;
@@ -633,12 +633,12 @@ void ht_hexascii_search_form::init(bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_evalstr_search_form
  */
-void ht_evalstr_search_form::init(bounds *b, int options, ht_list *history)
+void ht_evalstr_search_form::init(Bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_evalstr_search_form");
 
-	bounds c;
+	Bounds c;
 	/* string */
 	c.x=0;
 	c.y=1;
@@ -713,12 +713,12 @@ void ht_evalstr_search_form::init(bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_vregex_search_form
  */
-void ht_vregex_search_form::init(bounds *b, int options, ht_list *history)
+void ht_vregex_search_form::init(Bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_text_search_form");
 
-	bounds c;
+	Bounds c;
 	/* string */
 	c.x=0;
 	c.y=1;
@@ -785,12 +785,12 @@ void ht_vregex_search_form::init(bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_expr_search_form
  */
-void	ht_expr_search_form::init(bounds *b, int options, ht_list *history)
+void	ht_expr_search_form::init(Bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_expr_search_form");
 
-	bounds c;
+	Bounds c;
 	/* string */
 	c.x=0;
 	c.y=1;
@@ -869,7 +869,7 @@ ht_replace_bin_context::~ht_replace_bin_context()
 	free(repl);
 }
 
-ht_view* create_form_replace_hexascii(bounds *b, HT_ATOM histid)
+ht_view* create_form_replace_hexascii(Bounds *b, HT_ATOM histid)
 {
 	ht_replace_hexascii_search_form *form=new ht_replace_hexascii_search_form();
 	form->init(b, 0, (ht_list*)find_atom(histid));
@@ -887,12 +887,12 @@ Object* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_vi
 	return ctx;
 }
 
-void ht_replace_hexascii_search_form::init(bounds *b, int options, ht_list *history)
+void ht_replace_hexascii_search_form::init(Bounds *b, int options, ht_list *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_replace_hexascii_search_form");
 
-	bounds c;
+	Bounds c;
 	/* ascii string */
 	c.x=6;
 	c.y=0;
@@ -947,7 +947,7 @@ static ht_search_method search_methods[] =
 ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, viewer_pos *start, viewer_pos *end)
 {
 	ht_search_request *result = NULL;
-	bounds b;
+	Bounds b;
 	b.w = 50;
 	b.h = 15;
 	b.x = (screen->size.w-b.w)/2;
@@ -955,7 +955,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 	ht_search_dialog *dialog = new ht_search_dialog();
 	dialog->init(&b, "search");
 
-	bounds k;
+	Bounds k;
 	dialog->search_mode_xgroup->getbounds(&k);
 
 	k.x = 0;
@@ -966,7 +966,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 	ht_search_method *q = search_methods;
 	while (q->name) {
 		if (q->search_mode_mask & searchmodes) {
-			bounds v = k;
+			Bounds v = k;
 			ht_view *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 			modes++;
@@ -1038,7 +1038,7 @@ static ht_replace_method replace_methods[] =
 uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 {
 	*cancelled = false;
-	bounds b;
+	Bounds b;
 	b.w = 50;
 	b.h = 22;
 	b.x = (screen->size.w-b.w)/2;
@@ -1046,7 +1046,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 	ht_replace_dialog *dialog = new ht_replace_dialog();
 	dialog->init(&b);
 
-	bounds k;
+	Bounds k;
 	dialog->search_mode_xgroup->getbounds(&k);
 
 	k.x = 0;
@@ -1059,7 +1059,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 	while (q->name) {
 		if ((q->search_mode_mask & searchmodes) &&
 		(q->search_class == SC_PHYSICAL)) {
-			bounds v = k;
+			Bounds v = k;
 			ht_view *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 		}
@@ -1074,7 +1074,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 	i = 0;
 	ht_replace_method *w = replace_methods;
 	while (w->name) {
-		bounds v = k;
+		Bounds v = k;
 		ht_view *form = w->create_form(&v, w->histid);
 		dialog->insert_replace_mode(i, w->name, form);
 		w++;
@@ -1274,7 +1274,7 @@ bool replace_bin_process(Object *context, ht_text *progress_indicator)
 /*
  *	CLASS ht_search_dialog
  */
-void ht_search_dialog::init(bounds *b, const char *title)
+void ht_search_dialog::init(Bounds *b, const char *title)
 {
 	ht_dialog::init(b, title, FS_KILLER | FS_TITLE | FS_MOVE);
 	VIEW_DEBUG_NAME("ht_search_dialog");
@@ -1282,7 +1282,7 @@ void ht_search_dialog::init(bounds *b, const char *title)
 	smodecount = 0;
 	smodeidx = -1;
 
-	bounds c;
+	Bounds c;
 	c.x=1;
 	c.y=1;
 	c.w=20;
@@ -1380,13 +1380,13 @@ void ht_search_dialog::select_search_mode_bymodeidx()
 /*
  *	CLASS ht_replace_dialog
  */
-void ht_replace_dialog::init(bounds *b)
+void ht_replace_dialog::init(Bounds *b)
 {
 	ht_search_dialog::init(b, "replace");
 
 	rmodecount=0;
 
-	bounds c;
+	Bounds c;
 	c.x=1;
 	c.y=15;
 	c.w=20;
