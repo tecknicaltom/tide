@@ -40,6 +40,8 @@ bool		sys_native_clipboard_read(void *buf, int bufsize);
 bool		sys_native_clipboard_write(const void *buf, int bufsize);
 int		sys_native_clipboard_get_size();
 
+const char *	sys_get_name();
+
 #if 1
 class File;
 
