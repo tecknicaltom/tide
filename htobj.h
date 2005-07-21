@@ -153,12 +153,12 @@ public:
 /* new */
 		void		*allocdatabuf(void *handle);
 	virtual	int		aclone();
-		int		buf_lprint(int x, int y, int c, int l, char *text);
-		int		buf_lprintw(int x, int y, int c, int l, int *text);
-		int		buf_print(int x, int y, int c, char *text);
-		void		buf_printchar(int x, int y, int c, int ch);
-		int		buf_printf(int x, int y, int c, char *format, ...);
-		int		buf_printw(int x, int y, int c, int *text);
+		int		buf_lprint(int x, int y, int c, int l, const char *text, Codepage cp = CP_DEVICE);
+		int		buf_lprintw(int x, int y, int c, int l, const AbstractChar *text, Codepage cp = CP_DEVICE);
+		int		buf_print(int x, int y, int c, const char *text, Codepage cp = CP_DEVICE);
+		void		buf_printchar(int x, int y, int c, int ch, Codepage cp = CP_DEVICE);
+		int		buf_printf(int x, int y, int c, Codepage cp, const char *format, ...);
+		int		buf_printw(int x, int y, int c, const AbstractChar *text, Codepage cp = CP_DEVICE);
 	virtual	int		childcount();
 		void		clear(int color);
 	virtual	void		clipbounds(Bounds *b);
