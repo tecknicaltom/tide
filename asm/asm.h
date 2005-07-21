@@ -55,7 +55,7 @@ typedef void asm_insn;
 
 class Assembler: public Object {
 protected:
-	int (*imm_eval_proc)(void *context, char **s, uint32 *v);
+	int (*imm_eval_proc)(void *context, char *&s, uint64 &v);
 	void *imm_eval_context;
 	
 	asm_code *codes;
@@ -84,7 +84,7 @@ public:
 	virtual	char *get_name();
 	virtual	int translate_str(asm_insn *asm_insn, const char *s);
 		void set_error_msg(char *format, ...);
-		void set_imm_eval_proc(int (*imm_eval_proc)(void *context, char **s, uint32 *v), void *imm_eval_context);
+		void set_imm_eval_proc(int (*imm_eval_proc)(void *context, char *&s, uint64 &v), void *imm_eval_context);
 		asm_code *shortest(asm_code *codes);
 };
 
