@@ -100,21 +100,21 @@ char *memndup(const char *s, int n)
  *
  */
 
-bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool note)
+bool parse_xref_body(File *f, Container *t, char *&n, uint *o, uint *line, bool note)
 {
 	whitespaces(n);
-	char *l = strchr(*n, ':');
+	char *l = strchr(n, ':');
 	if (!l) return false;
 	char *e = l;
-	while ((e>*n) && ((unsigned char)*(e-1)<=32)) e--;
+	while (e > n && ((unsigned char)*(e-1)<=32)) e--;
 	char *name = NULL;
 	char *target = NULL;
 	char *end = l;
 	bool extrabreak=false;
 	l++;
-	whitespaces(&l);
+	whitespaces(l);
 	if (*(end+1) == ':') {
-		name = memndup(*n, e-*n);
+		name = memndup(n, e-n);
 		end+=2;
 	} else if ((note && (l-1 > end)) || (!note && (*(end+1) == ' '))){
 		if (*(end+1) == '\n') extrabreak = true;
@@ -129,7 +129,7 @@ bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool 
 		char *p = q;
 
 		while ((q>l) && ((unsigned char)*(q-1)<=32)) q--;
-		name = memndup(*n, e-*n);
+		name = memndup(n, e-n);
 		target = memndup(l, q-l);
 		end = p+1;
 	} else return false;
@@ -170,7 +170,7 @@ bool parse_xref_body(File *f, Container *t, char **n, uint *o, uint *line, bool 
 	if (name) free(name);
 	if (target) free(target);
 //	fprintf(stderr, "t2\n");
-	*n = end;
+	n = end;
 	return true;
 }
 
@@ -191,7 +191,7 @@ Container *parse_info_node(File *fl, char *infotext)
 		char *k = (*n == '*') ? n : strchr(n, '*');
 		if ((k == n) && (ht_strnicmp(n, "*note", 5) == 0)) {
 			n += 5;
-			if (!parse_xref_body(fl, t, &n, &o, &l, true)) {
+			if (!parse_xref_body(fl, t, n, &o, &l, true)) {
 				n = on;
 				o = oo;
 				l = ol;
@@ -202,7 +202,7 @@ Container *parse_info_node(File *fl, char *infotext)
 			f = fl->tell();
 		} else if (linestart && (k == n) && (n[1] == ' ')) {
 			n++;
-			if (!parse_xref_body(fl, t, &n, &o, &l, false)) {
+			if (!parse_xref_body(fl, t, n, &o, &l, false)) {
 				n = on;
 				o = oo;
 				l = ol;
@@ -448,13 +448,13 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 		char *cr = strchr(s, '\n');
 		if (cr) {
 			while (*s && (s<cr)) {
-				whitespaces(&s);
+				whitespaces(s);
 				char *os = s;
 				for (uint i=0; i<NUM_NODE_TAGS; i++) {
 					uint l = strlen(tags[i]);
 					if ((strncmp(s, tags[i], l) == 0) && (s[l] == ':')) {
 						s += l+1;
-						whitespaces(&s);
+						whitespaces(s);
 						char *e = strchr(s, ',');
 						if (!e || (e>cr)) e = cr;
 						if (!firstnode && (strcmp(tags[i], "Node") == 0)) {
