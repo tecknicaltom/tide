@@ -1102,12 +1102,12 @@ void ht_keyline::draw()
 			char *s=msg.data1.str;
 			if (s) {
 				if (s[0]=='~') {
-					buf_printf(x+1, 0, getcolor(palidx_generic_text_disabled), s+1);
+					buf_print(x+1, 0, getcolor(palidx_generic_text_disabled), s+1);
 				} else {
 					for (int j=0; j<size.w/10-1; j++) {
-						buf_printf(x+j+1, 0, getcolor(palidx_generic_text_focused), " ");
+						buf_print(x+j+1, 0, getcolor(palidx_generic_text_focused), " ");
 					}
-					buf_printf(x+1, 0, getcolor(palidx_generic_text_focused), s);
+					buf_print(x+1, 0, getcolor(palidx_generic_text_focused), s);
 				}
 			}
 		}
