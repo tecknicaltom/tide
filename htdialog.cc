@@ -170,7 +170,7 @@ void ht_dialog::setstate(int st, int retval)
  *	CLASS ht_cluster
  */
 
-void ht_cluster::init(Bounds *b,  *_strings)
+void ht_cluster::init(Bounds *b, ht_string_list *_strings)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, 0);
 	VIEW_DEBUG_NAME("ht_cluster");
@@ -179,17 +179,16 @@ void ht_cluster::init(Bounds *b,  *_strings)
 	if (scount>32) scount=32;			/* cant use more than 32... */
 	sel=0;
 	for (int i=0; i<scount; i++) {
-		char *s = strings->get_string(i);
-		s=strchr(s, '~');
+		const char *s = strings->get_string(i);
+		s = strchr(s, '~');
 		if (s) {
-			shortcuts[i]=ht_metakey((ht_key)*(s+1));
-		} else shortcuts[i]=K_INVALID;
+			shortcuts[i] = keyb_metakey((ht_key)*(s+1));
+		} else shortcuts[i] = K_INVALID;
 	}
 }
 
 void ht_cluster::done()
 {
-	strings->destroy();
 	delete strings;
 	ht_view::done();
 }
@@ -230,10 +229,10 @@ void ht_checkboxes::draw()
 	while (i<scount) {
 		int c=getcolor(palidx_generic_cluster_unfocused);
 		if ((focused) && (sel==i)) c=getcolor(palidx_generic_cluster_focused);
-		char *s=strings->get_string(i);
-		int slen=strlen(s);
-		if (slen>maxcolstrlen) maxcolstrlen=slen;
-		if ((1<<i) & state) {
+		const char *s = strings->get_string(i);
+		int slen = strlen(s);
+		if (slen > maxcolstrlen) maxcolstrlen = slen;
+		if ((1 << i) & state) {
 			buf_print(vx, vy, c, "[X]");
 		} else {
 			buf_print(vx, vy, c, "[ ]");
@@ -262,7 +261,7 @@ void ht_checkboxes::draw()
 
 void ht_checkboxes::getdata(ObjectStream &s)
 {
-	s->putIntDec(state, 4, NULL);
+	PUT_INT32D(s, state);
 }
 
 void ht_checkboxes::handlemsg(htmsg *msg)
@@ -320,7 +319,7 @@ void ht_checkboxes::handlemsg(htmsg *msg)
 
 void ht_checkboxes::setdata(ObjectStream &s)
 {
-	state=s->getIntDec(4, NULL);
+	GET_INT32D(s, state);
 	dirtyview();
 }
 
@@ -354,12 +353,12 @@ void ht_radioboxes::draw()
 	while (i<scount) {
 		int c=getcolor(palidx_generic_cluster_unfocused);
 		if ((focused) && (sel==i)) c=getcolor(palidx_generic_cluster_focused);
-		char *s=strings->get_string(i);
+		const char *s=strings->get_string(i);
 		int slen=strlen(s);
 		if (slen>maxcolstrlen) maxcolstrlen=slen;
 		buf_print(vx, vy, c, "( )");
 		if (i==sel) {
-			buf_printchar(vx+1, vy, c, CHAR_RADIO);
+			buf_printchar(vx+1, vy, c, GC_FILLED_CIRCLE, CP_GRAPHICAL);
 		}
 		buf_print(vx+4, vy, c, s);
 		i++;
@@ -374,7 +373,7 @@ void ht_radioboxes::draw()
 
 void ht_radioboxes::getdata(ObjectStream &s)
 {
-	s->putIntDec(sel, 4, NULL);
+	PUT_INT32D(s, sel);
 }
 
 void ht_radioboxes::handlemsg(htmsg *msg)
@@ -417,14 +416,14 @@ void ht_radioboxes::handlemsg(htmsg *msg)
 
 void ht_radioboxes::setdata(ObjectStream &s)
 {
-	sel=s->getIntDec(4, NULL);
+	GET_INT32D(s, sel);
 }
 
 
 /*
  *	CLASS ht_history_listbox
  */
-void ht_history_listbox::init(Bounds *b, ht_list *hist)
+void ht_history_listbox::init(Bounds *b, List *hist)
 {
 	history = hist;
 	ht_listbox::init(b);
@@ -476,7 +475,7 @@ void *ht_history_listbox::getPrev(void *entry)
 
 char *ht_history_listbox::getStr(int col, void *entry)
 {
-	return ((ht_history_entry*)history->get((int)entry-1))->desc;
+	return ((ht_history_entry*)(*history)[(int)entry-1])->desc;
 }
 
 void ht_history_listbox::handlemsg(htmsg *msg)
@@ -487,7 +486,7 @@ void ht_history_listbox::handlemsg(htmsg *msg)
 				case K_Delete: {
 					int p = pos;
 					cursorUp(1);
-					history->del(p);
+					history->del(history->findByIdx(p));
 					update();
 					if (p) cursorDown(1);
 					dirtyview();
@@ -534,7 +533,7 @@ char	*ht_history_listbox::quickfindCompletition(char *s)
  *	CLASS ht_history_popup_dialog
  */
 
-void ht_history_popup_dialog::init(Bounds *b, ht_list *hist)
+void ht_history_popup_dialog::init(Bounds *b, List *hist)
 {
 	history = hist;
 	ht_listpopup_dialog::init(b, "history");
@@ -543,17 +542,17 @@ void ht_history_popup_dialog::init(Bounds *b, ht_list *hist)
 void ht_history_popup_dialog::getdata(ObjectStream &s)
 {
 	// FIXME: public member needed:
-	s->putIntDec(listbox->pos, 4, NULL);
+	PUTX_INT32D(s, listbox->pos, NULL);
 	if (history->count()) {
-		s->putString(((ht_history_entry*)history->get(listbox->pos))->desc, NULL);
+		PUTX_STRING(s, ((ht_history_entry*)(*history)[listbox->pos])->desc, NULL);
 	} else {
-		s->putString(NULL, NULL);
+		PUTX_STRING(s, NULL, NULL);
 	}
 }
 
 void ht_history_popup_dialog::init_text_listbox(Bounds *b)
 {
-	listbox=new ht_history_listbox();
+	listbox = new ht_history_listbox();
 	((ht_history_listbox *)listbox)->init(b, history);
 	insert(listbox);
 }
@@ -566,11 +565,11 @@ void ht_history_popup_dialog::setdata(ObjectStream &s)
  *	CLASS ht_inputfield
  */
 
-void ht_inputfield::init(Bounds *b, int Maxtextlen, ht_list *hist)
+void ht_inputfield::init(Bounds *b, int Maxtextlen, List *hist)
 {
 	ht_view::init(b, VO_SELECTABLE, "some inputfield");
 	VIEW_DEBUG_NAME("ht_inputfield");
-	
+
 	history=hist;
 	maxtextlenv=Maxtextlen;
 	
@@ -624,7 +623,7 @@ void ht_inputfield::freebuf()
 
 void ht_inputfield::getdata(ObjectStream &s)
 {
-	uint h=s->recordStart(datasize());
+	uint h = s->recordStart(datasize());
 	if (!attachedto) {
 		s->putIntDec(*textlen, 4, NULL);
 		s->putBinary(*text, *textlen, NULL);
