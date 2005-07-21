@@ -605,17 +605,17 @@ static int aviewer_func_addr(eval_scalar *result, eval_str *str)
 	Address *addr = aviewer->analy->createAddress();
 	int l = addr->parseString(str->value, str->len, aviewer->analy);
 	if (l) {
-		// FIXNEW
-		uint64 q = 0;
-		addr->putIntoArray((byte*)&q);
-		scalar_create_int_q(result, q);
-		return 1;
+		uint64 q;
+		if (addr->putIntoUInt64(q)) {
+			scalar_create_int_q(result, q);
+			return 1;
+		}
 	} else {
 		char buffer[1024];
 		bin2str(buffer, str->value, MIN((uint)str->len, sizeof buffer));
 		set_eval_error("invalid address '%s'", buffer);
-		return 0;
 	}
+	return 0;
 }
 
 static int aviewer_func_address_of(eval_scalar *result, eval_str *str)
@@ -625,33 +625,33 @@ static int aviewer_func_address_of(eval_scalar *result, eval_str *str)
 	bin2str(buffer, str->value, MIN((uint)str->len, sizeof buffer));
 	Symbol *l;
 	if ((l = aviewer->analy->getSymbolByName(buffer))) {
-		// FIXNEW
-		uint64 q = 0;
-		l->location->addr->putIntoArray((byte*)&q);
-		scalar_create_int_q(result, q);
-		return 1;
+		uint64 q;
+		if (l->location->addr->putIntoUInt64(q)) {
+			scalar_create_int_q(result, q);
+			return 1;
+		}
 	} else {
 		set_eval_error("invalid label '%s'", buffer);
-		return 0;
 	}
+	return 0;
 }
 
 static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 {
-	// FIXNEW
 	ht_aviewer *aviewer = (ht_aviewer*)eval_get_context();
 	viewer_pos p;
 	if (aviewer->offset_to_pos(i->value, &p)) {
 		Address *a;
-		uint64 q = 0;
+		uint64 q;
 		aviewer->convertViewerPosToAddress(p, &a);
-		a->putIntoArray((byte*)&q);
+		if (a->putIntoUInt64(q)) {
+			delete a;
+			scalar_create_int_q(result, q);
+			return 1;
+		}
 		delete a;
-		scalar_create_int_q(result, q);
-		return 1;
 	} else {
 		set_eval_error("invalid file offset or no corresponding address for '0%xh'", i->value);
-		return 0;
 	}
 	return 0;
 }
@@ -659,38 +659,40 @@ static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 /*
  *	for assembler
  */
-static int ht_aviewer_symbol_to_addr(void *Aviewer, char **s, uint32 *v)
+static int ht_aviewer_symbol_to_addr(void *Aviewer, char *&s, uint64 &v)
 {
 	// FIXNEW
 	ht_aviewer *aviewer = (ht_aviewer*)Aviewer;
 	Address *a;
-	if (**s == '@') {
-		(*s)++;
-		if (bnstr(s, v, 10)) {
+	if (*s == '@') {
+		s++;
+		if (parseIntStr(s, v, 10)) {
 			viewer_pos vp;
-			if (!aviewer->offset_to_pos(*v, &vp)) {
+			if (!aviewer->offset_to_pos(v, &vp)) {
 				set_eval_error("invalid offset: %08x", v);
 				return false;
 			}
 			aviewer->convertViewerPosToAddress(vp, &a);
-			a->putIntoArray((byte*)v);
+			if (a->putIntoUInt64(v)) {
+				delete a;
+				return true;
+			}
 			delete a;
-			return true;
 		}
 		// invalid number after @
 		return false;
 	} else {
-		char *k=ht_strdup(*s);
+		char *k=ht_strdup(s);
 		char *t=k;
 		while (!strchr("+/-* \t[]", *t) && *t) t++;
 		char temp=*t;
 		*t=0;
 		if ((*k == '$') && (k[1] == 0)) {
-			*t=temp;
-			*s+= t-k;
+			*t = temp;
+			s += t-k;
 			free(k);
 			if (aviewer->getCurrentAddress(&a)) {
-				a->putIntoArray((byte*)v);
+				a->putIntoArray((byte*)&v);
 				delete a;
 				return true;
 			} else {
@@ -702,11 +704,12 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, char **s, uint32 *v)
 		*t=temp;
 		if (l) {
 			// Label
-			*s+=t-k;
-			a=l->location->addr;               
-			a->putIntoArray((byte*)v);
-			free(k);
-			return true;
+			s += t-k;
+			a = l->location->addr;
+			if (a->putIntoUInt64(v)) {
+				free(k);
+				return true;
+			}
 		}
 		free(k);
 	}
@@ -815,10 +818,10 @@ void ht_aviewer::generateOutputDialog()
 			errorbox(globalerror);
 			continue;
 		}
-		uint end_by_lines;
+		uint64 end_by_lines;
 		if ((by_lines = end_str[0]=='#')) {
 			char *pend = &end_str[1];
-			bnstr(&pend, &end_by_lines, 10);
+			parseIntStr(pend, end_by_lines, 10);
 		} else {
 			if (!string_to_pos(end_str, &end)) {
 				errorbox(globalerror);
@@ -1209,7 +1212,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		viewer_pos current_pos;
 		Address *current_address;
 		if (get_current_pos(&current_pos) && getCurrentAddress(&current_address)) {
-			a->set_imm_eval_proc((int(*)(void *context, char **s, uint32 *v))ht_aviewer_symbol_to_addr, (void*)this);
+			a->set_imm_eval_proc(/*(int(*)(void *context, char **s, uint32 *v))*/ht_aviewer_symbol_to_addr, (void*)this);
 			int want_length;
 			analy->getDisasmStr(current_address, want_length);
 			dialog_assemble(this, current_pos, analy->mapAddr(current_address), a, analy->disasm, analy->getDisasmStrFormatted(current_address), want_length);
@@ -1956,7 +1959,7 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 	Address *w;
 	if (*name == '@') {
 		name++;
-		if (bnstr(&name, &v, 10)) {
+		if (parseIntStr(name, v, 10)) {
 			if (*name) return 0;
 			if (!offset_to_pos(v, &vp)) {
 				set_eval_error("invalid offset: %08x", v);
