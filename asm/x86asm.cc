@@ -1275,10 +1275,10 @@ bool x86asm::opimm(x86_insn_op *op, char *xop)
 
 bool x86asm::opplugimm(x86_insn_op *op, char *xop)
 {
-	uint32 d;
-	if (imm_eval_proc && imm_eval_proc(imm_eval_context, &xop, &d)) {
+	uint64 d;
+	if (imm_eval_proc && imm_eval_proc(imm_eval_context, xop, d)) {
 		if (*xop) return 0;
-		op->type=X86_OPTYPE_IMM;
+		op->type = X86_OPTYPE_IMM;
 		if (d>0xffff) op->size=4; else if (d>0xff) op->size=2; else op->size=1;
 		op->imm=d;
 		return true;
@@ -1432,10 +1432,10 @@ cont:
 		lasttokenreg=X86_REG_NO;
 
 		/* test if number */
+		uint64 vv;
 		uint32 v;
-		
-		if (imm_eval_proc && imm_eval_proc(imm_eval_context, &t, &v)) {
-			if (sign) disp-=v; else disp+=v;
+		if (imm_eval_proc && imm_eval_proc(imm_eval_context, t, vv)) {
+			if (sign) disp-=vv; else disp+=vv;
 			continue;
 		} else if (fetch_number(&t, &v)) {
 			if (sign) disp-=v; else disp+=v;
