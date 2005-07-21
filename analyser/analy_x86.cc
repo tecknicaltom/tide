@@ -109,12 +109,12 @@ int AddressX86Flat32::parseString(const char *s, int length, Analyser *a)
 	return 0;
 }
 
-void AddressX86Flat32::putIntoArray(byte *array)
+void AddressX86Flat32::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint32*)array, addr);
 }
 
-void AddressX86Flat32::putIntoCPUAddress(CPU_ADDR *ca)
+void AddressX86Flat32::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.offset = addr;
 }
@@ -235,13 +235,13 @@ int AddressX86_1632::parseString(const char *s, int length, Analyser *a)
 	return 0;
 }
 
-void AddressX86_1632::putIntoArray(byte *array)
+void AddressX86_1632::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint32*)array, addr);
 	UNALIGNED_MOVE(*(uint16*)(array+sizeof addr), seg);
 }
 
-void AddressX86_1632::putIntoCPUAddress(CPU_ADDR *ca)
+void AddressX86_1632::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.seg = seg;
 	ca->addr32.offset = addr;
@@ -368,13 +368,13 @@ int AddressX86_1616::parseString(const char *s, int length, Analyser *a)
 	return 0;
 }
 
-void AddressX86_1616::putIntoArray(byte *array)
+void AddressX86_1616::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint16*)array, addr);
 	UNALIGNED_MOVE(*(uint16*)(array+sizeof seg), seg);
 }
 
-void AddressX86_1616::putIntoCPUAddress(CPU_ADDR *ca)
+void AddressX86_1616::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.seg = seg;
 	ca->addr32.offset = addr;
