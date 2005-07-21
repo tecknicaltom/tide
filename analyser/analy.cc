@@ -81,7 +81,7 @@ int InvalidAddress::compareTo(const Object *obj) const
 	return 0;
 }
 
-void InvalidAddress::putIntoCPUAddress(CPU_ADDR *ca)
+void InvalidAddress::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 }
 
@@ -118,7 +118,7 @@ ObjectID InvalidAddress::getObjectID() const
 	return ATOM_ADDRESS_INVALID;
 }
 
-void InvalidAddress::putIntoArray(byte *array)
+void InvalidAddress::putIntoArray(byte *array) const
 {
 }
 
@@ -215,12 +215,12 @@ int AddressFlat32::parseString(const char *s, int length, Analyser *a)
 	return false;
 }
 
-void AddressFlat32::putIntoArray(byte *array)
+void AddressFlat32::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint32*)array, addr);
 }
 
-void AddressFlat32::putIntoCPUAddress(CPU_ADDR *ca)
+void AddressFlat32::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.offset = addr;
 }
@@ -333,12 +333,12 @@ int AddressFlat64::parseString(const char *s, int length, Analyser *a)
 	return false;
 }
 
-void AddressFlat64::putIntoArray(byte *array)
+void AddressFlat64::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint64*)array, addr);
 }
 
-void AddressFlat64::putIntoCPUAddress(CPU_ADDR *ca)
+void AddressFlat64::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->flat64.addr = addr;
 }
