@@ -94,11 +94,11 @@ struct BuildCtorArg {
 class Object {
 public:
 				Object(BuildCtorArg&);
-				Object();
+				Object(){};
 
-	virtual			~Object();
-		void		init();
-	virtual	void		done();
+	virtual			~Object(){};
+		void		init(){};
+	virtual	void		done(){};
 /* new */
 
 /**
