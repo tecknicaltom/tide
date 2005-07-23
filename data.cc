@@ -53,14 +53,6 @@ int autoCompare(const Object *a, const Object *b)
  *	Object
  */
 
-Object::Object()
-{
-}
-
-Object::~Object()
-{
-}
-
 void Object::init()
 {
 }
