@@ -19,7 +19,7 @@
  */
 
 #include "machostruc.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htmacho.h"
 #include "htmachohd.h"
 #include "httag.h"
