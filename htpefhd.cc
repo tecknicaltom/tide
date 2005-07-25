@@ -19,7 +19,7 @@
  */
 
 #include "pefstruc.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htpef.h"
 #include "htpefhd.h"
 #include "httag.h"
