@@ -18,7 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "htatom.h"
+#include "atom.h"
 #include "htnewexe.h"
 #include "htle.h"
 #include "htlevxd.h"
