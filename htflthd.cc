@@ -19,7 +19,7 @@
  */
 
 #include "fltstruc.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htflt.h"
 #include "htflthd.h"
 #include "httag.h"
