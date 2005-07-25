@@ -1518,7 +1518,12 @@ char *getstrz(Stream *stream)
 
 void putstrz(Stream *stream, const char *str)
 {
-	stream->writex(str, strlen(str)+1);
+	if (str) {
+		stream->writex(str, strlen(str)+1);
+	} else {
+		byte n = 0;
+		stream->writex(&n, 1);
+	}
 }
 
 char *getstrp(Stream *stream)
