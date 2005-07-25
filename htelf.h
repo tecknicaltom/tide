@@ -31,8 +31,8 @@
 #define DESC_ELF_HEADER "elf/header"
 #define DESC_ELF_SECTION_HEADERS "elf/section headers"
 #define DESC_ELF_PROGRAM_HEADERS "elf/program headers"
-#define DESC_ELF_SYMTAB "elf/symbol table %s (%d)"
-#define DESC_ELF_RELOCTAB "elf/relocation table %s (%d)"
+#define DESC_ELF_SYMTAB "elf/symbol table %y (%d)"
+#define DESC_ELF_RELOCTAB "elf/relocation table %y (%d)"
 #define DESC_ELF_IMAGE "elf/image"
 
 #define ATOM_ELF_CLASS	 			0x454c4600
