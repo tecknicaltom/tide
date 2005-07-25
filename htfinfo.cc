@@ -19,6 +19,7 @@
  */
 
 #include "htfinfo.h"
+#include "snprintf.h"
 
 #include <sys/stat.h>
 #include <string.h>
@@ -68,7 +69,7 @@ char *ht_finfo_text::gettext()
 {
 	char *t=finfotext;
 	pstat_t s;
-	file->pstat(&s);
+	file->pstat(s);
 	
 	if (s.caps & pstat_ctime) t+=print_time(t, "time of creation", s.ctime);
 	if (s.caps & pstat_mtime) t+=print_time(t, "time of modification", s.mtime);
@@ -77,8 +78,8 @@ char *ht_finfo_text::gettext()
 	if (s.caps & pstat_gid) t+=sprintf(t, "%-"FINFO_IDENTIFIER_WIDTH_STR"s%d\n", "group id", s.gid);
 
 	if (s.caps & pstat_size) {
-		t+=sprintf(t, "%-"FINFO_IDENTIFIER_WIDTH_STR"s%d (%.2f KiB, %.2f MiB)"
-		" / 0x%08x\n", "size", s.size, ((float)s.size)/1024,
+		t+=ht_snprintf(t, 200, "%-"FINFO_IDENTIFIER_WIDTH_STR"s%qd (%.2f KiB, %.2f MiB)"
+		" / 0x%08qx\n", "size", s.size, ((float)s.size)/1024,
 		((float)s.size)/1024/1024, s.size);
 	}	    
 
