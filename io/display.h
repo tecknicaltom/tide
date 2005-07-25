@@ -70,7 +70,13 @@ enum Codepage {
 #define GC_ARROW_LEFT		'<'		// a filled triangle, points left
 #define GC_ARROW_RIGHT		'>'		// a filled triangle, points right
 
+#define GC_SMALL_ARROW_UP	'A'		// an arrow up
+#define GC_SMALL_ARROW_DOWN	'V'		// an arrow down
+
 #define GC_FILLED_CIRCLE	'o'		// a filled and centered circle
+
+#define GC_FILLED_UPPER		0x0d		// upper half filled
+#define GC_FILLED_LOWER		0x0e		// lower half filled
 
 /* virtual colors */
 
