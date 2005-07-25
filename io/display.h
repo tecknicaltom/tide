@@ -64,6 +64,7 @@ enum Codepage {
 #define GC_LOW			0x0a		// regular pattern, density: low
 #define GC_MEDIUM		0x0b		// regular pattern, density: medium
 #define GC_HIGH			0x0c		// regular pattern, density: high
+#define GC_FULL			0x0d		// regular pattern, density: full
 
 #define GC_ARROW_UP		'^'		// a filled triangle, points up
 #define GC_ARROW_DOWN		'v'		// a filled triangle, points down
@@ -75,8 +76,8 @@ enum Codepage {
 
 #define GC_FILLED_CIRCLE	'o'		// a filled and centered circle
 
-#define GC_FILLED_UPPER		0x0d		// upper half filled
-#define GC_FILLED_LOWER		0x0e		// lower half filled
+#define GC_FILLED_UPPER		0x0e		// upper half filled
+#define GC_FILLED_LOWER		0x0f		// lower half filled
 
 /* virtual colors */
 
