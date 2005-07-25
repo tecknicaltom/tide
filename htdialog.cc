@@ -623,12 +623,16 @@ void ht_inputfield::freebuf()
 
 void ht_inputfield::getdata(ObjectStream &s)
 {
-	uint h = s->recordStart(datasize());
+	if (!attachedto) {
+		PUTX_INT32D(s, *textlen, NULL);
+		PUTX_BINARY(s, *text, *textlen, NULL);
+	}
+/*	FIXPORT uint h = s->recordStart(datasize());
 	if (!attachedto) {
 		s->putIntDec(*textlen, 4, NULL);
 		s->putBinary(*text, *textlen, NULL);
 	}
-	s->recordEnd(h);
+	s->recordEnd(h);*/
 }
 
 int ht_inputfield::insertbyte(byte *pos, byte b)
@@ -694,30 +698,30 @@ void ht_inputfield::select_add(byte *start, byte *end)
 
 void ht_inputfield::setdata(ObjectStream &s)
 {
-	uint h=s->recordStart(datasize());
+//	FIXPORT uint h=s->recordStart(datasize());
 	if (!attachedto) {
 		textlen=&textlenv;
-		*textlen=s->getIntDec(4, NULL);
+		GET_INT32D(s, *textlen);
 		
-		if (*textlen>*maxtextlen) *textlen=*maxtextlen;
+		if (*textlen > *maxtextlen) *textlen = *maxtextlen;
 		
-		s->getBinary(*text, *textlen, NULL);
+		GET_BINARY(s, *text, *textlen);
 		
-		curchar=&curcharv;
-		*curchar=*text+*textlen;
+		curchar = &curcharv;
+		*curchar = *text + *textlen;
 		
 		if (*textlen) {
-			*selstart=*text;
-			*selend=*text+*textlen;
+			*selstart = *text;
+			*selend = *text+*textlen;
 		} else {
-			*selstart=0;
-			*selend=0;
+			*selstart = 0;
+			*selend = 0;
 		}
 
-		ofs=0;
+		ofs = 0;
 	}
 	
-	s->recordEnd(h);
+//	s->recordEnd(h);
 	dirtyview();
 }
 
@@ -725,7 +729,7 @@ void ht_inputfield::setdata(ObjectStream &s)
  *	CLASS ht_strinputfield
  */
 
-void ht_strinputfield::init(Bounds *b, int maxstrlen, ht_list *history)
+void ht_strinputfield::init(Bounds *b, int maxstrlen, List *history)
 {
 	ht_inputfield::init(b, maxstrlen, history);
 	VIEW_DEBUG_NAME("ht_strinputfield");
@@ -768,7 +772,7 @@ void ht_strinputfield::draw()
 		buf_printchar(size.w-1, y, getcolor(palidx_generic_input_clip), '>');
 	}
 	if (history && history->count()) {
-		buf_printchar(size.w-1, y+size.h-1, getcolor(palidx_generic_input_clip), CHAR_ARROW_DOWN);
+		buf_printchar(size.w-1, y+size.h-1, getcolor(palidx_generic_input_clip), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
 	}
 	if (focused) {
 		int cx, cy;
@@ -785,34 +789,36 @@ void ht_strinputfield::draw()
 
 void ht_strinputfield::handlemsg(htmsg *msg)
 {
-	if ((msg->type==mt_empty) && (msg->msg==msg_keypressed)) {
+	if (msg->type == mt_empty && msg->msg == msg_keypressed) {
 		int k = msg->data1.integer;
 		switch (k) {
 			case K_Meta_S:
-				selectmode=!selectmode;
+				selectmode = !selectmode;
 				clearmsg(msg);
 				break;
 			case K_Up:
-				is_virgin=0;
-				if (*curchar-*text-ofs<size.w-2) {
-					ofs-=size.w-2;
-					if (ofs<0) ofs=0;
+				is_virgin = false;
+				if (*curchar - *text - ofs < size.w - 2) {
+					ofs -= size.w-2;
+					if (ofs < 0) ofs=0;
 				}
-				*curchar-=size.w-2;
-				if (*curchar<*text) *curchar=*text;
+				*curchar -= size.w-2;
+				if (*curchar < *text) *curchar = *text;
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Down:
-				is_virgin=0;
-				if (*curchar+size.w-2-*text>*textlen) {
+				is_virgin = false;
+				if (*curchar + size.w - 2 - *text > *textlen) {
 					history_dialog();
 					clearmsg(msg);
 					return;
 				} else {
-					*curchar+=size.w-2;
-					if (*curchar-*text>*textlen) *curchar=*text+*textlen;
+					*curchar += size.w-2;
+					if (*curchar - *text > *textlen) {
+						*curchar = *text + *textlen;
+					}
 					correct_viewpoint();
 					dirtyview();
 				}
@@ -820,7 +826,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Shift_Left:
 			case K_Left:
-				is_virgin=0;
+				is_virgin = false;
 				if (*curchar>*text) {
 					(*curchar)--;
 					if ((k==K_Shift_Left) != selectmode) {
@@ -833,7 +839,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Shift_Right:				
 			case K_Right:
-				is_virgin=0;
+				is_virgin = false;
 				if (*curchar-*text<*textlen) {
 					(*curchar)++;
 					if ((k==K_Shift_Right) != selectmode) {
@@ -846,16 +852,16 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Backspace:
 				if (is_virgin) {
-					is_virgin=0;
-					*selstart=0;
-					*selend=0;
-					*textlen=0;
-					*curchar=*text;
+					is_virgin = false;
+					*selstart = 0;
+					*selend = 0;
+					*textlen = 0;
+					*curchar = *text;
 					dirtyview();
 					clearmsg(msg);
-				} else if (*curchar>*text) {
-					*selstart=0;
-					*selend=0;
+				} else if (*curchar > *text) {
+					*selstart = 0;
+					*selend = 0;
 					memmove(*curchar-1, *curchar, *textlen-(*curchar-*text));
 					(*textlen)--;
 					(*curchar)--;
@@ -868,18 +874,18 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				break;
 			case K_Delete:
 				if (is_virgin) {
-					is_virgin=0;
-					*selstart=0;
-					*selend=0;
-					*textlen=0;
-					*curchar=*text;
+					is_virgin = false;
+					*selstart = 0;
+					*selend = 0;
+					*textlen = 0;
+					*curchar = *text;
 					dirtyview();
 					clearmsg(msg);
-				} else if ((*curchar-*text<*textlen) && (*textlen)) {
+				} else if (*curchar-*text < *textlen && *textlen) {
 					if (*selstart) {
-						if (*curchar>=*selstart) {
-							if (*curchar<*selend) (*selend)--;
-							if (*selstart==*selend) {
+						if (*curchar >= *selstart) {
+							if (*curchar < *selend) (*selend)--;
+							if (*selstart == *selend) {
 								*selstart=0;
 								*selend=0;
 							}
@@ -897,7 +903,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				break;
 			case K_Shift_Home:
 			case K_Home:
-				is_virgin=0;
+				is_virgin=false;
 				if ((k==K_Shift_Home) != selectmode) {
 					select_add(*curchar, *text);
 				}					
@@ -908,7 +914,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Shift_End:
 			case K_End:
-				is_virgin=0;
+				is_virgin=false;
 				if ((k==K_Shift_End) != selectmode) {
 					select_add(*curchar, *text+*textlen);
 				}						
@@ -933,7 +939,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 					*curchar=*selstart;
 					*selstart=0;
 					*selend=0;
-					is_virgin=0;
+					is_virgin=false;
 					correct_viewpoint();
 				}
 				dirtyview();
@@ -942,7 +948,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 			case K_Meta_C:
 			case K_Control_Insert:
 				if (*selend>*selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
-				is_virgin=0;
+				is_virgin=false;
 				dirtyview();
 				clearmsg(msg);
 				return;
@@ -959,15 +965,15 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 					*selend=*curchar+r;
 				}
 				delete buf;
-				is_virgin=0;
+				is_virgin=false;
 				dirtyview();
 				clearmsg(msg);
 				return;
 			}
 			default:
-				if ((msg->data1.integer>=' ') && (msg->data1.integer<256)) {
+				if (msg->data1.integer >= ' ' && msg->data1.integer < 256) {
 					if (is_virgin) {
-						is_virgin=0;
+						is_virgin=false;
 						*selstart=0;
 						*selend=0;
 						*textlen=0;
@@ -998,18 +1004,18 @@ void ht_strinputfield::history_dialog()
 			l->databuf_get(&d, sizeof d);
 
 			if (d.cursor_string) {
-				ht_history_entry *v=(ht_history_entry*)history->get(d.cursor_pos);
-				if ((v->data) && (group)) {
+				ht_history_entry *v=(ht_history_entry*)(*history)[d.cursor_pos];
+				if (v->data && group) {
 					v->datafile->seek(0);
-					group->setdata(v->data);
+					group->setdata(*v->data);
 				} else {
 					ht_inputfield_data e;
-					e.textlen=strlen(d.cursor_string);
-					e.text=(byte*)d.cursor_string;
+					e.textlen = strlen(d.cursor_string);
+					e.text = (byte*)d.cursor_string;
 					databuf_set(&e, sizeof e);
 				}
 			}
-			is_virgin=0;
+			is_virgin = false;
 		}
 		l->done();
 		delete l;
@@ -1027,7 +1033,7 @@ bool ht_strinputfield::inputbyte(byte a)
 	if (setbyte(a)) {
 		(*curchar)++;
 		correct_viewpoint();
-		is_virgin=0;
+		is_virgin = false;
 		return true;
 	}
 	return false;
@@ -1035,8 +1041,8 @@ bool ht_strinputfield::inputbyte(byte a)
 
 bool ht_strinputfield::setbyte(byte a)
 {
-	if ((insert) || (*curchar-*text>=*textlen)) {
-		if ((insertbyte(*curchar, a)) && (*curchar-*text<*textlen)) return true;
+	if (insert || *curchar-*text >= *textlen) {
+		if (insertbyte(*curchar, a) && *curchar-*text<*textlen) return true;
 	} else {
 		**curchar=a;
 		return true;
@@ -1063,8 +1069,11 @@ void ht_hexinputfield::done()
 
 void ht_hexinputfield::correct_viewpoint()
 {
-	if (*curchar-*text<ofs) ofs=*curchar-*text; else
-	if ((*curchar-*text)*3-(size.w-2)*size.h+5>ofs*3) ofs=((*curchar-*text)*3-(size.w-2)*size.h+5)/3;
+	if (*curchar-*text<ofs) {
+		ofs = *curchar-*text; 
+	} else if ((*curchar-*text)*3-(size.w-2)*size.h+5>ofs*3) {
+		ofs = ((*curchar-*text)*3-(size.w-2)*size.h+5) / 3;
+	}
 }
 
 void ht_hexinputfield::draw()
@@ -1078,11 +1087,11 @@ void ht_hexinputfield::draw()
 	int vv=*textlen-ofs;
 	if (vv<0) vv=0; else if (vv>(size.w-2)*size.h/3) vv=(size.w-2)*size.h/3+1;
 	for (int k=0; k<vv; k++) {
-		h+=sprintf(h, "%02x ", *(*text+k+ofs));
+		h += sprintf(h, "%02x ", *(*text+k+ofs));
 	}
 	if (vv) {
-		h=hbuf;
-		while ((*h) && (y<size.h)) {
+		h = hbuf;
+		while (*h && y < size.h) {
 			h+=buf_lprint(1, y, c, size.w-2, h);
 			y++;
 		}
@@ -1097,8 +1106,8 @@ void ht_hexinputfield::draw()
 			cx = size.w-1;
 			cy = size.h-1;
 		} else {
-			cx = ((*curchar-*text-ofs)*3+nib+1)%(size.w-2);
-			cy = ((*curchar-*text-ofs)*3+nib+1)/(size.w-2);
+			cx = ((*curchar-*text-ofs)*3+nib+1) % (size.w-2);
+			cy = ((*curchar-*text-ofs)*3+nib+1) / (size.w-2);
 		}
 		setcursor(cx, cy, insert ? cm_normal : cm_overwrite);
 	}
@@ -1256,11 +1265,11 @@ void ht_button::init(Bounds *b, const char *Text, int Value)
 	if (magicchar) {
 		int l=strlen(text);
 		memmove(magicchar, magicchar+1, l-(magicchar-text));
-		shortcut1=ht_metakey((ht_key)tolower(*magicchar));
-		shortcut2=(ht_key)tolower(*magicchar);
+		shortcut1 = keyb_metakey((ht_key)tolower(*magicchar));
+		shortcut2 = (ht_key)tolower(*magicchar);
 	} else {
-		shortcut1=K_INVALID;
-		shortcut2=K_INVALID;
+		shortcut1 = K_INVALID;
+		shortcut2 = K_INVALID;
 	}
 }
 
