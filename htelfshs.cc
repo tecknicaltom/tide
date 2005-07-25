@@ -19,7 +19,8 @@
  */
 
 #include "elfstruc.h"
-#include "htatom.h"
+#include "atom.h"
+#include "except.h"
 #include "htelf.h"
 #include "htelfshs.h"
 #include "httag.h"
@@ -100,8 +101,8 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 		v=new ht_uformat_viewer();
 		v->init(b, DESC_ELF_SECTION_HEADERS, VC_EDIT, file, group);
 
-		register_atom(ATOM_ELF_SH_TYPE, elf_sh_type);
-		register_atom(ATOM_ELF_SH_FLAGS, elf_sh_flags);
+		registerAtom(ATOM_ELF_SH_TYPE, elf_sh_type);
+		registerAtom(ATOM_ELF_SH_FLAGS, elf_sh_flags);
 
 		FileOfs h=elf_shared->header32.e_shoff;
 
@@ -109,7 +110,7 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 		m->init(file, 0);
 
 		char info[128];
-		ht_snprintf(info, sizeof info, "* ELF section headers at offset %08x", h);
+		ht_snprintf(info, sizeof info, "* ELF section headers at offset 0x%08qx", h);
 
 		m->add_mask(info);
 
@@ -118,12 +119,14 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 		elf_shared->shnames = (char**)malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
 		FileOfs so=elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset;
 		for (uint i=0; i<elf_shared->sheaders.count; i++) {
-			char *s;
-			if (file->seek(so+elf_shared->sheaders.sheaders32[i].sh_name)
-			|| !((s = fgetstrz(file)))) s = "?";
+			String s("?");
+
+			file->seek(so+elf_shared->sheaders.sheaders32[i].sh_name);
+			getStringz(file, s);
+
 			char t[1024];
-			ht_snprintf(t, sizeof t, "section %d: %s", i, s);
-			elf_shared->shnames[i] = s;
+			ht_snprintf(t, sizeof t, "section %d: %y", i, &s);
+			elf_shared->shnames[i] = ht_strdup(s);
 
 			ht_mask_sub *n = new ht_mask_sub();
 			n->init(file, i);
@@ -139,29 +142,33 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 		v = new ht_uformat_viewer();
 		v->init(b, DESC_ELF_SECTION_HEADERS, VC_EDIT, file, group);
 
-		register_atom(ATOM_ELF_SH_TYPE, elf_sh_type);
-		register_atom(ATOM_ELF_SH_FLAGS, elf_sh_flags);
+		registerAtom(ATOM_ELF_SH_TYPE, elf_sh_type);
+		registerAtom(ATOM_ELF_SH_FLAGS, elf_sh_flags);
 
 		/* FIXME: 64-bit */
-		FileOfs h = elf_shared->header64.e_shoff.lo;
+		FileOfs h = elf_shared->header64.e_shoff;
 
 		ht_mask_sub *m=new ht_mask_sub();
 		m->init(file, 0);
 
 		char info[128];
-		ht_snprintf(info, sizeof info, "* ELF section headers at offset %08x", h);
+		ht_snprintf(info, sizeof info, "* ELF section headers at offset 0x%08qx", h);
 
 		m->add_mask(info);
 
 		v->insertsub(m);
 
 		elf_shared->shnames=(char**)malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
-		/* FIXME: 64-bit */
-		FileOfs so=elf_shared->sheaders.sheaders64[elf_shared->header64.e_shstrndx].sh_offset.lo;
-		for (uint i=0; i<elf_shared->sheaders.count; i++) {
+
+		FileOfs so=elf_shared->sheaders.sheaders64[elf_shared->header64.e_shstrndx].sh_offset;
+		for (uint i=0; i < elf_shared->sheaders.count; i++) {
 			char *s;
-			if (file->seek(so+elf_shared->sheaders.sheaders64[i].sh_name)
-			|| !((s=fgetstrz(file)))) s = "?";
+			try {
+				file->seek(so+elf_shared->sheaders.sheaders64[i].sh_name);
+				s = getstrz(file);
+			} catch (const EOFException &) {
+				s = ht_strdup("?");
+			}
 			char t[1024];
 			ht_snprintf(t, sizeof t, "section %d: %s", i, s);
 			elf_shared->shnames[i]=s;
