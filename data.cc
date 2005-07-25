@@ -53,14 +53,6 @@ int autoCompare(const Object *a, const Object *b)
  *	Object
  */
 
-void Object::init()
-{
-}
-
-void Object::done()
-{
-}
-
 int Object::compareTo(const Object *obj) const
 {
 	throw NotImplementedException(HERE);
