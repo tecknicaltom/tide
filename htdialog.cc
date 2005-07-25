@@ -1295,10 +1295,10 @@ void ht_button::draw()
 /* shadow */
 	buf_printchar(0, 1, getcolor(palidx_generic_button_shadow), ' ');
 	for (int i=1; i<size.w-1; i++) {
-		buf_printchar(i, 1, getcolor(palidx_generic_button_shadow), CHAR_FILLED_HU);
+		buf_printchar(i, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
 	}
-	buf_printchar(size.w-1, 0, getcolor(palidx_generic_button_shadow), CHAR_FILLED_HL);
-	buf_printchar(size.w-1, 1, getcolor(palidx_generic_button_shadow), CHAR_FILLED_HU);
+	buf_printchar(size.w-1, 0, getcolor(palidx_generic_button_shadow), GC_FILLED_LOWER, CP_GRAPHICAL);
+	buf_printchar(size.w-1, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
 }
 
 void ht_button::handlemsg(htmsg *msg)
@@ -1377,7 +1377,7 @@ void ht_listbox_title::draw()
 		x += listbox->widths[i];
 		if (i+1<cols) {
 			buf_printchar(x++, 0, color, ' ');
-			buf_printchar(x++, 0, color, CHAR_LINEV);
+			buf_printchar(x++, 0, color, GC_1VLINE, CP_GRAPHICAL);
 			buf_printchar(x++, 0, color, ' ');
 		}
 	}
@@ -1631,7 +1631,7 @@ void ht_listbox::draw()
 				}
 				if (j+1<cols) {
 					buf_printchar(X++, i, c, ' ');
-					buf_printchar(X++, i, c, CHAR_LINEV);
+					buf_printchar(X++, i, c, GC_1VLINE, CP_GRAPHICAL);
 					buf_printchar(X++, i, c, ' ');
 				}
 			}
@@ -1681,7 +1681,7 @@ void ht_listbox::getdata(ObjectStream &s)
 	ht_listbox_data d;
 	d.top_ptr = e_top;
 	d.cursor_ptr = e_cursor;
-	s->write(&d, sizeof d);
+	PUTX_BINARY(s, &d, sizeof d, NULL);
 }
 
 void ht_listbox::gotoItemByEntry(void *entry, bool clear_quickfind)
@@ -1903,7 +1903,7 @@ bool ht_listbox::selectEntry(void *entry)
 void ht_listbox::setdata(ObjectStream &s)
 {
 	ht_listbox_data d;
-	s->read(&d, sizeof d);
+	GET_BINARY(s, &d, sizeof d);
 	e_top = d.top_ptr;
 	e_cursor = d.cursor_ptr;
 	update();
@@ -2515,13 +2515,13 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 	ht_listbox_data d;
 	listbox->databuf_get(&d, sizeof d);
 
-	s->putIntDec(((ht_text_listbox*)listbox)->getID(d.cursor_ptr), 4, NULL);
+	PUTX_INT32D(s, ((ht_text_listbox*)listbox)->getID(d.cursor_ptr), NULL);
 
 	ht_text_listbox_item *cursor = (ht_text_listbox_item*)d.cursor_ptr;
 	if (cursor) {
-		s->putString(cursor->data[0], NULL);
+		PUTX_STRING(s, cursor->data[0], NULL);
 	} else {
-		s->putString(NULL, NULL);
+		PUTX_STRING(s, NULL, NULL);
 	}
 }
 
@@ -2550,9 +2550,9 @@ void ht_listpopup_dialog::select_prev()
 
 void ht_listpopup_dialog::setdata(ObjectStream &s)
 {
-	int cursor_id=s->getIntDec(4, NULL);
-	s->getString(NULL);	/* ignored */
-	
+	int cursor_id = GETX_INT32D(s, NULL);
+	free(GETX_STRING(s, NULL));	/* ignored */
+
 	listbox->gotoItemByPosition(cursor_id);
 }
 
@@ -2591,7 +2591,7 @@ int ht_listpopup::datasize()
 void ht_listpopup::draw()
 {
 	ht_statictext::draw();
-	buf_printchar(size.w-1, 0, gettextcolor(), CHAR_ARROW_DOWN);
+	buf_printchar(size.w-1, 0, gettextcolor(), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
 }
 
 vcp ht_listpopup::gettextcolor()
@@ -2686,10 +2686,12 @@ void ht_label::init(Bounds *b, const char *_text, ht_view *_connected)
 		int l = strlen(text);
 		memmove(magicchar, magicchar+1, l-(magicchar-text));
 	}
-	connected=_connected;
+	connected = _connected;
 	if (magicchar) {
-		shortcut = ht_metakey((ht_key)*magicchar);
-	} else shortcut = K_INVALID;
+		shortcut = keyb_metakey((ht_key)*magicchar);
+	} else {
+		shortcut = K_INVALID;
+	}
 }
 
 void ht_label::done()
@@ -2802,17 +2804,17 @@ void ht_color_block::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	uint32 cursor=VCP(focused ? VC_LIGHT(VC_WHITE) : VC_BLACK, VC_TRANSPARENT);
-	for (int i=0; i<colors; i++) {
-		buf_printchar((i%4)*3+1, i/4, VCP(vcs[i], VC_TRANSPARENT), CHAR_FILLED_F);
-		buf_printchar((i%4)*3+2, i/4, VCP(vcs[i], VC_BLACK), CHAR_FILLED_M);
-		if (i==color) {
+	for (int i=0; i < colors; i++) {
+		buf_printchar((i%4)*3+1, i/4, VCP(vcs[i], VC_TRANSPARENT), GC_FULL, CP_GRAPHICAL);
+		buf_printchar((i%4)*3+2, i/4, VCP(vcs[i], VC_BLACK), GC_MEDIUM, CP_GRAPHICAL);
+		if (i == color) {
 			buf_printchar((i%4)*3, i/4, cursor, '>');
 			buf_printchar((i%4)*3+3, i/4, cursor, '<');
 		}
 	}
 	if (flags & cf_transparent) {
 		buf_print(1, (colors==8) ? 2 : 4, VCP(VC_BLACK, VC_TRANSPARENT), "transparent");
-		if (color==-1) {
+		if (color == -1) {
 			buf_printchar(0, (colors==8) ? 2 : 4, cursor, '>');
 			buf_printchar(12, (colors==8) ? 2 : 4, cursor, '<');
 		}
@@ -2821,7 +2823,7 @@ void ht_color_block::draw()
 
 void ht_color_block::getdata(ObjectStream &s)
 {
-	s->putIntDec((color==-1) ? VC_TRANSPARENT : vcs[color], 4, NULL);
+	PUTX_INT32D(s, (color==-1) ? VC_TRANSPARENT : vcs[color], NULL);
 }
 
 void ht_color_block::handlemsg(htmsg *msg)
@@ -2859,8 +2861,10 @@ void ht_color_block::handlemsg(htmsg *msg)
 
 void ht_color_block::setdata(ObjectStream &s)
 {
-	int c=s->getIntDec(4, NULL);
-	if (c==VC_TRANSPARENT) color=-1; else {
+	int c = GETX_INT32D(s, NULL);
+	if (c == VC_TRANSPARENT) {
+		color = -1; 
+	} else {
 		for (int i=0; i<16; i++) if (vcs[i]==c) {
 			color=i;
 			break;
