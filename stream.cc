@@ -1511,9 +1511,26 @@ char *getstrz(Stream *stream)
 	if (!z) return NULL;
 	char *str = (char*)malloc(z);
 	if (!str) throw std::bad_alloc();
-	memmove(str, buf, z-1);
+	memcpy(str, buf, z-1);
 	str[z-1] = 0;
 	return str;
+}
+
+bool getStringz(Stream *stream, String &s)
+{
+	String r;
+	try {
+		while (1) {
+			char c;
+			stream->readx(c, 1);
+			if (!c) break;
+			r += c;
+		}
+		s = r;
+		return true;
+	} catch (const EOFException &) {
+		return false;
+	}
 }
 
 void putstrz(Stream *stream, const char *str)
@@ -1532,14 +1549,19 @@ char *getstrp(Stream *stream)
 	stream->readx(&l, 1);
 	char *str = (char*)malloc(l+1);
 	if (!str) throw std::bad_alloc();
-	stream->readx(str, l);
-	*(str+l) = 0;
+	try {
+		stream->readx(str, l);
+	} catch (...) {
+		free(str);
+		throw;
+	}
+	str[l] = 0;
 	return str;
 }
 
 void putstrp(Stream *stream, const char *str)
 {
-	unsigned char l = strlen(str);
+	unsigned char l = str ? strlen(str) : 0;
 	stream->writex(&l, 1);
 	stream->writex(str, l);
 }
