@@ -192,18 +192,16 @@ void ElfAnalyser::initInsertFakeSymbols()
 {
 	if (!elf_shared->undefined2fakeaddr) return;
 	
-	foreach(KeyValue, kv, *elf_shared->undefined2fakeaddr, {
-		sectionAndIdx *key = (sectionAndIdx*)kv->mKey;
-		UInt *value = (UInt *)kv->mValue;
-		Address *address = createAddress32(value->value);
-		FileOfs h = elf_shared->sheaders.sheaders32[key->secidx].sh_offset;
+	foreach(FakeAddr, fa, *elf_shared->undefined2fakeaddr, {
+		Address *address = createAddress32(fa->addr);
+		FileOfs h = elf_shared->sheaders.sheaders32[fa->secidx].sh_offset;
 		ELF_SYMBOL32 sym;
-		file->seek(h + key->symidx * sizeof (ELF_SYMBOL32));
-		file->read(&sym, sizeof sym);
+		file->seek(h + fa->symidx * sizeof (ELF_SYMBOL32));
+		file->readx(&sym, sizeof sym);
 		createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 
 		FileOfs sto = elf_shared->sheaders.sheaders32[
-			elf_shared->sheaders.sheaders32[key->secidx].sh_link].sh_offset;
+			elf_shared->sheaders.sheaders32[fa->secidx].sh_link].sh_offset;
 		file->seek(sto + sym.st_name);
 		char *name = fgetstrz(file);
 		char buf[1024];
@@ -534,7 +532,7 @@ Assembler *ElfAnalyser::createAssembler()
 FileOfs ElfAnalyser::addressToFileofs(Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
-		uint32 ofs;
+		FileOfs ofs;
 		ELFAddress ea;
 		if (!convertAddressToELFAddress(Addr, &ea)) return INVALID_FILE_OFS;
 		if (!elf_addr_to_ofs(&elf_shared->sheaders, elf_shared->ident.e_ident[ELF_EI_CLASS], ea, &ofs)) return INVALID_FILE_OFS;
