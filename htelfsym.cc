@@ -19,7 +19,8 @@
  */
 
 #include "elfstruc.h"
-#include "htatom.h"
+#include "atom.h"
+#include "except.h"
 #include "htelf.h"
 #include "htelfsym.h"
 #include "httag.h"
@@ -70,15 +71,15 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 	/* associated string table offset (from sh_link) */
 	FileOfs sto = elf_shared->sheaders.sheaders32[elf_shared->sheaders.sheaders32[symtab_shidx].sh_link].sh_offset;
 
-	char *symtab_name;
-	if (!isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx) ||
-	file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset+elf_shared->sheaders.sheaders32[symtab_shidx].sh_name)
-	|| !((symtab_name=fgetstrz(file))))
-		symtab_name = "?";
+	String symtab_name("?");
+	if (isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)) {
+		file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset
+			+ elf_shared->sheaders.sheaders32[symtab_shidx].sh_name);
+		getStringz(file, symtab_name);
+	}
 
 	char desc[128];
-	ht_snprintf(desc, sizeof desc, DESC_ELF_SYMTAB, symtab_name, symtab_shidx);
-	free(symtab_name);
+	ht_snprintf(desc, sizeof desc, DESC_ELF_SYMTAB, &symtab_name, symtab_shidx);
 
 	ht_uformat_viewer *v=new ht_uformat_viewer();
 	v->init(b, desc, VC_EDIT | VC_SEARCH, file, group);
@@ -86,10 +87,10 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 
-	register_atom(ATOM_ELF_ST_BIND, elf_st_bind);
+	registerAtom(ATOM_ELF_ST_BIND, elf_st_bind);
 
 	char t[256];
-	ht_snprintf(t, sizeof t, "* ELF symtab at offset %08x", h);
+	ht_snprintf(t, sizeof t, "* ELF symtab at offset %08qx", h);
 
 	m->add_mask(t);
 
@@ -97,10 +98,10 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 
 	bool elf_bigendian = (elf_shared->ident.e_ident[ELF_EI_DATA] == ELFDATA2MSB);
 	uint symnum = elf_shared->sheaders.sheaders32[symtab_shidx].sh_size / sizeof (ELF_SYMBOL32);
-	for (uint i=0; i<symnum; i++) {
+	for (uint i=0; i < symnum; i++) {
 		ELF_SYMBOL32 sym;
 		file->seek(h+i*sizeof (ELF_SYMBOL32));
-		file->read(&sym, sizeof sym);
+		file->readx(&sym, sizeof sym);
 		createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 		file->seek(sto+sym.st_name);          
 		char *name = fgetstrz(file);
@@ -142,16 +143,11 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 				tt += ht_snprintf(tt, sizeof t - (tt-t), "*common     ");
 				break;
 			default: {
-				char *s;
-				if (!isValidELFSectionIdx(elf_shared, sym.st_shndx)
-				|| file->seek(so+elf_shared->sheaders.sheaders32[sym.st_shndx].sh_name)
-				|| !((s = fgetstrz(file)))) {
-					s = "?";
-					tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11s ", s);
-				} else {
-					tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11s ", s);
-					free(s);
+				String s("?");
+				if (isValidELFSectionIdx(elf_shared, sym.st_shndx)) {
+					getStringz(file, s);
 				}
+				tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11y ", &s);
 				break;
 			}
 		}
