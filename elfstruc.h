@@ -98,8 +98,8 @@ typedef uint16 elf64_quarter;
 #define ELF_ET_CORE			4
 #define ELF_ET_LOOS			0xFE00
 #define ELF_ET_HIOS			0xFEFF
-#define ELF_ET_LOPROC		0xFF00
-#define ELF_ET_HIPROC		0xFFFF
+#define ELF_ET_LOPROC			0xFF00
+#define ELF_ET_HIPROC			0xFFFF
 
 /* e_machine */
 #define ELF_EM_NONE			0
