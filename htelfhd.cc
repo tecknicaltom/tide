@@ -190,28 +190,28 @@ ht_view *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 	
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	ht_uformat_viewer *v = new ht_uformat_viewer();
 	v->init(b, DESC_ELF_HEADER, VC_EDIT, file, group);
-	ht_mask_sub *m=new ht_mask_sub();
+	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 	char info[128];
-	ht_snprintf(info, sizeof info, "* ELF header at offset %08x", elf_shared->header_ofs);
-	register_atom(ATOM_ELF_CLASS, elf_class);
-	register_atom(ATOM_ELF_DATA, elf_data);
-	register_atom(ATOM_ELF_OS_ABI, elf_os_abi);
-	register_atom(ATOM_ELF_TYPE, elf_type);
-	register_atom(ATOM_ELF_MACHINE, elf_machine);
+	ht_snprintf(info, sizeof info, "* ELF header at offset 0x%08qx", elf_shared->header_ofs);
+	registerAtom(ATOM_ELF_CLASS, elf_class);
+	registerAtom(ATOM_ELF_DATA, elf_data);
+	registerAtom(ATOM_ELF_OS_ABI, elf_os_abi);
+	registerAtom(ATOM_ELF_TYPE, elf_type);
+	registerAtom(ATOM_ELF_MACHINE, elf_machine);
 	m->add_mask(info);
 	m->add_staticmask_ptable(elfheader, elf_shared->header_ofs, true);
 	bool elf_bigendian = (elf_shared->ident.e_ident[ELF_EI_DATA] == ELFDATA2MSB);
 	
 	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
-		case ELFCLASS32:
-			m->add_staticmask_ptable(elfheader32, elf_shared->header_ofs, elf_bigendian);
-			break;
-		case ELFCLASS64:
-			m->add_staticmask_ptable(elfheader64, elf_shared->header_ofs, elf_bigendian);
-			break;
+	case ELFCLASS32:
+		m->add_staticmask_ptable(elfheader32, elf_shared->header_ofs, elf_bigendian);
+		break;
+	case ELFCLASS64:
+		m->add_staticmask_ptable(elfheader64, elf_shared->header_ofs, elf_bigendian);
+		break;
 	}
 	
 	v->insertsub(m);
