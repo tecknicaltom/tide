@@ -472,6 +472,8 @@ void fileMove(File *file, FileOfs src, FileOfs dest, FileOfs size);
 char *fgetstrz(File *file);
 /** read string from stream (zero-terminated, 8-bit chars) */
 char *getstrz(Stream *stream);
+/** read string from stream (zero-terminated, 8-bit chars) */
+bool getStringz(Stream *stream, String &s);
 /** write string into stream (zero-terminated, 8-bit chars) */
 void putstrz(Stream *stream, const char *str);
 
