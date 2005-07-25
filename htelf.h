@@ -73,16 +73,18 @@
 
 extern format_viewer_if htelf_if;
 
-class sectionAndIdx: public Object {
+class FakeAddr: public Object {
 public:
 	uint secidx;
 	uint symidx;
+	uint32 addr;
 
-	sectionAndIdx(uint asecidx, uint asymidx)
+	FakeAddr(uint asecidx, uint asymidx, uint32 aAddr)
+		: secidx(asecidx), symidx(asymidx), addr(aAddr)
 	{
-		secidx = asecidx;
-		symidx = asymidx;
 	}
+
+	virtual int compareTo(const Object *) const;
 };
 
 struct elf_section_headers {
@@ -185,10 +187,10 @@ bool elf_phys_and_mem_section(elf_section_header *s, uint elfclass);
 bool elf_valid_section(elf_section_header *s, uint elfclass);
 
 bool elf_addr_to_section(elf_section_headers *section_headers, uint elfclass, ELFAddress addr, int *section);
-bool elf_addr_to_ofs(elf_section_headers *section_headers, uint elfclass, ELFAddress addr, uint32 *ofs);
+bool elf_addr_to_ofs(elf_section_headers *section_headers, uint elfclass, ELFAddress addr, FileOfs *ofs);
 bool elf_addr_is_valid(elf_section_headers *section_headers, uint elfclass, ELFAddress addr);
 
-bool elf_ofs_to_addr(elf_section_headers *section_headers, uint elfclass, uint32 ofs, ELFAddress *addr);
-bool elf_ofs_to_section(elf_section_headers *section_headers, uint elfclass, uint32 ofs, uint32 *section);
+bool elf_ofs_to_addr(elf_section_headers *section_headers, uint elfclass, FileOfs ofs, ELFAddress *addr);
+bool elf_ofs_to_section(elf_section_headers *section_headers, uint elfclass, FileOfs ofs, uint32 *section);
 
 #endif /* !__HTELF_H__ */
