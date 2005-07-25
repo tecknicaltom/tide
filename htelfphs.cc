@@ -82,8 +82,8 @@ static ht_view *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group 
 		v = new ht_uformat_viewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
 	
-		register_atom(ATOM_ELF_PH_TYPE, elf_ph_type);
-		register_atom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
+		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);
+		registerAtom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
 	
 		FileOfs h=elf_shared->header32.e_phoff;
 	
@@ -117,17 +117,16 @@ static ht_view *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group 
 		v = new ht_uformat_viewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
 	
-		register_atom(ATOM_ELF_PH_TYPE, elf_ph_type);
-		register_atom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
+		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);
+		registerAtom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
 
-/* FIXME: 64-bit */
-		FileOfs h=elf_shared->header64.e_phoff.lo;
+		FileOfs h = elf_shared->header64.e_phoff;
 	
 		ht_mask_sub *m=new ht_mask_sub();
 		m->init(file, 0);
 	
 		char info[128];
-		ht_snprintf(info, sizeof info, "* ELF program headers at offset %08x", h);
+		ht_snprintf(info, sizeof info, "* ELF program headers at offset 0x%08qx", h);
 	
 		m->add_mask(info);
 
