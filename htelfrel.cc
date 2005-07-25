@@ -19,7 +19,7 @@
  */
 
 #include "elfstruc.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htelf.h"
 #include "htelfrel.h"
 #include "httag.h"
@@ -74,15 +74,15 @@ static ht_view *htelfreloctable_init(Bounds *b, File *file, ht_format_group *gro
 	/* section index of section to be relocated */
 	int si_dest=elf_shared->sheaders.sheaders32[reloctab_shidx].sh_info;
 
-	char *reloctab_name;
-	if (!isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)
-	|| file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.
-	e_shstrndx].sh_offset+elf_shared->sheaders.sheaders32[reloctab_shidx].sh_name)
-	|| !((reloctab_name=fgetstrz(file))))
-		reloctab_name = "?";
+	String reloctab_name("?");
+	if (isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)) {
+		file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset
+			+ elf_shared->sheaders.sheaders32[reloctab_shidx].sh_name);
+		getStringz(file, reloctab_name);
+	}
+
 	char desc[128];
-	ht_snprintf(desc, sizeof desc, DESC_ELF_RELOCTAB, reloctab_name, reloctab_shidx);
-	free(reloctab_name);
+	ht_snprintf(desc, sizeof desc, DESC_ELF_RELOCTAB, &reloctab_name, reloctab_shidx);
 	
 	ht_uformat_viewer *v=new ht_uformat_viewer();
 	v->init(b, desc, VC_EDIT, file, group);
@@ -90,7 +90,7 @@ static ht_view *htelfreloctable_init(Bounds *b, File *file, ht_format_group *gro
 	ht_mask_sub *m=new ht_mask_sub();
 	m->init(file, 0);
 	
-	register_atom(ATOM_ELF_R_386_TYPE, elf_r_386_type);
+	registerAtom(ATOM_ELF_R_386_TYPE, elf_r_386_type);
 
 	char t[256];	/* FIXME: possible buffer overflow ! */
 	ht_snprintf(t, sizeof t, "* ELF relocation table at offset %08x, relocates section %d, symtab %d", h, si_dest, si_symbol);
