@@ -207,8 +207,8 @@ String *String::clone() const
  */
 int String::compareChar(char c1, char c2) const
 {
-	if (c1<c2) return -1;
-	if (c1>c2) return 1;
+	if (c1 < c2) return -1;
+	if (c1 > c2) return 1;
 	return 0;
 }
 
