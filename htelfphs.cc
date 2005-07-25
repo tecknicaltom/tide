@@ -19,7 +19,7 @@
  */
 
 #include "elfstruc.h"
-#include "htatom.h"
+#include "atom.h"
 #include "htelf.h"
 #include "htelfphs.h"
 #include "httag.h"
