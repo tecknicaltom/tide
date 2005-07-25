@@ -28,14 +28,14 @@
 #include "blockop.h"
 #include "cmds.h"
 #include "htapp.h"		// for popup_view_list(..)
-#include "htatom.h"
+#include "atom.h"
 #include "htclipboard.h"
 #include "htctrl.h"
 #include "endianess.h"
 #include "hteval.h"
 #include "hthist.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htpal.h"
 #include "httag.h"
 #include "textedit.h"
@@ -123,8 +123,7 @@ void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bo
 	xgroup->init(b, options, desc);
 	xgroup->group=group;
 
-	format_views=new ht_clist();	// a list of ht_format_viewer_entrys
-	format_views->init();
+	format_views=new Array(true);	// a list of ht_format_viewer_entrys
 
 	own_file=own_f;
 	editable_file=editable_f;
@@ -135,7 +134,6 @@ void ht_format_group::done()
 {
 	done_ifs();
 
-	format_views->destroy();
 	delete format_views;
 
 	xgroup->done();
@@ -143,10 +141,7 @@ void ht_format_group::done()
 
 	ht_format_viewer::done();
 
-	if (own_file && file) {
-		file->done();
-		delete file;
-	}
+	if (own_file) delete file;
 }
 
 int ht_format_group::childcount()
@@ -168,7 +163,7 @@ void ht_format_group::done_ifs()
 {
 	int j=0;
 	while (1) {
-		ht_format_viewer_entry *e=(ht_format_viewer_entry*)format_views->get(j);
+		ht_format_viewer_entry *e=(ht_format_viewer_entry*)(*format_views)[j];
 		if (!(e && e->instance)) break;
 		done_if(e->interface, e->instance);
 		j++;
@@ -177,7 +172,7 @@ void ht_format_group::done_ifs()
 
 bool ht_format_group::edit()
 {
-	return (file->get_access_mode() & FAM_WRITE);
+	return (file->getAccessMode() & IOAM_WRITE);
 }
 
 int ht_format_group::focus(ht_view *view)
@@ -502,8 +497,9 @@ bool ht_format_viewer::continue_search()
 							r=psearch(last_search_request, no, last_search_end_ofs);
 						}
 					}
-				} catch (const ht_exception &e) {
-					errorbox("error: %s", e.what());
+				} catch (const Exception &e) {
+					String s;
+					errorbox("error: %y", &e.reason(s));
 				}
 			}
 		} else {
@@ -515,8 +511,9 @@ bool ht_format_viewer::continue_search()
 							r=vsearch(last_search_request, na, last_search_end_pos);
 						}
 					}
-				} catch (const ht_exception &e) {
-					errorbox("error: %s", e.what());
+				} catch (const Exception &e) {
+					String s;
+					errorbox("error: %y", &e.reason(s));
 				}
 			}
 		}
@@ -593,7 +590,7 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 			break;
 		}
 		case msg_vstate_restore:
-			vstate_restore((ht_data*)msg->data1.ptr);
+			vstate_restore((Object*)msg->data1.ptr);
 			clearmsg(msg);
 			return;
 		case cmd_file_truncate: {
@@ -616,12 +613,12 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 		}
 		case cmd_edit_mode_i: {
 			if (file/* && (file==msg->data1.ptr)*/) {
-				if (file->set_access_mode(FAM_READ | FAM_WRITE)) {
+				if (file->setAccessMode(IOAM_READ | FAM_WRITE)) {
 					htmsg m;
 					m.msg = cmd_edit_mode;
 					m.type = mt_broadcast;
 					sendmsg(&m);
-				} else errorbox("can't open file %s in write mode ! (error %08x)", file->get_filename(), file->get_error());
+				} else errorbox("can't open file %s in write mode ! (error %08x)", file->getFilename(), file->get_error());
 			}
 			clearmsg(msg);
 			return;
