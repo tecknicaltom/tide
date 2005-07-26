@@ -438,7 +438,7 @@ public:
 #define Q_ENGAGE_DATA_ANALYSER 3
 
 /* interesting constants */
-#define INVALID_FILE_OFS ((uint32)-1)
+#define INVALID_FILE_OFS ((FileOfs)-1)
 
 /* analyser system constants */
 #define MAX_OPS_PER_CONTINUE 10
