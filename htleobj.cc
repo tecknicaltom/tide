@@ -74,13 +74,13 @@ static ht_view *htleobjects_init(Bounds *b, File *file, ht_format_group *group)
 	ht_mask_sub *m=new ht_mask_sub();
 	m->init(file, 0);
 
-	register_atom(ATOM_LE_OBJFLAGS, le_objflags);
+	registerAtom(ATOM_LE_OBJFLAGS, le_objflags);
 
 /* FIXME: */
 	bool le_bigendian = false;
 
 	char t[64];
-	ht_snprintf(t, sizeof t, "* LE object headers at offset %08x", h+le_shared->hdr.objtab);
+	ht_snprintf(t, sizeof t, "* LE object headers at offset 0x%08qx", h+le_shared->hdr.objtab);
 	m->add_mask(t);
 
 	v->insertsub(m);
