@@ -53,8 +53,9 @@ static ht_view *htle_init(Bounds *b, File *file, ht_format_group *format_group)
 	byte lemagic[2];
 	FileOfs h=get_newexe_header_ofs(file);
 	file->seek(h);
-	file->read(lemagic, 2);
-	if ((lemagic[0]!=LE_MAGIC0) || (lemagic[1]!=LE_MAGIC1)) return 0;
+	
+	if (file->read(lemagic, 2) != 2 
+	 || lemagic[0] != LE_MAGIC0 || lemagic[1] != LE_MAGIC1) return 0;
 
 	ht_le *g=new ht_le();
 	g->init(b, file, htle_ifs, format_group, h);
@@ -71,7 +72,8 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_LE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_le");
 
-	LOG("%s: LE: found header at %08x", file->get_filename(), h);
+	String fn;
+	LOG("%y: LE: found header at 0x%08qx", &file->getFilename(fn), h);
 	ht_le_shared_data *le_shared = (ht_le_shared_data*)malloc(sizeof(ht_le_shared_data));
 	shared_data = le_shared;
 	le_shared->v_header = NULL;
@@ -89,7 +91,7 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	/* read LE header */
 	file->seek(h);
-	file->read(&le_shared->hdr, sizeof le_shared->hdr);
+	file->readx(&le_shared->hdr, sizeof le_shared->hdr);
 	createHostStruct(&le_shared->hdr, LE_HEADER_struct, le_shared->byteorder);
 
 	le_shared->is_vxd = (le_shared->hdr.winresoff) ||
@@ -100,9 +102,8 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	read_pagemap();
 	read_objects();
 
-	ht_le_page_file *lfile = new ht_le_page_file();
-	lfile->init(file, false, &le_shared->pagemap, le_shared->pagemap.count,
-		le_shared->hdr.pagesize);
+	ht_le_page_file *lfile = new ht_le_page_file(file, false, &le_shared->pagemap, 
+		le_shared->pagemap.count, le_shared->hdr.pagesize);
 	le_shared->linear_file = lfile;
 
 	do_fixups();
@@ -125,15 +126,8 @@ void ht_le::done()
 	if (le_shared->pagemap.vsize) free(le_shared->pagemap.vsize);
 	if (le_shared->pagemap.psize) free(le_shared->pagemap.psize);
 
-	if (le_shared->linear_file) {
-		le_shared->linear_file->done();
-		delete le_shared->linear_file;
-	}
-
-	if (le_shared->reloc_file) {
-		le_shared->reloc_file->done();
-		delete le_shared->reloc_file;
-	}
+	delete le_shared->linear_file;
+	delete le_shared->reloc_file;
 
 	free(le_shared);
 }
@@ -149,7 +143,7 @@ void ht_le::do_fixups()
 	file->seek(h+le_shared->hdr.fpagetab);
 	for (uint i=0; i<le_shared->hdr.pagecnt+1; i++) {
 		char buf[4];
-		file->read(buf, 4);
+		file->readx(buf, 4);
 		uint32 ofs = createHostInt(buf, 4, little_endian);
 		page_fixup_ofs[i] = ofs;
 	}
@@ -158,14 +152,14 @@ void ht_le::do_fixups()
 		page_fixup_size[i] = page_fixup_ofs[i+1] - page_fixup_ofs[i];
 	}
 
-	ht_le_reloc_file *rfile = new ht_le_reloc_file();
-	rfile->init(le_shared->linear_file, false, le_shared);
+	ht_le_reloc_file *rfile = new ht_le_reloc_file(le_shared->linear_file, 
+					false, le_shared);
 
 	le_shared->reloc_file = rfile;
 
 	uint error_count = 0;
 
-	for (uint i=0; i<le_shared->hdr.pagecnt; i++) {
+	for (uint i=0; i < le_shared->hdr.pagecnt; i++) {
 		// size of fixup record table for segment
 		uint32 size = page_fixup_size[i];
 		uint obj_ofs = i * le_shared->hdr.pagesize;
@@ -177,7 +171,7 @@ void ht_le::do_fixups()
 			LE_FIXUP f;
 			if (sizeof f > size) { error = true; break; }
 			size -= sizeof f;
-			file->read(&f, sizeof f);
+			file->readx(&f, sizeof f);
 			createHostStruct(&f, LE_FIXUP_struct, le_shared->byteorder);
 			/* only internal references (16/32) supported for now... */
 			if ((f.reloc_type != 0) && (f.reloc_type != 16)) {
@@ -209,14 +203,14 @@ void ht_le::do_fixups()
 				char buf[1];
 				if (sizeof buf > size) { error = true; break; }
 				size -= sizeof buf;
-				file->read(buf, sizeof buf);
+				file->readx(buf, sizeof buf);
 				multi_count = createHostInt(buf, 1, little_endian);
 			} else {
 				// single source offset
 				char buf[2];
 				if (sizeof buf > size) { error = true; break; }
 				size -= sizeof buf;
-				file->read(buf, sizeof buf);
+				file->readx(buf, sizeof buf);
 				src_ofs = createHostInt(buf, 2, little_endian);
 			}
 
@@ -228,7 +222,7 @@ void ht_le::do_fixups()
 						LE_FIXUP_INTERNAL32 x;
 						if (sizeof x > size) { error = true; break; }
 						size -= sizeof x;
-						file->read(&x, sizeof x);
+						file->readx(&x, sizeof x);
 						createHostStruct(&x, LE_FIXUP_INTERNAL32_struct, le_shared->byteorder);
 						target_seg = x.seg-1;
 						target_ofs = x.ofs;
@@ -236,7 +230,7 @@ void ht_le::do_fixups()
 						LE_FIXUP_INTERNAL16 x;
 						if (sizeof x > size) { error = true; break; }
 						size -= sizeof x;
-						file->read(&x, sizeof x);
+						file->readx(&x, sizeof x);
 						createHostStruct(&x, LE_FIXUP_INTERNAL16_struct, le_shared->byteorder);
 						target_seg = x.seg-1;
 						target_ofs = x.ofs;
@@ -247,7 +241,7 @@ void ht_le::do_fixups()
 							char buf[2];
 							if (sizeof buf > size) { error = true; break; }
 							size -= sizeof buf;
-							file->read(buf, sizeof buf);
+							file->readx(buf, sizeof buf);
 							src_ofs = createHostInt(buf, sizeof buf, little_endian);
 							rfile->insert_reloc(obj_ofs + src_ofs, new ht_le_reloc_entry(obj_ofs + src_ofs, target_seg, LE_MAKE_ADDR(le_shared, target_seg, target_ofs), f.address_type, f.reloc_type));
 						}
@@ -273,12 +267,14 @@ void ht_le::do_fixups()
 	free(page_fixup_size);
 
 	if (error_count) {
+		String fn;
 		// FIXME: once complete:
 		// "%s: NE relocations seem to be corrupted.", file->get_filename());
-		LOG_EX(LOG_WARN, "%s: LE: invalid and/or unsupported relocations found.", file->get_filename());
-		errorbox("%s: LE: invalid and/or unsupported relocations found.", file->get_filename());
+		LOG_EX(LOG_WARN, "%y: LE: invalid and/or unsupported relocations found.", &file->getFilename(fn));
+		errorbox("%y: LE: invalid and/or unsupported relocations found.", &fn);
 	} else {
-		LOG("%s: LE: relocations present, relocation simulation layer enabled", file->get_filename());
+		String fn;
+		LOG("%y: LE: relocations present, relocation simulation layer enabled", &file->getFilename(fn));
 	}
 	rfile->finalize();
 }
@@ -293,12 +289,12 @@ void ht_le::check_vxd()
 		/* test if really VxD and find VxD descriptor */
 		LE_ENTRYPOINT_BUNDLE b;
 		file->seek(h+le_shared->hdr.enttab);
-		file->read(&b, sizeof b);
+		file->readx(&b, sizeof b);
 		le_shared->is_vxd = false;
 		if ((b.entry_count == 1) && (b.flags & LE_ENTRYPOINT_BUNDLE_VALID) &&
 		(b.flags & LE_ENTRYPOINT_BUNDLE_32BIT) && (b.obj_index == 1)) {
 			LE_ENTRYPOINT32 e;
-			file->read(&e, sizeof e);
+			file->readx(&e, sizeof e);
 			createHostStruct(&e, LE_ENTRYPOINT32_struct, le_shared->byteorder);
 			if (e.flags & LE_ENTRYPOINT_EXPORTED) {
 				/* linearized address for ht_le_page_file */
@@ -306,7 +302,7 @@ void ht_le::check_vxd()
 					page_map_index-1)*le_shared->hdr.pagesize + e.offset;
 
 				le_shared->reloc_file->seek(vxd_desc_ofs);
-				le_shared->reloc_file->read(&le_shared->vxd_desc, sizeof le_shared->vxd_desc);
+				le_shared->reloc_file->readx(&le_shared->vxd_desc, sizeof le_shared->vxd_desc);
 				createHostStruct(&le_shared->vxd_desc, LE_VXD_DESCRIPTOR_struct, le_shared->byteorder);
 
 				le_shared->vxd_desc_linear_ofs = vxd_desc_ofs;
@@ -330,7 +326,7 @@ void ht_le::read_pagemap()
 	for (uint32 i=0; i<le_shared->hdr.pagecnt; i++) {
 		LE_PAGE_MAP_ENTRY e;
 		file->seek(h+le_shared->hdr.pagemap+i*4);
-		file->read(&e, sizeof e);
+		file->readx(&e, sizeof e);
 		createHostStruct(&e, LE_PAGE_MAP_ENTRY_struct, le_shared->byteorder);
 		
 		/* FIXME: is this formula correct ? it comes straight from my docs... */
@@ -364,7 +360,7 @@ void ht_le::read_objects()
 
 	for (uint i=0; i<le_shared->hdr.objcnt; i++) {
 		file->seek(h+le_shared->hdr.objtab+i*24);
-		file->read(&le_shared->objmap.header[i], sizeof *le_shared->objmap.header);
+		file->readx(&le_shared->objmap.header[i], sizeof *le_shared->objmap.header);
 		createHostStruct(&le_shared->objmap.header[i], LE_OBJECT_HEADER_struct, le_shared->byteorder);
 
 		/* sum up page sizes to find object's physical size */
@@ -421,9 +417,9 @@ bool ht_le::loc_enum_next(ht_format_loc *loc)
  *	CLASS ht_le_page_file
  */
 
-void ht_le_page_file::init(File *file, bool own_file, ht_le_pagemap *pm, uint32 pms, uint32 ps)
+ht_le_page_file::ht_le_page_file(File *file, bool own_file, ht_le_pagemap *pm, uint32 pms, uint32 ps)
+	: FileLayer(file, own_file)
 {
-	ht_layer_streamfile::init(file, own_file);
 	pagemap = pm;
 	pagemapsize = pms;
 	page_size = ps;
@@ -439,7 +435,7 @@ bool ht_le_page_file::isdirty(FileOfs offset, FileOfs range)
 		if (!map_ofs(offset, &mofs, &msize)) break;
 		if (s > msize) s = msize;
 		bool isdirty;
-		streamfile->cntl(FCNTL_MODS_IS_DIRTY, mofs, s, &isdirty);
+		mFile->cntl(FCNTL_MODS_IS_DIRTY, mofs, s, &isdirty);
 		if (isdirty) return true;
 		range -= s;
 		ofs += s;
@@ -451,9 +447,9 @@ bool ht_le_page_file::isdirty(FileOfs offset, FileOfs range)
  *	Map a paged and linearized LE offset to its corresponding
  *	physical file offset
  */
-bool ht_le_page_file::map_ofs(uint lofs, FileOfs *pofs, uint *maxsize)
+bool ht_le_page_file::map_ofs(uint32 lofs, FileOfs *pofs, FileOfs *maxsize)
 {
-	uint i = lofs/page_size, j = lofs % page_size;
+	uint i = lofs / page_size, j = lofs % page_size;
 	if (i < pagemapsize) {
 		if (j < pagemap->vsize[i]) {
 			*pofs = pagemap->offset[i]+j;
@@ -464,7 +460,7 @@ bool ht_le_page_file::map_ofs(uint lofs, FileOfs *pofs, uint *maxsize)
 	return false;
 }
 
-bool ht_le_page_file::unmap_ofs(FileOfs pofs, uint *lofs)
+bool ht_le_page_file::unmap_ofs(FileOfs pofs, uint32 *lofs)
 {
 	for (uint i=0; i<pagemapsize; i++) {
 		if ((pofs >= pagemap->offset[i]) && (pofs < pagemap->offset[i]+pagemap->vsize[i])) {
@@ -478,15 +474,15 @@ bool ht_le_page_file::unmap_ofs(FileOfs pofs, uint *lofs)
 uint ht_le_page_file::read(void *aBuf, uint size)
 {
 	FileOfs mofs;
-	uint msize;
+	FileOfs msize;
 	int c = 0;
 	byte *buf = (byte *)aBuf;
 	while (size) {
 		uint s = size;
 		if (!map_ofs(ofs, &mofs, &msize)) break;
-		if (s>msize) s = msize;
-		streamfile->seek(mofs);
-		s = streamfile->read(buf, s);
+		if (s > msize) s = msize;
+		mFile->seek(mofs);
+		s = mFile->read(buf, s);
 		if (!s) break;
 		buf += s;
 		size -= s;
@@ -496,13 +492,12 @@ uint ht_le_page_file::read(void *aBuf, uint size)
 	return c;
 }
 
-int ht_le_page_file::seek(FileOfs offset)
+void ht_le_page_file::seek(FileOfs offset)
 {
 	ofs = offset;
-	return 0;
 }
 
-FileOfs ht_le_page_file::tell()
+FileOfs ht_le_page_file::tell() const
 {
 	return ofs;
 }
@@ -511,32 +506,32 @@ int ht_le_page_file::vcntl(uint cmd, va_list vargs)
 {
 	switch (cmd) {
 		case FCNTL_MODS_CLEAR_DIRTY_RANGE: {
-			FileOfs o = va_arg(vargs, FILEOFS);
-			uint s = va_arg(vargs, UINT);
-			uint ts, ms;
+			FileOfs o = va_arg(vargs, FileOfs);
+			FileOfs s = va_arg(vargs, FileOfs);
+			FileOfs ts, ms;
 			int e;
 
 			do {
 				if (!map_ofs(o, &o, &ms)) return EINVAL;
 				ts = (s < ms) ? s : ms;
-				e = streamfile->cntl(cmd, o, ts);
+				e = FileLayer::cntl(cmd, o, ts);
 				if (e) return e;
 				s -= ts;
 			} while (s);
 			return 0;
 		}
 		case FCNTL_MODS_IS_DIRTY: {
-			FileOfs o = va_arg(vargs, FILEOFS);
-			uint s = va_arg(vargs, UINT);
+			FileOfs o = va_arg(vargs, FileOfs);
+			FileOfs s = va_arg(vargs, FileOfs);
 			bool *b = va_arg(vargs, bool*);
-			uint ts, ms;
+			FileOfs ts, ms;
 			int e;
 
 			*b = false;
 			do {
 				if (!map_ofs(o, &o, &ms)) return EINVAL;
 				ts = (s < ms) ? s : ms;
-				e = streamfile->cntl(cmd, o, ts, b);
+				e = mFile->cntl(cmd, o, ts, b);
 				if (e) return e;
 				if (*b) break;
 				s -= ts;
@@ -544,21 +539,21 @@ int ht_le_page_file::vcntl(uint cmd, va_list vargs)
 			return 0;
 		}
 	}
-	return ht_layer_streamfile::vcntl(cmd, vargs);
+	return FileLayer::vcntl(cmd, vargs);
 }
 
 uint ht_le_page_file::write(const void *aBuf, uint size)
 {
 	FileOfs mofs;
-	uint msize;
+	FileOfs msize;
 	int c = 0;
 	const byte *buf = (const byte *)aBuf;
 	while (size) {
 		uint s = size;
 		if (!map_ofs(ofs, &mofs, &msize)) break;
 		if (s>msize) s = msize;
-		streamfile->seek(mofs);
-		buf += streamfile->write(buf, s);
+		mFile->seek(mofs);
+		buf += mFile->write(buf, s);
 		size -= s;
 		c += s;
 		ofs += s;
@@ -583,13 +578,13 @@ ht_le_reloc_entry::ht_le_reloc_entry(uint o, uint s, LEAddress a, uint8 at, uint
  *	CLASS ht_le_reloc_file
  */
 
-void ht_le_reloc_file::init(File *s, bool os, ht_le_shared_data *d)
+ht_le_reloc_file::ht_le_reloc_file(File *s, bool os, ht_le_shared_data *d)
+	: ht_reloc_file(s, os)
 {
-	ht_reloc_file::init(s, os);
 	data = d;
 }
 
-void ht_le_reloc_file::reloc_apply(ht_data *reloc, byte *data)
+void ht_le_reloc_file::reloc_apply(Object *reloc, byte *data)
 {
 	ht_le_reloc_entry *e = (ht_le_reloc_entry*)reloc;
 
@@ -620,7 +615,7 @@ void ht_le_reloc_file::reloc_apply(ht_data *reloc, byte *data)
 	}
 }
 
-bool ht_le_reloc_file::reloc_unapply(ht_data *reloc, byte *data)
+bool ht_le_reloc_file::reloc_unapply(Object *reloc, byte *data)
 {
 	return false;
 }
