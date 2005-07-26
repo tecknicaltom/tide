@@ -111,15 +111,15 @@ protected:
 public:
 			ht_le_page_file(File *file, bool own_file, ht_le_pagemap *pagemap, uint32 pagemapsize, uint32 page_size);
 /* overwritten */
-	virtual bool isdirty(FileOfs offset, uint range);
+	virtual bool isdirty(FileOfs offset, FileOfs range);
 	virtual uint read(void *buf, uint size);
 	virtual void seek(FileOfs offset);
 	virtual FileOfs tell() const;
 	virtual int vcntl(uint cmd, va_list vargs);
 	virtual uint write(const void *buf, uint size);
 /* new */
-	   bool map_ofs(uint lofs, FileOfs *pofs, uint *maxsize);
-	   bool unmap_ofs(FileOfs pofs, uint *lofs);
+	   bool map_ofs(uint32 lofs, FileOfs *pofs, FileOfs *maxsize);
+	   bool unmap_ofs(FileOfs pofs, uint32 *lofs);
 };
 
 /*
