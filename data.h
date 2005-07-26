@@ -1,4 +1,4 @@
-/*                       s
+/*
  *	HT Editor
  *	data.h
  *
