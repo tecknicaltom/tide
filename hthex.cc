@@ -43,7 +43,7 @@ ht_view *hthex_init(Bounds *b, File *file, ht_format_group *group)
 	v->search_caps|=SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 
 	v->h=new ht_hex_file_sub();
-	v->h->init(file, 0x0, file->get_size(), 16, 0);
+	v->h->init(file, 0x0, file->getSize(), 16, 0);
 
 	v->insertsub(v->h);
 	return v;
@@ -79,10 +79,11 @@ void ht_hex_viewer::get_pindicator_str(char *buf)
 	
 bool ht_hex_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
-	int s=file->get_size();
+	FileOfs s=file->getSize();
 	if (s) {
 		int ll = h->get_line_length();
-		int z=MIN(size.h*ll, s-(int)top.line_id.id1);
+		// FIXPORT
+		int z=MIN(size.h*ll, s - top.line_id.id1);
 		return scrollbar_pos(top.line_id.id1, z, s, pstart, psize);
 	}
 	return false;
@@ -193,7 +194,7 @@ bool ht_hex_viewer::qword_to_pos(uint64 q, viewer_pos *p)
 {
 	int ll = h->get_line_length();
 	ht_linear_sub *s = (ht_linear_sub*)cursor.sub;
-	FileOfs ofs = QWORD_GET_INT(q);
+	FileOfs ofs = q;
 	clear_viewer_pos(p);
 	p->u.sub = s;
 	p->u.tag_idx = ofs % ll;
@@ -218,8 +219,7 @@ int ht_hex_viewer::symbol_handler(eval_scalar *result, char *name)
 void ht_hex_file_sub::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_filesize_changed) {
-		uint s = file->get_size();
-		fsize = s;
+		fsize = file->getSize();
 		return;
 	}
 	ht_hex_sub::handlemsg(msg);
