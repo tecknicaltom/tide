@@ -137,24 +137,24 @@ void FileModificator::checkSanity()
 		bool ismod = dynamic_cast<ModifiedFileArea*>(x) != NULL;
 		// rule (1) part 1 and rule (2)
 		if (x->start != s)
-			throw new MsgfException("mfile-sanity: area starts at 0x%qx, should be 0x%qx", x->start, s);
+			throw MsgfException("mfile-sanity: area starts at 0x%qx, should be 0x%qx", x->start, s);
 		// rule (3)
 		if (x->size < 1)
-			throw new MsgfException("mfile-sanity: area at 0x%qx, has size %qd (must be >= %d)", x->start, x->size, 1);
+			throw MsgfException("mfile-sanity: area at 0x%qx, has size %qd (must be >= %d)", x->start, x->size, 1);
 		// rule (4)
 		if ((x->size > MAX_MFA_SIZE) && ismod)
-			throw new MsgfException("mfile-sanity: area at 0x%qx, has size %qd (must be <= %d)", x->start, x->size, MAX_MFA_SIZE);
+			throw MsgfException("mfile-sanity: area at 0x%qx, has size %qd (must be <= %d)", x->start, x->size, MAX_MFA_SIZE);
 		// rule (5)
 /*		if (prevx && (dynamic_cast<ModifiedFileArea*>(prevx) != NULL)
 		&& ismod && (((ModifiedFileArea*)prevx)->size + 
 		((ModifiedFileArea*)x)->size <= MAX_MFA_SIZE))
-			throw new MsgException("mfile-sanity: two adjacent MFAs with sum of sizes <= MAX_MFA_SIZE = %d", MAX_MFA_SIZE);
+			throw MsgException("mfile-sanity: two adjacent MFAs with sum of sizes <= MAX_MFA_SIZE = %d", MAX_MFA_SIZE);
 */		s += x->size;
 		prevx = x;
 	);
 	// rule (1) part 2
 	if (newsize != s)
-		throw new MsgfException("mfile-sanity: newsize = %qx != %qx = calculated_size", &newsize, &s);
+		throw MsgfException("mfile-sanity: newsize = %qx != %qx = calculated_size", &newsize, &s);
 }
 
 void FileModificator::debug()
@@ -165,7 +165,7 @@ void FileModificator::debug()
 		if (dynamic_cast<ModifiedFileArea*>(x)) {
 			ModifiedFileArea *m = (ModifiedFileArea *)x;
 			ht_fprintf(f, "\tmodify %08qx, %qd bytes", &x->start, &x->size);
-			for (uint i=0; i<x->size; i++) {
+			for (uint i=0; i < x->size; i++) {
 				ht_fprintf(f, " %02x", m->buf[i]);
 			}
 			ht_fprintf(f, " '");
@@ -274,10 +274,10 @@ uint FileModificator::copyTo(Stream *stream, uint count)
 
 void FileModificator::cut(uint size)
 {
-	if (!(getAccessMode() & IOAM_WRITE)) throw new IOException(EACCES);
+	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 
 	FileOfs o = tell();
-	if (o + size > newsize) throw new IOException(EINVAL);
+	if (o + size > newsize) throw IOException(EINVAL);
 	ObjHandle h = findArea(o);
 	FileOfs ssize = size;
 
@@ -314,8 +314,8 @@ void FileModificator::cut(uint size)
 void FileModificator::extend(FileOfs Newsize)
 {
 	if (Newsize == newsize) return;
-	if (Newsize < newsize) throw new IOException(EINVAL);
-	if (!(getAccessMode() & IOAM_WRITE)) throw new IOException(EACCES);
+	if (Newsize < newsize) throw IOException(EINVAL);
+	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 
 	seek(0);
 	// find last area
@@ -376,7 +376,7 @@ FileOfs FileModificator::getSize() const
 
 void FileModificator::insert(const void *buf, uint size)
 {
-	if (!(getAccessMode() & IOAM_WRITE)) throw new IOException(EACCES);
+	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 
 	ObjHandle h;
 
@@ -615,7 +615,7 @@ void FileModificator::read1(FileArea *a, FileOfs rstart, byte *buf, uint count)
 
 uint FileModificator::read(void *buf, uint size)
 {
-	if (!(getAccessMode() & IOAM_READ)) throw new IOException(EACCES);
+	if (!(getAccessMode() & IOAM_READ)) throw IOException(EACCES);
 
 	FileOfs t = tell();
 	FileOfs o = t;
@@ -639,7 +639,7 @@ uint FileModificator::read(void *buf, uint size)
 
 void FileModificator::seek(FileOfs offset)
 {
-	if (offset > newsize) throw new IOException(EINVAL);
+	if (offset > newsize) throw IOException(EINVAL);
 	pos = offset;
 }
 
@@ -651,8 +651,8 @@ FileOfs FileModificator::tell() const
 void FileModificator::truncate(FileOfs Newsize)
 {
 	if (Newsize == newsize) return;
-	if (Newsize > newsize) throw new IOException(EINVAL);
-	if (!(getAccessMode() & IOAM_WRITE)) throw new IOException(EACCES);
+	if (Newsize > newsize) throw IOException(EINVAL);
+	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 	seek(0);
 	ObjHandle h = findArea(Newsize);
 	FileArea *a = (FileArea*)mods.get(h);
@@ -684,7 +684,7 @@ void FileModificator::flushMods()
 	int e;
 	IOAccessMode old_am = mFile->getAccessMode();
 	e = mFile->setAccessMode(IOAM_READ | IOAM_WRITE);
-	if (e) throw new IOException(e);
+	if (e) throw IOException(e);
 	// start work
 	if (newsize > mFile->getSize()) mFile->extend(newsize);
 	// store CFAs with start > src_start in descending order
@@ -717,7 +717,7 @@ void FileModificator::flushMods()
 	if (newsize < mFile->getSize()) mFile->truncate(newsize);
 	// restore old access mode
 	e = mFile->setAccessMode(old_am);
-	if (e) throw new IOException(e);
+	if (e) throw IOException(e);
 	//
 	inv_mcount = mcount;
 	invalidateMods();
@@ -771,48 +771,48 @@ bool FileModificator::isModifiedByte(FileOfs o)
 int FileModificator::vcntl(uint cmd, va_list vargs)
 {
 	switch (cmd) {
-		case FCNTL_MODS_INVD:
-			invalidateMods();
-			return 0;
-		case FCNTL_MODS_FLUSH:
-			flushMods();
-			return 0;
-/*		case FCNTL_MODS_CLEAR_DIRTY_RANGE: {
-			// BEFORE-IMPLEMENT: decl changed !
-			FileOfs o = va_arg(vargs, FileOfs);
-			uint s = va_arg(vargs, uint);
-			uint i = 0;
-			while (s--) {
-				cleardirtybyte(o+i);
-				i++;
-			}
-			return 0;
-		}*/
-		case FCNTL_MODS_IS_DIRTY: {
-			// const FileOfs &offset, const FileOfs &range, bool &isdirty
-			const FileOfs &o = (const FileOfs&)*va_arg(vargs, FileOfs*);
-			const FileOfs &s = (const FileOfs&)*va_arg(vargs, FileOfs*);
-			bool &b = (bool&)*va_arg(vargs, bool*);
-			if ((o == 0) && (s == newsize)) {
-				b = isModified();
-			} else if (s == 1) {
-				try {
-					b = isModifiedByte(o);
-				} catch (IOException *x) {
-					delete x;
-					return EIO;
-				}
-			} else {
-				return ENOSYS;
-			}
-			return 0;
+	case FCNTL_MODS_INVD:
+		invalidateMods();
+		return 0;
+	case FCNTL_MODS_FLUSH:
+		flushMods();
+		return 0;
+	case FCNTL_MODS_CLEAR_DIRTY_RANGE: {
+/*
+		// BEFORE-IMPLEMENT: decl changed !
+		FileOfs o = va_arg(vargs, FileOfs);
+		uint s = va_arg(vargs, uint);
+		uint i = 0;
+		while (s--) {
+			cleardirtybyte(o+i);
+			i++;
 		}
-		case FCNTL_GET_MOD_COUNT: {	// int &mcount
-			int *mc = va_arg(vargs, int *);
-			*mc = mcount;
-			return 0;
+		return 0;
+*/
+	}
+	case FCNTL_MODS_IS_DIRTY: {
+		// const FileOfs offset, const FileOfs range, bool &isdirty
+		const FileOfs o = va_arg(vargs, FileOfs);
+		const FileOfs s = va_arg(vargs, FileOfs);
+		bool &b = (bool&)*va_arg(vargs, bool*);
+		if (o == 0 && s == newsize) {
+			b = isModified();
+		} else if (s == 1) {
+			try {
+				b = isModifiedByte(o);
+			} catch (const IOException &x) {
+				return EIO;
+			}
+		} else {
+			return ENOSYS;
 		}
-		
+		return 0;
+	}
+	case FCNTL_GET_MOD_COUNT: {	// int &mcount
+		int *mc = va_arg(vargs, int *);
+		*mc = mcount;
+		return 0;
+	}		
 	}
 	return mFile->vcntl(cmd, vargs);
 }
@@ -827,7 +827,7 @@ void FileModificator::write1(FileArea *a, FileOfs rstart, const byte *buf, uint 
 
 uint FileModificator::write(const void *buf, uint size)
 {
-	if (!(getAccessMode() & IOAM_WRITE)) throw new IOException(EACCES);
+	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 	// (1) make areas modified
 	FileOfs t = tell();
 	FileOfs o = t;
