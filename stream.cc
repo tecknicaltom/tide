@@ -174,6 +174,15 @@ int	Stream::setAccessMode(IOAccessMode mode)
 }
 
 /**
+ *	Set access-mode, throw IOException if unsuccessful
+ */
+void	Stream::setAccessModex(IOAccessMode mode)
+{
+	int e = setAccessMode(mode);
+	if (e) throw IOException(e);
+}
+
+/**
  *	Read from stream.
  *	Read up to <i>size</i> bytes from stream into <i>buf</i>.
  *	If less than <i>size</i> bytes are read, the exact number is
@@ -202,7 +211,7 @@ uint	Stream::read(void *buf, uint size)
 void	Stream::readx(void *buf, uint size)
 {
 //	File *f = dynamic_cast<File*>(this);
-//	FileOfs t = f ? f->tell() : mkfofs(0);
+//	FileOfs t = f ? f->tell() : 0;
 	if (read(buf, size) != size) {
 //		FileOfs sz = f ? f->getSize() : mkfofs(0);
 //		ht_printf("readx failed, ofs = 0x%qx, size = %d (file size 0x%qx)\n", &t, size, &sz);
@@ -961,7 +970,7 @@ FileOfs LocalFile::getSize() const
 {
 	FileOfs t = tell();
 	sys_fseek(file, 0, SYS_SEEK_END);
-	off_t r = sys_ftell(file);
+	FileOfs r = sys_ftell(file);
 	sys_fseek(file, t, SYS_SEEK_SET);
 	return r;
 }
