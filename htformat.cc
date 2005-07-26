@@ -69,6 +69,20 @@ bool compeq_line_id(const LINE_ID &a, const LINE_ID &b)
 		&& (a.id5 == b.id5));
 }
 
+/*
+ *	CLASS ht_data_tagstring
+ */
+
+class ht_data_tagstring: public Object {
+public:
+	char *value;
+
+	ht_data_tagstring(const char *tagstr = NULL)
+	{
+		value=tag_strdup(tagstr);
+	}
+};
+
 
 /*
  *	CLASS ht_search_request
@@ -613,27 +627,35 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 		}
 		case cmd_edit_mode_i: {
 			if (file/* && (file==msg->data1.ptr)*/) {
-				if (file->setAccessMode(IOAM_READ | FAM_WRITE)) {
+				try {
+					file->setAccessModex(IOAM_READ | IOAM_WRITE);
 					htmsg m;
 					m.msg = cmd_edit_mode;
 					m.type = mt_broadcast;
 					sendmsg(&m);
-				} else errorbox("can't open file %s in write mode ! (error %08x)", file->getFilename(), file->get_error());
+				} catch (const IOException &e) {
+					String fn, s;
+					errorbox("can't open file %y in write mode! (%y)", &file->getFilename(fn), &e.reason(s));
+				}
 			}
 			clearmsg(msg);
 			return;
 		}
 		case cmd_view_mode_i:
 			if (file /*&& (file==msg->data1.ptr)*/) {
-				uint size = file->get_size();
+				FileOfs size = file->getSize();
 				file->cntl(FCNTL_MODS_INVD);
-				if (file->set_access_mode(FAM_READ)) {
+				try {
+					file->setAccessModex(IOAM_READ);
 					htmsg m;
 					m.msg = cmd_view_mode;
 					m.type = mt_broadcast;
 					sendmsg(&m);
-				} else errorbox("can't (re)open file %s in read mode ! (error %08x)", file->get_filename(), file->get_error());
-				if (size != file->get_size()) {
+				} catch (const IOException &e) {
+					String fn, s;
+					 errorbox("can't (re)open file %y in read mode! (%y)", &file->getFilename(fn), &e.reason(s));
+				}
+				if (size != file->getSize()) {
 					htmsg m;
 					m.msg = msg_filesize_changed;
 					m.type = mt_broadcast;
@@ -687,10 +709,8 @@ bool ht_format_viewer::vstate_save()
 
 uint ht_format_viewer::pread(FileOfs ofs, void *buf, uint size)
 {
-	if (file->seek(ofs)==0) {
-		return file->read(buf, size);
-	}
-	return 0;
+	file->seek(ofs);
+	return file->read(buf, size);
 }
 
 ht_search_result *ht_format_viewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
@@ -712,11 +732,9 @@ void ht_format_viewer::pselect_set(FileOfs start, FileOfs end)
 
 uint ht_format_viewer::pwrite(FileOfs ofs, void *buf, uint size)
 {
-	if (file->seek(ofs)==0) {
-		sendmsg(msg_file_changed);
-		return file->write(buf, size);
-	}
-	return 0;
+	sendmsg(msg_file_changed);
+	file->seek(ofs);
+	return file->write(buf, size);
 }
 
 bool ht_format_viewer::qword_to_offset(uint64 q, FileOfs *ofs)
@@ -795,7 +813,7 @@ Object *ht_format_viewer::vstate_create()
 	return NULL;
 }
 
-void ht_format_viewer::vstate_restore(ht_data *view_state)
+void ht_format_viewer::vstate_restore(Object *view_state)
 {
 }
 
@@ -916,8 +934,8 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	b2.w = b.w - 3 - b2.x;
 	b2.h = 1;
 
-	ht_clist *hist = 0;
-	if (histid) hist = (ht_clist*)getAtomValue(histid);
+	List *hist = NULL;
+	if (histid) hist = (List*)getAtomValue(histid);
 	input = new ht_strinputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
@@ -1562,7 +1580,7 @@ restart:
 
 bool ht_uformat_viewer::edit()
 {
-	return (file && (file->get_access_mode() & FAM_WRITE));
+	return (file && (file->getAccessMode() & IOAM_WRITE));
 }
 
 bool ht_uformat_viewer::edit_end()
@@ -1981,24 +1999,25 @@ char *ht_uformat_viewer::func(uint i, bool execute)
 			if (caps & VC_EDIT) {
 				if (edit()) {
 					if (execute) {
-						uint size = file->get_size();
+						FileOfs size = file->getSize();
 						bool isdirty = false;
-						file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->get_size(), &isdirty);
+						file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->getSize(), &isdirty);
 						char q[1024];
-						if (file->get_filename()) {
+						String fn;
+						if (!file->getFilename(fn).isEmpty()) {
 							ht_snprintf(q, sizeof q,
-								"file %s has been modified, apply changes ?",
-								file->get_filename());
+								"file %y has been modified, apply changes?",
+								&fn);
 						} else {
 							ht_snprintf(q, sizeof q,
-								"untitled file has been modified, apply changes ?");
+								"untitled file has been modified, apply changes?");
 						}
-						if (isdirty && (confirmbox(q) == button_yes)) {
+						if (isdirty && confirmbox(q) == button_yes) {
 							file->cntl(FCNTL_MODS_FLUSH);
 						} else {
 							file->cntl(FCNTL_MODS_INVD);
 						}
-						if (size != file->get_size()) {
+						if (size != file->getSize()) {
 							htmsg m;
 							m.msg = msg_filesize_changed;
 							m.type = mt_broadcast;
@@ -2144,7 +2163,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			return;
 		case msg_keypressed:
 			switch (msg->data1.integer) {
-				case K_Alt_S:
+				case K_Meta_S:
 					if (cursor_select) {
 					    select_mode_off();
 					} else {
@@ -2524,13 +2543,13 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						return;
 					}
 					break;
-				case K_Alt_C:
+				case K_Meta_C:
 				case K_Control_Insert:
 					sendmsg(cmd_edit_copy);
 					dirtyview();
 					clearmsg(msg);
 					return;
-				case K_Alt_V:
+				case K_Meta_V:
 				case K_Shift_Insert:
 					sendmsg(cmd_edit_paste);
 					dirtyview();
@@ -2559,7 +2578,8 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 		case cmd_edit_copy:
 			if (sel_end>sel_start) {
 				char dsc[1024];
-				ht_snprintf(dsc, sizeof dsc, "%s::%s", file->get_filename(), desc);
+				String fn;
+				ht_snprintf(dsc, sizeof dsc, "%y::%s", &file->getFilename(fn), desc);
 				clipboard_copy(dsc, file, sel_start, sel_end-sel_start);
 			}
 			clearmsg(msg);
@@ -2568,8 +2588,8 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			FileOfs ofs;
 			if (get_current_offset(&ofs)) {
 				baseview->sendmsg(cmd_edit_mode_i, file, NULL);
-				if (file->get_access_mode() & FAM_WRITE) {
-					uint32 s=clipboard_paste(file, ofs);
+				if (file->getAccessMode() & IOAM_WRITE) {
+					FileOfs s = clipboard_paste(file, ofs);
 					if (s) {
 						pselect_set(ofs, ofs+s);
 						sendmsg(cmd_edit_mode_i);
@@ -2627,16 +2647,18 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 							&& pos_to_offset(end_pos, &end)) {
 								result = psearch(request, start, end);
 							}
-						} catch (const ht_exception &e) {
-							errorbox("error: %s", e.what());
+						} catch (const Exception &e) {
+							String s;
+							errorbox("error: %y", &e.reason(s));
 						}
 						break;
 					}
 					case SC_VISUAL: {
 						try {
 							result = vsearch(request, start_pos, end_pos);
-						} catch (const ht_exception &e) {
-							errorbox("error: %s", e.what());
+						} catch (const Exception &e) {
+							String s;
+							errorbox("error: %y", &e.reason(s));
 						}
 						break;
 					}
@@ -2656,10 +2678,10 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			sendmsg(cmd_edit_mode_i);
 			if (edit()) {
 				bool cancel;
-				uint s = get_file()->get_size();
+				FileOfs s = get_file()->getSize();
 				uint repls = replace_dialog(this, search_caps, &cancel);
 				if (repls) {
-					if (s != get_file()->get_size()) {
+					if (s != get_file()->getSize()) {
 						sendmsg(msg_filesize_changed);
 					}
 					infobox("%d replacement(s) made", repls);
@@ -2746,9 +2768,9 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			if (sel_end>sel_start) {
 				blockop_dialog(this, sel_start, sel_end);
 			} else {
-				FileOfs o=0;
+				FileOfs o = 0;
 				get_current_offset(&o);
-				blockop_dialog(this, o, file->get_size());
+				blockop_dialog(this, o, file->getSize());
 			}
 			clearmsg(msg);
 			dirtyview();
@@ -2859,20 +2881,20 @@ vcp ht_uformat_viewer::get_tag_color_edit(FileOfs tag_offset, uint size, bool at
 	vcp tag_color = getcolor_tag(palidx_tags_edit_tag);
 	bool isdirty = false;
 	file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset, size, &isdirty);
-	if (isdirty) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
-	if ((tag_offset>=sel_start) && (tag_offset<sel_end)) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
+	if (isdirty) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
+	if (tag_offset >= sel_start && tag_offset < sel_end) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
 	if (iscursor) {
 		int coloridx;
 		if (atcursoroffset) {
 			if (edit()) {
-				coloridx=palidx_tags_edit_tag_cursor_edit;
+				coloridx = palidx_tags_edit_tag_cursor_edit;
 			} else {
-				coloridx=palidx_tags_edit_tag_cursor_select;
+				coloridx = palidx_tags_edit_tag_cursor_select;
 			}
 		} else {
-			coloridx=palidx_tags_edit_tag_cursor_unfocused;
+			coloridx = palidx_tags_edit_tag_cursor_unfocused;
 		}
-		tag_color=vcp_mix(tag_color, getcolor_tag(coloridx));
+		tag_color = mixColors(tag_color, getcolor_tag(coloridx));
 	}
 	return tag_color;
 }
@@ -2889,52 +2911,47 @@ void ht_uformat_viewer::render_tagstring_desc(char **string, int *length, vcp *t
 		int_hash *tbl;
 		if ((tbl=(int_hash*)getAtomValue(id))) {
 			char *str;
-			uint64 q;
-			q.hi = 0;
-			q.lo = 0;
-			FileOfs tag_offset=tag_get_offset(tag);
-			byte buf[4];
-			
-			if (pread(tag_offset, buf, size)==size) {
+			uint64 q = 0;
+			FileOfs tag_offset = tag_get_offset(tag);
+			byte buf[8];
+
+			if (pread(tag_offset, buf, size) == size) {
 				switch (size) {
-					case 1:
-						q.hi = 0;
-						q.lo = buf[0];
-						break;
-					case 2:
-						q.hi = 0;
-						if (bigendian) {
-							q.lo = (buf[0]<<8) | buf[1];
-						} else {
-							q.lo = (buf[1]<<8) | buf[0];
-						}
-						break;
-					case 4:
-						q.hi = 0;
-						if (bigendian) {
-							q.lo = (buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
-						} else {
-							q.lo = (buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
-						}
-						break;
-					case 8:
-						if (bigendian) {
-							q.hi = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
-							q.lo = (buf[4] << 24) | (buf[5] << 16) | (buf[6] << 8) | buf[7];
-						} else {
-							q.hi = (buf[7] << 24) | (buf[6] << 16) | (buf[5] << 8) | buf[4];
-							q.lo = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-						}
-						break;
+				case 1:
+					q = buf[0];
+					break;
+				case 2:
+					if (bigendian) {
+						q = (buf[0]<<8) | buf[1];
+					} else {
+						q = (buf[1]<<8) | buf[0];
+					}
+					break;
+				case 4:
+					if (bigendian) {
+						q = (buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
+					} else {
+						q = (buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
+					}
+					break;
+				case 8:
+					if (bigendian) {
+						q = ((uint64)buf[0] << 56) | ((uint64)buf[1] << 48) | ((uint64)buf[2] << 40) | ((uint64)buf[3] << 32)
+						  | ((uint64)buf[4] << 24) | ((uint64)buf[5] << 16) | ((uint64)buf[6] << 8) | (uint64)buf[7];
+					} else {
+						q = ((uint64)buf[7] << 56) | ((uint64)buf[6] << 48) | ((uint64)buf[5] << 40) | ((uint64)buf[4] << 32)
+						  | ((uint64)buf[3] << 24) | ((uint64)buf[2] << 16) | ((uint64)buf[1] << 8) | (uint64)buf[0];
+					}
+					break;
 				}
 /* FIXME: uint64 ? */
-				if ((str=matchhash(q.lo, tbl))) {
-					*string=str;
-					*length=strlen(*string);
+				if ((str = matchhash(q, tbl))) {
+					*string = str;
+					*length = strlen(*string);
 				}
 			} else {
-				*string="?";
-				*length=strlen(*string);
+				*string = "?";
+				*length = strlen(*string);
 			}
 		}
 	}
@@ -2944,8 +2961,8 @@ void ht_uformat_viewer::reloadpalette()
 {
 	ht_format_viewer::reloadpalette();
 	if (tagpal.data) {
-	    free(tagpal.data);
-	    tagpal.data = NULL;
+		free(tagpal.data);
+		tagpal.data = NULL;
 	}	    
 	load_pal(palclasskey_tags, palkey_tags_default, &tagpal);
 }
@@ -2972,18 +2989,18 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				case HT_TAG_EDIT_BYTE: {
 					byte d;
 					
-					tag_offset=tag_get_offset(n);
-					tag_color=get_tag_color_edit(tag_offset, 1, focused && (g==cursor.tag_group), is_cursor);
+					tag_offset = tag_get_offset(n);
+					tag_color = get_tag_color_edit(tag_offset, 1, focused && (g==cursor.tag_group), is_cursor);
 
-					if (pread(tag_offset, &d, 1)==1) {
-						mkhexb(str, d);
+					if (pread(tag_offset, &d, 1) == 1) {
+						ht_snprintf(str, sizeof str, "%02x", d);
 					} else {
 						strcpy(str, "??");
 					}
 					
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, 2, tag_color);
+					c += render_tagstring_single(chars, colors, maxlen, c, str, 2, tag_color);
 		
-					n+=HT_TAG_EDIT_BYTE_LEN;
+					n += HT_TAG_EDIT_BYTE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_WORD_LE: {
@@ -2996,7 +3013,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					if (pread(tag_offset, &buf, 2)==2) {
 						/* little endian */
 						d=(buf[1] << 8) | buf[0];
-						mkhexw(str, d);
+						ht_snprintf(str, sizeof str, "%04x", d);
 					} else {
 						strcpy(str, "????");
 					}
@@ -3015,13 +3032,13 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					if (pread(tag_offset, &buf, 4)==4) {
 						/* little endian */
 						d=(buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-						mkhexd(str, d);
+						ht_snprintf(str, sizeof str, "%08x", d);
 					} else {
 						strcpy(str, "????????");
 					}
 
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, 8, tag_color);
-					n+=HT_TAG_EDIT_DWORD_LE_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, str, 8, tag_color);
+					n += HT_TAG_EDIT_DWORD_LE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_QWORD_LE: {
@@ -3033,9 +3050,9 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					byte buf[8];
 					if (pread(tag_offset, &buf, 8)==8) {
 						/* little endian */
-						q.hi = (buf[7] << 24) | (buf[6] << 16) | (buf[5] << 8) | buf[4];
-						q.lo = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
-						mkhexq(str, q);
+						q = ((uint64)buf[7] << 56) | ((uint64)buf[6] << 48) | ((uint64)buf[5] << 40) | ((uint64)buf[4] << 32)
+						  | ((uint64)buf[3] << 24) | ((uint64)buf[2] << 16) | ((uint64)buf[1] << 8) | (uint64)buf[0];
+						ht_snprintf(str, sizeof str, "%016x", q);
 					} else {
 						strcpy(str, "????????????????");
 					}
@@ -3054,7 +3071,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					if (pread(tag_offset, &buf, 2)==2) {
 						/* big endian */
 						d=(buf[0] << 8) | buf[1];
-						mkhexw(str, d);
+						ht_snprintf(str, sizeof str, "%04x", d);
 					} else {
 						strcpy(str, "????");
 					}
@@ -3073,7 +3090,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					if (pread(tag_offset, &buf, 4)==4) {
 						/* big endian */
 						d=(buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
-						mkhexd(str, d);
+						ht_snprintf(str, sizeof str, "%08x", d);
 					} else {
 						strcpy(str, "????????");
 					}
@@ -3090,9 +3107,9 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					byte buf[8];
 					if (pread(tag_offset, &buf, 8)==8) {
 						/* big endian */
-						q.hi = (buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3];
-						q.lo = (buf[4] << 24) | (buf[5] << 16) | (buf[6] << 8) | buf[7];
-						mkhexq(str, q);
+						q = ((uint64)buf[0] << 56) | ((uint64)buf[1] << 48) | ((uint64)buf[2] << 40) | ((uint64)buf[3] << 32)
+						  | ((uint64)buf[4] << 24) | ((uint64)buf[5] << 16) | ((uint64)buf[6] << 8) | (uint64)buf[7];
+						ht_snprintf(str, sizeof str, "%016x", q);
 					} else {
 						strcpy(str, "????????????????");
 					}
@@ -3142,9 +3159,9 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					tag_color=getcolor_tag(palidx_tags_edit_tag);
 					bool isdirty = false;
 					file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset+op, IS_DIRTY_SINGLEBIT | (shift & 7), &isdirty);
-					if (isdirty) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
-					if ((tag_offset>=sel_start) && (tag_offset<sel_end)) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
-					if (is_cursor) tag_color=vcp_mix(tag_color, getcolor_tag(edit() ? palidx_tags_edit_tag_cursor_edit : palidx_tags_edit_tag_cursor_select));
+					if (isdirty) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
+					if (tag_offset >= sel_start && tag_offset < sel_end) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
+					if (is_cursor) tag_color = mixColors(tag_color, getcolor_tag(edit() ? palidx_tags_edit_tag_cursor_edit : palidx_tags_edit_tag_cursor_select));
 
 					if (pread(tag_offset+op, &d, 1)==1) {
 						str[0]=(d& (1 << (shift%8))) ? '1' : '0';
@@ -3161,7 +3178,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					tag_offset=tag_get_offset(n);
 					tag_color=getcolor_tag(palidx_tags_edit_tag);
 
-					if ((tag_offset>=sel_start) && (tag_offset<sel_end)) tag_color=vcp_mix(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
+					if (tag_offset >= sel_start && tag_offset < sel_end) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
 
 					c+=render_tagstring_single(chars, colors, maxlen, c, &((ht_tag_edit_selvis*)n)->ch, 1, tag_color);
 					n+=HT_TAG_EDIT_SELVIS_LEN;
@@ -3392,14 +3409,14 @@ int ht_uformat_viewer::ref()
 
 int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian)
 {
-	endianess end = bigendian ? big_endian : little_endian;
+	Endianess end = bigendian ? big_endian : little_endian;
 	int_hash *desc=(int_hash*)getAtomValue(id);
 	if (desc) {
 		Bounds b;
 		b.w=60;
 		b.h=14;
-		b.x=(screen->size.w-b.w)/2;
-		b.y=(screen->size.h-b.h)/2;
+		b.x=(screen->w - b.w)/2;
+		b.y=(screen->h - b.h)/2;
 		ht_dialog *g=new ht_dialog();
 		g->init(&b, "desc", FS_KILLER | FS_MOVE);
 
@@ -3492,8 +3509,8 @@ int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 		Bounds b;
 		b.w=60;
 		b.h=14;
-		b.x=(screen->size.w-b.w)/2;
-		b.y=(screen->size.h-b.h)/2;
+		b.x=(screen->w-b.w)/2;
+		b.y=(screen->h-b.h)/2;
 		ht_dialog *d=new ht_dialog();
 		d->init(&b, (flags->bitidx==-1) ? flags->desc : 0, FS_KILLER | FS_TITLE | FS_MOVE);
 
@@ -3541,11 +3558,11 @@ int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 
 		d->setpalette(palkey_generic_window_default);
 
-		uint pmode=file->get_access_mode() & FAM_WRITE;
+		uint pmode=file->getAccessMode() & IOAM_WRITE;
 
-		if (d->run(false)==button_ok) u->edit_update();
+		if (d->run(false) == button_ok) u->edit_update();
 
-		if (pmode != file->get_access_mode() & FAM_WRITE) {
+		if (pmode != (file->getAccessMode() & IOAM_WRITE)) {
 			if (pmode) {
 				baseview->sendmsg(cmd_view_mode_i, file, NULL);
 			} else {
@@ -3623,8 +3640,8 @@ ht_search_result *ht_uformat_viewer::vsearch(ht_search_request *request, viewer_
 				}
 				lines++;
 				if (lines % 500==0) {
-					if (ht_keypressed()) {
-						if (ht_getkey()==K_Escape) goto leave;
+					if (keyb_keypressed()) {
+						if (keyb_getkey() == K_Escape) goto leave;
 					}
 
 					char text[256];
@@ -3816,8 +3833,7 @@ void ht_uformat_viewer::scroll_down(int n)
 
 bool ht_uformat_viewer::qword_to_offset(uint64 q, FileOfs *ofs)
 {
-// FIXME: not "The Right Thing(tm)"
-	*ofs = QWORD_GET_INT(q);
+	*ofs = q;
 	return true;
 }
 
@@ -3887,7 +3903,7 @@ void ht_uformat_viewer::update_ypos()
 	}
 }
 
-void ht_uformat_viewer::vstate_restore(ht_data *data)
+void ht_uformat_viewer::vstate_restore(Object *data)
 {
 	ht_uformat_viewer_vstate *vs = (ht_uformat_viewer_vstate*)data;
 	first_sub = vs->first_sub;
@@ -4000,7 +4016,7 @@ ht_search_result *ht_sub::search(ht_search_request *search, FileOfs start, FileO
  *	CLASS ht_linear_sub
  */
 
-void ht_linear_sub::init(File *f, FileOfs ofs, int size)
+void ht_linear_sub::init(File *f, FileOfs ofs, FileOfs size)
 {
 	ht_sub::init(f);
 	fofs=ofs;
@@ -4014,12 +4030,12 @@ void ht_linear_sub::done()
 
 void ht_linear_sub::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_filesize_changed) {
-		uint s=file->get_size();
-		if (fofs>s) {
-			fsize=0;
-		} else if (fofs+fsize>s) {
-			fsize=s-fofs;
+	if (msg->msg == msg_filesize_changed) {
+		FileOfs s = file->getSize();
+		if (fofs > s) {
+			fsize = 0;
+		} else if (fofs+fsize > s) {
+			fsize = s-fofs;
 		}
 		return;
 	}
@@ -4034,8 +4050,8 @@ int ht_linear_func_readbyte(eval_scalar *result, eval_int *offset)
 	};
 	ht_format_viewer *f=((context_t*)eval_get_context())->fv;
 	byte b;
-	if (f->pread(QWORD_GET_INT(offset->value), &b, 1)!=1) {
-		set_eval_error("i/o error (requested %d, read %d from ofs %08x)", 1, 0, offset->value);
+	if (f->pread(offset->value, &b, 1) != 1) {
+		set_eval_error("i/o error (requested %d, read %d from ofs 0x%08qx)", 1, 0, offset->value);
 		return 0;
 	}
 	scalar_create_int_c(result, b);
@@ -4051,15 +4067,15 @@ int ht_linear_func_readstring(eval_scalar *result, eval_int *offset, eval_int *l
 	};
 	ht_format_viewer *f=((context_t*)eval_get_context())->fv;
 
-	uint l=QWORD_GET_INT(len->value);
+	uint l = len->value;
 	void *buf=malloc(l);	/* FIXME: may be too slow... */
 
 	if (buf) {
 		eval_str s;
-		uint c=f->pread(QWORD_GET_INT(offset->value), buf, l);
-		if (c!=l) {
+		uint c = f->pread(offset->value, buf, l);
+		if (c != l) {
 			free(buf);
-			set_eval_error("i/o error (requested %d, read %d from ofs %08x)", l, c, offset->value);
+			set_eval_error("i/o error (requested %d, read %d from ofs 0x%08qx)", l, c, offset->value);
 			return 0;
 		}
 		s.value=(char*)buf;
@@ -4129,7 +4145,7 @@ public:
 	ht_search_result **result;
 };
 
-bool process_search_expr(ht_data *ctx, ht_text *progress_indicator)
+bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 {
 #define PROCESS_EXPR_SEARCH_BYTES_PER_CALL	256
 	ht_expr_search_pcontext *c=(ht_expr_search_pcontext*)ctx;
@@ -4146,7 +4162,7 @@ bool process_search_expr(ht_data *ctx, ht_text *progress_indicator)
 		if (eval(&r, s->expr, ht_linear_sub_func_handler, ht_linear_sub_symbol_handler, &context)) {
 			eval_int i;
 			scalar_context_int(&r, &i);
-			if (i.value != to_qword(0)) {
+			if (i.value != 0) {
 				ht_physical_search_result *r=new ht_physical_search_result();
 				r->offset = c->o;
 				r->size = 1;
@@ -4157,7 +4173,7 @@ bool process_search_expr(ht_data *ctx, ht_text *progress_indicator)
 			char *str;
 			int pos;
 			get_eval_error(&str, &pos);
-			throw ht_io_exception("eval error at pos %d: %s", pos, str);
+			throw MsgfException("eval error at pos %d: %s", pos, str);
 		}
 		c->i++;
 		c->o++;
@@ -4165,7 +4181,7 @@ bool process_search_expr(ht_data *ctx, ht_text *progress_indicator)
 		if (!--w) {
 			char text[64];
 			if (c->end > c->start) {
-				sprintf(text, "%d %% done", (c->o - c->start) * 100 / (c->end - c->start));
+				ht_snprintf(text, 100, "%qd %% done", (c->o - c->start) * 100 / (c->end - c->start));
 			} else {
 				strcpy(text, "? % done");
 			}
@@ -4216,9 +4232,9 @@ void ht_hex_sub::init(File *f, FileOfs ofs, uint32 size, uint Line_length, uint 
 {
 	line_length = Line_length;
 	ht_linear_sub::init(f, ofs, size);
-	vaddrinc=vinc;
-	balign=ofs % line_length;
-	uid=u;
+	vaddrinc = vinc;
+	balign = ofs % line_length;
+	uid = u;
 }
 
 void ht_hex_sub::done()
@@ -4243,10 +4259,11 @@ void	ht_hex_sub::set_line_length(int Line_length)
 
 bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 {
-	if ((offset>=fofs) && (offset<fofs+fsize)) {
+	if (offset >= fofs && offset < fofs+fsize) {
 		clear_line_id(line_id);
 		line_id->id1 = (offset - (offset%line_length)) + balign;
-		line_id->id2 = uid;
+		line_id->id2 = ((offset - (offset % line_length)) + balign) >> 32;
+		line_id->id3 = uid;
 		return true;
 	}
 	return false;
@@ -4254,19 +4271,19 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 
 bool ht_hex_sub::convert_id_to_ofs(const LINE_ID line_id, FileOfs *ofs)
 {
-	*ofs = line_id.id1;
+	*ofs = line_id.id1 + ((uint64)line_id.id2 << 32);
 	return true;
 }
 
 bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id2 != uid) return false;
-	ID ofs = line_id.id1;
+	FileOfs ofs = line_id.id1 + ((uint64)line_id.id2 << 32);
 	uint c = MIN(line_length, (fofs+fsize-ofs));
-	if (c<=0) return false;
+	if (c <= 0) return false;
 	c = MIN(line_length, c+ofs%line_length);
 	char *l=line;
-	l=mkhexd(l, ofs+vaddrinc);
+	l += ht_snprintf(l, 16, "%08qx", ofs + vaddrinc);
 	*l++=' ';
 	if (ofs % line_length) ofs -= ofs % line_length;
 	for (uint32 i=0; i<line_length; i++) {
@@ -4284,10 +4301,10 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 			}
 		} else *l++=' ';
 	}
-	l=tag_make_group(l);
+	l = tag_make_group(l);
 	*l++='|';
-	for (uint32 i=0; i<line_length; i++) {
-		if (i<c && ofs+i>=fofs) {
+	for (uint32 i=0; i < line_length; i++) {
+		if (i < c && ofs+i >= fofs) {
 			l=tag_make_edit_char(l, ofs+i);
 		} else {
 			*l++=' ';
@@ -4307,24 +4324,27 @@ void ht_hex_sub::first_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
 	line_id->id1 = fofs;
-	line_id->id2 = uid;
+	line_id->id2 = fofs << 32;
+	line_id->id3 = uid;
 }
 
 void ht_hex_sub::last_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
 	if (fsize) {
-		int k = fsize + (fofs % line_length);
+		FileOfs k = fsize + (fofs % line_length);
 		line_id->id1 = (k - k%line_length) + (fofs - fofs%line_length);
+		line_id->id2 = ((k - k%line_length) + (fofs - fofs%line_length)) << 32;
 	} else {
 		line_id->id1 = fofs;
+		line_id->id2 = fofs << 32;
 	}
-	line_id->id2 = uid;
+	line_id->id3 = uid;
 }
 
 int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 {
-	if (line_id->id2 != uid) return 0;
+	if (line_id->id3 != uid) return 0;
 	int c=0;
 	while (n--) {
 		if (!line_id->id1 || line_id->id1 == fofs) break;
@@ -4344,7 +4364,7 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 
 int ht_hex_sub::next_line_id(LINE_ID *line_id, int n)
 {
-	if (line_id->id2 != uid) return 0;
+	if (line_id->id3 != uid) return 0;
 	int c=0;
 	while (n--) {
 		if (line_id->id1 % line_length) {
@@ -4367,13 +4387,11 @@ void ht_mask_sub::init(File *f, uint u)
 {
 	ht_sub::init(f);
 	masks = new ht_string_list();
-	masks->init();
 	uid = u;
 }
 
 void ht_mask_sub::done()
 {
-	masks->destroy();
 	delete masks;
 	ht_sub::done();
 }
@@ -4388,7 +4406,7 @@ void ht_mask_sub::first_line_id(LINE_ID *line_id)
 bool ht_mask_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id2 != uid) return false;
-	char *s=masks->get_string(line_id.id1);
+	const char *s = masks->get_string(line_id.id1);
 	if (s) {
 		tag_strcpy(line, s);
 		return true;
@@ -4409,7 +4427,7 @@ int ht_mask_sub::next_line_id(LINE_ID *line_id, int n)
 	if (line_id->id2 != uid) return 0;
 	int c=masks->count();
 	ID i1 = line_id->id1;
-	i1+=n;
+	i1 += n;
 	if ((int)i1>c-1) {
 		r-=i1-c+1;
 		i1=c-1;
@@ -4482,7 +4500,7 @@ void ht_mask_sub::add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOf
  *	CLASS ht_layer_sub
  */
 
-void ht_layer_sub::init(File *file, ht_sub *s, bool own_s=1)
+void ht_layer_sub::init(File *file, ht_sub *s, bool own_s)
 {
 	ht_sub::init(file);
 	sub=s;
@@ -4679,13 +4697,11 @@ ht_search_result *ht_collapsable_sub::search(ht_search_request *search, FileOfs 
 void ht_group_sub::init(File *file)
 {
 	ht_sub::init(file);
-	subs=new ht_clist();
-	subs->init();
+	subs=new Array(false);
 }
 
 void ht_group_sub::done()
 {
-	subs->done();
 	delete subs;
 	ht_sub::done();
 }
@@ -4702,7 +4718,7 @@ bool ht_group_sub::convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset)
 
 void ht_group_sub::first_line_id(LINE_ID *line_id)
 {
-	ht_sub *s = (ht_sub*)subs->get(0);
+	ht_sub *s = (ht_sub*)(*subs)[0];
 	if (s) s->first_line_id(line_id);
 }
 
@@ -4711,7 +4727,7 @@ bool ht_group_sub::getline(char *line, const LINE_ID line_id)
 	ht_sub *s;
 	uint c=subs->count();
 	for (uint i=0; i<c; i++) {
-		s=(ht_sub*)subs->get(i);
+		s=(ht_sub*)(*subs)[i];
 		if (s->getline(line, line_id)) return true;
 	}
 	return false;
@@ -4724,7 +4740,7 @@ void ht_group_sub::handlemsg(htmsg *msg)
 
 void ht_group_sub::last_line_id(LINE_ID *line_id)
 {
-	ht_sub *s = (ht_sub*)subs->get(subs->count()-1);
+	ht_sub *s = (ht_sub*)(*subs)[subs->count()-1];
 	if (s) s->last_line_id(line_id);
 }
 
@@ -4734,11 +4750,11 @@ int ht_group_sub::next_line_id(LINE_ID *line_id, int n)
 	uint c=subs->count();
 	int on=n;
 	for (uint i=0; i<c; i++) {
-		s=(ht_sub*)subs->get(i);
+		s=(ht_sub*)(*subs)[i];
 		LINE_ID t;
 		s->last_line_id(&t);
 		if (compeq_line_id(t, *line_id)) {
-			s=(ht_sub*)subs->get(i+1);
+			s=(ht_sub*)(*subs)[i+1];
 			if (s) {
 				s->first_line_id(line_id);
 				n--;
@@ -4757,11 +4773,11 @@ int ht_group_sub::prev_line_id(LINE_ID *line_id, int n)
 	uint c=subs->count();
 	int on=n;
 	for (uint i=0; i<c; i++) {
-		s=(ht_sub*)subs->get(i);
+		s=(ht_sub*)(*subs)[i];
 		LINE_ID t;
 		s->first_line_id(&t);
 		if (compeq_line_id(t, *line_id)) {
-			s=(ht_sub*)subs->get(i-1);
+			s=(ht_sub*)(*subs)[i-1];
 			if (s) {
 				s->last_line_id(line_id);
 				n--;
@@ -4779,7 +4795,7 @@ bool ht_group_sub::ref(LINE_ID *id)
 	ht_sub *s;
 	uint c=subs->count();
 	for (uint i=0; i<c; i++) {
-		s=(ht_sub*)subs->get(i);
+		s=(ht_sub*)(*subs)[i];
 		if (s->ref(id)) return true;
 	}
 	return false;
@@ -4794,19 +4810,4 @@ void ht_group_sub::insertsub(ht_sub *sub)
 {
 	subs->insert(sub);
 }
-
-/*
- *	CLASS ht_data_tagstring
- */
-
-ht_data_tagstring::ht_data_tagstring(char *tagstr)
-: ht_data_string()
-{
-	value=tag_strdup(tagstr);
-}
-
-ht_data_tagstring::~ht_data_tagstring()
-{
-}
-
 
