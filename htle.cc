@@ -430,21 +430,21 @@ void ht_le_page_file::init(File *file, bool own_file, ht_le_pagemap *pm, uint32 
 	ofs = 0;
 }
 
-bool ht_le_page_file::isdirty(FileOfs offset, uint range)
+bool ht_le_page_file::isdirty(FileOfs offset, FileOfs range)
 {
 	FileOfs mofs;
-	uint msize;
+	FileOfs msize;
 	while (range) {
-		uint32 s=range;
+		FileOfs s = range;
 		if (!map_ofs(offset, &mofs, &msize)) break;
-		if (s>msize) s=msize;
+		if (s > msize) s = msize;
 		bool isdirty;
 		streamfile->cntl(FCNTL_MODS_IS_DIRTY, mofs, s, &isdirty);
-		if (isdirty) return 1;
-		range-=s;
-		ofs+=s;
+		if (isdirty) return true;
+		range -= s;
+		ofs += s;
 	}
-	return 0;
+	return false;
 }
 
 /**
