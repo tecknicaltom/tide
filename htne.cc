@@ -45,7 +45,7 @@ static format_viewer_if *htne_ifs[] = {
 	0
 };
 
-static int compare_keys_ne_import_rec(ht_data *key_a, Object *key_b)
+static int compare_keys_ne_import_rec(Object *key_a, Object *key_b)
 {
 	ne_import_rec *a=(ne_import_rec*)key_a;
 	ne_import_rec *b=(ne_import_rec*)key_b;
