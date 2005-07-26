@@ -78,7 +78,7 @@ TAGSTRING *tag_make_ref(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 i
 	return tag_make_ref_len(buf, id128_1, id128_2, id128_3, id128_4, string, strlen(string));
 }
 
-TAGSTRING *tag_make_flags(TAGSTRING *buf, uint32 ofs32, uint32 id)
+TAGSTRING *tag_make_flags(TAGSTRING *buf, FileOfs ofs32, uint32 id)
 {
 	ht_tag_flags *tag=(ht_tag_flags*)buf;
 	tag->escape = '\e';
@@ -681,7 +681,7 @@ int tag_get_size(const TAGSTRING *tagstring)
 	}
 }
 
-uint32 tag_get_offset(const TAGSTRING *tagstring)
+FileOfs tag_get_offset(const TAGSTRING *tagstring)
 {
 	FileOfs f;
 	switch (tagstring[1]) {
@@ -809,7 +809,7 @@ bool tag_get_desc_id(const TAGSTRING *tagstring, uint32 *id)
 	return false;
 }
 
-void tag_set_offset(const TAGSTRING *tagstring, uint32 offset)
+void tag_set_offset(const TAGSTRING *tagstring, FileOfs offset)
 {
 	switch (tagstring[1]) {
 		case HT_TAG_EDIT_BYTE:
