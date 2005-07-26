@@ -835,25 +835,25 @@ void ht_ltextfile::update_nofs(uint target)
 int ht_ltextfile::vcntl(uint cmd, va_list vargs)
 {
 	switch (cmd) {
-		case FCNTL_MODS_INVD:
-				cache_invd();
-				return 0;
-		case FCNTL_MODS_FLUSH:
-				cache_flush();
-				return 0;
-		case FCNTL_MODS_IS_DIRTY: {
-				FileOfs o=va_arg(vargs, FILEOFS);
-				uint s=va_arg(vargs, UINT);
-				bool *b=va_arg(vargs, bool*);
-				*b = dirty;
-				o = 0;	// gcc warns otherwise
-				s = 0;    // gcc warns otherwise
-				return 0;
-		}
-		case FCNTL_MODS_CLEAR_DIRTY: {
-			dirty = false;
-			return 0;
-		}
+	case FCNTL_MODS_INVD:
+		cache_invd();
+		return 0;
+	case FCNTL_MODS_FLUSH:
+		cache_flush();
+		return 0;
+	case FCNTL_MODS_IS_DIRTY: {
+		FileOfs o = va_arg(vargs, FileOfs);
+		FileOfs s = va_arg(vargs, FileOfs);
+		bool *b = va_arg(vargs, bool*);
+		*b = dirty;
+		o = 0;	// gcc warns otherwise
+		s = 0;    // gcc warns otherwise
+		return 0;
+	}
+	case FCNTL_MODS_CLEAR_DIRTY: {
+		dirty = false;
+		return 0;
+	}
 	}
 	return ht_textfile::vcntl(cmd, vargs);
 }
