@@ -541,10 +541,14 @@ bool Array::moveTo(ObjHandle from, ObjHandle to)
 	if (!validHandle(to)) return false;
 	uint i = handleToNative(from);
 	uint t = handleToNative(to);
+	if (i == t) return true;
 	Object *o = elems[i];
-	memmove(elems+i, elems+i+1, sizeof (*elems) * (ecount - i - 1));
-	ecount--;
-	insertAt(nativeToHandle(t), o);
+	if (i < t) {
+		memmove(elems+i, elems+i+1, sizeof (*elems) * (t - i));
+	} else {
+		memmove(elems+t+1, elems+t, sizeof (*elems) * (i - t));
+	}
+	elems[t] = o;
 	return true;
 }
 
@@ -587,7 +591,7 @@ void Array::insertAt(ObjHandle h, Object *obj)
 		insert(obj);
 	} else {
 		uint i = handleToNative(h);
-		if (i<ecount) {
+		if (i < ecount) {
 			prepareWriteAccess(ecount);
 			memmove(elems+i+1, elems+i, sizeof (*elems) * (ecount - i));
 			ecount++;
