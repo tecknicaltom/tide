@@ -49,6 +49,7 @@ public:
 	virtual	uint			read(void *buf, uint size);
 		void			readx(void *buf, uint size);
 	virtual	int			setAccessMode(IOAccessMode mode);
+		void			setAccessModex(IOAccessMode mode);
 	virtual	uint			write(const void *buf, uint size);
 		void			writex(const void *buf, uint size);
 };
@@ -217,12 +218,13 @@ public:
 /* cntl cmd */
 #define FCNTL_MODS_INVD			0x00000001
 #define FCNTL_MODS_FLUSH		0x00000002
-#define FCNTL_MODS_IS_DIRTY		0x00000003	// const FileOfs &offset, const FileOfs &range, bool &isdirty
-#define FCNTL_CACHE_INVD		0x00000004
-#define FCNTL_FLUSH_STAT		0x00000005
-#define FCNTL_GET_RELOC			0x00000006	// bool &enabled
-#define FCNTL_SET_RELOC			0x00000007	// bool enable
-#define FCNTL_GET_FD			0x00000008	// int &fd
+#define FCNTL_MODS_CLEAR_DIRTY_RANGE	0x00000003	// const FileOfs offset, const FileOfs range
+#define FCNTL_MODS_IS_DIRTY		0x00000004	// const FileOfs offset, const FileOfs range, bool &isdirty
+#define FCNTL_CACHE_INVD		0x00000005
+#define FCNTL_FLUSH_STAT		0x00000006
+#define FCNTL_GET_RELOC			0x00000007	// bool &enabled
+#define FCNTL_SET_RELOC			0x00000008	// bool enable
+#define FCNTL_GET_FD			0x00000009	// int &fd
 
 // Return a "modification count" that changes, every time the file state
 // ( content, size, pstat ) changes.
