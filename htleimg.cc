@@ -38,7 +38,8 @@ static ht_view *htleimage_init(Bounds *b, File *file, ht_format_group *group)
 
 	File *myfile = le_shared->reloc_file;
 
-	LOG("%s: LE: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: LE: loading image (starting analyser)...", &file->getFilename(fn));
 	LEAnalyser *p = new LEAnalyser();
 	p->init(le_shared, myfile);
 
@@ -152,7 +153,7 @@ bool ht_le_aviewer::get_current_real_offset(FileOfs *ofs)
 {
 	FileOfs o;
 	if (!get_current_offset(&o)) return false;
-	uint m;
+	FileOfs m;
 	if (!le_shared->linear_file->map_ofs(o, ofs, &m)) return false;
 	return true;
 }
