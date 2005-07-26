@@ -165,8 +165,8 @@ int msgbox(int buttonmask, const char *title, bool modal, statictext_align align
 	app->getbounds(&b);
 	b.w=55;
 	b.h=MAX(strl/(b.w-4), ns)+6;
-	b.x=(screen->size.w-b.w)/2;
-	b.y=(screen->size.h-b.h)/2;
+	b.x=(screen->w - b.w)/2;
+	b.y=(screen->h - b.h)/2;
 	return imsgbox(&b, buttonmask, title, modal, align, buf);
 }
 
@@ -205,8 +205,8 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 	b2.w = b->w - 3 - b2.x;
 	b2.h = 1;
 
-	ht_clist *hist = 0;
-	if (histid) hist = (ht_clist*)getAtomValue(histid);
+	List *hist = NULL;
+	if (histid) hist = (List*)getAtomValue(histid);
 	input = new ht_strinputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
@@ -263,7 +263,7 @@ void get_std_progress_indicator_metrics(Bounds *b)
 	app->getbounds(b);
 	b->w=b->w*2/3;
 	b->h=6;
-	b->x=(screen->size.w-b->w)/2;
-	b->y=(screen->size.h-b->h)/2;
+	b->x=(screen->w - b->w)/2;
+	b->y=(screen->h - b->h)/2;
 }
 
