@@ -19,7 +19,7 @@
  */
 
 #include "atom.h"
-#include "htdata.h"
+#include "data.h"
 #include "hthist.h"
 #include "strtools.h"
 #include "tools.h"
@@ -31,23 +31,19 @@
 
 #define MAX_HISTORY_ENTRY_COUNT			40
 
-bool insert_history_entry(ht_list *history, char *name, ht_view *view)
+bool insert_history_entry(List *history, char *name, ht_view *view)
 {
 	if (name && *name) {
-		ht_object_stream_bin *os=0;
-		ht_mem_file *file=0;
+		ObjectStreamBin *os = NULL;
+		MemoryFile *file = NULL;
 		if (view) {
-				file=new ht_mem_file();
-				file->init();
-
-				os=new ht_object_stream_bin();
-				os->init(file);
-
-				view->getdata(os);
+				file=new MemoryFile();
+				os=new ObjectStreamBin(file, true);
+				view->getdata(*os);
 		}
 
 		ht_history_entry *e=new ht_history_entry(name, os, file);
-		uint li=history->find(e);
+		uint li = history->find(e);
 		int r=0;
 		if (li==LIST_UNDEFINED) {
 			history->prepend(e);
@@ -56,7 +52,7 @@ bool insert_history_entry(ht_list *history, char *name, ht_view *view)
 			delete e;
 			history->move(li, 0);
 		}
-/* limit number of history entries to MAX_HISTORY_ENTRY_COUNT */
+		/* limit number of history entries to MAX_HISTORY_ENTRY_COUNT */
 		if (history->count() > MAX_HISTORY_ENTRY_COUNT) {
 			history->del_multiple(MAX_HISTORY_ENTRY_COUNT, history->count() - MAX_HISTORY_ENTRY_COUNT);
 		}
