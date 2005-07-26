@@ -20,7 +20,7 @@
 
 #include "htapp.h"		// for queuemsg
 #include "htctrl.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htmenu.h"
 #include "htpal.h"
 #include "htreg.h"
@@ -96,7 +96,6 @@ bool execute_submenu(int x, int y, ht_context_menu *m)
 
 void ht_context_menu::init(char *Name)
 {
-	ht_data::init();
 	name = ht_strdup(Name);
 	shortcut = shortcut_str(name);
 	width = 0;
@@ -105,7 +104,6 @@ void ht_context_menu::init(char *Name)
 void ht_context_menu::done()
 {
 	free(name);
-	ht_data::done();
 }
 
 int ht_context_menu::count()
@@ -150,13 +148,11 @@ char *ht_context_menu::get_shortcut()
 void ht_static_context_menu::init(char *name)
 {
 	ht_context_menu::init(name);
-	context_menu_entry=new ht_clist();
-	((ht_clist*)context_menu_entry)->init();
+	context_menu_entry=new Array(true);
 }
 
 void ht_static_context_menu::done()
 {
-	context_menu_entry->destroy();
 	delete context_menu_entry;
 	ht_context_menu::done();
 }
@@ -169,14 +165,14 @@ int ht_static_context_menu::count()
 ht_context_menu_entry *ht_static_context_menu::enum_entry_first()
 {
 	enum_idx=0;
-	ht_context_menu_entry *e=(ht_context_menu_entry*)context_menu_entry->get(enum_idx);
+	ht_context_menu_entry *e=(ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
 	return e;
 }
 
 ht_context_menu_entry *ht_static_context_menu::enum_entry_next()
 {
 	enum_idx++;
-	ht_context_menu_entry *e=(ht_context_menu_entry*)context_menu_entry->get(enum_idx);
+	ht_context_menu_entry *e=(ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
 	return e;
 }
 
@@ -241,8 +237,7 @@ void ht_menu::init(Bounds *b)
 	ht_view::init(b, VO_OWNBUFFER | VO_POSTPROCESS, "menu");
 	VIEW_DEBUG_NAME("ht_menu");
 
-	menu=new ht_clist();
-	((ht_clist*)menu)->init();
+	menu=new Array(true);
 	lastmenux = 1;
 	curmenu = -1;
 	localmenu = -1;
@@ -253,7 +248,6 @@ void ht_menu::init(Bounds *b)
 
 void ht_menu::done()
 {
-	menu->destroy();
 	delete menu;
 	ht_view::done();
 }
@@ -270,7 +264,7 @@ char *ht_menu::defaultpaletteclass()
 
 ht_context_menu *ht_menu::get_context_menu(int i)
 {
-	ht_context_menu *q = (ht_context_menu*)menu->get(i);
+	ht_context_menu *q = (ht_context_menu*)(*menu)[i];
 	if (context_menu_hack && (i == localmenu) && !q) return context_menu_hack;
 	return q;
 }
@@ -351,8 +345,8 @@ void ht_menu::handlemsg(htmsg *msg)
 	if (msg->type==mt_postprocess) {
 		if (msg->msg==msg_keypressed) {
 /* shortcuts */
-			ht_key k=ht_unmetakey((ht_key)msg->data1.integer);
-			if (k!=K_INVALID) {
+			ht_key k = keyb_unmetakey((ht_key)msg->data1.integer);
+			if (k != K_INVALID) {
 				int c=count();
 				for (int i=0; i<c; i++) {
 					ht_context_menu *m = get_context_menu(i);
@@ -365,10 +359,10 @@ void ht_menu::handlemsg(htmsg *msg)
 							last_context_menu_hack = NULL;
 						}
 						if (localmenu != -1) {
-							context_menu_hack = (ht_context_menu*)menu->get(localmenu);
+							context_menu_hack = (ht_context_menu*)(*menu)[localmenu];
 							last_context_menu_hack = NULL;
 							if (context_menu_hack) {
-								menu->remove(localmenu);
+								menu->remove(menu->findByIdx(localmenu));
 							}
 						}
 						context_menu_hack2 = true;
@@ -414,7 +408,7 @@ bool ht_menu::handle_key_context_menu(ht_context_menu *a, int k)
 			htmsg m;
 			m.msg = e->entry.command;
 			m.type = mt_empty;
-			((ht_app*)app)->queuemsg(app, &m);
+			((ht_app*)app)->queuemsg(app, m);
 			return true;
 		} else if (e->type == CME_SUBMENU) {
 			if (handle_key_context_menu(e->submenu, k)) return true;
@@ -426,7 +420,7 @@ bool ht_menu::handle_key_context_menu(ht_context_menu *a, int k)
 
 int ht_menu::count()
 {
-	ht_context_menu *q = (ht_context_menu*)menu->get(localmenu);
+	ht_context_menu *q = (ht_context_menu*)(*menu)[localmenu];
 	if (context_menu_hack) return menu->count() + (((localmenu != -1) && !q) 
 		? 1 : 0);
 	return menu->count();
@@ -452,7 +446,7 @@ void ht_menu::delete_local_menu()
 			delete last_context_menu_hack;
 			last_context_menu_hack = NULL;
 		}
-		menu->del(localmenu);
+		menu->del(menu->findByIdx(localmenu));
 	}		
 }
 
@@ -484,13 +478,13 @@ bool ht_menu::set_local_menu(ht_context_menu *m)
 	} else {
 		int namelen = strlen(m->get_name());
 
-		ht_context_menu *p = (ht_context_menu*)menu->get(localmenu-1);
+		ht_context_menu *p = (ht_context_menu*)(*menu)[localmenu-1];
 		if (p) lastmenux = p->xpos + strlen(p->get_name())+1; else
 			lastmenux = 1;
 
 		m->xpos = lastmenux;
 
-		menu->set(localmenu, m);
+		menu->forceSetByIdx(localmenu, m);
 
 		lastmenux += namelen+1;
 	}
@@ -594,7 +588,7 @@ void ht_context_menu_window_body::draw()
 			}
 			break;
 			case CME_SEPARATOR:
-				fill(0, i, size.w, 1, getcolor(palidx_generic_text_focused), CHAR_LINEH);
+				fill(0, i, size.w, 1, getcolor(palidx_generic_text_focused), GC_1HLINE, CP_GRAPHICAL);
 				break;
 			case CME_SUBMENU: {
 				char *n = e->submenu->get_name();
@@ -608,7 +602,7 @@ void ht_context_menu_window_body::draw()
 				fill(0, i, size.w, 1, c, ' ');
 				buf_lprint(1, i, c, size.w, n);
 				if (s) buf_printchar(n-s+1, i, getcolor(palidx_generic_text_shortcut), *s);
-				buf_printchar(size.w-2, i, c, CHAR_ARROWBIG_RIGHT);
+				buf_printchar(size.w-2, i, c, GC_ARROW_RIGHT, CP_GRAPHICAL);
 				break;
 			}
 		}
@@ -706,12 +700,12 @@ int ht_context_menu_window_body::prev_selectable(int to)
 
 void ht_context_menu_window_body::getdata(ObjectStream &s)
 {
-	s->putIntDec(selected, 4, NULL);
+	PUT_INT32D(s, selected);
 }
 
 void ht_context_menu_window_body::setdata(ObjectStream &s)
 {
-	selected=s->getIntDec(4, NULL);
+	GET_INT32D(s, selected);
 }
 
 /*
@@ -758,7 +752,7 @@ void ht_menu_window::handlemsg(htmsg *msg)
 					htmsg m;
 					m.msg = e->entry.command;
 					m.type = mt_empty;
-					((ht_app*)app)->queuemsg(app, &m);
+					((ht_app*)app)->queuemsg(app, m);
 //					app->sendmsg(e->entry.command);
 				} else if (e->type == CME_SUBMENU) {
 					if (execute_submenu(menu->xpos+2, 3+curentry, e->submenu)) {
