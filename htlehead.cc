@@ -145,12 +145,12 @@ static ht_view *htleheader_init(Bounds *b, File *file, ht_format_group *group)
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 
-	register_atom(ATOM_LE_FLAGS, le_flags);
-	register_atom(ATOM_LE_MACHINE, le_machines);
-	register_atom(ATOM_LE_OS, le_os);
+	registerAtom(ATOM_LE_FLAGS, le_flags);
+	registerAtom(ATOM_LE_MACHINE, le_machines);
+	registerAtom(ATOM_LE_OS, le_os);
 
 	char info[128];
-	ht_snprintf(info, sizeof info, "* LE header at offset %08x", le_shared->hdr_ofs);
+	ht_snprintf(info, sizeof info, "* LE header at offset 0x%08qx", le_shared->hdr_ofs);
 	m->add_mask(info);
 	m->add_staticmask_ptable(leheader, h, le_bigendian);
 	v->insertsub(m);
