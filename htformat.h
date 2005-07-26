@@ -452,9 +452,9 @@ public:
 class ht_linear_sub: public ht_sub {
 protected:
 	FileOfs fofs;
-	uint32 fsize;
+	FileOfs fsize;
 public:
-			void init(File *file, FileOfs offset, int size);
+			void init(File *file, FileOfs offset, FileOfs size);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -527,7 +527,7 @@ protected:
 	ht_sub *sub;
 	bool own_sub;
 public:
-			void init(File *file, ht_sub *sub, bool own_sub);
+		void init(File *file, ht_sub *sub, bool own_sub = true);
 	virtual	void done();
 /* overwritten */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
@@ -591,16 +591,6 @@ public:
 	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
 /* new */
 			void insertsub(ht_sub *sub);
-};
-
-/*
- *	CLASS ht_data_tagstring
- */
-
-class ht_data_tagstring: public String {
-public:
-		ht_data_tagstring(char *tagstr = NULL);
-	virtual	~ht_data_tagstring();
 };
 
 ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize);
