@@ -79,11 +79,11 @@ static ht_view *htleentrypoints_init(Bounds *b, File *file, ht_format_group *gro
 	v->init(b, DESC_LE_ENTRYPOINTS, VC_EDIT | VC_SEARCH, file, group);
 	ht_mask_sub *m=new ht_mask_sub();
 	m->init(file, 0);
-	register_atom(ATOM_LE_ENTRY_FLAGS, le_entry_flags);
-	register_atom(ATOM_LE_ENTRY_BUNDLE_FLAGS, le_entry_bundle_flags);
+	registerAtom(ATOM_LE_ENTRY_FLAGS, le_entry_flags);
+	registerAtom(ATOM_LE_ENTRY_BUNDLE_FLAGS, le_entry_bundle_flags);
 	char info[128];
 	
-	ht_snprintf(info, sizeof info, "* LE entry header at offset %08x", h+le_shared->hdr.enttab);
+	ht_snprintf(info, sizeof info, "* LE entry header at offset 0x%08qx", h+le_shared->hdr.enttab);
 
 /* FIXME: false */
 	bool le_bigendian = false;
