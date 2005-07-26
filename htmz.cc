@@ -37,8 +37,8 @@ static ht_view *htmz_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte magic[2];
 	file->seek(0);
-	file->read(magic, 2);
-	if ((magic[0] != IMAGE_MZ_MAGIC0) || (magic[1] != IMAGE_MZ_MAGIC1))
+	if (file->read(magic, 2) != 2 
+	 || magic[0] != IMAGE_MZ_MAGIC0 || magic[1] != IMAGE_MZ_MAGIC1)
 		return NULL;
 
 	ht_mz *g = new ht_mz();
