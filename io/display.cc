@@ -87,19 +87,6 @@ vcp mixColors(vcp base, vcp layer)
 /*
  *	Display
  */
-Display::Display()
-{
-}
-
-Display::Display(const Bounds &b)
-: Bounds(b)
-{
-}
-
-Display::~Display()
-{
-}
-
 void Display::assign(int x, int y, int w, int h)
 {
 	Bounds b(x, y, w, h);
@@ -125,11 +112,11 @@ void Display::resize(int deltaw, int deltah)
 	setBounds(b);
 }
 
-int Display::nprintf(int x, int y, vcp color, const char *format, int maxstrlen, Codepage cp, ...)
+int Display::nprintf(int x, int y, vcp color, int maxstrlen, Codepage cp, const char *format, ...)
 {
 	char buf[512];
 	va_list ap;
-	va_start(ap, cp);
+	va_start(ap, format);
 	ht_vsnprintf(buf, MIN((int)sizeof buf, maxstrlen), format, ap);
 	va_end(ap);
 	return print(x, y, color, buf, cp);
@@ -158,11 +145,11 @@ int Display::printChar(int x, int y, vcp color, char chr, Codepage cp)
 	return 1;
 }
 
-int Display::printf(int x, int y, vcp color, const char *format, Codepage cp, ...)
+int Display::printf(int x, int y, vcp color, Codepage cp, const char *format, ...)
 {
 	char buf[512];
 	va_list ap;
-	va_start(ap, cp);
+	va_start(ap, format);
 	ht_vsnprintf(buf, sizeof buf, format, ap);
 	va_end(ap);
 	return print(x, y, color, buf, cp);
@@ -325,7 +312,7 @@ void BufferedRDisplay::setBounds(const Bounds &b)
 	ColoredChar *bufnew;
 	if (w * h) {
 		bufnew = (ColoredChar*)malloc(sizeof *buf * w * h);
-		if (!bufnew) throw new std::bad_alloc();
+		if (!bufnew) throw std::bad_alloc();
 		ColoredChar *bb = bufnew;
 		for (int iy = 0; iy < h; iy++) {
 			for (int ix = 0; ix < w; ix++) {
