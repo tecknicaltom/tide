@@ -371,7 +371,7 @@ protected:
 	uint size;
 	const void *buf;
 public:
-				ConstMemMapFile(const void *buf, uint size);
+				ConstMemMapFile(const void *buf, uint size, FileOfs ofs=0);
 	/* extends File */
 	virtual String &	getDesc(String &result) const;
 	virtual FileOfs	getSize() const;
@@ -385,7 +385,7 @@ public:
  */
 class MemMapFile: public ConstMemMapFile {
 public:
-				MemMapFile(void *buf, uint size);
+				MemMapFile(void *buf, uint size, FileOfs ofs=0);
 	/* extends Stream */
 	virtual uint		write(const void *buf, uint size);
 };
