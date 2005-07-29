@@ -98,8 +98,6 @@ struct gsi_scrollbar_t {
 
 /* grow modes */
 
-class ht_group;
-
 #define VIEW_DEBUG_NAME(name)	ht_view::view_debug_name=name;
 
 #define GMV_TOP		0
@@ -116,8 +114,6 @@ class ht_group;
 #define MK_GM(gmh, gmv)	((gmv) | ((gmh)<<16))
 
 void clearmsg(htmsg *msg);
-
-enum cursor_mode {cm_normal, cm_overwrite};
 
 class ht_view: public Object {
 protected:
@@ -148,18 +144,23 @@ public:
 
 /*debug:*/char *view_debug_name;
 
+				ht_view() {}
+				ht_view(BuildCtorArg&);
+
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 /* new */
 		void		*allocdatabuf(void *handle);
 	virtual	int		aclone();
+/*
 		int		buf_lprint(int x, int y, int c, int l, const char *text, Codepage cp = CP_DEVICE);
 		int		buf_lprintw(int x, int y, int c, int l, const AbstractChar *text, Codepage cp = CP_DEVICE);
 		int		buf_print(int x, int y, int c, const char *text, Codepage cp = CP_DEVICE);
 		void		buf_printchar(int x, int y, int c, int ch, Codepage cp = CP_DEVICE);
 		int		buf_printf(int x, int y, int c, Codepage cp, const char *format, ...);
 		int		buf_printw(int x, int y, int c, const AbstractChar *text, Codepage cp = CP_DEVICE);
-	virtual	int		childcount();
+*/
+	virtual	int		childcount() const;
 		void		clear(int color);
 	virtual	void		clipbounds(Bounds *b);
 	virtual	void		config_changed();
@@ -209,7 +210,7 @@ public:
 		void		sendmsg(int msg, void *data1, void *data2=0);
 		void		setbounds(Bounds *b);
 		void		setvisualbounds(Bounds *b);
-		void		setcursor(int x, int y, cursor_mode c=cm_normal);
+		void		setcursor(int x, int y, CursorMode c=CURSOR_NORMAL);
 	virtual	void		setdata(ObjectStream &s);
 	virtual	void		setgroup(ht_group *group);
 	virtual	void		setnumber(uint number);
@@ -232,10 +233,13 @@ public:
 	ht_view 	*first, *current, *last;
 	void		*shared_data;
 
-		void	init(Bounds *b, int options, const char *desc);
+		ht_group() {}
+		ht_group(BuildCtorArg&);
+
+		void init(Bounds *b, int options, const char *desc);
 	virtual	void done();
 /* overwritten */
-	virtual	int childcount();
+	virtual	int childcount() const;
 	virtual	int countselectables();
 	virtual	int datasize();
 	virtual	int enum_start();
@@ -275,6 +279,9 @@ public:
 
 class ht_xgroup: public ht_group {
 public:
+		ht_xgroup() {}
+		ht_xgroup(BuildCtorArg&);
+
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 /* overwritten */
@@ -299,12 +306,15 @@ protected:
 	palette *gpal;
 	bool isvertical;
 public:
-		void	init(Bounds *b, palette *gpal, bool isvertical);
+		ht_scrollbar() {}
+		ht_scrollbar(BuildCtorArg&);
+
+		void init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
 /* overwritten */
 	virtual	void enable();
 	virtual	void disable();
-	virtual 	void draw();
+	virtual void draw();
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -319,6 +329,8 @@ public:
 class ht_text: public ht_view {
 public:
 /* new */
+		ht_text() {}
+		ht_text(BuildCtorArg&);
 	virtual	void settext(const char *text);
 };
 
@@ -348,6 +360,8 @@ protected:
 	virtual	vcp getcurcol_normal();
 	virtual	vcp getcurcol_killer();
 public:
+				ht_frame() {}
+				ht_frame(BuildCtorArg&);
 		void		init(Bounds *b, const char *desc, uint style, uint number=0);
 	virtual	void		done();
 /* overwritten */
@@ -384,14 +398,17 @@ protected:
 	
 			bool next_action_state();
 public:
-			void	init(Bounds *b, const char *desc, uint framestyle, uint number=0);
+		ht_window() {}
+		ht_window(BuildCtorArg&);
+
+		void	init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
 	virtual	uint getnumber();
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void insert(ht_view *view);
-	virtual	void		load(ObjectStream &s);
+	virtual	void load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void receivefocus();
 	virtual	void releasefocus();
