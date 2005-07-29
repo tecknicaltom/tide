@@ -31,6 +31,8 @@
 class ht_registry_data: public Object {
 public:
 /* new */
+		ht_registry_data() {};
+		ht_registry_data(BuildCtorArg&) {};
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
 };
@@ -43,7 +45,7 @@ class ht_registry_data_stree: public ht_registry_data {
 public:
 	Container *tree;
 
-			ht_registry_data_stree(Container *aTree=NULL);
+			ht_registry_data_stree(AVLTree *aTree=NULL);
 			~ht_registry_data_stree();
 /* overwritten */
 	virtual	void load(ObjectStream &f);
@@ -60,7 +62,7 @@ class ht_registry_data_dword: public ht_registry_data {
 public:
 	uint32 value;
 
-			ht_registry_data_dword(uint32 value=0);
+		ht_registry_data_dword(uint32 value=0);
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -116,9 +118,13 @@ typedef uint ht_registry_node_type;
 
 class ht_registry_node_type_desc: public Object {
 public:
+	char *name;
 	ht_registry_node_type type;
 	create_empty_registry_data_func create_empty_registry_data;
 	
+	ht_registry_node_type_desc(ht_registry_node_type t, const char *name, create_empty_registry_data_func c);
+	virtual ~ht_registry_node_type_desc();
+	virtual int compareTo(const Object *) const;
 	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
 	virtual	void store(ObjectStream &f) const;
@@ -137,12 +143,15 @@ public:
 
 class ht_registry_node: public Object {
 public:
+	char *name;
 	ht_registry_node_type type;
 	ht_registry_data *data;
 
-			void init(ht_registry_node_type type);
-	virtual	void done();
+	ht_registry_node(ht_registry_node_type type, const char *name, ht_registry_data *data);
+	ht_registry_node(BuildCtorArg&);
+	virtual ~ht_registry_node();
 /* overwritten */
+	virtual int compareTo(const Object *) const;
 	virtual	void load(ObjectStream &f);
 	virtual	void store(ObjectStream &f) const;
 	virtual	ObjectID getObjectID() const;
