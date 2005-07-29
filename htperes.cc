@@ -25,7 +25,7 @@
 #include "endianess.h"
 #include "hthex.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htnewexe.h"
 #include "htobj.h"
 #include "htpe.h"
@@ -171,6 +171,7 @@ static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group
 	t->init(b, DESC_PE_RESOURCES);
 
 	void *root;
+	String fn;
 /* get resource directory offset */
 	/* 1. get resource directory rva */
 	FileOfs iofs;
@@ -184,7 +185,7 @@ static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group
 	/* 2. transform it into an offset */
 	if (!pe_rva_to_ofs(&pe_shared->sections, irva, &iofs)) goto pe_read_error;
 
-	LOG("%s: PE: reading resource directory at offset %08x, rva %08x", file->get_filename(), iofs, irva);
+	LOG("%y: PE: reading resource directory at offset 0x%08qx, rva %08x", &file->getFilename(fn), iofs, irva);
 
 	peresource_file=file;
 	peresource_dir_ofs=iofs;
@@ -200,7 +201,7 @@ static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group
 	pe_shared->v_resources = t;
 	return t;
 pe_read_error:
-	errorbox("%s: PE resource directory seems to be corrupted.", file->get_filename());
+	errorbox("%y: PE resource directory seems to be corrupted.", &file->getFilename(fn));
 	t->done();
 	delete t;
 	return NULL;
@@ -230,7 +231,7 @@ void ht_pe_resource_viewer::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_vstate_restore:
-			vstate_restore((ht_data*)msg->data1.ptr);
+			vstate_restore((Object*)msg->data1.ptr);
 			clearmsg(msg);
 			return;
 	}
@@ -290,7 +291,7 @@ bool ht_pe_resource_viewer::vstate_save()
 	return false;
 }
 
-void ht_pe_resource_viewer::vstate_restore(ht_data *d)
+void ht_pe_resource_viewer::vstate_restore(Object *d)
 {
 	ht_pe_resource_viewer_vstate *v = new ht_pe_resource_viewer_vstate();
 	goto_node(v->node);
