@@ -73,11 +73,11 @@ static ht_view *htnesegments_init(Bounds *b, File *file, ht_format_group *group)
 	ht_mask_sub *m=new ht_mask_sub();
 	m->init(file, 0);
 
-	register_atom(ATOM_NE_SEGFLAGS, ne_segflags);
+	registerAtom(ATOM_NE_SEGFLAGS, ne_segflags);
 
 	char t[64];
 
-	ht_snprintf(t, sizeof t, "* NE segment table at offset %08x", h+ne_shared->hdr.segtab);
+	ht_snprintf(t, sizeof t, "* NE segment table at offset 0x%08qx", h+ne_shared->hdr.segtab);
 	m->add_mask(t);
 	m->add_mask("note: 0 means 65536 for segment size and minalloc");
 
