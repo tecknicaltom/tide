@@ -33,7 +33,7 @@ class ht_pe_import_library: public Object {
 public:
 	char *name;
 
-	ht_pe_import_library(char *name);
+	ht_pe_import_library(const char *name);
 	~ht_pe_import_library();
 };
 
@@ -55,7 +55,7 @@ public:
 	RVA address;
 
 	ht_pe_import_function(uint libidx, RVA address, uint ordinal);
-	ht_pe_import_function(uint libidx, RVA address, char *name, uint hint);
+	ht_pe_import_function(uint libidx, RVA address, const char *name, uint hint);
 	~ht_pe_import_function();
 };
 
