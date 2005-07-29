@@ -278,13 +278,13 @@ void ht_menu::draw()
 		char *n = c->get_name();
 		char *s = c->get_shortcut();
 		if (i==curmenu) {
-			buf_printchar(c->xpos-1, 0, getcolor(palidx_generic_text_selected), ' ');
-			buf_print(c->xpos, 0, getcolor(palidx_generic_text_selected), n);
-			buf_printchar(c->xpos+strlen(n), 0, getcolor(palidx_generic_text_selected), ' ');
-			if (s) buf_printchar(c->xpos+(s - n), 0, getcolor(palidx_generic_text_shortcut_selected), *s);
+			buf->printChar(c->xpos-1, 0, getcolor(palidx_generic_text_selected), ' ');
+			buf->print(c->xpos, 0, getcolor(palidx_generic_text_selected), n);
+			buf->printChar(c->xpos+strlen(n), 0, getcolor(palidx_generic_text_selected), ' ');
+			if (s) buf->printChar(c->xpos+(s - n), 0, getcolor(palidx_generic_text_shortcut_selected), *s);
 		} else {
-			buf_print(c->xpos, 0, getcolor(palidx_generic_text_focused), n);
-			if (s) buf_printchar(c->xpos+(s - n), 0, getcolor(palidx_generic_text_shortcut), *s);
+			buf->print(c->xpos, 0, getcolor(palidx_generic_text_focused), n);
+			if (s) buf->printChar(c->xpos+(s - n), 0, getcolor(palidx_generic_text_shortcut), *s);
 		}
 	}
 }
@@ -565,25 +565,25 @@ void ht_context_menu_window_body::draw()
 				if (e->entry.active) {
 					vcp c = getcolor(palidx_generic_text_selected);
 					fill(0, i, size.w, 1, c, ' ');
-					buf_lprint(1, i, c, size.w, e->entry.name);
-					if (e->entry.comment) buf_lprint(size.w-1-strlen(e->entry.comment), i, c, size.w, e->entry.comment);
-					if (e->entry.shortcut) buf_printchar(e->entry.shortcut-e->entry.name+1, i, getcolor(palidx_generic_text_shortcut_selected), *e->entry.shortcut);
+					buf->nprint(1, i, c, e->entry.name, size.w);
+					if (e->entry.comment) buf->nprint(size.w-1-strlen(e->entry.comment), i, c, e->entry.comment, size.w);
+					if (e->entry.shortcut) buf->printChar(e->entry.shortcut-e->entry.name+1, i, getcolor(palidx_generic_text_shortcut_selected), *e->entry.shortcut);
 				} else {
 					vcp c = getcolor(palidx_generic_text_disabled);
 					fill(0, i, size.w, 1, c, ' ');
-					buf_lprint(1, i, c, size.w, e->entry.name);
-					if (e->entry.comment) buf_lprint(size.w-1-strlen(e->entry.comment), i, c, size.w, e->entry.comment);
+					buf->nprint(1, i, c, e->entry.name, size.w);
+					if (e->entry.comment) buf->nprint(size.w-1-strlen(e->entry.comment), i, c, e->entry.comment, size.w);
 				}
 			} else {
 				if (e->entry.active) {
 					vcp c = getcolor(palidx_generic_text_focused);
-					buf_lprint(1, i, c, size.w, e->entry.name);
-					if (e->entry.comment) buf_lprint(size.w-1-strlen(e->entry.comment), i, c, size.w, e->entry.comment);
-					if (e->entry.shortcut) buf_printchar(e->entry.shortcut-e->entry.name+1, i, getcolor(palidx_generic_text_shortcut), *e->entry.shortcut);
+					buf->nprint(1, i, c, e->entry.name, size.w);
+					if (e->entry.comment) buf->nprint(size.w-1-strlen(e->entry.comment), i, c, e->entry.comment, size.w);
+					if (e->entry.shortcut) buf->printChar(e->entry.shortcut-e->entry.name+1, i, getcolor(palidx_generic_text_shortcut), *e->entry.shortcut);
 				} else {
 					vcp c = getcolor(palidx_generic_text_disabled);
-					buf_lprint(1, i, c, size.w, e->entry.name);
-					if (e->entry.comment) buf_lprint(size.w-1-strlen(e->entry.comment), i, c, size.w, e->entry.comment);
+					buf->nprint(1, i, c, e->entry.name, size.w);
+					if (e->entry.comment) buf->nprint(size.w-1-strlen(e->entry.comment), i, c, e->entry.comment, size.w);
 				}
 			}
 			break;
@@ -600,9 +600,9 @@ void ht_context_menu_window_body::draw()
 					c = getcolor(palidx_generic_text_focused);
 				}
 				fill(0, i, size.w, 1, c, ' ');
-				buf_lprint(1, i, c, size.w, n);
-				if (s) buf_printchar(n-s+1, i, getcolor(palidx_generic_text_shortcut), *s);
-				buf_printchar(size.w-2, i, c, GC_ARROW_RIGHT, CP_GRAPHICAL);
+				buf->nprint(1, i, c, n, size.w);
+				if (s) buf->printChar(n-s+1, i, getcolor(palidx_generic_text_shortcut), *s);
+				buf->printChar(size.w-2, i, c, GC_ARROW_RIGHT, CP_GRAPHICAL);
 				break;
 			}
 		}
