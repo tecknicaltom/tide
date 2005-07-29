@@ -51,9 +51,10 @@ static ht_view *htpe_init(Bounds *b, File *file, ht_format_group *format_group)
 	byte pemagic[4];
 	FileOfs h = get_newexe_header_ofs(file);
 	file->seek(h);
-	file->read(pemagic, 4);
-	if ((pemagic[0]!=PE_MAGIC0) || (pemagic[1]!=PE_MAGIC1) ||
-	   (pemagic[2]!=PE_MAGIC2) || (pemagic[3]!=PE_MAGIC3)) return 0;
+	;
+	if (file->read(pemagic, 4) != 4 
+	 || pemagic[0] != PE_MAGIC0 || pemagic[1] != PE_MAGIC1
+	 || pemagic[2] != PE_MAGIC2 || pemagic[3] != PE_MAGIC3) return 0;
 
 	ht_pe *g = new ht_pe();
 	g->init(b, file, htpe_ifs, format_group, h);
@@ -73,26 +74,18 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_PE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_pe");
 
-	LOG("%s: PE: found header at %08x", file->get_filename(), header_ofs);
+	String fn;
+	LOG("%y: PE: found header at 0x%08qx", &file->getFilename(fn), header_ofs);
 
 	ht_pe_shared_data *pe_shared = (ht_pe_shared_data*)malloc(sizeof (ht_pe_shared_data));
 	shared_data = pe_shared;
 	pe_shared->header_ofs = header_ofs;
 
-	pe_shared->exports.funcs = new ht_clist();
-	pe_shared->exports.funcs->init();
-
-	pe_shared->dimports.funcs = new ht_clist();
-	pe_shared->dimports.funcs->init();
-
-	pe_shared->dimports.libs = new ht_clist();
-	pe_shared->dimports.libs->init();
-
-	pe_shared->imports.funcs = new ht_clist();
-	pe_shared->imports.funcs->init();
-
-	pe_shared->imports.libs = new ht_clist();
-	pe_shared->imports.libs->init();
+	pe_shared->exports.funcs = new Array(true);
+	pe_shared->dimports.funcs = new Array(true);
+	pe_shared->dimports.libs = new Array(true);
+	pe_shared->imports.funcs = new Array(true);
+	pe_shared->imports.libs = new Array(true);
 
 	pe_shared->il = NULL;
 	pe_shared->v_image = NULL;
@@ -104,16 +97,16 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	/* read header */
 	file->seek(header_ofs+4);
-	file->read(&pe_shared->coffheader, sizeof pe_shared->coffheader);
+	file->readx(&pe_shared->coffheader, sizeof pe_shared->coffheader);
 	createHostStruct(&pe_shared->coffheader, COFF_HEADER_struct, little_endian);
-	file->read(&pe_shared->opt_magic, sizeof pe_shared->opt_magic);
+	file->readx(&pe_shared->opt_magic, sizeof pe_shared->opt_magic);
 	pe_shared->opt_magic = createHostInt(&pe_shared->opt_magic, sizeof pe_shared->opt_magic, little_endian);
 	file->seek(header_ofs+4+sizeof pe_shared->coffheader);
 	switch (pe_shared->opt_magic) {
 		case COFF_OPTMAGIC_PE32: {
-			file->read(&pe_shared->pe32.header, sizeof pe_shared->pe32.header);
+			file->readx(&pe_shared->pe32.header, sizeof pe_shared->pe32.header);
 			createHostStruct(&pe_shared->pe32.header, COFF_OPTIONAL_HEADER32_struct, little_endian);
-			file->read(&pe_shared->pe32.header_nt, sizeof pe_shared->pe32.header_nt);
+			file->readx(&pe_shared->pe32.header_nt, sizeof pe_shared->pe32.header_nt);
 			createHostStruct(&pe_shared->pe32.header_nt, PE_OPTIONAL_HEADER32_NT_struct, little_endian);
 			for (uint i=0; i<PE_NUMBEROF_DIRECTORY_ENTRIES; i++) {
 				createHostStruct(&pe_shared->pe32.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
@@ -121,9 +114,9 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 			break;
 		}
 		case COFF_OPTMAGIC_PE64: {
-			file->read(&pe_shared->pe64.header, sizeof pe_shared->pe64.header);
+			file->readx(&pe_shared->pe64.header, sizeof pe_shared->pe64.header);
 			createHostStruct(&pe_shared->pe64.header, COFF_OPTIONAL_HEADER64_struct, little_endian);
-			file->read(&pe_shared->pe64.header_nt, sizeof pe_shared->pe64.header_nt);
+			file->readx(&pe_shared->pe64.header_nt, sizeof pe_shared->pe64.header_nt);
 			createHostStruct(&pe_shared->pe64.header_nt, PE_OPTIONAL_HEADER64_NT_struct, little_endian);
 			for (uint i=0; i<PE_NUMBEROF_DIRECTORY_ENTRIES; i++) {
 				createHostStruct(&pe_shared->pe64.header_nt.directory[i], PE_DATA_DIRECTORY_struct, little_endian);
@@ -138,7 +131,7 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	file->seek(header_ofs+os+sizeof(COFF_HEADER)+4/*magic*/);
 	pe_shared->sections.sections=(COFF_SECTION_HEADER*)malloc(pe_shared->sections.section_count * sizeof *pe_shared->sections.sections);
-	file->read(pe_shared->sections.sections, pe_shared->sections.section_count*sizeof *pe_shared->sections.sections);
+	file->readx(pe_shared->sections.sections, pe_shared->sections.section_count*sizeof *pe_shared->sections.sections);
 
 	for (uint i=0; i<pe_shared->sections.section_count; i++) {
 		createHostStruct(&pe_shared->sections.sections[i], COFF_SECTION_HEADER_struct, little_endian);
@@ -168,28 +161,13 @@ void ht_pe::done()
 
 	ht_pe_shared_data *pe_shared = (ht_pe_shared_data*)shared_data;
 
-	if (pe_shared->exports.funcs) {
-		pe_shared->exports.funcs->destroy();
-		delete pe_shared->exports.funcs;
-	}
-	if (pe_shared->dimports.funcs) {
-		pe_shared->dimports.funcs->destroy();
-		delete pe_shared->dimports.funcs;
-	}
-	if (pe_shared->dimports.libs) {
-		pe_shared->dimports.libs->destroy();
-		delete pe_shared->dimports.libs;
-	}
-	if (pe_shared->imports.funcs) {
-		pe_shared->imports.funcs->destroy();
-		delete pe_shared->imports.funcs;
-	}
-	if (pe_shared->imports.libs) {
-		pe_shared->imports.libs->destroy();
-		delete pe_shared->imports.libs;
-	}
-	free(pe_shared->sections.sections);
+	delete pe_shared->exports.funcs;
+	delete pe_shared->dimports.funcs;
+	delete pe_shared->dimports.libs;
+	delete pe_shared->imports.funcs;
+	delete pe_shared->imports.libs;
 
+	free(pe_shared->sections.sections);
 	free(shared_data);
 }
 
