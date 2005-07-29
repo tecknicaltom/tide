@@ -158,7 +158,7 @@ void ht_format_group::done()
 	if (own_file) delete file;
 }
 
-int ht_format_group::childcount()
+int ht_format_group::childcount() const
 {
 	return xgroup->childcount();
 }
@@ -1540,7 +1540,7 @@ restart:
 			cursor_in_line = true;
 		} else cursor_in_line = false;
 		print_tagstring(0, y, size.w, xscroll, line, cursor_in_line);
-		if (xscroll>0)	buf_printchar(0, y, VCP(VC_GREEN, VC_TRANSPARENT), '<');
+		if (xscroll > 0) buf->printChar(0, y, VCP(VC_GREEN, VC_TRANSPARENT), '<');
 		if (!next_line(&p, 1)) break;
 	}
 	if ((cursor_state==cursor_state_visible) && (cursor_found==-1)) {
@@ -3312,10 +3312,10 @@ void ht_uformat_viewer::print_tagstring(int x, int y, int maxlen, int xscroll, c
 		l-=xscroll;
 		while (l--) {
 			if (x>=size.w) {
-				buf_printchar(x-1, y, VCP(VC_GREEN, VC_TRANSPARENT), '>');
+				buf->printChar(x-1, y, VCP(VC_GREEN, VC_TRANSPARENT), '>');
 				break;
 			}
-			buf_printchar(x, y, *c, (unsigned char)*t);
+			buf->printChar(x, y, *c, (unsigned char)*t);
 			t++;
 			c++;
 			x++;
