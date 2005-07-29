@@ -727,7 +727,7 @@ void ht_project_listbox::draw()
 			getcolor(palidx_generic_list_unfocused_unselected);
 
 		clear(fc);
-		buf_print(0, 0, fc, "<no project>");
+		buf->print(0, 0, fc, "<no project>");
 	}
 }
 
@@ -987,7 +987,7 @@ void ht_status::draw()
 	fill(size.w-clear_len, 0, clear_len, 1, getcolor(palidx_generic_text_focused), ' ');
 	int len=strlen(workbuf);
 	clear_len = len;
-	buf_print(size.w-len, 0, getcolor(palidx_generic_text_focused), workbuf);
+	buf->print(size.w-len, 0, getcolor(palidx_generic_text_focused), workbuf);
 }
 
 void ht_status::handlemsg(htmsg *msg)
@@ -1097,17 +1097,17 @@ void ht_keyline::draw()
 		msg.msg=msg_funcquery;
 		msg.data1.integer=i;
 		baseview->sendmsg(&msg);
-		buf_printchar(x, 0, getcolor(palidx_generic_text_shortcut), '0'+i%10);
+		buf->printChar(x, 0, getcolor(palidx_generic_text_shortcut), '0'+i%10);
 		if (msg.msg==msg_retval) {
 			char *s=msg.data1.str;
 			if (s) {
 				if (s[0]=='~') {
-					buf_print(x+1, 0, getcolor(palidx_generic_text_disabled), s+1);
+					buf->print(x+1, 0, getcolor(palidx_generic_text_disabled), s+1);
 				} else {
 					for (int j=0; j<size.w/10-1; j++) {
-						buf_print(x+j+1, 0, getcolor(palidx_generic_text_focused), " ");
+						buf->print(x+j+1, 0, getcolor(palidx_generic_text_focused), " ");
 					}
-					buf_print(x+1, 0, getcolor(palidx_generic_text_focused), s);
+					buf->print(x+1, 0, getcolor(palidx_generic_text_focused), s);
 				}
 			}
 		}
@@ -1242,7 +1242,7 @@ void ht_logviewer::draw()
 		if (i+ofs >= c) break;
 		ht_log_msg *msg = (ht_log_msg*)(*lines)[i+ofs];
 		int l = strlen(msg->msg);
-		if (xofs<l) buf_print(0, i, /*getcolor(palidx_generic_body)*/msg->color, msg->msg+xofs);
+		if (xofs < l) buf->print(0, i, /*getcolor(palidx_generic_body)*/msg->color, msg->msg+xofs);
 	}
 }
 
