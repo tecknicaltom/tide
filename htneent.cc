@@ -47,10 +47,10 @@ static ht_view *htneentrypoints_init(Bounds *b, File *file, ht_format_group *gro
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 
-	register_atom(ATOM_NE_ENTFLAGS, ne_entflags);
+	registerAtom(ATOM_NE_ENTFLAGS, ne_entflags);
 
 	char line[1024], *l;	/* possible buffer overflow */
-	ht_snprintf(line, sizeof line, "* NE entrypoint table at offset %08x", h+ne_shared->hdr.enttab);
+	ht_snprintf(line, sizeof line, "* NE entrypoint table at offset 0x%08qx", h+ne_shared->hdr.enttab);
 	m->add_mask(line);
 
 	FileOfs o = h + ne_shared->hdr.enttab;
