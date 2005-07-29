@@ -254,7 +254,7 @@ public:
 		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, ht_format_group *format_group);
 	virtual	void done();
 /* overwritten */
-	virtual	int childcount();
+	virtual	int childcount() const;
 	virtual	int focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
 			void getbounds(Bounds *b);
