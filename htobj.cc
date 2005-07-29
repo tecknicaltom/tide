@@ -65,10 +65,10 @@ void bounds_and(Bounds *a, Bounds *b)
 
 void put_bounds(ObjectStream &s, Bounds *b)
 {
-	s->putIntDec(b->x, 4, NULL);
-	s->putIntDec(b->y, 4, NULL);
-	s->putIntDec(b->w, 4, NULL);
-	s->putIntDec(b->h, 4, NULL);
+	PUTX_INT32D(s, b->x, "x");
+	PUTX_INT32D(s, b->y, "y");
+	PUTX_INT32D(s, b->w, "w");
+	PUTX_INT32D(s, b->h, "h");
 }
 
 void clearmsg(htmsg *msg)
@@ -110,11 +110,12 @@ void ht_view::init(Bounds *b, int o, const char *d)
 
 	growmode = MK_GM(GMH_LEFT, GMV_TOP);
 	
+	Bounds rel(0, 0, b->w - b->x, b->h - b->y);
 	if (options & VO_OWNBUFFER) {
-		buf = new drawbuf(&size);
+		buf = new BufferedRDisplay(rel);
 		enable_buffering();
 	} else {
-		buf = screen;
+		buf = new SystemRDisplay(screen, rel);
 		disable_buffering();
 	}
 
@@ -136,7 +137,7 @@ void ht_view::done()
 {
 	if (desc) free(desc);
 	if (pal.data) free(pal.data);
-	if (options & VO_OWNBUFFER) delete buf;
+	delete buf;
 	Object::done();
 }
 
@@ -145,43 +146,44 @@ int ht_view::aclone()
 	return (group && group->isaclone(this));
 }
 
-int ht_view::buf_lprint(int x, int y, int c, int l, char *text)
+#if 0
+int ht_view::buf_lprint(int aX, int aY, int c, int l, const char *text, Codepage cp)
 {
-	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
-		if (size.x+x+l>vsize.x+vsize.w) l=vsize.x+vsize.w-size.x-x;
-		if (size.x+x-vsize.x<0) {
-			int kqx=-size.x-x+vsize.x;
-			for (int i=0; i<kqx; i++) {
+	if (y+aY >= vsize.y && y+aY < vsize.y+vsize.h) {
+		if (x+aX+l > vsize.x+vsize.w) l = vsize.x+vsize.w-size.x-aX;
+		if (x+aX-vsize.x < 0) {
+			int kqx = -x-aX+vsize.x;
+			for (int i=0; i < kqx; i++) {
+				if (!*text) return 0;
+				text++;
+				aX++;
+				l--;
+			}
+		}
+		return (l > 0) ? buf->b_lprint(x+aX, y+aY, c, l, text) : 0;
+	}
+	return 0;
+}
+
+int ht_view::buf_lprintw(int aX, int aY, int c, int l, const AbstractChar *text, Codepage cp)
+{
+	if (size.y+aY >= vsize.y && size.y+aY < vsize.y+vsize.h)) {
+		if (x+aX+l > vsize.x+vsize.w) l=vsize.x+vsize.w-x-aX;
+		if (x+aX-vsize.x < 0) {
+			int kqx = -x-aX+vsize.x;
+			for (int i=0; i < kqx; i++) {
 				if (!*text) return 0;
 				text++;
 				x++;
 				l--;
 			}
 		}
-		return (l>0) ? buf->b_lprint(size.x+x, size.y+y, c, l, text) : 0;
+		return (l>0) ? buf->lprintw(size.x+x, size.y+y, c, l, text) : 0;
 	}
 	return 0;
 }
 
-int ht_view::buf_lprintw(int x, int y, int c, int l, int *text)
-{
-	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
-		if (size.x+x+l>vsize.x+vsize.w) l=vsize.x+vsize.w-size.x-x;
-		if (size.x+x-vsize.x<0) {
-			int kqx=-size.x-x+vsize.x;
-			for (int i=0; i<kqx; i++) {
-				if (!*text) return 0;
-				text++;
-				x++;
-				l--;
-			}
-		}
-		return (l>0) ? buf->b_lprintw(size.x+x, size.y+y, c, l, text) : 0;
-	}
-	return 0;
-}
-
-int ht_view::buf_print(int x, int y, int c, char *text)
+int ht_view::buf_print(int x, int y, int c, const char *text, Codepage cp)
 {
 	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
 		int l=vsize.x+vsize.w-x-size.x;
@@ -199,22 +201,22 @@ int ht_view::buf_print(int x, int y, int c, char *text)
 	return 0;
 }
 
-void ht_view::buf_printchar(int x, int y, int c, int ch)
+void ht_view::buf_printchar(int x, int y, int c, int ch, Codepage cp)
 {
-	if (pointvisible(size.x+x, size.y+y)) buf->b_printchar(size.x+x, size.y+y, c, ch);
+	if (pointvisible(size.x+x, size.y+y)) buf->b_printchar(size.x+x, size.y+y, c, ch, cp);
 }
 
-int ht_view::buf_printf(int x, int y, int c, char *format, ...)
+int ht_view::buf_printf(int x, int y, int c, CodePage cp, const char *format, ...)
 {
 	char buf[256];	/* secure */
 	va_list arg;
 	va_start(arg, format);
 	ht_vsnprintf(buf, sizeof buf, format, arg);
 	va_end(arg);
-	return buf_print(x, y, c, buf);
+	return buf_print(x, y, c, buf, cp);
 }
 
-int ht_view::buf_printw(int x, int y, int c, int *text)
+int ht_view::buf_printw(int x, int y, int c, const AbstractChar *text, Codepage cp)
 {
 	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
 		int l=vsize.x+vsize.w-x-size.x;
@@ -231,8 +233,9 @@ int ht_view::buf_printw(int x, int y, int c, int *text)
 	}
 	return 0;
 }
+#endif
 
-int ht_view::childcount()
+int ht_view::childcount() const
 {
 	return 1;
 }
@@ -244,7 +247,7 @@ void ht_view::cleanview()
 
 void ht_view::clear(int c)
 {
-	buf->b_fill(vsize.x, vsize.y, vsize.w, vsize.h, c, ' ');
+	buf->fill(0, 0, vsize.w, vsize.h, c, ' ');
 }
 
 void ht_view::clipbounds(Bounds *b)
@@ -294,9 +297,10 @@ void ht_view::disable()
 void ht_view::disable_buffering()
 {
 	if (options & VO_OWNBUFFER) {
-		if (buf) delete buf;
-		buf=screen;
-		setoptions(options&(~VO_OWNBUFFER));
+		delete buf;
+		Bounds rel(0, 0, size.w - size.x, size.h - size.y);
+		buf = new SystemRDisplay(screen, rel);
+		setoptions(options & ~VO_OWNBUFFER);
 	}
 }
 
@@ -312,7 +316,9 @@ void ht_view::enable()
 void ht_view::enable_buffering()
 {
 	if (!(options & VO_OWNBUFFER)) {
-		buf=new drawbuf(&size);
+		delete buf;
+		Bounds rel(0, 0, size.w - size.x, size.h - size.y);
+		buf = new BufferedRDisplay(rel);
 		setoptions(options | VO_OWNBUFFER);
 	}
 }
@@ -321,9 +327,9 @@ bool view_line_exposed(ht_view *v, int y, int x1, int x2)
 {
 	ht_group *g=v->group;
 	while (g) {
-		if ((y>=g->size.y) && (y<g->size.y+g->size.h)) {
-			if (x1<g->size.x) x1=g->size.x;
-			if (x2>g->size.x+g->size.w) x2=g->size.x+g->size.w;
+		if (y >= g->size.y && y < g->size.y+g->size.h) {
+			if (x1<g->size.x) x1 = g->size.x;
+			if (x2>g->size.x + g->size.w) x2=g->size.x+g->size.w;
 			ht_view *n=g->first;
 			while (n && n!=v) n=n->next;
 			if (n) {
@@ -380,7 +386,7 @@ bool ht_view::exposed()
 #endif
 }
 
-void ht_view::fill(int x, int y, int w, int h, int c, int chr)
+void ht_view::fill(int x, int y, int w, int h, int c, char chr, Codepage cp)
 {
 	Bounds b;
 	b.x=size.x+x;
@@ -388,7 +394,7 @@ void ht_view::fill(int x, int y, int w, int h, int c, int chr)
 	b.w=w;
 	b.h=h;
 	bounds_and(&b, &vsize);
-	buf->b_fill(b.x, b.y, b.w, b.h, c, chr);
+	buf->fill(b.x, b.y, b.w, b.h, c, chr, cp);
 }
 
 int ht_view::focus(ht_view *view)
@@ -417,49 +423,32 @@ void ht_view::getminbounds(int *width, int *height)
 }
 
 struct databufdup_s {
-	ht_memmap_file *f;
-	ht_object_stream_memmap *s;
+	MemMapFile *f;
+	ObjectStreamNative *s;
 };
 
 void ht_view::databuf_freedup(void *handle)
 {
-	databufdup_s *s=(databufdup_s*)handle;
-	
-	s->s->done();
+	databufdup_s *s=(databufdup_s*)handle;	
 	delete s->s;
-	
-	s->f->done();
 	delete s->f;
-
 	free(s);
 }
 
 void ht_view::databuf_get(void *buf, int bufsize)
 {
-	ht_memmap_file *f=new ht_memmap_file();
-	f->init((byte*)buf, bufsize);
-	
-	ht_object_stream_memmap *s=new ht_object_stream_memmap();
-	s->init(f, false);
-	
+	MemMapFile f(buf, bufsize);
+	ObjectStreamNative s(&f, false, true);
+
 	getdata(s);
-
-	s->done();
-	delete s;
-
-	f->done();
-	delete f;
 }
 
 void *ht_view::databuf_getdup(void *buf, int bufsize)
 {
-	ht_memmap_file *f=new ht_memmap_file();
-	f->init((byte*)buf, bufsize);
+	MemMapFile *f=new MemMapFile(buf, bufsize);	
+	ObjectStreamNative *s = new ObjectStreamNative(f, false, true);
 	
-	ht_object_stream_memmap *s=new ht_object_stream_memmap();
-	s->init(f, true);
-	
-	getdata(s);
+	getdata(*s);
 
 	databufdup_s *q=(databufdup_s*)malloc(sizeof (databufdup_s));
 	q->f=f;
@@ -469,19 +458,9 @@ void *ht_view::databuf_getdup(void *buf, int bufsize)
 
 void ht_view::databuf_set(void *buf, int bufsize)
 {
-	ht_memmap_file *f=new ht_memmap_file();
-	f->init((byte*)buf, bufsize);
-	
-	ht_object_stream_memmap *s=new ht_object_stream_memmap();
-	s->init(f, false);
-	
-	setdata(s);
-	
-	s->done();
-	delete s;
-	
-	f->done();
-	delete f;
+	ConstMemMapFile f(buf, bufsize);
+	ObjectStreamNative s(&f, false, true);
+	setdata(s);	
 }
 
 void ht_view::getdata(ObjectStream &s)
@@ -527,7 +506,7 @@ void ht_view::handlemsg(htmsg *msg)
 
 void ht_view::hidecursor()
 {
-	screen->hidecursor();
+	screen->setCursorMode(CURSOR_OFF);
 }
 
 int ht_view::isaclone(ht_view *view)
@@ -540,7 +519,7 @@ int ht_view::isviewdirty()
 	return view_is_dirty;
 }
 
-int ht_view::load(ObjectStream &s)
+void ht_view::load(ObjectStream &s)
 {
 /*     s->get_bool(enabled, NULL);
 	s->get_bool(focused, NULL);
@@ -552,14 +531,13 @@ int ht_view::load(ObjectStream &s)
 	s->get_string(pal_class, NULL);
 	s->get_string(pal_name, NULL);
 	s->get_int_dec(growmode, 4, NULL);*/
-	return 1;
 }
 
 void ht_view::move(int rx, int ry)
 {
-	size.x+=rx;
-	size.y+=ry;
-	buf->b_rmove(rx, ry);
+	size.x += rx;
+	size.y += ry;
+	buf->move(rx, ry);
 	vsize=size;
 	if (group) group->clipbounds(&vsize);
 	app->clipbounds(&vsize);
@@ -589,7 +567,7 @@ void ht_view::redraw()
 				draw();
 				cleanview();
 			}
-			screen->drawbuffer((drawbuf*)buf, size.x, size.y, &vsize);
+			screen->copyFromDisplay(*buf, size.x, size.y, vsize);
 		} else {
 			draw();
 			cleanview();
@@ -602,9 +580,9 @@ void ht_view::resize(int sx, int sy)
 	if (options & VO_RESIZE) {
 		if (size.w+sx <= 0) sx=-size.w+1;
 		if (size.h+sy <= 0) sy=-size.h+1;
-		size.w+=sx;
-		size.h+=sy;
-		buf->b_resize(sx, sy);
+		size.w += sx;
+		size.h += sy;
+		buf->resize(sx, sy);
 	}
 	vsize = size;
 	if (group) group->clipbounds(&vsize);
@@ -687,32 +665,24 @@ void ht_view::sendmsg(int msg, int data1, int data2)
 
 void ht_view::setbounds(Bounds *b)
 {
-	size=*b;
-	setvisualbounds(&size);
+	size = *b;
+	setvisualbounds(b);
 }
 
 void ht_view::setvisualbounds(Bounds *b)
 {
-	vsize=*b;
-	if (options & VO_OWNBUFFER) {
-		buf->b_setbounds(b);
-	}
+	vsize = *b;
+	Bounds rel(0, 0, b->w - b->x, b->h - b->y);
+	buf->setBounds(rel);
 }
 
-void ht_view::setcursor(int x, int y, cursor_mode c)
+void ht_view::setcursor(int x, int y, CursorMode c)
 {
 	if (pointvisible(size.x+x, size.y+y)) {
-		screen->setcursor(size.x+x, size.y+y);
-		switch (c) {
-			case cm_normal:
-				screen->setcursormode(0);
-				break;
-			case cm_overwrite:
-				screen->setcursormode(1);
-				break;
-		}
+		screen->setCursor(size.x+x, size.y+y);
+		screen->setCursorMode(c);
 	} else {
-		screen->hidecursor();
+		screen->setCursorMode(CURSOR_OFF);
 	}
 }
 
@@ -746,7 +716,7 @@ void ht_view::setpalettefull(char *_pal_name, char *_pal_class)
 	setpalette(pal_name);
 }
 
-void	ht_view::store(ObjectStream &s)
+void	ht_view::store(ObjectStream &s) const
 {
 /*	s->putBool(enabled, NULL);
 	s->putBool(focused, NULL);
@@ -799,7 +769,7 @@ void ht_group::done()
 	ht_view::done();
 }
 
-int ht_group::childcount()
+int ht_group::childcount() const
 {
 	return view_count;
 }
@@ -1002,7 +972,7 @@ void ht_group::handlemsg(htmsg *msg)
 	if (((msg->type==mt_empty) || (msg->type==mt_broadcast)) && (msg->msg==msg_keypressed)) {
 		switch (msg->data1.integer) {
 			case K_Left:
-			case K_BackTab: {
+			case K_Shift_Tab: {
 				if (focusprev()) {
 					clearmsg(msg);
 					dirtyview();
@@ -1076,9 +1046,8 @@ int ht_group::isviewdirty()
 	return 0;
 }
 
-int ht_group::load(ObjectStream &f)
+void ht_group::load(ObjectStream &f)
 {
-	return 1;
 }
 
 void ht_group::move(int rx, int ry)
@@ -1246,13 +1215,13 @@ void ht_group::setpalette(char *pal_name)
 	ht_view::setpalette(pal_name);
 }
 
-void ht_group::store(ObjectStream &s)
+void ht_group::store(ObjectStream &s) const
 {
 	ht_view::store(s);
-	s->putIntDec(childcount(), 4, NULL);
+	PUTX_INT32D(s, childcount(), "childcount");
 	ht_view *v=first;
 	while (v) {
-		s->putObject(v, NULL);
+		PUTX_OBJECT(s, v, "obj");
 		v=v->next;
 	}
 }
@@ -1297,9 +1266,9 @@ int ht_xgroup::isaclone(ht_view *view)
 	return 0;
 }
 
-int ht_xgroup::load(ObjectStream &s)
+void ht_xgroup::load(ObjectStream &s)
 {
-	return ht_group::load(s);
+	ht_group::load(s);
 }
 
 ObjectID ht_xgroup::getObjectID() const
@@ -1324,7 +1293,7 @@ void ht_xgroup::selectlast()
 	current->selectlast();
 }
 
-void	ht_xgroup::store(ObjectStream &s)
+void	ht_xgroup::store(ObjectStream &s) const
 {
 	ht_group::store(s);
 }
@@ -1405,17 +1374,16 @@ void ht_scrollbar::draw()
 				if (s==size.h-2) s--;
 				e=1;
 			}
-			fill(0, s+1, 1, e, color, CHAR_FILLED_M);
-			buf_printchar(0, 0, color, CHAR_ARROWBIG_UP);
-			buf_printchar(0, size.h-1, color, CHAR_ARROWBIG_DOWN);
+			fill(0, s+1, 1, e, color, GC_MEDIUM, CP_GRAPHICAL);
+			buf->printChar(0, 0, color, GC_ARROW_UP, CP_GRAPHICAL);
+			buf->printChar(0, size.h-1, color, GC_ARROW_DOWN, CP_GRAPHICAL);
 		} else {
 		}
 	}
 }
 
-int ht_scrollbar::load(ObjectStream &s)
+void ht_scrollbar::load(ObjectStream &s)
 {
-	return 1;
 }
 
 ObjectID ht_scrollbar::getObjectID() const
@@ -1430,7 +1398,7 @@ void ht_scrollbar::setpos(int ps, int pz)
 	dirtyview();
 }
 
-void	ht_scrollbar::store(ObjectStream &s)
+void	ht_scrollbar::store(ObjectStream &s) const
 {
 }
 
@@ -1465,43 +1433,43 @@ void ht_frame::draw()
 			setframestate(FST_UNFOCUSED);
 	}
 	if (style & FS_THICK) {
-		cornerul=CHAR_CORNERUL_DBL;
-		cornerur=CHAR_CORNERUR_DBL;
-		cornerll=CHAR_CORNERLL_DBL;
-		cornerlr=CHAR_CORNERLR_DBL;
-		lineh=CHAR_LINEH_DBL;
-		linev=CHAR_LINEV_DBL;
+		cornerul = GC_2CORNER3;
+		cornerur = GC_2CORNER0;
+		cornerll = GC_2CORNER2;
+		cornerlr = GC_2CORNER1;
+		lineh = GC_2HLINE;
+		linev = GC_2VLINE;
 	} else {
-		cornerul=CHAR_CORNERUL;
-		cornerur=CHAR_CORNERUR;
-		cornerll=CHAR_CORNERLL;
-		cornerlr=CHAR_CORNERLR;
-		lineh=CHAR_LINEH;
-		linev=CHAR_LINEV;
+		cornerul = GC_2CORNER3;
+		cornerur = GC_2CORNER0;
+		cornerll = GC_2CORNER2;
+		cornerlr = GC_1CORNER1;
+		lineh = GC_1HLINE;
+		linev = GC_1VLINE;
 	}
-	
+
 	vcp c=getcurcol_normal();
 /* "ÚÄÄ...ÄÄ¿" */
-	buf_printchar(0, 0, c, cornerul);
-	for (int i=1; i<size.w-1; i++) buf_printchar(i, 0, c, lineh);
-	buf_printchar(0+size.w-1, 0, c, cornerur);
+	buf->printChar(0, 0, c, cornerul, CP_GRAPHICAL);
+	for (int i=1; i<size.w-1; i++) buf->printChar(i, 0, c, lineh, CP_GRAPHICAL);
+	buf->printChar(0+size.w-1, 0, c, cornerur, CP_GRAPHICAL);
 /* "ÀÄÄ...ÄÄÙ" */
-	buf_printchar(0, size.h-1, c, cornerll);
-	for (int i=1; i<size.w-1; i++) buf_printchar(i, size.h-1, c, lineh);
+	buf->printChar(0, size.h-1, c, cornerll, CP_GRAPHICAL);
+	for (int i=1; i<size.w-1; i++) buf->printChar(i, size.h-1, c, lineh, CP_GRAPHICAL);
 /*	if (style & FS_RESIZE) {
-		buf_printchar(size.w-1, size.h-1, getcurcol_killer(), CHAR_CORNERLR);
+		buf->printChar(size.w-1, size.h-1, getcurcol_killer(), GC_1CORNER1, CP_GRAPHICAL);
 	} else {*/
-		buf_printchar(size.w-1, size.h-1, c, cornerlr);
+		buf->printChar(size.w-1, size.h-1, c, cornerlr, CP_GRAPHICAL);
 //     }
 /* "³", "³" */
 	for (int i=1; i<size.h-1; i++) {
-		buf_printchar(0, i, c, linev);
-		buf_printchar(size.w-1, i, c, linev);
+		buf->printChar(0, i, c, linev, CP_GRAPHICAL);
+		buf->printChar(size.w-1, i, c, linev, CP_GRAPHICAL);
 	}
 /* "[x]" */
 	if (style & FS_KILLER) {
-		buf_print(2, 0, c, "[ ]");
-		buf_printchar(3, 0, getcurcol_killer(), CHAR_QUAD_SMALL);
+		buf->print(2, 0, c, "[ ]");
+		buf->printChar(3, 0, getcurcol_killer(), GC_FILLED_QUAD, CP_GRAPHICAL);
 	}
 /* e.g. "1" */
 	int ns=0;
@@ -1511,7 +1479,7 @@ void ht_frame::draw()
 			l=l/10;
 			ns++;
 		} while (l);
-		buf_printf(size.w-4-ns, 0, c, "%d", number);
+		buf->printf(size.w-4-ns, 0, c, CP_DEVICE, "%d", number);
 		ns+=4;
 	}
 /* <title> */
@@ -1535,9 +1503,9 @@ void ht_frame::draw()
 			if (size.w > 6+ks+ns+2) {
 				d+=k;
 			} else d="";
-			buf_printf(2+ks, 0, c, " ...%s ",  d);
+			buf->printf(2+ks, 0, c, CP_DEVICE, " ...%s ", d);
 		} else {
-			buf_printf((size.w-l-2)/2, 0, c, " %s ", d);
+			buf->printf((size.w-l-2)/2, 0, c, CP_DEVICE, " %s ", d);
 		}
 	}
 }
@@ -1571,9 +1539,9 @@ uint ht_frame::getstyle()
 	return style;
 }
 
-int ht_frame::load(ObjectStream &s)
+void ht_frame::load(ObjectStream &s)
 {
-	return ht_view::load(s);
+	ht_view::load(s);
 }
 
 ObjectID ht_frame::getObjectID() const
@@ -1605,7 +1573,7 @@ void ht_frame::settext(const char *text)
 	dirtyview();
 }
 
-void ht_frame::store(ObjectStream &s)
+void ht_frame::store(ObjectStream &s) const
 {
 	ht_view::store(s);
 }
@@ -1769,10 +1737,9 @@ void ht_window::insert(ht_view *view)
 	ht_group::insert(view);
 }
 
-int ht_window::load(ObjectStream &s)
+void ht_window::load(ObjectStream &s)
 {
-	if (ht_group::load(s)!=0) return 1;
-	return s->get_error();
+	ht_group::load(s);
 }
 
 bool ht_window::next_action_state()
@@ -1961,7 +1928,7 @@ void ht_window::setvscrollbar(ht_scrollbar *s)
 	putontop(vscrollbar);
 }
 
-void	ht_window::store(ObjectStream &s)
+void	ht_window::store(ObjectStream &s) const
 {
 	ht_group::store(s);
 }
@@ -1972,7 +1939,7 @@ void	ht_window::store(ObjectStream &s)
 
 void ht_vbar::draw()
 {
-	fill(0, 0, 1, size.h, getcolor(palidx_generic_body), CHAR_LINEV);
+	fill(0, 0, 1, size.h, getcolor(palidx_generic_body), GC_1VLINE, CP_GRAPHICAL);
 }
 
 /*
@@ -1981,16 +1948,16 @@ void ht_vbar::draw()
 
 void ht_hbar::draw()
 {
-	fill(0, 0, size.w, 1, getcolor(palidx_generic_body), CHAR_LINEH);
+	fill(0, 0, size.w, 1, getcolor(palidx_generic_body), GC_1HLINE, CP_GRAPHICAL);
 }
 
 /***/
-BUILDER(ATOM_HT_VIEW, ht_view);
-BUILDER(ATOM_HT_GROUP, ht_group);
-BUILDER(ATOM_HT_XGROUP, ht_xgroup);
-BUILDER(ATOM_HT_WINDOW, ht_window);
-BUILDER(ATOM_HT_FRAME, ht_frame);
-BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar);
+BUILDER(ATOM_HT_VIEW, ht_view, Object);
+BUILDER(ATOM_HT_GROUP, ht_group, ht_view);
+BUILDER(ATOM_HT_XGROUP, ht_xgroup, ht_group);
+BUILDER(ATOM_HT_WINDOW, ht_window, ht_group);
+BUILDER(ATOM_HT_FRAME, ht_frame, ht_text);
+BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, ht_view);
 
 /*
  *	INIT
