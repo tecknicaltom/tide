@@ -233,18 +233,18 @@ void ht_checkboxes::draw()
 		int slen = strlen(s);
 		if (slen > maxcolstrlen) maxcolstrlen = slen;
 		if ((1 << i) & state) {
-			buf_print(vx, vy, c, "[X]");
+			buf->print(vx, vy, c, "[X]");
 		} else {
-			buf_print(vx, vy, c, "[ ]");
+			buf->print(vx, vy, c, "[ ]");
 		}
 		int k=0, oc=c;
-		for (int q=0; q<size.w-4; q++) {
+		for (int q=0; q < size.w-4; q++) {
 			if (!*(s+q)) break;
 			if (*(s+q)=='~') {
-				c=getcolor(palidx_generic_cluster_shortcut);
+				c = getcolor(palidx_generic_cluster_shortcut);
 				continue;
 			} else {
-				buf_printchar(vx+k+4, vy, c, *(s+q));
+				buf->printChar(vx+k+4, vy, c, *(s+q));
 				k++;
 			}
 			c=oc;
@@ -356,11 +356,11 @@ void ht_radioboxes::draw()
 		const char *s=strings->get_string(i);
 		int slen=strlen(s);
 		if (slen>maxcolstrlen) maxcolstrlen=slen;
-		buf_print(vx, vy, c, "( )");
+		buf->print(vx, vy, c, "( )");
 		if (i==sel) {
-			buf_printchar(vx+1, vy, c, GC_FILLED_CIRCLE, CP_GRAPHICAL);
+			buf->printChar(vx+1, vy, c, GC_FILLED_CIRCLE, CP_GRAPHICAL);
 		}
-		buf_print(vx+4, vy, c, s);
+		buf->print(vx+4, vy, c, s);
 		i++;
 		vy++;
 		if (vy>=size.h) {
@@ -754,36 +754,36 @@ void ht_strinputfield::draw()
 		getcolor(palidx_generic_input_unfocused);
 	byte *t=*text+ofs;
 	int l=*textlen-ofs;
-	if (l>size.w) l=size.w;
+	if (l>size.w) l = size.w;
 	int y=0;
 	fill(0, 0, size.w, size.h, c, ' ');
-	if (ofs) buf_printchar(0, y, getcolor(palidx_generic_input_clip), '<');
+	if (ofs) buf->printChar(0, y, getcolor(palidx_generic_input_clip), '<');
 	for (int k=0; k<*textlen-ofs; k++) {
-		if (1+k-y*(size.w-2)>size.w-2) {
-			if (y+1<size.h) y++; else break;
+		if (1+k-y*(size.w-2) > size.w-2) {
+			if (y+1 < size.h) y++; else break;
 		}
-		if ((t<*selstart) || (t>=*selend)) {
-			buf_printchar(1+k-y*(size.w-2), y, c, *(t++));
+		if (t < *selstart || t >= *selend) {
+			buf->printChar(1+k-y*(size.w-2), y, c, *(t++));
 		} else {
-			buf_printchar(1+k-y*(size.w-2), y, getcolor(palidx_generic_input_selected), *(t++));
+			buf->printChar(1+k-y*(size.w-2), y, getcolor(palidx_generic_input_selected), *(t++));
 		}
 	}
 	if (*textlen-ofs > (size.w-2)*size.h) {
-		buf_printchar(size.w-1, y, getcolor(palidx_generic_input_clip), '>');
+		buf->printChar(size.w-1, y, getcolor(palidx_generic_input_clip), '>');
 	}
 	if (history && history->count()) {
-		buf_printchar(size.w-1, y+size.h-1, getcolor(palidx_generic_input_clip), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
+		buf->printChar(size.w-1, y+size.h-1, getcolor(palidx_generic_input_clip), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
 	}
 	if (focused) {
 		int cx, cy;
-		if (*curchar-*text-ofs>=(size.w-2)*size.h) {
+		if (*curchar-*text-ofs >= (size.w-2)*size.h) {
 			cx = size.w-1;
 			cy = size.h-1;
 		} else {
-			cx = (*curchar-*text-ofs)%(size.w-2)+1;
-			cy = (*curchar-*text-ofs)/(size.w-2);
+			cx = (*curchar-*text-ofs) % (size.w-2)+1;
+			cy = (*curchar-*text-ofs) / (size.w-2);
 		}
-		setcursor(cx, cy, insert ? cm_normal : cm_overwrite);
+		setcursor(cx, cy, insert ? CURSOR_NORMAL : CURSOR_BOLD);
 	}
 }
 
@@ -1083,7 +1083,7 @@ void ht_hexinputfield::draw()
 	char hbuf[256], *h=hbuf;
 	int y=0;
 	fill(0, 0, size.w, size.h, c, ' ');
-	if (ofs) buf_print(0, y, getcolor(palidx_generic_input_clip), "<");
+	if (ofs) buf->print(0, y, getcolor(palidx_generic_input_clip), "<");
 	int vv=*textlen-ofs;
 	if (vv<0) vv=0; else if (vv>(size.w-2)*size.h/3) vv=(size.w-2)*size.h/3+1;
 	for (int k=0; k<vv; k++) {
@@ -1092,24 +1092,24 @@ void ht_hexinputfield::draw()
 	if (vv) {
 		h = hbuf;
 		while (*h && y < size.h) {
-			h+=buf_lprint(1, y, c, size.w-2, h);
+			h += buf->nprint(1, y, c, h, size.w-2);
 			y++;
 		}
 		y--;
 	}
 	if ((*textlen-ofs)*3 > (size.w-2)*size.h) {
-		buf_print(size.w-1, y, getcolor(palidx_generic_input_clip), ">");
+		buf->print(size.w-1, y, getcolor(palidx_generic_input_clip), ">");
 	}
 	if (focused) {
 		int cx, cy;
-		if ((*curchar-*text-ofs)*3+nib+1>=(size.w-2)*size.h) {
+		if ((*curchar-*text-ofs)*3+nib+1 >= (size.w-2)*size.h) {
 			cx = size.w-1;
 			cy = size.h-1;
 		} else {
 			cx = ((*curchar-*text-ofs)*3+nib+1) % (size.w-2);
 			cy = ((*curchar-*text-ofs)*3+nib+1) / (size.w-2);
 		}
-		setcursor(cx, cy, insert ? cm_normal : cm_overwrite);
+		setcursor(cx, cy, insert ? CURSOR_NORMAL : CURSOR_BOLD);
 	}
 }
 
@@ -1290,15 +1290,15 @@ void ht_button::draw()
 		getcolor(palidx_generic_button_unfocused);
 	fill(0, 0, size.w-1, size.h-1, c, ' ');
 	int xp=(size.w-strlen(text))/2, yp=(size.h-1)/2;
-	buf_print(xp, yp, c, text);
-	if (magicchar) buf_printchar(xp+(magicchar-text), yp, getcolor(palidx_generic_button_shortcut), *magicchar);
+	buf->print(xp, yp, c, text);
+	if (magicchar) buf->printChar(xp+(magicchar-text), yp, getcolor(palidx_generic_button_shortcut), *magicchar);
 /* shadow */
-	buf_printchar(0, 1, getcolor(palidx_generic_button_shadow), ' ');
+	buf->printChar(0, 1, getcolor(palidx_generic_button_shadow), ' ');
 	for (int i=1; i<size.w-1; i++) {
-		buf_printchar(i, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
+		buf->printChar(i, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
 	}
-	buf_printchar(size.w-1, 0, getcolor(palidx_generic_button_shadow), GC_FILLED_LOWER, CP_GRAPHICAL);
-	buf_printchar(size.w-1, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
+	buf->printChar(size.w-1, 0, getcolor(palidx_generic_button_shadow), GC_FILLED_LOWER, CP_GRAPHICAL);
+	buf->printChar(size.w-1, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
 }
 
 void ht_button::handlemsg(htmsg *msg)
@@ -1373,12 +1373,12 @@ void ht_listbox_title::draw()
 	int x = listbox->x;
 	x = 0;
 	for (int i=0; i<cols; i++) {     
-		buf_lprint(x, 0, color, size.w, texts[i]);
+		buf->nprint(x, 0, color, texts[i], size.w);
 		x += listbox->widths[i];
 		if (i+1<cols) {
-			buf_printchar(x++, 0, color, ' ');
-			buf_printchar(x++, 0, color, GC_1VLINE, CP_GRAPHICAL);
-			buf_printchar(x++, 0, color, ' ');
+			buf->printChar(x++, 0, color, ' ');
+			buf->printChar(x++, 0, color, GC_1VLINE, CP_GRAPHICAL);
+			buf->printChar(x++, 0, color, ' ');
 		}
 	}
 }
@@ -1619,9 +1619,9 @@ void ht_listbox::draw()
 				}
 				if (s) {
 					if (X >= 0) {
-						buf_lprint(X, i, c, size.w, s);
+						buf->nprint(X, i, c, s, size.w);
 					} else {
-						if (slen > -X) buf_lprint(0, i, c, size.w, &s[-X]);
+						if (slen > -X) buf->nprint(0, i, c, &s[-X], size.w);
 					}
 				}
 				if (j==cols-1) {
@@ -1630,20 +1630,20 @@ void ht_listbox::draw()
 					X += widths[j];
 				}
 				if (j+1<cols) {
-					buf_printchar(X++, i, c, ' ');
-					buf_printchar(X++, i, c, GC_1VLINE, CP_GRAPHICAL);
-					buf_printchar(X++, i, c, ' ');
+					buf->printChar(X++, i, c, ' ');
+					buf->printChar(X++, i, c, GC_1VLINE, CP_GRAPHICAL);
+					buf->printChar(X++, i, c, ' ');
 				}
 			}
 			if (x > 0) {
 				// more text left
-				buf_printchar(0, i, c, '<');
+				buf->printChar(0, i, c, '<');
 			}
 			// position of '>' char is scrollbar dependent
 			int a = mScrollbarEnabled ? 0 : 1;
 			if (X >= size.w+a) {
 				// more text right
-				buf_printchar(size.w-2+a, i, c, '>');
+				buf->printChar(size.w-2+a, i, c, '>');
 			}
 			entry = getNext(entry);
 			i++;
@@ -2451,13 +2451,13 @@ void ht_statictext::draw()
 /**/
 		d=orig_d;
 		for (int i=0; i<c; i++) {
-			buf_lprint(d->ofs, i, gettextcolor(), d->len, d->text);
+			buf->nprint(d->ofs, i, gettextcolor(), d->text, d->len);
 			d++;
 		}
 		free(orig_d);
 	} else {
 		int o=0;
-		buf_print(o, 0, gettextcolor(), t);
+		buf->print(o, 0, gettextcolor(), t);
 	}
 }
 
@@ -2591,7 +2591,7 @@ int ht_listpopup::datasize()
 void ht_listpopup::draw()
 {
 	ht_statictext::draw();
-	buf_printchar(size.w-1, 0, gettextcolor(), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
+	buf->printChar(size.w-1, 0, gettextcolor(), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
 }
 
 vcp ht_listpopup::gettextcolor()
@@ -2714,8 +2714,8 @@ void ht_label::draw()
 	} else {
 		c = getcolor(palidx_generic_text_unfocused);
 	}
-	buf_lprint(0, 0, c, size.w, text);
-	if (magicchar) buf_printchar(magicchar-text, 0, sc, *magicchar);
+	buf->nprint(0, 0, c, text, size.w);
+	if (magicchar) buf->printChar(magicchar-text, 0, sc, *magicchar);
 }
 
 void ht_label::handlemsg(htmsg *msg)
@@ -2805,18 +2805,18 @@ void ht_color_block::draw()
 	clear(getcolor(palidx_generic_body));
 	uint32 cursor=VCP(focused ? VC_LIGHT(VC_WHITE) : VC_BLACK, VC_TRANSPARENT);
 	for (int i=0; i < colors; i++) {
-		buf_printchar((i%4)*3+1, i/4, VCP(vcs[i], VC_TRANSPARENT), GC_FULL, CP_GRAPHICAL);
-		buf_printchar((i%4)*3+2, i/4, VCP(vcs[i], VC_BLACK), GC_MEDIUM, CP_GRAPHICAL);
+		buf->printChar((i%4)*3+1, i/4, VCP(vcs[i], VC_TRANSPARENT), GC_FULL, CP_GRAPHICAL);
+		buf->printChar((i%4)*3+2, i/4, VCP(vcs[i], VC_BLACK), GC_MEDIUM, CP_GRAPHICAL);
 		if (i == color) {
-			buf_printchar((i%4)*3, i/4, cursor, '>');
-			buf_printchar((i%4)*3+3, i/4, cursor, '<');
+			buf->printChar((i%4)*3, i/4, cursor, '>');
+			buf->printChar((i%4)*3+3, i/4, cursor, '<');
 		}
 	}
 	if (flags & cf_transparent) {
-		buf_print(1, (colors==8) ? 2 : 4, VCP(VC_BLACK, VC_TRANSPARENT), "transparent");
+		buf->print(1, (colors==8) ? 2 : 4, VCP(VC_BLACK, VC_TRANSPARENT), "transparent");
 		if (color == -1) {
-			buf_printchar(0, (colors==8) ? 2 : 4, cursor, '>');
-			buf_printchar(12, (colors==8) ? 2 : 4, cursor, '<');
+			buf->printChar(0, (colors==8) ? 2 : 4, cursor, '>');
+			buf->printChar(12, (colors==8) ? 2 : 4, cursor, '<');
 		}
 	}
 }
