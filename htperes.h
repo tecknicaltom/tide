@@ -32,9 +32,9 @@ private:
 /* new */
 	virtual	Object *vstate_create();
 			bool vstate_save();
-	virtual	void vstate_restore(ht_data *d);
+	virtual	void vstate_restore(Object *d);
 public:
-			void init(Bounds *b, char *desc);
+		void init(Bounds *b, char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	void	handlemsg(htmsg *msg);
