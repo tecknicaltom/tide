@@ -75,6 +75,7 @@ enum Codepage {
 #define GC_SMALL_ARROW_DOWN	'V'		// an arrow down
 
 #define GC_FILLED_CIRCLE	'o'		// a filled and centered circle
+#define GC_FILLED_QUAD		'x'		// a filled and centered quad
 
 #define GC_FILLED_UPPER		0x0e		// upper half filled
 #define GC_FILLED_LOWER		0x0f		// lower half filled
@@ -140,9 +141,9 @@ enum CursorMode { CURSOR_OFF, CURSOR_NORMAL, CURSOR_BOLD };
 
 class Display: public Bounds {
 public:
-				Display();
-				Display(const Bounds &b);
-	virtual			~Display();
+				Display() {};
+				Display(const Bounds &b) : Bounds(b) {};
+	virtual			~Display() {};
 	/* extends Bounds */
 	virtual	void		assign(int x, int y, int w, int h);
 	virtual	void		move(int deltax, int deltay);
@@ -153,11 +154,11 @@ public:
 	virtual	void		getCursor(int &x, int &y) const = 0;
 	virtual	CursorMode	getCursorMode() const = 0;
 	virtual	int		nprint(int x, int y, vcp color, const char *str, int maxstrlen, Codepage cp = CP_DEVICE) = 0;
-		int		nprintf(int x, int y, vcp color, const char *format, int maxstrlen, Codepage cp = CP_DEVICE, ...);
+		int		nprintf(int x, int y, vcp color, int maxstrlen, Codepage cp, const char *format, ...);
 		int		print(int x, int y, vcp color, const char *str, Codepage cp = CP_DEVICE);
 		int		printW(int x, int y, vcp color, const AbstractChar *widestr, Codepage cp = CP_DEVICE);
 		int		printChar(int x, int y, vcp color, char chr, Codepage cp = CP_DEVICE);
-		int		printf(int x, int y, vcp color, const char *format, Codepage cp = CP_DEVICE, ...);
+		int		printf(int x, int y, vcp color, Codepage cp, const char *format, ...);
 	virtual	bool		read(uint &rawchar, vcp &color, int x, int y) const = 0;
 	virtual	void		setBounds(const Bounds &b);
 	virtual	void		setCursor(int x, int y, CursorMode mode = CURSOR_NORMAL) = 0;
