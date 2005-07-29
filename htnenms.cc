@@ -32,7 +32,7 @@
 static void assign_entrypoint_name(ht_ne_shared_data *ne_shared, uint i, char *name)
 {
 	if (ne_shared->entrypoints) {
-		ht_ne_entrypoint *e = (ht_ne_entrypoint*)ne_shared->entrypoints->get(i);
+		ht_ne_entrypoint *e = (ht_ne_entrypoint*)(*ne_shared->entrypoints)[i];
 		if (e) {
 			e->name = strdup(name);
 		} /*else fprintf(stderr, "entry %d not available\n", i);*/
@@ -53,7 +53,7 @@ static ht_view *htnenames_init(Bounds *b, File *file, ht_format_group *group)
 	char *n;
 	int i;
 
-	ht_snprintf(line, sizeof line, "* NE resident names table at offset %08x", h+ne_shared->hdr.restab);
+	ht_snprintf(line, sizeof line, "* NE resident names table at offset 0x%08qx", h+ne_shared->hdr.restab);
 	m->add_mask(line);
 
 	file->seek(h+ne_shared->hdr.restab);
