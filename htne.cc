@@ -45,23 +45,6 @@ static format_viewer_if *htne_ifs[] = {
 	0
 };
 
-static int compare_keys_ne_import_rec(Object *key_a, Object *key_b)
-{
-	ne_import_rec *a=(ne_import_rec*)key_a;
-	ne_import_rec *b=(ne_import_rec*)key_b;
-	if (a->module == b->module) {
-		if (a->byname == b->byname) {
-			if (a->byname) {
-				return a->name_ofs - b->name_ofs;
-			} else {
-				return a->ord - b->ord;
-			}
-		}
-		return a->byname - b->byname;
-	}
-	return a->module - b->module;
-}
-
 ne_import_rec::ne_import_rec(uint a, uint mod, bool b, uint i)
 {
 	addr = a;
@@ -110,7 +93,8 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_NE, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_ne");
 
-	LOG("%s: NE: found header at %08x", file->get_filename(), h);
+	String fn;
+	LOG("%y: NE: found header at 0x%08qx", &file->getFilename(fn), h);
 
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)malloc(sizeof (ht_ne_shared_data));
 	shared_data = ne_shared;
@@ -122,7 +106,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	ne_shared->v_image = NULL;
 
 	file->seek(h);
-	file->read(&ne_shared->hdr, sizeof ne_shared->hdr);
+	file->readx(&ne_shared->hdr, sizeof ne_shared->hdr);
 	createHostStruct(&ne_shared->hdr, NE_HEADER_struct, little_endian);
 
 /* read segment descriptors */
@@ -133,7 +117,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	NE_SEGMENT *s = ne_shared->segments.segments;
 	file->seek(h+ne_shared->hdr.segtab);
 	for (uint32 i = 0; i < ne_shared->segments.segment_count; i++) {
-		file->read(s, sizeof *s);
+		file->readx(s, sizeof *s);
 		createHostStruct(s, NE_SEGMENT_struct, little_endian);
 		if (s->flags & NE_HASRELOC) reloc_needed = true;
 		s++;
@@ -142,12 +126,11 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	FileOfs o = h + ne_shared->hdr.enttab;
 	NE_ENTRYPOINT_HEADER e;
 	file->seek(o);
-	file->read(&e, sizeof e);
+	file->readx(&e, sizeof e);
 	createHostStruct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
 	o += sizeof e;
 
-	ht_clist *ep = new ht_clist();
-	ep->init();
+	Array *ep = new Array(true);
 
 	uint32 index = 1;
 	while (o<h+ne_shared->hdr.enttab+ne_shared->hdr.cbenttab) {
@@ -157,23 +140,23 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 				o+=sizeof (NE_ENTRYPOINT_MOVABLE);
 				
 				NE_ENTRYPOINT_MOVABLE me;
-				file->read(&me, sizeof me);
+				file->readx(&me, sizeof me);
 				createHostStruct(&me, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
 
-				ep->set(index, new ht_ne_entrypoint(index, me.seg, me.offset, 0));
+				ep->forceSetByIdx(index, new ht_ne_entrypoint(index, me.seg, me.offset, 0));
 			} else {
 				o+=sizeof (NE_ENTRYPOINT_FIXED);
 				
 				NE_ENTRYPOINT_FIXED fe;
 				file->seek(o);
-				file->read(&fe, sizeof fe);
+				file->readx(&fe, sizeof fe);
 				createHostStruct(&fe, NE_ENTRYPOINT_FIXED_struct, little_endian);
-				ep->set(index, new ht_ne_entrypoint(index, e.seg_index, fe.offset, 0));
+				ep->forceSetByIdx(index, new ht_ne_entrypoint(index, e.seg_index, fe.offset, 0));
 			}
 			index++;
 		}
 		file->seek(o);
-		file->read(&e, sizeof e);
+		file->readx(&e, sizeof e);
 		createHostStruct(&e, NE_ENTRYPOINT_HEADER_struct, little_endian);
 		o += sizeof e;
 	}
@@ -197,18 +180,16 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 
 /* do relocations */
 	if (reloc_needed) {
-		ht_ne_reloc_file *rf = new ht_ne_reloc_file();
-		rf->init(file, false, (ht_ne_shared_data*)shared_data);
+		ht_ne_reloc_file *rf = new ht_ne_reloc_file(file, false, (ht_ne_shared_data*)shared_data);
 
 		if (relocate(rf)) {
 			rf->finalize();
 			file = rf;
 			own_file = true;
-			LOG("%s: NE: relocations present, relocation simulation layer enabled", file->get_filename());
+			LOG("%y: NE: relocations present, relocation simulation layer enabled", &fn);
 		} else {
-			LOG_EX(LOG_WARN, "%s: NE relocations seem to be corrupted.", file->get_filename());
-			errorbox("%s: NE relocations seem to be corrupted.", file->get_filename());
-			rf->done();
+			LOG_EX(LOG_WARN, "%y: NE relocations seem to be corrupted.", &fn);
+			errorbox("%y: NE relocations seem to be corrupted.", &fn);
 			delete rf;
 		}
 	}
@@ -233,15 +214,9 @@ void ht_ne::done()
 		free(ne_shared->modnames);
 	}
 	
-	if (ne_shared->entrypoints) {
-		ne_shared->entrypoints->destroy();
-		delete ne_shared->entrypoints;
-	}
-	
-	if (ne_shared->imports) {
-		ne_shared->imports->destroy();
-		delete ne_shared->imports;
-	}
+	delete ne_shared->entrypoints;
+	delete ne_shared->imports;
+
 	free(shared_data);
 }
 
@@ -288,8 +263,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
 	if (!create_fake_segment()) return false;
 
-	ht_stree *imports = new ht_stree();
-	imports->init(compare_keys_ne_import_rec);
+	AVLTree *imports = new AVLTree(true);
 
 	int fake_entry_count = 0;
 	/* if selfload only relocate first segment. Is this "The Right Thing" ? */
@@ -301,19 +275,19 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 			FileOfs f = seg_ofs + NE_get_seg_psize(ne_shared, i);
 			char buf[2];
 			file->seek(f);
-			file->read(buf, 2);
+			file->readx(buf, 2);
 			f += 2;
 			int c = createHostInt(buf, 2, little_endian);
 			for (int j = 0; j < c; j++) {
 				NE_RELOC_HEADER reloc;
 				file->seek(f);
-				file->read(&reloc, sizeof reloc);
+				file->readx(&reloc, sizeof reloc);
 				createHostStruct(&reloc, NE_RELOC_HEADER_struct, little_endian);
 				f += sizeof reloc;
 				switch (reloc.flags & NE_RF_RT_MASK) {
 				case NE_RF_INTERNAL: {
 					NE_RELOC_INTERNAL sreloc;
-					file->read(&sreloc, sizeof sreloc);
+					file->readx(&sreloc, sizeof sreloc);
 					createHostStruct(&sreloc, NE_RELOC_INTERNAL_struct, little_endian);
 					f += sizeof sreloc;
 					if (sreloc.seg == 0xff) {
@@ -326,10 +300,10 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				}
 				case NE_RF_IMPORT_ORD: {
 					NE_RELOC_IMPORT sreloc;
-					file->read(&sreloc, sizeof sreloc);
+					file->readx(&sreloc, sizeof sreloc);
 					createHostStruct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
 					f += sizeof sreloc;
-					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, false, sreloc.ord), NULL)) {
+					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, false, sreloc.ord))) {
 //						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf2, sreloc.ord)) return false;
 						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
 						fake_entry_count++;
@@ -338,10 +312,10 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				}
 				case NE_RF_IMPORT_NAME: {
 					NE_RELOC_IMPORT sreloc;
-					file->read(&sreloc, sizeof sreloc);
+					file->readx(&sreloc, sizeof sreloc);
 					createHostStruct(&sreloc, NE_RELOC_IMPORT_struct, little_endian);
 					f += sizeof sreloc;
-					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, true, sreloc.name_ofs), NULL)) {
+					if (imports->insert(new ne_import_rec(fake_entry_count, sreloc.module, true, sreloc.name_ofs))) {
 //						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xf3, sreloc.name_ofs)) return false;
 						if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, ne_shared->fake_segment+1, fake_entry_count)) return false;
 						fake_entry_count++;
@@ -350,7 +324,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 				}
 				case NE_RF_OSFIXUP: {
 					NE_RELOC_FIXUP sreloc;
-					file->read(&sreloc, sizeof sreloc);
+					file->readx(&sreloc, sizeof sreloc);
 					createHostStruct(&sreloc, NE_RELOC_FIXUP_struct, little_endian);
 					f += sizeof sreloc;
 					if (!relocate_single(rf, i, seg_ofs + reloc.src_ofs, reloc.type, reloc.flags, 0xdead, 0xcafebabe)) return false;
@@ -388,7 +362,7 @@ bool ht_ne::relocate_single(ht_reloc_file *rf, uint seg, FileOfs ofs, uint type,
 		rf->insert_reloc(ofs, new ht_ne_reloc_entry(type, flags & NE_RF_ADD, value_seg, value_ofs));
 		char buf[2];
 		file->seek(ofs);
-		file->read(buf, 2);
+		file->readx(buf, 2);
 		uint16 r = createHostInt(buf, 2, little_endian);
 		if (r == 0xffff) break;
 		NEAddress a = NE_MAKE_ADDR(seg+1, r);
@@ -433,13 +407,14 @@ ht_ne_reloc_entry::ht_ne_reloc_entry(uint Mode, bool Add, uint16 Seg, uint16 Ofs
  *	CLASS ht_ne_reloc_file
  */
 
-void ht_ne_reloc_file::init(File *s, bool os, ht_ne_shared_data *d)
+ht_ne_reloc_file::ht_ne_reloc_file(File *s, bool os, ht_ne_shared_data *d)
+	: ht_reloc_file(s, os)
+	
 {
-	ht_reloc_file::init(s, os);
 	data = d;
 }
 
-void ht_ne_reloc_file::reloc_apply(ht_data *reloc, byte *data)
+void ht_ne_reloc_file::reloc_apply(Object *reloc, byte *data)
 {
 	ht_ne_reloc_entry *e = (ht_ne_reloc_entry*)reloc;
 
@@ -467,7 +442,7 @@ void ht_ne_reloc_file::reloc_apply(ht_data *reloc, byte *data)
 	}
 }
 
-bool ht_ne_reloc_file::reloc_unapply(ht_data *reloc, byte *data)
+bool ht_ne_reloc_file::reloc_unapply(Object *reloc, byte *data)
 {
 	return false;
 //	ht_ne_reloc_entry *e = (ht_ne_reloc_entry*)reloc;
