@@ -331,7 +331,7 @@ public:
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
 	/* cursor */
-	virtual	cursor_mode get_cursor_mode();
+	virtual	CursorMode get_cursor_mode();
 	virtual	void get_cursor_pos(text_viewer_pos *cursor);
 	/* conversions */
 	virtual	bool pos_to_offset(text_viewer_pos *pos, FileOfs *ofs);
@@ -389,7 +389,7 @@ public:
 	/* position indicator string */
 	virtual	void get_pindicator_str(char *buf);
 	/* cursor mode */
-	virtual	cursor_mode get_cursor_mode();
+	virtual	CursorMode get_cursor_mode();
 /* new */
 			bool concat_lines(uint a);
 			void delete_chars(uint line, uint ofs, uint count);
