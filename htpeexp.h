@@ -57,7 +57,7 @@ public:
 	RVA address;
 
 	ht_pe_export_function(RVA address, uint ordinal);
-	ht_pe_export_function(RVA address, uint ordinal, char *name);
+	ht_pe_export_function(RVA address, uint ordinal, const char *name);
 	~ht_pe_export_function();
 };
 
