@@ -168,12 +168,12 @@ static ht_view *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 	FileOfs h=pe_shared->header_ofs;
 	ht_pe_header_viewer *v=new ht_pe_header_viewer();
 	v->init(b, DESC_PE_HEADER, VC_EDIT | VC_SEARCH, file, group);
-	register_atom(ATOM_COFF_MACHINES, coff_machines);
-	register_atom(ATOM_COFF_CHARACTERISTICS, coff_characteristics);
-	register_atom(ATOM_COFF_SECTION_CHARACTERISTICS, coff_section_characteristics);
-	register_atom(ATOM_PE_OPTIONAL_MAGICS, pe_optional_magics);
-	register_atom(ATOM_PE_SUBSYSTEMS, pe_subsystems);
-	register_atom(ATOM_PE_DLL_CHARACTERISTICS, pe_dll_characteristics);
+	registerAtom(ATOM_COFF_MACHINES, coff_machines);
+	registerAtom(ATOM_COFF_CHARACTERISTICS, coff_characteristics);
+	registerAtom(ATOM_COFF_SECTION_CHARACTERISTICS, coff_section_characteristics);
+	registerAtom(ATOM_PE_OPTIONAL_MAGICS, pe_optional_magics);
+	registerAtom(ATOM_PE_SUBSYSTEMS, pe_subsystems);
+	registerAtom(ATOM_PE_DLL_CHARACTERISTICS, pe_dll_characteristics);
 
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs;
@@ -181,7 +181,7 @@ static ht_view *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 	s=new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
-	ht_snprintf(info, sizeof info, "* PE header at offset %08x", h);
+	ht_snprintf(info, sizeof info, "* PE header at offset 0x%08qx", h);
 	s->add_mask(info);
 	v->insertsub(s);
 
