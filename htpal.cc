@@ -19,7 +19,7 @@
  */
 
 #include "atom.h"
-#include "htcurses.h"
+#include "display.h"
 #include "htctrl.h"
 #include "htdialog.h"
 #include "htpal.h"
@@ -226,8 +226,8 @@ bool palette_entry::editdialog(const char *keyname)
 	Bounds b;
 	b.w=50;
 	b.h=15;
-	b.x=(screen->size.w-b.w)/2;
-	b.y=(screen->size.h-b.h)/2;
+	b.x=(screen->w - b.w)/2;
+	b.y=(screen->h - b.h)/2;
 	
 	ht_dialog *d=new ht_dialog();
 	d->init(&b, "edit palette entry", FS_TITLE | FS_KILLER);
@@ -235,22 +235,22 @@ bool palette_entry::editdialog(const char *keyname)
 	ht_color_block *fgc, *bgc;
 	ht_label *l1, *l2;
 	
-	BOUNDS_ASSIGN(b, 2, 1, 16, 5);
+	b.assign(2, 1, 16, 5);
 	fgc=new ht_color_block();
 	fgc->init(&b, VCP_FOREGROUND(color), cf_transparent | cf_light);
 	d->insert(fgc);
 
-	BOUNDS_ASSIGN(b, 2, 0, 16, 1);
+	b.assign(2, 0, 16, 1);
 	l1 = new ht_label();
 	l1->init(&b, "~foreground", fgc);
 	d->insert(l1);
 	
-	BOUNDS_ASSIGN(b, 20, 1, 16, 5);
+	b.assign(20, 1, 16, 5);
 	bgc=new ht_color_block();
 	bgc->init(&b, VCP_BACKGROUND(color), cf_transparent | cf_light);
 	d->insert(bgc);
 	
-	BOUNDS_ASSIGN(b, 20, 0, 16, 1);
+	b.assign(20, 0, 16, 1);
 	l2 = new ht_label();
 	l2->init(&b, "~background", bgc);
 	d->insert(l2);
@@ -268,11 +268,10 @@ bool palette_entry::editdialog(const char *keyname)
 	return r;
 }
 
-int palette_entry::load(ObjectStream &f)
+void palette_entry::load(ObjectStream &f)
 {
-	idx=f->getIntHex(4, 0);
-	color=f->getIntHex(4, 0);
-	return f->get_error();
+	GET_INT32D(f, idx);
+	GET_INT32D(f, color);
 }
 
 ObjectID palette_entry::getObjectID() const
@@ -280,10 +279,10 @@ ObjectID palette_entry::getObjectID() const
 	return ATOM_PALETTE_ENTRY;
 }
 
-void palette_entry::store(ObjectStream &f)
+void palette_entry::store(ObjectStream &f) const
 {
-	f->putIntHex(idx, 4, 0);
-	f->putIntHex(color, 4, 0);
+	PUT_INT32D(f, idx);
+	PUT_INT32D(f, color);
 }
 
 void palette_entry::strvalue(char *buf32bytes)
@@ -322,12 +321,12 @@ ht_registry_data *create_empty_palette_entry()
  *	INIT
  */
 
-BUILDER(ATOM_PALETTE_ENTRY, palette_entry);
+BUILDER(ATOM_PALETTE_ENTRY, palette_entry, ht_registry_data);
 
 bool init_pal()
 {
 	REGISTER(ATOM_PALETTE_ENTRY, palette_entry);
-	register_atom(ATOM_HT_CREATE_PALETTE_ENTRY, (void*)create_empty_palette_entry);
+	registerAtom(ATOM_HT_CREATE_PALETTE_ENTRY, (void*)create_empty_palette_entry);
 
 	return true;
 }
@@ -339,6 +338,6 @@ bool init_pal()
 void done_pal()
 {
 	UNREGISTER(ATOM_PALETTE_ENTRY, palette_entry);
-	unregister_atom(ATOM_HT_CREATE_PALETTE_ENTRY);
+	unregisterAtom(ATOM_HT_CREATE_PALETTE_ENTRY);
 }
 
