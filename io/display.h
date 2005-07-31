@@ -154,9 +154,10 @@ public:
 	virtual	void		getCursor(int &x, int &y) const = 0;
 	virtual	CursorMode	getCursorMode() const = 0;
 	virtual	int		nprint(int x, int y, vcp color, const char *str, int maxstrlen, Codepage cp = CP_DEVICE) = 0;
+		int		nprintW(int x, int y, vcp color, const AbstractChar *widestr, int maxstrlen);
 		int		nprintf(int x, int y, vcp color, int maxstrlen, Codepage cp, const char *format, ...);
 		int		print(int x, int y, vcp color, const char *str, Codepage cp = CP_DEVICE);
-		int		printW(int x, int y, vcp color, const AbstractChar *widestr, Codepage cp = CP_DEVICE);
+		int		printW(int x, int y, vcp color, const AbstractChar *widestr);
 		int		printChar(int x, int y, vcp color, char chr, Codepage cp = CP_DEVICE);
 		int		printf(int x, int y, vcp color, Codepage cp, const char *format, ...);
 	virtual	bool		read(uint &rawchar, vcp &color, int x, int y) const = 0;
