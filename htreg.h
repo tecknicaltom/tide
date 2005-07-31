@@ -32,7 +32,7 @@ class ht_registry_data: public Object {
 public:
 /* new */
 		ht_registry_data() {};
-		ht_registry_data(BuildCtorArg&) {};
+		ht_registry_data(BuildCtorArg&);
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
 };
@@ -45,7 +45,8 @@ class ht_registry_data_stree: public ht_registry_data {
 public:
 	Container *tree;
 
-			ht_registry_data_stree(AVLTree *aTree=NULL);
+			ht_registry_data_stree(AVLTree *aTree);
+			ht_registry_data_stree(BuildCtorArg&);
 			~ht_registry_data_stree();
 /* overwritten */
 	virtual	void load(ObjectStream &f);
@@ -62,7 +63,8 @@ class ht_registry_data_dword: public ht_registry_data {
 public:
 	uint32 value;
 
-		ht_registry_data_dword(uint32 value=0);
+		ht_registry_data_dword(uint32 value);
+		ht_registry_data_dword(BuildCtorArg&);
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -80,7 +82,8 @@ public:
 	void *value;
 	uint size;
 
-			ht_registry_data_raw(const void *value = 0, uint size = 0);
+			ht_registry_data_raw(const void *value, uint size);
+			ht_registry_data_raw(BuildCtorArg&);
 			~ht_registry_data_raw();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
@@ -98,8 +101,9 @@ class ht_registry_data_string: public ht_registry_data {
 public:
 	char *value;
 
-			ht_registry_data_string(const char *s = 0);
-			~ht_registry_data_string();
+		ht_registry_data_string(const char *s);
+		ht_registry_data_string(BuildCtorArg&);
+		~ht_registry_data_string();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -123,6 +127,7 @@ public:
 	create_empty_registry_data_func create_empty_registry_data;
 	
 	ht_registry_node_type_desc(ht_registry_node_type t, const char *name, create_empty_registry_data_func c);
+	ht_registry_node_type_desc(BuildCtorArg&);
 	virtual ~ht_registry_node_type_desc();
 	virtual int compareTo(const Object *) const;
 	virtual	void load(ObjectStream &f);
@@ -176,17 +181,19 @@ protected:
 public:
 	Container *node_types;
 
-			void init();
+		ht_registry() {};
+		ht_registry(BuildCtorArg&);
+		void init();
 	virtual	void done();
 /* new */
 			int create_node(const char *key, ht_registry_node_type type);
 			int create_subdir(const char *key);
 			int delete_node(const char *key);
-			const char *enum_next(ht_registry_data **data, ht_registry_node_type *type, const char *dir, const char *prevkey);
-			const char *enum_prev(ht_registry_data **data, ht_registry_node_type *type, const char *dir, const char *nextkey);
+			ht_registry_node *enum_next(const char *dir, ht_registry_node *prevkey);
+			ht_registry_node *enum_prev(const char *dir, ht_registry_node *nextkey);
 			
-			bool find_any_entry(const char *key, ht_registry_data **data, ht_registry_node_type *type);
-			bool find_data_entry(const char *key, ht_registry_data **data, ht_registry_node_type *type, bool follow_symlinks);
+			bool find_any_entry(const char *key, ht_registry_node **node);
+			bool find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks);
 			/* node type*/
 			ht_registry_node_type lookup_node_type(const char *identifier);
 			ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, char **identifier);
