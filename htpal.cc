@@ -195,15 +195,13 @@ bool load_pal(char *pal_class, char *pal_flavour, palette *p)
 
 	for (int i=0; i < psize; i++) p->data[i] = VCP(VC_WHITE, VC_RED);
 
-	ht_registry_node_type t;
-	palette_entry *d;
-	const char *n = NULL;
+	ht_registry_node *n = NULL;
 	ht_registry_node_type rnt_pal = registry->lookup_node_type(rnt_palette_name);
-	while ((n = registry->enum_next((ht_registry_data **)&d, &t, dir, n))) {
-		if (t == rnt_pal) {
-			int idx = find_pal_entry_idx(pl, n);
-			if ((idx != -1) && (idx < psize)) {
-				p->data[idx] = d->color;
+	while ((n = registry->enum_next(dir, n))) {
+		if (n->type == rnt_pal) {
+			int idx = find_pal_entry_idx(pl, n->name);
+			if (idx != -1 && idx < psize) {
+				p->data[idx] = ((palette_entry *)n->data)->color;
 			}
 		}
 	}
