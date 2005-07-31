@@ -24,7 +24,7 @@
 
 #include "htdialog.h"
 #include "htpal.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "strtools.h"
 #include "httree.h"
 #include "stream.h"
@@ -108,11 +108,11 @@ void ht_treeview::collapse_all(void *node)
 
 void ht_treeview::draw_r(void *node, int level, int *pos, uint32 lines)
 {
-	int normal_color, sel_color, foc_color, color;
+	vcp normal_color, sel_color, foc_color, color;
 	normal_color = getcolor(palidx_generic_list_unfocused_unselected);
 	foc_color = getcolor(palidx_generic_list_focused_selected);
 	sel_color = getcolor(palidx_generic_list_unfocused_selected);
-	int s[1024];
+	AbstractChar s[1024];
 
 	while (node) {
 		if (*pos >= delta_y) {
@@ -123,7 +123,7 @@ void ht_treeview::draw_r(void *node, int level, int *pos, uint32 lines)
 				fill(0, *pos-delta_y, size.w, 1, color, ' ');
 			} else color = normal_color;
 			if (get_graph(s, node, level, lines) > delta_x)
-				buf_lprintw(0, *pos-delta_y, color, size.w, &s[delta_x]);
+				buf->nprintW(0, *pos-delta_y, color, &s[delta_x], size.w);
 		}
 		(*pos)++;
 		if (has_children(node) && is_expanded(node)) {
@@ -158,7 +158,7 @@ void ht_treeview::expand_all(void *node)
  */
 void ht_treeview::getdata(ObjectStream &s)
 {
-	s->putIntHex((int)selected, 4, NULL);
+	PUT_INT32D(s, (int)selected);
 }
 
 /*
@@ -166,9 +166,9 @@ void ht_treeview::getdata(ObjectStream &s)
  *	get i. child of node
  */
 
-int  ht_treeview::get_graph(int *s, void *node, int level, int lines)
+int  ht_treeview::get_graph(AbstractChar *s, void *node, int level, int lines)
 {
-    int graph[10];
+    AbstractChar graph[10];
     graph[0]=' ';
     graph[1]=CHAR_LINEV;
     graph[2]=CHAR_BORDERTL;
