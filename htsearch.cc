@@ -23,7 +23,7 @@
 #include "htctrl.h"
 #include "hthist.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htsearch.h"
 #include "strtools.h"
 #include "process.h"
@@ -50,7 +50,7 @@ struct ht_search_method {
 	char *name;
 	uint search_class;			// SC_*
 	uint search_mode_mask;		// SEARCHMODE_*
-	HT_ATOM histid;
+	uint histid;
 	create_form_func create_form;
 	create_request_func create_request;
 	create_desc_func create_desc;
@@ -58,7 +58,7 @@ struct ht_search_method {
 
 struct ht_replace_method {
 	char *name;
-	HT_ATOM histid;
+	uint histid;
 	create_form_func create_form;
 	create_replace_context_func create_replace_context;
 	process_func replace_process;
@@ -70,15 +70,15 @@ struct ht_replace_method {
 bool test_str_to_ofs(FileOfs *ofs, byte *str, uint strlen, ht_format_viewer *format, char *desc)
 {
 #define TEST_STR_TO_OFS_MAXSTRLEN       128
-	if (strlen>TEST_STR_TO_OFS_MAXSTRLEN) {
-		throw ht_io_exception("%s: expression too long (len %d, max %d)", desc, strlen, TEST_STR_TO_OFS_MAXSTRLEN);
+	if (strlen > TEST_STR_TO_OFS_MAXSTRLEN) {
+		throw MsgfException("%s: expression too long (len %d, max %d)", desc, strlen, TEST_STR_TO_OFS_MAXSTRLEN);
 		return false;
 	}
-	if (strlen>0) {
+	if (strlen > 0) {
 		char s[TEST_STR_TO_OFS_MAXSTRLEN+1];
 		bin2str(s, str, strlen);
 		if (!format->string_to_offset(s, ofs)) {
-			throw ht_io_exception("%s: invalid expression: '%s'", desc, s);
+			throw MsgfException("%s: invalid expression: '%s'", desc, s);
 			return false;
 		}
 	}
@@ -89,14 +89,14 @@ bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *
 {
 #define TEST_STR_TO_POS_MAXSTRLEN      128
 	if (strlen>TEST_STR_TO_POS_MAXSTRLEN) {
-		throw ht_io_exception("%s: expression too long (len %d, max %d)", desc, strlen, TEST_STR_TO_POS_MAXSTRLEN);
+		throw MsgfException("%s: expression too long (len %d, max %d)", desc, strlen, TEST_STR_TO_POS_MAXSTRLEN);
 		return false;
 	}
 	if (strlen>0) {
 		char s[TEST_STR_TO_POS_MAXSTRLEN+1];
 		bin2str(s, str, strlen);
 		if (!format->string_to_pos(s, pos)) {
-			throw ht_io_exception("%s: invalid expression: '%s'", desc, s);
+			throw MsgfException("%s: invalid expression: '%s'", desc, s);
 			return false;
 		}
 	}
@@ -107,23 +107,23 @@ bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *
  *	CLASS ht_fxbin_search_request
  */
 
-ht_view* create_form_hexascii(Bounds *b, HT_ATOM histid)
+ht_view* create_form_hexascii(Bounds *b, uint histid)
 {
-	ht_hexascii_search_form *form=new ht_hexascii_search_form();
-	form->init(b, 0, (ht_list*)getAtomValue(histid));
+	ht_hexascii_search_form *form = new ht_hexascii_search_form();
+	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
 ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
 {
-	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
+	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
 	form->databuf_get(&d, sizeof d);
 	
 	ht_fxbin_search_request *request;
 	
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "hex/ascii");
+		throw MsgfException("%s: string is empty", "hex/ascii");
 	}
 	if (test_str_to_ofs(&start->offset, d.start.text, d.start.textlen, format, "start-offset")
 	&& test_str_to_ofs(&end->offset, d.end.text, d.end.textlen, format, "end-offset")) {
@@ -143,7 +143,7 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 	form->databuf_get(&d, sizeof d);
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "hex/ascii");
+		throw MsgfException("%s: string is empty", "hex/ascii");
 	}
 
 	char *b = buf;
@@ -157,22 +157,22 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 	if (d.start.textlen) {
 		strncat(b, ", start=", buflen-(b-buf));
 		if (b-buf<buflen) b+=strlen(b);
-		b+=escape_special(b, buflen-(b-buf), d.start.text, d.start.textlen);
+		b += escape_special(b, buflen-(b-buf), d.start.text, d.start.textlen);
 	}
 	if (d.end.textlen) {
 		strncat(b, ", end=", buflen-(b-buf));
 		if (b-buf<buflen) b+=strlen(b);
-		b+=escape_special(b, buflen-(b-buf), d.end.text, d.end.textlen);
+		b += escape_special(b, buflen-(b-buf), d.end.text, d.end.textlen);
 	}
 	strncat(b, ")", buflen-(b-buf));
 }
 
 /***/
 
-ht_view* create_form_evalstr(Bounds *b, HT_ATOM histid)
+ht_view* create_form_evalstr(Bounds *b, uint histid)
 {
 	ht_evalstr_search_form *form=new ht_evalstr_search_form();
-	form->init(b, 0, (ht_list*)getAtomValue(histid));
+	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
@@ -186,7 +186,7 @@ ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht
 	ht_fxbin_search_request *request = NULL;
 		
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "eval str");
+		throw MsgfException("%s: string is empty", "eval str");
 	} else if (d.str.textlen<=EVALSTR_MAXSTRLEN) {
 		char strbuf[EVALSTR_MAXSTRLEN+1];
 		bin2str(strbuf, d.str.text, d.str.textlen);
@@ -206,10 +206,10 @@ ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht
 			char *str;
 			int pos;
 			get_eval_error(&str, &pos);
-			throw ht_io_exception("eval error at pos %d: %s", pos, str);
+			throw MsgfException("eval error at pos %d: %s", pos, str);
 		}
 	} else {
-		throw ht_io_exception("%s: expression too long (len %d, max %d)", "eval str", d.str.textlen, EVALSTR_MAXSTRLEN);
+		throw MsgfException("%s: expression too long (len %d, max %d)", "eval str", d.str.textlen, EVALSTR_MAXSTRLEN);
 	}
 	return request;
 }
@@ -221,7 +221,7 @@ void create_desc_evalstr(char *buf, int buflen, ht_view *f)
 	form->databuf_get(&d, sizeof d);
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "eval str");
+		throw MsgfException("%s: string is empty", "eval str");
 	}
 
 	char *b = buf;
@@ -252,7 +252,7 @@ ht_fxbin_search_request::ht_fxbin_search_request(uint search_class, uint flags, 
 {
 	data_size = ds;
 	data = (byte*)malloc(data_size);
-	memmove(data, d, data_size);
+	memcpy(data, d, data_size);
 }
 
 ht_fxbin_search_request::~ht_fxbin_search_request()
@@ -260,7 +260,7 @@ ht_fxbin_search_request::~ht_fxbin_search_request()
 	free(data);
 }
 
-Object *ht_fxbin_search_request::clone()
+ht_fxbin_search_request *ht_fxbin_search_request::clone() const
 {
 	return new ht_fxbin_search_request(search_class, flags, data_size, data);
 }
@@ -269,10 +269,10 @@ Object *ht_fxbin_search_request::clone()
  *	CLASS ht_regex_search_request
  */
  
-ht_view* create_form_vregex(Bounds *b, HT_ATOM histid)
+ht_view* create_form_vregex(Bounds *b, uint histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
-	form->init(b, 0, (ht_list*)getAtomValue(histid));
+	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
@@ -286,7 +286,7 @@ ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_
 	ht_regex_search_request *request=NULL;
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "regex");
+		throw MsgfException("%s: string is empty", "regex");
 	} else if (d.str.textlen <= VREGEX_MAXSTRLEN) {
 		char strbuf[VREGEX_MAXSTRLEN+1];
 		bin2str(strbuf, d.str.text, d.str.textlen);
@@ -296,7 +296,7 @@ ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_
 			request = new ht_regex_search_request(search_class, d.options.state & 1 ? SF_REGEX_CASEINSENSITIVE : 0, strbuf);
 		}
 	} else {
-		throw ht_io_exception("%s: expression too long (size %d, max %d)", "regex", strlen, VREGEX_MAXSTRLEN);
+		throw MsgfException("%s: expression too long (size %d, max %d)", "regex", strlen, VREGEX_MAXSTRLEN);
 	}
 	return request;
 }
@@ -308,7 +308,7 @@ void create_desc_vregex(char *buf, int buflen, ht_view *f)
 	form->databuf_get(&d, sizeof d);
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "regex");
+		throw MsgfException("%s: string is empty", "regex");
 	}
 
 	char *b = buf;
@@ -348,7 +348,7 @@ ht_regex_search_request::~ht_regex_search_request()
 	free(rx_str);
 }
 
-Object *ht_regex_search_request::clone()
+ht_regex_search_request *ht_regex_search_request::clone() const
 {
 	return new ht_regex_search_request(search_class, flags, rx_str);
 }
@@ -364,19 +364,19 @@ ht_regex_search_exception::ht_regex_search_exception(int e, regex_t *r)
 	ht_snprintf(rxerr, sizeof rxerr, "error compiling regex: %s", s);
 }
 	
-const char* ht_regex_search_exception::what() const
+String &ht_regex_search_exception::reason(String &s) const
 {
-	return rxerr;
+	return s = rxerr;
 }
 
 /*
  *	CLASS ht_expr_search_request
  */
 
-ht_view* create_form_expr(Bounds *b, HT_ATOM histid)
+ht_view* create_form_expr(Bounds *b, uint histid)
 {
 	ht_expr_search_form *form = new ht_expr_search_form();
-	form->init(b, 0, (ht_list*)getAtomValue(histid));
+	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
@@ -390,7 +390,7 @@ ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_vi
 	ht_expr_search_request *request = NULL;
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "expr");
+		throw MsgfException("%s: string is empty", "expr");
 	} else if (d.str.textlen <= EXPR_MAXSTRLEN) {
 		char strbuf[EXPR_MAXSTRLEN+1];
 		bin2str(strbuf, d.str.text, d.str.textlen);
@@ -400,7 +400,7 @@ ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_vi
 			request = new ht_expr_search_request(search_class, 0, strbuf);
 		}
 	} else {
-		throw ht_io_exception("%s: expression too long (size %d, max %d)", "expr", strlen, EXPR_MAXSTRLEN);
+		throw MsgfException("%s: expression too long (size %d, max %d)", "expr", strlen, EXPR_MAXSTRLEN);
 	}
 	return request;
 }
@@ -412,7 +412,7 @@ void create_desc_expr(char *buf, int buflen, ht_view *f)
 	form->databuf_get(&d, sizeof d);
 
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "expr");
+		throw MsgfException("%s: string is empty", "expr");
 	}
 
 	char *b = buf;
@@ -446,10 +446,10 @@ ht_expr_search_request::ht_expr_search_request(uint search_class, uint flags, ch
 
 ht_expr_search_request::~ht_expr_search_request()
 {
-	if (expr) delete expr;
+	if (expr) free(expr);
 }
 
-Object *ht_expr_search_request::clone()
+ht_expr_search_request *ht_expr_search_request::clone() const
 {
 	return new ht_expr_search_request(search_class, flags, expr);
 }
@@ -462,7 +462,7 @@ Object *ht_expr_search_request::clone()
 void bufdowncase(byte *buf, uint32 len)
 {
 	for (uint32 i=0; i<len; i++) {
-		if ((buf[i]>='A') && (buf[i]<='Z')) buf[i]+=32;
+		if (buf[i] >= 'A' && buf[i] <= 'Z') buf[i] += 32;
 	}
 }
 
@@ -474,7 +474,7 @@ ht_search_bin_context::~ht_search_bin_context()
 	free(pat);
 }
 
-Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success)
+Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success)
 {
 	if (patlen > SEARCH_BUF_SIZE) return NULL;
 	
@@ -545,7 +545,7 @@ bool search_bin_process(Object *context, ht_text *progress_indicator)
 /*
  *	CLASS ht_hexascii_search_form
  */
-void ht_hexascii_search_form::init(Bounds *b, int options, ht_list *history)
+void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_hexascii_search_form");
@@ -633,7 +633,7 @@ void ht_hexascii_search_form::init(Bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_evalstr_search_form
  */
-void ht_evalstr_search_form::init(Bounds *b, int options, ht_list *history)
+void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_evalstr_search_form");
@@ -713,7 +713,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_vregex_search_form
  */
-void ht_vregex_search_form::init(Bounds *b, int options, ht_list *history)
+void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_text_search_form");
@@ -785,7 +785,7 @@ void ht_vregex_search_form::init(Bounds *b, int options, ht_list *history)
 /*
  *	CLASS ht_expr_search_form
  */
-void	ht_expr_search_form::init(Bounds *b, int options, ht_list *history)
+void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_expr_search_form");
@@ -869,10 +869,10 @@ ht_replace_bin_context::~ht_replace_bin_context()
 	free(repl);
 }
 
-ht_view* create_form_replace_hexascii(Bounds *b, HT_ATOM histid)
+ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
 {
 	ht_replace_hexascii_search_form *form=new ht_replace_hexascii_search_form();
-	form->init(b, 0, (ht_list*)getAtomValue(histid));
+	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
@@ -887,7 +887,7 @@ Object* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_vi
 	return ctx;
 }
 
-void ht_replace_hexascii_search_form::init(Bounds *b, int options, ht_list *history)
+void ht_replace_hexascii_search_form::init(Bounds *b, int options, List *history)
 {
 	ht_group::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_replace_hexascii_search_form");
@@ -950,8 +950,8 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 	Bounds b;
 	b.w = 50;
 	b.h = 15;
-	b.x = (screen->size.w-b.w)/2;
-	b.y = (screen->size.h-b.h)/2;
+	b.x = (screen->w - b.w)/2;
+	b.y = (screen->h - b.h)/2;
 	ht_search_dialog *dialog = new ht_search_dialog();
 	dialog->init(&b, "search");
 
@@ -991,14 +991,14 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, form);
-				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, form);
+				insert_history_entry((List*)getAtomValue(s->histid), hist_desc, form);
 			}
 			/* create request */
 			switch (s->search_class) {
 				case SC_PHYSICAL:
 					if (!format->pos_to_offset(*start, &sstart.offset)
 						|| !format->pos_to_offset(*end, &send.offset)) {
-						throw ht_io_exception("Internal error: can't convert viewer_pos to offset");
+						throw MsgfException("Internal error: can't convert viewer_pos to offset");
 					}
 					break;
 				case SC_VISUAL:
@@ -1011,7 +1011,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 				case SC_PHYSICAL:
 					if (!format->offset_to_pos(sstart.offset, start)
 					|| !format->offset_to_pos(send.offset, end)) {
-						throw ht_io_exception("Internal error: can't convert offset to viewer_pos");
+						throw MsgfException("Internal error: can't convert offset to viewer_pos");
 					}
 					break;
 				case SC_VISUAL:
@@ -1019,8 +1019,9 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 					*end = send.pos;
 					break;
 			}
-		} catch (const ht_exception &e) {
-			errorbox("error: %s", e.what());
+		} catch (const Exception &e) {
+			String s;
+			errorbox("error: %y", &e.reason(s));
 		}
 	}
 	dialog->done();
@@ -1041,8 +1042,8 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 	Bounds b;
 	b.w = 50;
 	b.h = 22;
-	b.x = (screen->size.w-b.w)/2;
-	b.y = (screen->size.h-b.h)/2;
+	b.x = (screen->w - b.w)/2;
+	b.y = (screen->h - b.h)/2;
 	ht_replace_dialog *dialog = new ht_replace_dialog();
 	dialog->init(&b);
 
@@ -1105,7 +1106,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, sform);
-				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, sform);
+				insert_history_entry((List*)getAtomValue(s->histid), hist_desc, sform);
 			}
 			/* search */
 			start.offset=0;
@@ -1113,8 +1114,9 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 			format->get_current_offset(&start.offset);
 
 			request = s->create_request(&start, &end, sform, format, s->search_class);
-		} catch (const ht_exception &e) {
-			errorbox("error: %s", e.what());
+		} catch (const Exception &e) {
+			String s;
+			errorbox("error: %y", &e.reason(s));
 		}
 		
 		if (request) {
@@ -1169,8 +1171,9 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 					}
 					delete result;
 				}
-			} catch (const ht_exception &e) {
-				errorbox("error: %s", e.what());
+			} catch (const Exception &e) {
+				String s;
+				errorbox("error: %y", &e.reason(s));
 			}
 
 			app->sendmsg(cmd_vstate_restore);
@@ -1191,12 +1194,12 @@ Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl
 	ctx->ofs = ofs;
 	ctx->len = len;
 	ctx->repl = (byte*)malloc(repllen);
-	memmove(ctx->repl, repl, repllen);
+	memcpy(ctx->repl, repl, repllen);
 	ctx->repllen = repllen;
 	if (repllen > len) {
-		ctx->o = file->get_size();
+		ctx->o = file->getSize();
 	} else if (len > repllen) {
-		ctx->o = ofs+len;
+		ctx->o = ofs + len;
 	}
 	ctx->z = REPLACE_COPY_BUF_SIZE;
 	if (len != repllen)
@@ -1212,7 +1215,7 @@ bool replace_bin_process(Object *context, ht_text *progress_indicator)
 	ht_replace_bin_context *c = (ht_replace_bin_context*)context;
 	if (c->repllen > c->len) {
 		/* grow */
-		uint size = c->file->get_size();
+		uint size = c->file->getSize();
 		c->file->extend(size + c->repllen - c->len);
 		
 		if (c->o > c->z) {
@@ -1226,36 +1229,31 @@ bool replace_bin_process(Object *context, ht_text *progress_indicator)
 			c->o = c->ofs + c->len;
 		}
 		c->file->seek(c->o);
-		if (c->file->read(c->buf, c->z) != c->z)
-			throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
-		c->file->seek(c->o+c->repllen-c->len);
-		if (c->file->write(c->buf, c->z) != c->z)
-			throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+		c->file->readx(c->buf, c->z);
+		c->file->seek(c->o + c->repllen - c->len);
+		c->file->writex(c->buf, c->z);
 			
 		if (c->o > c->ofs + c->len) return true;
 		
 		c->file->seek(c->ofs);
-		if (c->file->write(c->repl, c->repllen) != c->repllen)
-				throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+		c->file->writex(c->repl, c->repllen);
+
 		free(c->buf);
 	} else if (c->repllen < c->len) {
 		/* shrink */
-		uint size = c->file->get_size();
+		uint size = c->file->getSize();
 		if (c->o == c->ofs + c->len) {
 			c->file->seek(c->ofs);
-			if (c->file->write(c->repl, c->repllen) != c->repllen)
-				throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+			c->file->writex(c->repl, c->repllen);
 		}
 		
 		if (c->z > size - c->o) {
 			c->z = size - c->o;
 		}
 		c->file->seek(c->o);
-		if (c->file->read(c->buf, c->z) != c->z)
-			throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+		c->file->readx(c->buf, c->z);
 		c->file->seek(c->o - (c->len - c->repllen));
-		if (c->file->write(c->buf, c->z) != c->z)
-			throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+		c->file->writex(c->buf, c->z);
 		c->o += REPLACE_COPY_BUF_SIZE;
 		
 		if (c->z == REPLACE_COPY_BUF_SIZE) return true;
@@ -1264,8 +1262,7 @@ bool replace_bin_process(Object *context, ht_text *progress_indicator)
 		free(c->buf);
 	} else {
 		c->file->seek(c->ofs);
-		if (c->file->write(c->repl, c->repllen) != c->repllen)
-				throw ht_io_exception("cant replace, write error (ofs=%08x)", c->ofs);
+		c->file->writex(c->repl, c->repllen);
 	}
 	if (c->return_repllen) *c->return_repllen = c->repllen;
 	return false;
