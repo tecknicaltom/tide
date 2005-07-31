@@ -36,18 +36,18 @@ public:
 		int			foc;
 		void			*selected;
 
-			   void	init(Bounds *b, char *desc);
+		        void	init(Bounds *b, char *desc);
 		virtual void	done();
 		virtual void	adjust(void *node, bool expand) = 0;
-			   int 	create_graph(int *s, void *node, int level, int lines, int width, int endwidth, int *Chars);
-			   void   collapse_all(void *node);
+		        int	create_graph(int *s, void *node, int level, int lines, int width, int endwidth, int *Chars);
+			void	collapse_all(void *node);
 		virtual int	count_children(void *node);
 		virtual void	draw();
 			   void	draw_r(void *node, int level, int *pos, uint32 lines);
 			   void   expand_all(void *node);
 		virtual void   *get_child(void *node, int i) = 0;
 		virtual void	getdata(ObjectStream &s);
-		virtual int 	get_graph(int *s, void *node, int level, int lines);
+		virtual int 	get_graph(AbstractChar *s, void *node, int level, int lines);
 		virtual void	*get_next_node(void *node) = 0;
 			   void   *get_node(int i);
 			   void   *get_node_r(void *node, int *i);
