@@ -302,7 +302,7 @@ ht_registry_data *create_empty_symlink()
 
 ht_registry_data *create_empty_dword()
 {
-	return new ht_registry_data_dword();
+	return new ht_registry_data_dword(0);
 }
 
 ht_registry_data *create_empty_string()
@@ -312,7 +312,7 @@ ht_registry_data *create_empty_string()
 
 ht_registry_data *create_empty_raw()
 {
-	return new ht_registry_data_raw();
+	return new ht_registry_data_raw(NULL, 0);
 }
 
 /*
@@ -496,87 +496,73 @@ void ht_registry::debug_dump_i(FILE *f, Container *t, int ident)
 #endif
 }
 
-const char *ht_registry::enum_next(ht_registry_data **data, ht_registry_node_type *type, const char *dir, const char *prevkey)
+ht_registry_node *ht_registry::enum_next(const char *dir, ht_registry_node *prevkey)
 {
-	Container *t;
-	rec_depth = 0;
 	ht_registry_node *n = find_entry_i(0, dir, 1);
 	if (n) {
 		if (n->type != RNT_SUBDIR) return NULL;
-		t = ((ht_registry_data_stree*)n->data)->tree;
+		Container *t = ((ht_registry_data_stree*)n->data)->tree;
 
-		ht_data_string ok(prevkey);
-		ht_data_string *k;
-		ht_registry_node *d;
-		if ((k = (ht_data_string*)t->enum_next((ht_data**)&d, prevkey ? &ok : NULL))) {
-			*data = d->data;
-			*type = d->type;
-			return k->value;
+		if (prevkey) {
+			return (ht_registry_node *)t->get(t->findG(prevkey));
+		} else {
+			return (ht_registry_node *)t->get(t->findFirst());
 		}
 	}
 	return NULL;
 }
 
-const char *ht_registry::enum_prev(ht_registry_data **data, ht_registry_node_type *type, const char *dir, const char *nextkey)
+ht_registry_node *ht_registry::enum_prev(const char *dir, ht_registry_node *prevkey)
 {
-	ht_tree *t;
-	rec_depth = 0;
 	ht_registry_node *n = find_entry_i(0, dir, 1);
 	if (n) {
 		if (n->type != RNT_SUBDIR) return NULL;
-		t = ((ht_registry_data_stree*)n->data)->tree;
+		Container *t = ((ht_registry_data_stree*)n->data)->tree;
 
-		ht_data_string ok(nextkey);
-		ht_data_string *k;
-		ht_registry_node *d;
-		if ((k = (ht_data_string*)t->enum_prev((ht_data**)&d, nextkey ? &ok : NULL))) {
-			*data = d->data;
-			*type = d->type;
-			return k->value;
+		if (prevkey) {
+			return (ht_registry_node *)t->get(t->findL(prevkey));
+		} else {
+			return (ht_registry_node *)t->get(t->findFirst());
 		}
 	}
 	return NULL;
 }
 
-bool ht_registry::find_any_entry(const char *key, ht_registry_data **data, ht_registry_node_type *type)
+bool ht_registry::find_any_entry(const char *key, ht_registry_node **node)
 {
-	rec_depth=0;
 	ht_registry_node *n=find_entry_i(0, key, 1);
 	if (n) {
-		*data=n->data;
-		*type=n->type;
+		*node = n;
 		return true;
 	}
 	return false;
 }
 
-bool ht_registry::find_data_entry(const char *key, ht_registry_data **data, ht_registry_node_type *type, bool follow_symlinks)
+bool ht_registry::find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks)
 {
-	rec_depth=0;
 	ht_registry_node *n=find_entry_i(0, key, follow_symlinks);
 	if (n) {
-		if (n->type==RNT_SUBDIR) return false;
-		*data=n->data;
-		*type=n->type;
+		if (n->type == RNT_SUBDIR) return false;
+		*node = n;
 		return true;
 	}
 	return false;
 }
 
-ht_registry_node *ht_registry::find_entry_i(ht_tree **rdir, const char *key, bool follow_symlinks)
+ht_registry_node *ht_registry::find_entry_i(Container **rdir, const char *key, bool follow_symlinks)
 {
-	ht_registry_node *dir=root;
+	ht_registry_node *dir = root;
 	char *s;
 	char t[256]; /* FIXME: possible buffer overflow */
 	if (key[0]=='/') key++;
 	while (1) {
-		s=strchr(key, '/');
+		s = strchr(key, '/');
 		if (s) {
 			strncpy(t, key, s-key);
-			t[s-key]=0;
-			dir=find_entry_get_subdir(((ht_registry_data_stree*)dir->data)->tree, t);
+			t[s-key] = 0;
+			dir = find_entry_get_subdir(((ht_registry_data_stree*)dir->data)->tree, t);
 			if (!dir) break;
-			key=s+1;
+			key = s+1;
 		} else {
 			ht_registry_node *n;
 			if (*key==0) {
@@ -588,20 +574,20 @@ ht_registry_node *ht_registry::find_entry_i(ht_tree **rdir, const char *key, boo
 			return n;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
-ht_registry_node *ht_registry::find_entry_get_node(ht_tree *dir, const char *nodename)
+ht_registry_node *ht_registry::find_entry_get_node(Container *dir, const char *nodename)
 {
 	if (nodename) {
-		ht_data_string keystr(nodename);
-		ht_registry_node *n=(ht_registry_node*)dir->get(&keystr);
+		ht_registry_node t(0, nodename, NULL);
+		ht_registry_node *n=(ht_registry_node*)dir->get(&t);
 		return n;
 	}
 	return NULL;
 }
 
-ht_registry_node *ht_registry::find_entry_get_subdir(ht_tree *dir, const char *nodename)
+ht_registry_node *ht_registry::find_entry_get_subdir(Container *dir, const char *nodename)
 {
 	ht_registry_node *n=find_entry_get_node(dir, nodename);
 start:
@@ -624,17 +610,17 @@ start:
 	return 0;
 }
 
-ht_registry_node *ht_registry::find_entry_get_data(ht_tree *dir, const char *nodename, bool follow_symlinks)
+ht_registry_node *ht_registry::find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks)
 {
-	ht_registry_node *n=find_entry_get_node(dir, nodename);
+	ht_registry_node *n = find_entry_get_node(dir, nodename);
 start:
 	if (!n) return 0;
 	if ((follow_symlinks) && (n->type==RNT_SYMLINK)) {
 		rec_depth++;
-		if (rec_depth>MAX_SYMLINK_REC_DEPTH) return 0;
-		char *sl=((ht_registry_data_string*)n->data)->value;
+		if (rec_depth > MAX_SYMLINK_REC_DEPTH) return 0;
+		char *sl = ((ht_registry_data_string*)n->data)->value;
 		if (sl[0]=='/') {
-			n=find_entry_i(0, sl, 1);
+			n = find_entry_i(0, sl, 1);
 			goto start;
 		} else {
 			return find_entry_get_data(dir, sl, follow_symlinks);
@@ -650,29 +636,23 @@ ht_registry_node_type ht_registry::have_node_type(const char *identifier, create
 	return t;
 }
 
-int ht_registry::load(ObjectStream &f)
+void ht_registry::load(ObjectStream &f)
 {
-	if (!(node_types=(ht_stree*)f->getObject("types"))) return 1;
-	if (!(root=(ht_registry_node*)f->getObject("root"))) return 1;
-	return f->get_error();
+	GET_OBJECT(f, node_types);
+	GET_OBJECT(f, root);
 }
 
 ht_registry_node_type_desc *ht_registry::get_node_type_desc(ht_registry_node_type t, char **identifier)
 {
-	ht_data_string *key=NULL;
-	ht_registry_node_type_desc *data;
-	while ((key=(ht_data_string*)node_types->enum_next((ht_data**)&data, key))) {
-		if (t==data->type) {
-			if (identifier) *identifier = key->value;
-			return data;
-		}
-	}
-	return NULL;
+	ht_registry_node_type_desc *data = NULL;
+	firstThat(ht_registry_node_type_desc, data, *node_types, t == data->type);
+	if (data && identifier) *identifier = data->name;
+	return data;
 }
 
 ht_registry_node_type ht_registry::lookup_node_type(const char *identifier)
 {
-	ht_data_string s(identifier);
+	ht_registry_node_type_desc s(0, identifier, NULL);
 	ht_registry_node_type_desc *d=(ht_registry_node_type_desc*)node_types->get(&s);
 	return d ? d->type : 0;
 }
@@ -686,27 +666,22 @@ ht_registry_node_type ht_registry::register_node_type(const char *identifier, cr
 {
 //	ht_registry_node_type t = RNT_USER;
 	ht_registry_node_type t = 0;
-	ht_data_string *key;
-	ht_registry_node_type_desc *data;
-	bool found = false; 
-	while (!found) {
+	ht_registry_node_type_desc *nt = NULL;
+	do {
 		t++;
-		found = true;
-		key = NULL;
-		while ((key=(ht_data_string*)node_types->enum_next((ht_data**)&data, key))) {
-			if (t == data->type) {
-				found = false;
-				break;
-			}
-		}
-	}
+		firstThat(ht_registry_node_type_desc, nt, *node_types, t == nt->type);
+	} while (nt != NULL);
 
-	ht_registry_node_type_desc *v = new ht_registry_node_type_desc();
-	v->type = t;
-	v->create_empty_registry_data = create_empty_registry_data;
-	bool b = node_types->insert(new ht_data_string(identifier), v);
-	if (b) return t;
-	return RNT_INVALID;
+	ht_registry_node_type_desc *v = new ht_registry_node_type_desc(t, 
+		identifier, create_empty_registry_data);
+
+	if (node_types->get(v) != invObjHandle) {
+		delete v;
+		return RNT_INVALID;
+	} else {
+		node_types->insert(v);
+		return t;
+	}
 }
 
 int ht_registry::set_dword(const char *key, uint32 d)
@@ -766,10 +741,10 @@ bool ht_registry::splitfind(const char *key, const char **name, ht_registry_node
 	return 1;
 }
 
-void ht_registry::store(ObjectStream &f)
+void ht_registry::store(ObjectStream &f) const
 {
-	f->putObject(node_types, "types");
-	f->putObject(root, "root");
+	PUT_OBJECT(f, node_types);
+	PUT_OBJECT(f, root);
 }
 
 unsigned char valid_nodename_chars[256/8]=
@@ -850,15 +825,14 @@ uint32 get_config_dword(char *ident)
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
 	strncpy(ee, ident, sizeof (e) - (ee-e));
-	ht_registry_data *d;
-	ht_registry_node_type t;
-	if (registry->find_data_entry(e, &d, &t, true)) {
-		if (t == RNT_DWORD) {
-			ht_registry_data_dword *s = (ht_registry_data_dword *)d;
+	ht_registry_node *n;
+	if (registry->find_data_entry(e, &n, true)) {
+		if (n->type == RNT_DWORD) {
+			ht_registry_data_dword *s = (ht_registry_data_dword *)n->data;
 			return s->value;
 		} else {
 			char *q = "?";
-			registry->get_node_type_desc(t, &q);
+			registry->get_node_type_desc(n->type, &q);
 			LOG_EX(LOG_ERROR, "registry key '%s' not of type %s, but: %s", e, "dword", q);
 		}
 	} else LOG_EX(LOG_ERROR, "registry key '%s' not found", e);
@@ -870,28 +844,27 @@ char *get_config_string(char *ident)
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
 	strncpy(ee, ident, sizeof (e) - (ee-e));
-	ht_registry_data *d;
-	ht_registry_node_type t;
-	if (registry->find_data_entry(e, &d, &t, true)) {
-		if (t == RNT_STRING) {
-			ht_registry_data_string *s = (ht_registry_data_string *)d;
+	ht_registry_node *n;
+	if (registry->find_data_entry(e, &n, true)) {
+		if (n->type == RNT_STRING) {
+			ht_registry_data_string *s = (ht_registry_data_string *)n->data;
 			return ht_strdup(s->value);
 		} else {
 			char *q = "?";
-			registry->get_node_type_desc(t, &q);
+			registry->get_node_type_desc(n->type, &q);
 			LOG_EX(LOG_ERROR, "registry key '%s' not of type %s, but: %s", e, "string", q);
 		}
 	} else LOG_EX(LOG_ERROR, "registry key '%s' not found", e);
 	return NULL;
 }
 
-BUILDER(ATOM_HT_REGISTRY, ht_registry);
-BUILDER(ATOM_HT_REGISTRY_NODE, ht_registry_node);
-BUILDER(ATOM_HT_REGISTRY_DATA_STREE, ht_registry_data_stree);
-BUILDER(ATOM_HT_REGISTRY_DATA_DWORD, ht_registry_data_dword);
-BUILDER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw);
-BUILDER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string);
-BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc);
+BUILDER(ATOM_HT_REGISTRY, ht_registry, Object);
+BUILDER(ATOM_HT_REGISTRY_NODE, ht_registry_node, Object);
+BUILDER(ATOM_HT_REGISTRY_DATA_STREE, ht_registry_data_stree, ht_registry_data);
+BUILDER(ATOM_HT_REGISTRY_DATA_DWORD, ht_registry_data_dword, ht_registry_data);
+BUILDER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw, ht_registry_data);
+BUILDER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string, ht_registry_data);
+BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc, Object);
 	
 /*
  *	INIT
@@ -906,28 +879,19 @@ bool init_registry()
 	REGISTER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw);
 	REGISTER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string);
 	REGISTER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc);
-//	register_atom(ATOM_HT_CREATE_EMPTY_SUBDIR, (void*));
-	register_atom(ATOM_HT_CREATE_EMPTY_SYMLINK, (void*)create_empty_symlink);
-	register_atom(ATOM_HT_CREATE_EMPTY_DWORD, (void*)create_empty_dword);
-	register_atom(ATOM_HT_CREATE_EMPTY_STRING, (void*)create_empty_string);
-	register_atom(ATOM_HT_CREATE_EMPTY_RAW, (void*)create_empty_raw);
+//	registerAtom(ATOM_HT_CREATE_EMPTY_SUBDIR, (void*));
+	registerAtom(ATOM_HT_CREATE_EMPTY_SYMLINK, (void*)create_empty_symlink);
+	registerAtom(ATOM_HT_CREATE_EMPTY_DWORD, (void*)create_empty_dword);
+	registerAtom(ATOM_HT_CREATE_EMPTY_STRING, (void*)create_empty_string);
+	registerAtom(ATOM_HT_CREATE_EMPTY_RAW, (void*)create_empty_raw);
 
 /*
  *	load default registry
  */
-	ht_memmap_file *f = new ht_memmap_file();
-	f->init((unsigned char*)default_reg, sizeof default_reg);
+	ConstMemMapFile f(default_reg, sizeof default_reg);
+	ObjectStreamBin o(&f, false);
 
-	ht_object_stream_bin *o = new ht_object_stream_bin();
-	o->init(f);
-
-	registry = (ht_registry*)o->getObject(NULL);
-
-	o->done();
-	delete o;
-
-	f->done();
-	delete f;
+	GET_OBJECT(o, registry);
 
 	return true;
 }
@@ -945,11 +909,11 @@ void done_registry()
 	UNREGISTER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw);
 	UNREGISTER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string);
 	UNREGISTER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc);
-//	unregister_atom(ATOM_HT_CREATE_EMPTY_SUBDIR);
-	unregister_atom(ATOM_HT_CREATE_EMPTY_SYMLINK);
-	unregister_atom(ATOM_HT_CREATE_EMPTY_DWORD);
-	unregister_atom(ATOM_HT_CREATE_EMPTY_STRING);
-	unregister_atom(ATOM_HT_CREATE_EMPTY_RAW);
+//	unregisterAtom(ATOM_HT_CREATE_EMPTY_SUBDIR);
+	unregisterAtom(ATOM_HT_CREATE_EMPTY_SYMLINK);
+	unregisterAtom(ATOM_HT_CREATE_EMPTY_DWORD);
+	unregisterAtom(ATOM_HT_CREATE_EMPTY_STRING);
+	unregisterAtom(ATOM_HT_CREATE_EMPTY_RAW);
 	
 	registry->done();
 	delete registry;
