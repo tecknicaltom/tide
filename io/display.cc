@@ -127,7 +127,7 @@ int Display::print(int x, int y, vc color, const char *str, Codepage cp)
 	return nprint(x, y, color, str, 0x7fffffff, cp);
 }
 
-int Display::printW(int x, int y, vcp color, const AbstractChar *widestr, Codepage cp)
+int Display::printW(int x, int y, vcp color, const AbstractChar *widestr)
 {
 	const AbstractChar *owidestr = widestr;
 	// FIXME: speed ?
