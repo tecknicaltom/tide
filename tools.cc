@@ -20,6 +20,7 @@
 
 #include "tools.h"
 
+#include "data.h"
 #include "htdebug.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,18 +32,10 @@ uint32 delinearize(uint32 d)
 	return d*0x8088405+1;	/* there's magic in here... */
 }
 
-int compare_keys_int_delinear(ht_data *key_a, Object *key_b)
+int compare_keys_uint_delinear(Object *key_a, Object *key_b)
 {
-	int a = delinearize(((ht_data_uint*)key_a)->value);
-	int b = delinearize(((ht_data_uint*)key_b)->value);
-	if (a>b) return 1; else if (a<b) return -1;
-	return 0;
-}
-
-int compare_keys_uint_delinear(ht_data *key_a, Object *key_b)
-{
-	uint a = delinearize(((ht_data_uint*)key_a)->value);
-	uint b = delinearize(((ht_data_uint*)key_b)->value);
+	uint a = delinearize(((UInt*)key_a)->value);
+	uint b = delinearize(((UInt*)key_b)->value);
 	if (a>b) return 1; else if (a<b) return -1;
 	return 0;
 }
