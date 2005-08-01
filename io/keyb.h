@@ -352,4 +352,7 @@ bool keyb_keypressed();
 ht_key keyb_getkey();
 int keyb_getrawkey();
 
+bool init_keyb();
+void done_keyb();
+
 #endif /* __KEYB_H__ */
