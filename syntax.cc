@@ -23,7 +23,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#include "htexcept.h"
+#include "except.h"
 extern "C" {
 #include "regex.h"
 }
@@ -227,7 +227,7 @@ void ht_lang_syntax_lexer::set_lexer_rules(syntax_lexer_rule *lr)
 			memmove(regex+1, lexer_rules[i].string, rl);
 			
 			if (regcomp(preg, regex, REG_EXTENDED))
-				throw ht_exception();
+				throw Exception();
 				
 			free(regex);
 			
