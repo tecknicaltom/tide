@@ -82,11 +82,11 @@ bool unregisterAtom(uint id)
  *	Module Init/Done
  */
  
-bool initAtom()
+bool init_atom()
 {
 	return true;
 } 
  
-void doneAtom()
+void done_atom()
 {
 }
