@@ -367,7 +367,7 @@ public:
  */
 class ConstMemMapFile: public File {
 protected:
-	FileOfs pos;
+	FileOfs ofs, pos;
 	uint size;
 	const void *buf;
 public:
