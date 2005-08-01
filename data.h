@@ -1167,7 +1167,7 @@ char *matchhash(int value, int_hash *hash_table);
  *	Module Init/Done
  */
 
-bool initData();
-void doneData();
+bool init_data();
+void done_data();
 
 #endif /* __DATA_H__ */
