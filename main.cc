@@ -28,24 +28,25 @@
 #include "atom.h"
 #include "htcfg.h"
 #include "htclipboard.h"
-#include "htcurses.h"
-#include "htexcept.h"
+#include "display.h"
+#include "except.h"
 #include "hthist.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 #include "htidle.h"
 #include "htmenu.h"
 #include "htpal.h"
 #include "htinfo.h"
 #include "htreg.h"
-#include "htsys.h"
+#include "sys.h"
+#include "snprintf.h"
 #include "info/infoview.h"
 #include "log.h"
 #include "stddata.h"
 
 char *htcopyrights[]=
 {
-	ht_name" "ht_version" ("HT_SYS_NAME") "__TIME__" on "__DATE__,
+	ht_name" "ht_version" (%s) "__TIME__" on "__DATE__,
 	ht_copyright1,
 	ht_copyright2,
 	NULL
@@ -53,7 +54,7 @@ char *htcopyrights[]=
 
 static void add_file_history_entry(char *n)
 {
-	ht_clist *hist=(ht_clist*)getAtomValue(HISTATOM_FILE);
+	List *hist=(List*)getAtomValue(HISTATOM_FILE);
 	if (hist) insert_history_entry(hist, n, 0);
 }
 
@@ -71,7 +72,6 @@ struct initdonefunc {
 initdonefunc initdone[] = {
 	INITDONE(system),
 	INITDONE(atom),
-	INITDONE(string),
 	INITDONE(data),
 	INITDONE(pal),
 	INITDONE(registry),
@@ -148,9 +148,9 @@ static void show_help()
 
 static void show_version()
 {
-	char **copyrights=htcopyrights;
-		while (*copyrights) {
-		printf("%s\n", *copyrights);
+	char **copyrights = htcopyrights;
+	while (*copyrights) {
+		printf(*copyrights, sys_get_name());
 		copyrights++;
 	}
 	exit(0);
@@ -299,9 +299,9 @@ int main(int argc, char *argv[])
 
 	((ht_app*)app)->sendmsg(msg_draw);
 
-	char **copyrights=htcopyrights;
+	char **copyrights = htcopyrights;
 	while (*copyrights) {
-		LOG(*copyrights);
+		LOG(*copyrights, sys_get_name());
 		copyrights++;
 	}
 	LOG("appname = %s", appname);
@@ -354,21 +354,10 @@ int main(int argc, char *argv[])
 
 	try {
 		((ht_app*)app)->run(false);
-	} catch (const ht_io_exception &x) {
+	} catch (const Exception &x) {
 		done();
-		fprintf(stderr, "FATAL: %s: %s\n", "unhandled exception", x.what());
-		return 1;
-	} catch (ht_io_exception *x) {
-		done();
-		fprintf(stderr, "FATAL: %s: %s\n", "unhandled exception", x->what());
-		return 1;
-	} catch (const std::exception &x) {
-		done();
-		fprintf(stderr, "FATAL: %s: %s\n", "unhandled exception", x.what());
-		return 1;
-	} catch (std::exception *x) {
-		done();
-		fprintf(stderr, "FATAL: %s: %s\n", "unhandled exception", x->what());
+		String s;
+		ht_fprintf(stderr, "FATAL: %s: %y\n", "unhandled exception", &x.reason(s));
 		return 1;
 	} catch (...) {
 		done();
