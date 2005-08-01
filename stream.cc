@@ -1112,7 +1112,7 @@ void TempFile::pstat(pstat_t &s) const
 /*
  *	MemMapFile
  */
-MemMapFile::MemMapFile(void *b, uint s) : ConstMemMapFile(b, s)
+MemMapFile::MemMapFile(void *b, uint s, FileOfs ofs) : ConstMemMapFile(b, s, ofs)
 {
 }
 
@@ -1120,7 +1120,7 @@ uint MemMapFile::write(const void *b, uint size)
 {
 	if (pos > this->size) return 0;	// or throw exception?
 	if (pos+size > this->size) size = this->size - pos;
-	memmove(((byte*)buf)+pos, b, size);
+	memcpy(((byte*)buf) + pos, b, size);
 	pos += size;
 	return size;
 }
@@ -1128,12 +1128,13 @@ uint MemMapFile::write(const void *b, uint size)
 /*
  *	ConstMemMapFile
  */
-ConstMemMapFile::ConstMemMapFile(const void *b, uint s)
+ConstMemMapFile::ConstMemMapFile(const void *b, uint s, FileOfs o)
 : File()
 {
 	buf = b;
 	pos = 0;
 	size = s;
+	ofs = o;
 }
 
 String &ConstMemMapFile::getDesc(String &result) const
@@ -1151,14 +1152,14 @@ uint ConstMemMapFile::read(void *b, uint size)
 {
 	if (pos > this->size) return 0;
 	if (pos+size > this->size) size = this->size - pos;
-	memmove(b, (const byte*)buf+pos, size);
+	memcpy(b, (const byte*)buf+pos, size);
 	pos += size;
 	return size;
 }
 
 void ConstMemMapFile::seek(FileOfs offset)
 {
-	pos = offset;
+	pos = offset - ofs;
 }
 
 FileOfs ConstMemMapFile::tell() const
@@ -1531,7 +1532,7 @@ bool getStringz(Stream *stream, String &s)
 	try {
 		while (1) {
 			char c;
-			stream->readx(c, 1);
+			stream->readx(&c, 1);
 			if (!c) break;
 			r += c;
 		}
