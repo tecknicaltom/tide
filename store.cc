@@ -22,7 +22,7 @@
 #include <cstring>
 
 #include "atom.h"
-#include "debug.h"
+#include "htdebug.h"
 #include "endianess.h"
 #include "language.h"
 #include "snprintf.h"
@@ -121,7 +121,7 @@ bool ObjectStreamBin::getBool(const char *desc)
 
 uint64 ObjectStreamBin::getInt(uint size, const char *desc)
 {
-	ASSERT(size <= 8);
+	assert(size <= 8);
 	byte neta[8];
 	mStream->readx(&neta, size);
 	return createHostInt64(neta, size, big_endian);
@@ -182,7 +182,7 @@ void ObjectStreamBin::putComment(const char *comment)
 
 void ObjectStreamBin::putInt(uint64 i, uint size, const char *desc, uint int_fmt_hint)
 {
-	ASSERT(size <= 8);
+	assert(size <= 8);
 	byte neta[8];
 	createForeignInt64(neta, i, size, big_endian);
 	mStream->writex(neta, size);
