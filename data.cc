@@ -2871,7 +2871,7 @@ BUILDER(OBJID_MEMAREA, MemArea, Object);
 BUILDER(OBJID_STRING, String, Object);
 BUILDER(OBJID_ISTRING, IString, String);
 
-bool initData()
+bool init_data()
 {
 	registerAtom(OBJID_AUTO_COMPARE, (void*)&autoCompare);
 
@@ -2898,7 +2898,7 @@ bool initData()
 	return true;
 } 
  
-void doneData()
+void done_data()
 {
 	unregisterAtom(OBJID_AUTO_COMPARE);
 
