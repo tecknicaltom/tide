@@ -30,8 +30,7 @@ int		sys_get_caps();
 
 int		sys_ht_mode(int mode);
 
-#define	SYS_DRIVER_DESC_LEN		128
-void		sys_get_driver_desc(char *buf);
+void		sys_get_driver_desc(char *buf, int len);
 
 // return time slice to system
 void		sys_suspend();
@@ -47,19 +46,19 @@ class File;
 
 #define		SPE_STDERR_TO_STDOUT	1
 
-int		sys_child_create(File **in, File **out, File **err,
-			int &process_handle, int options,
-			const char *filename, char* const* argv);
+int sys_child_create(File **in, File **out, File **err,
+		int &process_handle, int options,
+		const char *filename, char* const* argv);
 // FIXME: creates empty subshell if filename == NULL
-int		sys_child_create_in_subshell(char *ttyname_32bytes,
-			int &tty_fd, int &process_handle,
-			const char *filename, char* const *argv);
-bool		sys_child_is_running(int process_handle);
-int		sys_child_terminate(int process_handle);
+int sys_child_create_in_subshell(char *ttyname_32bytes,
+		int &tty_fd, int &process_handle,
+		const char *filename, char* const *argv);
+bool sys_child_is_running(int process_handle);
+int  sys_child_terminate(int process_handle);
 
 #endif
 
-bool initSystem();
-void doneSystem();
+bool init_system();
+void done_system();
 
 #endif /* __SYS_H__ */
