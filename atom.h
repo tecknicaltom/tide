@@ -34,8 +34,8 @@ bool unregisterAtom(uint id);
  *	Module Init/Done
  */
 
-bool initAtom();
-void doneAtom();
+bool init_atom();
+void done_atom();
 
 #endif /* !__ATOM_H__ */
 
