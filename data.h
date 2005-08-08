@@ -332,7 +332,10 @@ public:
  *	@returns pointer to the requested element or <i>NULL</i> if <i>idx</i>
  *	is invalid.
  */
-		Object *	operator [] (int idx) const;
+		Object *	operator [] (int idx) const
+		{
+			return get(findByIdx(idx));
+		}
 };
 
 #define foreach(XTYPE, X, E, code...)\
@@ -584,7 +587,10 @@ public:
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
 	/* extends Enumerator */
-	virtual	uint		count() const;
+	virtual	uint		count() const
+	{
+		return ecount;
+	}
 	virtual	int		compareObjects(const Object *a, const Object *b) const;
 	virtual	ObjHandle	findByIdx(int i) const;
 	virtual	ObjHandle	findFirst() const;
@@ -610,6 +616,11 @@ public:
  *	@return number of objects deleted
  */
 	virtual	int		delRange(int start, int end);
+
+	inline void		insertBefore(int idx, Object *obj)
+	{
+		insertAt(findByIdx(idx), obj);
+	}
 };
 
 /**
