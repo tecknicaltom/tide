@@ -72,26 +72,26 @@ int ClassMethod::compareTo(const Object *obj) const
 
 
 /* extract name from a utf8 constant pool entry */
-static char *get_string(ht_stream *htio, classfile *clazz, uint index)
+static char *get_string(Stream *htio, classfile *clazz, uint index)
 {
 	return (index < clazz->cpool_count) ? clazz->cpool[index]->value.string : (char*)"?";
 }
 
 /* extract name from a utf8 constant pool class entry */
-static char *get_class_name(ht_stream *htio, classfile *clazz, uint index)
+static char *get_class_name(Stream *htio, classfile *clazz, uint index)
 {
 	return (index < clazz->cpool_count) ? get_string(htio, clazz, clazz->cpool[index]->value.llval[0]): (char*)"?";
 }
 
 /* extract name from a utf8 constant pool class entry */
-static void get_name_and_type(ht_stream *htio, classfile *clazz, uint index, char *name, char *type)
+static void get_name_and_type(Stream *htio, classfile *clazz, uint index, char *name, char *type)
 {
 	strcpy(name, (index < clazz->cpool_count) ? get_string(htio, clazz, clazz->cpool[index]->value.llval[0]) : "?");
 	strcpy(type, (index < clazz->cpool_count) ? get_string(htio, clazz, clazz->cpool[index]->value.llval[1]) : "?");
 }
 
 /* read and return constant pool entry */
-static cp_info *read_cpool_entry (ht_stream *htio, classfile *clazz)
+static cp_info *read_cpool_entry (Stream *htio, classfile *clazz)
 {
 	cp_info *cp;
 	u2 idx;
@@ -133,7 +133,7 @@ static cp_info *read_cpool_entry (ht_stream *htio, classfile *clazz)
 }
 
 /* read and return an attribute read */
-attrib_info *attribute_read(ht_stream *htio, classfile *clazz)
+attrib_info *attribute_read(Stream *htio, classfile *clazz)
 {
 	attrib_info *a;
 	u4 len;
@@ -177,7 +177,7 @@ attrib_info *attribute_read(ht_stream *htio, classfile *clazz)
 }
 
 /* read and return method info */
-static mf_info *read_fieldmethod (ht_stream *htio, ht_class_shared_data *shared)
+static mf_info *read_fieldmethod (Stream *htio, ht_class_shared_data *shared)
 {
 	mf_info *m;
 	u2 idx;
@@ -218,8 +218,7 @@ ht_class_shared_data *class_read(File *htio)
 	}
 	shared = (ht_class_shared_data *)malloc(sizeof (ht_class_shared_data));
 	shared->file = clazz;
-	shared->methods = new ht_stree();
-	shared->methods->init(compare_keys_ht_data);
+	shared->methods = new AVLTree(true);
 	shared->valid = new Area();
 	shared->valid->init();
 	shared->initialized = new Area();
@@ -262,12 +261,11 @@ ht_class_shared_data *class_read(File *htio)
 		if (!clazz->interfaces) {
 			return NULL;
 		}
-		shared->classinfo.interfaces = new ht_clist();
-		((ht_clist*)shared->classinfo.interfaces)->init();
+		shared->classinfo.interfaces = new Array(true);
 		for (int i=0; i<(int)count; i++) {
 			index = READ2();
 			clazz->interfaces[i] = index;
-			shared->classinfo.interfaces->append(new ht_data_string(get_class_name(htio, clazz, index)));
+			shared->classinfo.interfaces->insert(new String(get_class_name(htio, clazz, index)));
 		}
 	} else {
 		clazz->interfaces = 0;
@@ -300,7 +298,7 @@ ht_class_shared_data *class_read(File *htio)
 				attrib_info *ai = clazz->methods[i]->attribs[j];
 				if (ai->tag == ATTRIB_Code) {
 					ClassMethod *cm = new ClassMethod(clazz->methods[i]->name, clazz->methods[i]->desc, ai->code.start, ai->code.len, clazz->methods[i]->flags);
-					shared->methods->insert(cm, NULL);
+					shared->methods->insert(cm);
 					Address *a1 = new AddressFlat32(ai->code.start);
 					Address *a2 = new AddressFlat32(ai->code.start+ai->code.len);
 					shared->initialized->add(a1, a2);
@@ -313,7 +311,7 @@ ht_class_shared_data *class_read(File *htio)
 			if (!ok) {
 				// fake abstract method
 				ClassMethod *cm = new ClassMethod(clazz->methods[i]->name, clazz->methods[i]->desc, offset, 1, clazz->methods[i]->flags);
-				shared->methods->insert(cm, NULL);
+				shared->methods->insert(cm);
 				Address *a1 = new AddressFlat32(offset);
 				Address *a2 = new AddressFlat32(offset+1);
 				shared->valid->add(a1, a2);
