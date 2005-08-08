@@ -44,7 +44,7 @@ public:
 	virtual	void insert_chars(uint line, uint ofs, void *chars, uint len)=0;
 	virtual	bool has_line(uint line)=0;
 	virtual	uint linecount() const=0;
-	virtual	void set_layered_assume(File *streamfile, bool changes_applied)=0;
+	virtual	void set_layered_assume(File *streamfile, bool ownNewLayered, bool changes_applied)=0;
 	virtual	void set_lexer(ht_syntax_lexer *lexer)=0;
 };
 
@@ -67,7 +67,7 @@ public:
 	virtual	void insert_chars(uint line, uint ofs, void *chars, uint len);
 	virtual	bool has_line(uint line);
 	virtual	uint linecount() const;
-	virtual	void set_layered_assume(File *streamfile, bool changes_applied);
+	virtual	void set_layered_assume(File *streamfile, bool ownNewLayered, bool changes_applied);
 	virtual	void set_lexer(ht_syntax_lexer *lexer);
 };
 
@@ -105,7 +105,7 @@ protected:
 	Array *orig_lines;
 	ht_syntax_lexer *lexer;
 	uint first_parse_dirty_line;
-	uint first_nofs_dirty_line;
+	mutable uint first_nofs_dirty_line;
 	bool dirty;
 
 			void cache_invd();
@@ -118,10 +118,10 @@ protected:
 			ht_ltextfile_line *fetch_line_into_memory(uint line);
 			uint getlinelength_i(ht_ltextfile_line *e) const;
 			bool is_dirty_nofs(uint line) const;
-			bool is_dirty_parse(uint line);
+			bool is_dirty_parse(uint line) const;
 			byte *match_lineend_forwd(byte *buf, uint buflen, int *le_len);
 			lexer_state next_instate(uint line);
-			FileOfs next_nofs(ht_ltextfile_line *l);
+			FileOfs next_nofs(ht_ltextfile_line *l) const;
 			void split_line(uint a, uint pos, void *line_end, int line_end_len);
 			void update_nofs(uint line) const;
 			void update_parse(uint line);
@@ -153,7 +153,7 @@ public:
 	virtual	void insert_chars(uint line, uint ofs, void *chars, uint len);
 	virtual	bool has_line(uint line);
 	virtual	uint linecount() const;
-	virtual	void set_layered_assume(File *streamfile, bool changes_applied);
+	virtual	void set_layered_assume(File *streamfile, bool ownNewLayered, bool changes_applied);
 	virtual	void set_lexer(ht_syntax_lexer *lexer);
 };
 
