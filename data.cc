@@ -122,11 +122,11 @@ Enumerator::Enumerator()
 {
 }
 
-Object *Enumerator::operator [] (int idx) const
+/*Object *Enumerator::operator [] (int idx) const
 {
 	ObjHandle h = findByIdx(idx);
 	return (h != invObjHandle) ? get(h) : NULL;
-}
+}*/
 
 ObjHandle Enumerator::find(const Object *key) const
 {
@@ -459,10 +459,10 @@ void Array::prepareWriteAccess(int i)
 	if (n > acount) realloc(n);
 }
 
-uint Array::count() const
+/*uint Array::count() const
 {
 	return ecount;
-}
+}*/
 
 int Array::compareObjects(const Object *a, const Object *b) const
 {
