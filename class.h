@@ -153,9 +153,9 @@ char *java_demangle_flags(char *result, int flags);
 
 class cview : public ht_format_group {
 public:
-  void init(Bounds *, File *, format_viewer_if **,
+	void init(Bounds *, File *, format_viewer_if **,
 		  ht_format_group *, FileOfs, void *shared);
-  virtual void done();
+	virtual void done();
 };
 
 #define ClassAddress uint32
@@ -167,13 +167,13 @@ public:
 	ClassAddress start;
 	uint length;
 	int flags;
-				ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags);
+			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags);
 	virtual		~ClassMethod();
 	virtual int	compareTo(const Object *obj) const;
 };
 
 
-#define DESC_JAVA			"java - class file"
+#define DESC_JAVA		"java - class file"
 #define DESC_JAVA_HEADERS	"java/headers"
 #define DESC_JAVA_IMAGE		"java/image"
 
