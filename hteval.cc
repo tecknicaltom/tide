@@ -92,8 +92,7 @@ static void dialog_fhelp(File *f)
 	ht_help_lexer *l = new ht_help_lexer();
 	l->init();
 
-	ht_ltextfile *t = new ht_ltextfile();
-	t->init(f, true, NULL);
+	ht_ltextfile *t = new ht_ltextfile(f, true, NULL);
 
 	Bounds b, c;
 	app->getbounds(&c);
@@ -145,8 +144,7 @@ void dialog_eval_help(eval_func_handler func_handler, eval_symbol_handler symbol
 		scalar_context_str(&res, &s);
 		scalar_destroy(&res);
 
-		ht_memmap_file *f = new ht_memmap_file();
-		f->init((byte*)s.value, s.len);
+		ConstMemMapFile *f = new ConstMemMapFile(s.value, s.len);
 
 		dialog_fhelp(f);
 
@@ -221,43 +219,42 @@ static void do_eval(ht_strinputfield *s, ht_statictext *t, char *b)
 				char buf1[1024];
 				char buf2[1024];
 				// FIXME
-				uint32 lo = QWORD_GET_LO(r.scalar.integer.value);
-				uint32 hi = QWORD_GET_HI(r.scalar.integer.value);
 				x += sprintf(x, "64bit integer:\n");
-				ht_snprintf(buf1, sizeof buf1, "%qx", &r.scalar.integer.value);
+				ht_snprintf(buf1, sizeof buf1, "%qx", r.scalar.integer.value);
 				nicify(buf2, buf1, 4);
 				x += ht_snprintf(x, 64, "hex   %s\n", buf2);
-				ht_snprintf(buf1, sizeof buf1, "%qu", &r.scalar.integer.value);
+				ht_snprintf(buf1, sizeof buf1, "%qu", r.scalar.integer.value);
 				nicify(buf2, buf1, 3);
 				x += ht_snprintf(x, 64, "dec   %s\n", buf2);
-				if (to_sint64(r.scalar.integer.value) < to_sint64(0)) {
-					ht_snprintf(buf1, sizeof buf1, "%qd", &r.scalar.integer.value);
+				if ((sint64)r.scalar.integer.value < 0) {
+					ht_snprintf(buf1, sizeof buf1, "%qd", r.scalar.integer.value);
 					nicify(buf2, buf1+1, 3);
 					x += ht_snprintf(x, 64, "sdec  -%s\n", buf2);
 				}
-				ht_snprintf(buf1, sizeof buf1, "%qo", &r.scalar.integer.value);
+				ht_snprintf(buf1, sizeof buf1, "%qo", r.scalar.integer.value);
 				nicify(buf2, buf1, 3);
 				x += ht_snprintf(x, 64, "oct   %s\n", buf2);
 
-				sprint_base2(buf1, lo, true);
+				uint32 l = r.scalar.integer.value;
+				ht_snprintf(buf1, sizeof buf1, "%032b", l);
 				nicify(buf2, buf1, 8);
 				x += ht_snprintf(x, 64, "binlo %s\n", buf2);
-				if (hi) {
-					sprint_base2(buf1, hi, true);
+				if (r.scalar.integer.value >> 32) {
+					l = r.scalar.integer.value >> 32;
+					ht_snprintf(buf1, sizeof buf1, "%032b", l);
 					nicify(buf2, buf1, 8);
 					x += ht_snprintf(x, 64, "binhi %s\n", buf2);
 				}
 				char bb[4];
-				int i = lo;
 				/* big-endian string */
 				x += sprintf(x, "%s", "string \"");
-				createForeignInt(bb, i, 4, big_endian);
+				createForeignInt(bb, r.scalar.integer.value, 4, big_endian);
 				bin2str(x, bb, 4);
 				x += 4;
 				x += sprintf(x, "%s", "\" 32bit big-endian (e.g. network)\n");
 				/* little-endian string */
 				x += sprintf(x, "string \"");
-				createForeignInt(bb, i, 4, little_endian);
+				createForeignInt(bb, r.scalar.integer.value, 4, little_endian);
 				bin2str(x, bb, 4);
 				x += 4;
 				x += sprintf(x, "%s", "\" 32bit little-endian (e.g. x86)\n");
@@ -326,20 +323,20 @@ void eval_dialog()
 
 	d->init(&b, "evaluate", FS_TITLE | FS_MOVE | FS_RESIZE);
 
-	ht_list *ehist=(ht_list*)getAtomValue(HISTATOM_EVAL_EXPR);
+	List *ehist=(List*)getAtomValue(HISTATOM_EVAL_EXPR);
 
 	/* input line */
-	BOUNDS_ASSIGN(b, 1, 1, c.w-14, 1);
+	b.assign(1, 1, c.w-14, 1);
 	ht_strinputfield *s=new ht_strinputfield();
 	s->init(&b, 255, ehist);
 	d->insert(s);
 	/* help button */
 	ht_button *bhelp = new ht_button();
-	BOUNDS_ASSIGN(b, c.w-12, 1, 10, 1);
+	b.assign(c.w-12, 1, 10, 1);
 	bhelp->init(&b, "~Functions", BUTTON_HELP);
 	d->insert(bhelp);
 	/* result text */
-	BOUNDS_ASSIGN(b, 1, 3, c.w-4, c.h-5);
+	b.assign(1, 3, c.w-4, c.h-5);
 	ht_statictext *t=new ht_statictext();
 	t->init(&b, hint, align_left);
 	t->growmode = MK_GM(GMH_LEFT, GMV_FIT);
