@@ -102,10 +102,10 @@ uint ht_layer_textfile::linecount() const
 	return ((ht_textfile*)mFile)->linecount();
 }
 
-void ht_layer_textfile::set_layered_assume(File *s, bool changes_applied)
+void ht_layer_textfile::set_layered_assume(File *s, bool ownNewLayered, bool changes_applied)
 {
 /*	File *q = streamfile->get_layered();
-	if (q)*/ ((ht_textfile*)mFile)->set_layered_assume(s, changes_applied);
+	if (q)*/ ((ht_textfile*)mFile)->set_layered_assume(s, ownNewLayered, changes_applied);
 /*     else
 		streamfile = s;*/
 }
@@ -454,12 +454,12 @@ void ht_ltextfile::insert_lines(uint before, uint count, void **line_ends, int *
 		e->nofs = 0;
 		if (line_ends && line_end_lens) {
 			e->lineendlen = *line_end_lens++;
-			memmove(e->lineend, *line_ends++, e->lineendlen);
+			memcpy(e->lineend, *line_ends++, e->lineendlen);
 		} else {
 			e->lineendlen = 1;
 			e->lineend[0] = '\n';
 		}
-		lines->insert_before(e, before);
+		lines->insertBefore(before, e);
 	}
 	dirty_parse(before);
 	dirty_nofs(before);
@@ -503,17 +503,17 @@ bool ht_ltextfile::has_line(uint line)
 	return (fetch_line(line)!=NULL);
 }
 
-bool ht_ltextfile::is_dirty_nofs(uint line)
+bool ht_ltextfile::is_dirty_nofs(uint line) const
 {
-	return (line>=first_nofs_dirty_line);
+	return (line >= first_nofs_dirty_line);
 }
 
-bool ht_ltextfile::is_dirty_parse(uint line)
+bool ht_ltextfile::is_dirty_parse(uint line) const
 {
-	return (line>=first_parse_dirty_line);
+	return (line >= first_parse_dirty_line);
 }
 
-uint ht_ltextfile::linecount()
+uint ht_ltextfile::linecount() const
 {
 	return lines->count();
 }
@@ -565,7 +565,7 @@ lexer_state ht_ltextfile::next_instate(uint line)
 	return state;
 }
 
-FileOfs ht_ltextfile::next_nofs(ht_ltextfile_line *l)
+FileOfs ht_ltextfile::next_nofs(ht_ltextfile_line *l) const
 {
 	if (l) {
 		if (l->is_in_memory) return l->nofs+l->in_memory.len+l->lineendlen; else
@@ -574,11 +574,10 @@ FileOfs ht_ltextfile::next_nofs(ht_ltextfile_line *l)
 	return 0;
 }
 
-void	ht_ltextfile::pstat(pstat_t *s)
+void	ht_ltextfile::pstat(pstat_t &s) const
 {
-	streamfile->pstat(s);
-	s->size=get_size();
-	s->size_high=0;
+	mFile->pstat(s);
+	s.size = getSize();
 }
 
 uint	ht_ltextfile::read(void *buf, uint size)
@@ -612,8 +611,8 @@ uint	ht_ltextfile::read(void *buf, uint size)
 			if (s>pofs) {
 				s-=pofs;
 				s=MIN(size, s);
-				streamfile->seek(l->on_disk.ofs+pofs);
-				r=streamfile->read(b+c, s);
+				mFile->seek(l->on_disk.ofs+pofs);
+				r = mFile->read(b+c, s);
 				if (r!=s) break;
 				size-=s;
 				c+=s;
@@ -637,12 +636,12 @@ uint	ht_ltextfile::read(void *buf, uint size)
 
 void ht_ltextfile::reread()
 {
-	lines->empty();
-	orig_lines->empty();
-	dirty=false;
+	lines->delAll();
+	orig_lines->delAll();
+	dirty = false;
 	FileOfs ofs=0;
 	int ll, pll=-1, ln=0;
-	bool firstline=true;
+	bool firstline = true;
 	byte buf[TEXTFILE_MAX_LINELEN+1];
 
 	lexer_state state=0;
@@ -652,8 +651,8 @@ void ht_ltextfile::reread()
 
 	uint l=0;
 	while ((l=find_linelen_forwd(buf, sizeof buf, ofs, &ll))) {
-		if (streamfile->seek(ofs) != 0) break;
-		uint x=streamfile->read(buf, l-ll);
+		mFile->seek(ofs);
+		uint x = mFile->read(buf, l-ll);
 		buf[x]=0;
 
 		e=new ht_ltextfile_line();
@@ -664,11 +663,11 @@ void ht_ltextfile::reread()
 		e->nofs=ofs;
 		e->lineendlen=ll;
 		assert( (uint)ll <= sizeof e->lineend);
-		streamfile->read(e->lineend, ll);
-		lines->append(e);
+		mFile->read(e->lineend, ll);
+		lines->insert(e);
 		ce=new ht_ltextfile_line();
 		*ce = *e;
-		orig_lines->append(ce);
+		orig_lines->insert(ce);
 
 		if (lexer) {
 			text_pos p;
@@ -699,10 +698,10 @@ void ht_ltextfile::reread()
 		e->on_disk.len=l-ll;
 		e->nofs=ofs;
 		e->lineendlen=ll;
-		lines->append(e);
+		lines->insert(e);
 		ce=new ht_ltextfile_line();
 		*ce = *e;
-		orig_lines->append(ce);
+		orig_lines->insert(ce);
 	}
 }
 
@@ -725,22 +724,21 @@ void ht_ltextfile::split_line(uint a, uint pos, void *line_end, int line_end_len
 	}
 }
 
-int	ht_ltextfile::seek(FileOfs offset)
+void ht_ltextfile::seek(FileOfs offset)
 {
 	ofs = offset;
-	return 0;
 }
 
-void ht_ltextfile::set_layered(File *streamfile)
+void ht_ltextfile::setLayered(File *streamfile, bool ownNewLayered)
 {
-	ht_layer_streamfile::set_layered(streamfile);
+	FileLayer::setLayered(streamfile, ownNewLayered);
 	reread();
 }
 
-void ht_ltextfile::set_layered_assume(File *streamfile, bool changes_applied)
+void ht_ltextfile::set_layered_assume(File *streamfile, bool ownNewLayered, bool changes_applied)
 {
 	if (changes_applied) {
-		orig_lines->empty();
+		orig_lines->delAll();
 		uint c = lines->count();
 		for (uint i=0; i<c; i++) {
 			ht_ltextfile_line *l = fetch_line_nofs_ok(i);
@@ -752,11 +750,11 @@ void ht_ltextfile::set_layered_assume(File *streamfile, bool changes_applied)
 				l->is_in_memory = false;
 			}
 			*m = *l;
-			orig_lines->append(m);
+			orig_lines->insert(m);
 		}
 		cache_invd();
 	}
-	ht_layer_streamfile::set_layered(streamfile);
+	FileLayer::setLayered(streamfile, ownNewLayered);
 }
 
 void ht_ltextfile::set_lexer(ht_syntax_lexer *l)
@@ -767,15 +765,15 @@ void ht_ltextfile::set_lexer(ht_syntax_lexer *l)
 	}
 }
 
-FileOfs ht_ltextfile::tell()
+FileOfs ht_ltextfile::tell() const
 {
 	return ofs;
 }
 
-int	ht_ltextfile::truncate(uint newsize)
+void	ht_ltextfile::truncate(FileOfs newsize)
 {
 	/* FIXME: nyi */
-	return ENOSYS;
+	throw IOException(ENOSYS);
 }
 
 void ht_ltextfile::update_parse(uint target)
@@ -806,7 +804,7 @@ void ht_ltextfile::update_parse(uint target)
 	if (e) e->instate = instate;
 }
 
-void ht_ltextfile::update_nofs(uint target)
+void ht_ltextfile::update_nofs(uint target) const
 {
 	ht_ltextfile_line *e;
 	uint line=first_nofs_dirty_line;
@@ -847,8 +845,11 @@ int ht_ltextfile::vcntl(uint cmd, va_list vargs)
 		s = 0;    // gcc warns otherwise
 		return 0;
 	}
-	case FCNTL_MODS_CLEAR_DIRTY: {
+	case FCNTL_MODS_CLEAR_DIRTY_RANGE: {
+		FileOfs o = va_arg(vargs, FileOfs);
+		FileOfs s = va_arg(vargs, FileOfs);
 		dirty = false;
+		o = s = 0;
 		return 0;
 	}
 	}
