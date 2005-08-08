@@ -38,7 +38,6 @@ ht_reloc_file::ht_reloc_file(File *s, bool os)
 ht_reloc_file::~ht_reloc_file()
 {
 	delete relocs;
-	ht_layer_streamfile::done();
 }
 
 void ht_reloc_file::finalize()
@@ -59,19 +58,20 @@ int ht_reloc_file::vcntl(uint cmd, va_list vargs)
 			return 0;
 		}
 	}
-	return ht_layer_streamfile::vcntl(cmd, vargs);
+	return FileLaye::vcntl(cmd, vargs);
 }
 
 void ht_reloc_file::insert_reloc(FileOfs o, Object *reloc)
 {
-	relocs->insert(new ht_data_uint(o), reloc);
+	relocs->insert(new KeyValue(new UInt64(o), reloc));
 }
 
 uint ht_reloc_file::read(void *buf, uint size)
 {
 	FileOfs o = tell();
 	/* read fine data. */
-	uint ret = ht_layer_streamfile::read(buf, size), c = ret;
+	uint ret = FileLayer::read(buf, size);
+	uint c = ret;
 	if (enabled) {
 		ht_data_uint q;
 		Object *r;
