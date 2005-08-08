@@ -27,7 +27,7 @@
 ht_view *httext_init(Bounds *b, File *file, ht_format_group *group)
 {
 	/* no httext for file > 5 MiB */
-	if (file->get_size() > 5*1024*1024) {
+	if (file->getSize() > 5*1024*1024) {
 		return NULL;
 	}
 
@@ -37,7 +37,7 @@ ht_view *httext_init(Bounds *b, File *file, ht_format_group *group)
 	v->search_caps|=SEARCHMODE_BIN | SEARCHMODE_EVALSTR;
 
 	ht_text_sub *t=new ht_text_sub();
-	t->init(file, 0x0, file->get_size());
+	t->init(file, 0x0, file->getSize());
 	v->insertsub(t);
 	return v;
 }
