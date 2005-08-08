@@ -61,6 +61,12 @@ static int_hash elf_ph_type[] =
 	{ELF_PT_NOTE,		"note"},
 	{ELF_PT_SHLIB,		"shlib"},
 	{ELF_PT_PHDR,		"phdr"},
+	{ELF_PT_TLS,		"tls"},
+	{ELF_PT_NUM,		"num"},
+	{ELF_PT_GNU_EH_FRAME,	"gnu eh frame"},
+	{ELF_PT_GNU_STACK,	"gnu stack"},
+	{ELF_PT_GNU_RELRO,	"gnu relro"},
+	{ELF_PT_PAX_FLAGS,	"pax flags"},
 	{0, 0}
 };
 
