@@ -52,7 +52,7 @@ static ht_search_request* create_request_hexascii(text_search_pos *start, text_s
 	ht_fxbin_search_request *request;
 	
 	if (!d.str.textlen) {
-		throw ht_io_exception("%s: string is empty", "hex/ascii");
+		throw MsgfException("%s: string is empty", "hex/ascii");
 	}
 /*	if (test_str_to_ofs(&start->offset, d.start.text, d.start.textlen, format, "start-offset")
 	&& test_str_to_ofs(&end->offset, d.end.text, d.end.textlen, format, "end-offset")) {*/
@@ -71,7 +71,7 @@ struct ht_text_search_method {
 	char *name;
 	uint search_class;			// SC_*
 	uint search_mode_mask;		// SEARCHMODE_*
-	HT_ATOM histid;
+	uint histid;
 	create_form_func create_form;
 	create_request_func create_request;
 	create_desc_func create_desc;
@@ -89,8 +89,8 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 	Bounds b;
 	b.w = 50;
 	b.h = 15;
-	b.x = (screen->size.w-b.w)/2;
-	b.y = (screen->size.h-b.h)/2;
+	b.x = (screen->w - b.w)/2;
+	b.y = (screen->h - b.h)/2;
 	ht_search_dialog *dialog = new ht_search_dialog();
 	dialog->init(&b, "search");
 
@@ -130,7 +130,7 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, form);
-				insert_history_entry((ht_list*)getAtomValue(s->histid), hist_desc, form);
+				insert_history_entry((List*)getAtomValue(s->histid), hist_desc, form);
 			}
 /* search */
 			switch (s->search_class) {
@@ -144,8 +144,9 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 				}
 			}
 			result = s->create_request(&start, &end, form, s->search_class);
-		} catch (const ht_exception &e) {
-			errorbox("error: %s", e.what());
+		} catch (const Exception &e) {
+			String s;
+			errorbox("error: %y", &e.reason(s));
 		}
 	}
 	dialog->done();
@@ -839,9 +840,9 @@ void ht_undo_data_delete_block::unapply(ht_text_editor *te, bool *goto_only)
 /*
  *	CLASS ht_text_editor_undo
  */
-void ht_text_editor_undo::init(uint max_undo_size)
+ht_text_editor_undo::ht_text_editor_undo(uint max_undo_size)
+	: Array(true)
 {
-	ht_clist::init();
 	size = 0;
 	max_size = max_undo_size;
 	clean_state = 0;
@@ -857,15 +858,15 @@ int ht_text_editor_undo::get_current_position()
 void ht_text_editor_undo::insert_undo(ht_text_editor *tv, ht_undo_data *undo)
 {
 	if (undo) {
-		if (current_position!=(int)c_entry_count) {
+		if (current_position != (int)count()) {
 			// remove all pending redo's
-			uint test=c_entry_count;
-			for (uint i=current_position; i<test; i++) {
-				ht_undo_data *u = (ht_undo_data*)get(current_position);
-				size-=u->getsize();
-				del(current_position);
+			uint test = count();
+			for (uint i = current_position; i < test; i++) {
+				ht_undo_data *u = (ht_undo_data*)get(findByIdx(current_position));
+				size -= u->getsize();
+				del(findByIdx(current_position));
 			}
-			assert(current_position == (int)c_entry_count);
+			assert(current_position == (int)count());
 			// clean_state eventually becomes unreachable
 			if (clean_state > current_position) {
 				clean_state = -1;
@@ -875,27 +876,27 @@ void ht_text_editor_undo::insert_undo(ht_text_editor *tv, ht_undo_data *undo)
 		uint gsize = undo->getsize();
 		while (size + gsize > max_size) {
 			if (clean_state > -1) clean_state--;
-			if (c_entry_count) {
-				size-=((ht_undo_data*)get(0))->getsize();
-				del(0);
+			if (isEmpty()) {
+				size -= ((ht_undo_data*)get(findFirst()))->getsize();
+				del(findFirst());
 				if (current_position) current_position--;
 			} else {
 				delete undo;
 				return;
 			}
 		}
-		if (c_entry_count && !is_clean()) {
-			ht_undo_data *u = (ht_undo_data*)get(c_entry_count-1);
+		if (!isEmpty() && !is_clean()) {
+			ht_undo_data *u = (ht_undo_data*)get(findLast());
 			uint zsize = u->getsize();
 			if (u->combine(undo)) {
-				size-=zsize;
-				size+=u->getsize();
+				size -= zsize;
+				size += u->getsize();
 				delete undo;
 				return;
 			}
 		}
 		current_position++;
-		append(undo);
+		insert(undo);
 		size+=gsize;
 	}
 	goto_state = true;
@@ -920,8 +921,8 @@ bool	ht_text_editor_undo::is_clean(int i)
 void ht_text_editor_undo::redo(ht_text_editor *te)
 {
 	goto_state = true;
-	if (current_position < (int)c_entry_count) {
-		ht_undo_data *u = (ht_undo_data*)get(current_position);
+	if (current_position < (int)count()) {
+		ht_undo_data *u = (ht_undo_data*)get(findByIdx(current_position));
 		u->apply(te);
 		current_position++;
 	}
@@ -930,7 +931,7 @@ void ht_text_editor_undo::redo(ht_text_editor *te)
 void ht_text_editor_undo::undo(ht_text_editor *te, bool place_cursor_first)
 {
 	if (current_position) {
-		ht_undo_data *u = (ht_undo_data*)get(current_position-1);
+		ht_undo_data *u = (ht_undo_data*)get(findByIdx(current_position-1));
 		bool goto_state_test = place_cursor_first ? goto_state : false;
 		u->unapply(te, &goto_state_test);
 		if (!goto_state_test) {
@@ -955,7 +956,7 @@ int text_viewer_pos_compare(text_viewer_pos *a, text_viewer_pos *b)
  *	CLASS ht_text_viewer
  */
 
-void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, ht_list *l)
+void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, Container *l)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE | VO_RESIZE, "text viewer");
 	VIEW_DEBUG_NAME("ht_text_viewer");
@@ -995,10 +996,7 @@ void ht_text_viewer::done()
 {
 	if (last_search_request) delete last_search_request;
 
-	if (own_textfile) {
-		textfile->done();
-		delete textfile;
-	}
+	if (own_textfile) delete textfile;
 
 	if (own_lexer && lexer) {
 		lexer->done();
@@ -1024,7 +1022,8 @@ void ht_text_viewer::clipboard_copy_cmd()
 		if (textfile->convert_line2ofs(sel_start.line, sel_start.pofs, &s)
 		   && textfile->convert_line2ofs(sel_end.line, sel_end.pofs, &e)) {
 			char dsc[1024];
-			ht_snprintf(dsc, sizeof dsc, "%s::%s", textfile->get_desc(), desc);
+			String fn;
+			ht_snprintf(dsc, sizeof dsc, "%y::%s", &textfile->getDesc(fn), desc);
 			clipboard_copy(dsc, textfile, s, e-s);
 		}
 	}
@@ -1060,8 +1059,9 @@ bool ht_text_viewer::continue_search()
 				end.offset = last_search_end_ofs;
 				r = search(last_search_request, &start, &end);
 			}
-		} catch (const ht_exception &e) {
-			errorbox("error: %s", e.what());
+		} catch (const Exception &e) {
+			String s;
+			errorbox("error: %y", &e.reason(s));
 		}
 		
 		if (r) return show_search_result(r);
@@ -1260,11 +1260,11 @@ void ht_text_viewer::draw()
 						for (z=0; z<vtoklen; z++) tab[z]=' ';
 						tab[z]=0;
 						render_str_color(&c, &pos);
-						buf_lprint(x-xofs, y, c, z, tab);
+						buf->nprint(x-xofs, y, c, tab, z);
 					} else {
 						vcp c=bgcolor;
 						render_str_color(&c, &pos);
-						buf_printchar(x-xofs, y, c, *linep);
+						buf->printChar(x-xofs, y, c, *linep);
 					}
 				}
 				x+=vtoklen;
@@ -1339,9 +1339,9 @@ void ht_text_viewer::get_cursor_pos(text_viewer_pos *cursor)
 	cursor->line = top_line+cursory;
 }
 
-cursor_mode ht_text_viewer::get_cursor_mode()
+CursorMode ht_text_viewer::get_cursor_mode()
 {
-	return cm_normal;
+	return CURSOR_NORMAL;
 }
 
 ht_syntax_lexer *ht_text_viewer::get_lexer()
@@ -1446,7 +1446,7 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 			int k=msg->data1.integer;
 			bool sel;
 			switch (k) {
-				case K_Alt_S:
+				case K_Meta_S:
 					selectcursor=!selectcursor;
 					clearmsg(msg);
 					return;
@@ -1613,7 +1613,7 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 					dirtyview();
 					clearmsg(msg);
 					return;
-				case K_Alt_C:
+				case K_Meta_C:
 				case K_Control_Insert:
 					sendmsg(cmd_edit_copy);
 					clearmsg(msg);
@@ -1640,8 +1640,8 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 				if (eval(&r, line, NULL, NULL, NULL)) {
 					eval_int i;
 					scalar_context_int(&r, &i);
-					if (!i.value || !goto_line(QWORD_GET_INT(i.value)-1)) {
-						errorbox("no such line: %d!", i.value);
+					if (!i.value || !goto_line(i.value - 1)) {
+						errorbox("no such line: %qd!", i.value);
 					}
 				}
 			}
@@ -1767,7 +1767,7 @@ void ht_text_viewer::popup_change_highlight()
 	uint lc = lexers->count();
 	int selected = -1;
 	for (uint i=0; i<lc; i++) {
-		ht_syntax_lexer *l = (ht_syntax_lexer*)lexers->get(i);
+		ht_syntax_lexer *l = (ht_syntax_lexer*)(*lexers)[i];
 		mode_input->insert_str(i, l->getname());
 		if (lexer && (strcmp(lexer->getname(), l->getname()) == 0)) {
 			selected = i+1;
@@ -1796,8 +1796,8 @@ void ht_text_viewer::popup_change_highlight()
 
 		d->databuf_get(&data, sizeof data);
 
-		ht_syntax_lexer *l = (ht_syntax_lexer*)lexers->get(
-			mode_input->getID(data.type.cursor_ptr));
+		ht_syntax_lexer *l = (ht_syntax_lexer*)(*lexers)[
+			mode_input->getID(data.type.cursor_ptr)];
 		set_lexer(l, false);
 	}
 	
@@ -1820,9 +1820,9 @@ void ht_text_viewer::render_meta(uint x, uint y, text_viewer_pos *pos, vcp color
 	text_viewer_pos p=*pos;
 	render_str_color(&color, &p);
 	if (pos->line == textfile->linecount()-1) {
-		if (show_EOF && EOF_string) buf_print(x, y, color, EOF_string);
+		if (show_EOF && EOF_string) buf->print(x, y, color, EOF_string);
 	} else {
-		if (show_EOL && EOL_string) buf_print(x, y, color, EOL_string);
+		if (show_EOL && EOL_string) buf->print(x, y, color, EOL_string);
 	}
 }
 
@@ -1850,7 +1850,7 @@ int ht_text_viewer::buf_lprint0(int x, int y, int c, int l, char *text)
 	while (l--) {
 		char s = *text;
 		if (!s) s = ' ';
-		buf_printchar(x++, y, c, s);
+		buf->printChar(x++, y, c, s);
 		text++;
 	}
 	return l;
@@ -1858,23 +1858,23 @@ int ht_text_viewer::buf_lprint0(int x, int y, int c, int l, char *text)
 
 void ht_text_viewer::render_str_color(vcp *color, text_viewer_pos *pos)
 {
-	if ((text_viewer_pos_compare(pos, &sel_start)>=0) &&
-	(text_viewer_pos_compare(pos, &sel_end)<0)) {
+	if (text_viewer_pos_compare(pos, &sel_start) >= 0
+	 && text_viewer_pos_compare(pos, &sel_end) < 0) {
 		vcp selcolor = getcolor(palidx_generic_input_selected);
-		*color=vcp_mix(*color, selcolor);
+		*color = VCP(*color, selcolor);
 	}
 }
 
 void ht_text_viewer::resize(int rw, int rh)
 {
 	ht_view::resize(rw, rh);
-	if ((int)cursorx>size.w-1) {
-		xofs+=(int)cursorx-(size.w-1);
-		cursorx=size.w-1;
+	if ((int)cursorx > size.w-1) {
+		xofs += (int)cursorx-(size.w-1);
+		cursorx = size.w-1;
 	}
-	if ((int)cursory>size.h-1) {
-		top_line+=(int)cursory-(size.h-1);
-		cursory=size.h-1;
+	if ((int)cursory > size.h-1) {
+		top_line += (int)cursory-(size.h-1);
+		cursory = size.h-1;
 	}
 }
 
@@ -2013,10 +2013,7 @@ void ht_text_viewer::set_lexer(ht_syntax_lexer *l, bool own_l)
 
 void ht_text_viewer::set_textfile(ht_textfile *t, bool own_t)
 {
-	if (own_textfile) {
-		textfile->done();
-		delete textfile;
-	}
+	if (own_textfile) delete textfile;
 	textfile=t;
 	own_textfile=own_t;
 }
@@ -2024,14 +2021,14 @@ void ht_text_viewer::set_textfile(ht_textfile *t, bool own_t)
 bool ht_text_viewer::show_search_result(ht_search_result *result)
 {
 	switch (result->search_class) {
-		case SC_PHYSICAL: {
-			ht_physical_search_result *r = (ht_physical_search_result*)result;
-			text_viewer_pos start, end;
-			textfile->convert_ofs2line(r->offset, &start.line, &start.pofs);
-			textfile->convert_ofs2line(r->offset+r->size, &end.line, &end.pofs);
-			select_set(&start, &end);
-			cursor_set(&start);
-		}
+	case SC_PHYSICAL: {
+		ht_physical_search_result *r = (ht_physical_search_result*)result;
+		text_viewer_pos start, end;
+		textfile->convert_ofs2line(r->offset, &start.line, &start.pofs);
+		textfile->convert_ofs2line(r->offset+r->size, &end.line, &end.pofs);
+		select_set(&start, &end);
+		cursor_set(&start);
+	}
 	}
 	return true;
 }
@@ -2040,13 +2037,12 @@ bool ht_text_viewer::show_search_result(ht_search_result *result)
  *	CLASS ht_text_editor
  */
 
-void ht_text_editor::init(Bounds *b, bool own_t, ht_textfile *t, ht_list *l, uint e)
+void ht_text_editor::init(Bounds *b, bool own_t, ht_textfile *t, Container *l, uint e)
 {
 	ht_text_viewer::init(b, own_t, t, l);
 	edit_options=e;
 	if (edit_options & TEXTEDITOPT_UNDO) {
-		undo_list = new ht_text_editor_undo();
-		undo_list->init(1024*1024);
+		undo_list = new ht_text_editor_undo(1024*1024);
 	} else {
 		undo_list = NULL;
 	}
@@ -2058,10 +2054,7 @@ void ht_text_editor::init(Bounds *b, bool own_t, ht_textfile *t, ht_list *l, uin
 
 void ht_text_editor::done()
 {
-	if (undo_list) {
-		undo_list->destroy();
-		delete undo_list;
-	}
+	delete undo_list;
 	ht_text_viewer::done();
 }
 
@@ -2176,13 +2169,14 @@ char *ht_text_editor::func(uint i, bool execute)
 	switch (i) {
 		case 2:
 			if (execute) {
-				if (textfile->get_filename()) {
+				String fn;
+				if (!textfile->getFilename(fn).isEmpty()) {
 					sendmsg(cmd_file_save);
 				} else {
 					// FIXME: !! call undolist->mark_clean() !!
 					app->sendmsg(cmd_file_saveas);
 					bool dirty = true;
-					textfile->cntl(FCNTL_MODS_IS_DIRTY, 0, 0x7fffffff, &dirty);
+					textfile->cntl(FCNTL_MODS_IS_DIRTY, 0ULL, 0x7fffffffULL, &dirty);
 					if (undo_list && !dirty) {
 						undo_list->mark_clean();
 					}
@@ -2200,9 +2194,9 @@ vcp ht_text_editor::get_bgcolor()
 			palidx_generic_input_unfocused);
 }
 
-cursor_mode ht_text_editor::get_cursor_mode()
+CursorMode ht_text_editor::get_cursor_mode()
 {
-	return overwrite_mode ? cm_overwrite : cm_normal;
+	return overwrite_mode ? CURSOR_BOLD : CURSOR_NORMAL;
 }
 
 void ht_text_editor::get_pindicator_str(char *buf)
@@ -2210,7 +2204,7 @@ void ht_text_editor::get_pindicator_str(char *buf)
 	ht_syntax_lexer *l = get_lexer();
 	const char *ln = l ? l->getname() : NULL;
 	bool dirty = true;
-	textfile->cntl(FCNTL_MODS_IS_DIRTY, 0, 0x7fffffff, &dirty);
+	textfile->cntl(FCNTL_MODS_IS_DIRTY, 0ULL, 0x7fffffffULL, &dirty);
 	buf += sprintf(buf, "%c%d:%d ", dirty ? '*' : ' ', top_line+cursory+1, xofs+cursorx+1);
 	if (ln) sprintf(buf, "(%s) ", ln);
 }
@@ -2308,28 +2302,28 @@ void ht_text_editor::handlemsg(htmsg *msg)
 					clearmsg(msg);
 					return;
 				}
-				case K_Alt_U:
-				case K_Alt_Backspace: {
+				case K_Meta_U:
+				case K_Meta_Backspace: {
 					sendmsg(cmd_text_editor_undo);
 					clearmsg(msg);
 					return;
 				}
-				case K_Alt_R: {
+				case K_Meta_R: {
 					sendmsg(cmd_text_editor_redo);
 					clearmsg(msg);
 					return;
 				}
-				case K_Alt_V:
+				case K_Meta_V:
 				case K_Shift_Insert:
 					sendmsg(cmd_edit_paste);
 					clearmsg(msg);
 					return;
-				case K_Alt_X:
+				case K_Meta_X:
 				case K_Shift_Delete:
 					sendmsg(cmd_edit_cut);
 					clearmsg(msg);
 					return;
-				case K_Alt_D:
+				case K_Meta_D:
 				case K_Control_Delete:
 					sendmsg(cmd_edit_delete);
 					clearmsg(msg);
@@ -2380,7 +2374,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 			
 				m->insert_entry(buf, "Alt+U", cmd_text_editor_undo, 0, 1);
 				m->insert_entry("~Redo", "Alt+R", cmd_text_editor_redo, 0, 1);
-				m->insert_entry("~Protocol", "Alt+P", cmd_text_editor_protocol, K_Alt_P, 1);
+				m->insert_entry("~Protocol", "Alt+P", cmd_text_editor_protocol, K_Meta_P, 1);
 				m->insert_separator();
 			}
 			m->insert_entry("Change ~highlight", "", cmd_text_viewer_change_highlight, 0, 1);
@@ -2500,55 +2494,36 @@ void ht_text_editor::insert_lines(uint line, uint count)
 
 bool ht_text_editor::save()
 {
-	if (!textfile->get_filename()) return false;
+	String oldname;
+	if (textfile->getFilename(oldname).isEmpty()) return false;
 	dirtyview();
 
-	ht_temp_file *temp = NULL;
+	TempFile temp(IOAM_READ | IOAM_WRITE);
 
-	temp = new ht_temp_file();
-	temp->init(FAM_READ | FAM_WRITE);
-
-	if (temp->get_error()) {
-		errorbox("error creating temporary file");
-		return false;
-	}
-
-	File *old = textfile->get_layered();
-	char *oldname = strdup(textfile->get_filename());
+	File *old = textfile->getLayered();
 
 	old->seek(0);
-	old->copy_to(temp);
+	old->copyAllTo(&temp);
 
 	pstat_t st1, st2;
-	old->pstat(&st1);
-	temp->pstat(&st2);
-	if ((st1.size != st2.size) || (st1.size_high != st2.size_high)) {
-		errorbox("couldn't write backup file - file not saved. (o=%d, t=%d)", st1.size_high, st2.size_high);
-
-		temp->done();
-		delete temp;
-
-		free(oldname);
-
+	old->pstat(st1);
+	temp.pstat(st2);
+	if (st1.size != st2.size) {
+		errorbox("couldn't write backup file - file not saved. (o=%qd, t=%qd)", st1.size, st2.size);
 		return false;
 	}
 
-	textfile->set_layered_assume(temp, false);
+	textfile->set_layered_assume(&temp, false, false);
 
-	old->set_access_mode(FAM_WRITE);
+	old->setAccessMode(IOAM_WRITE);
 	old->truncate(0);
 
 	textfile->seek(0);
-	textfile->copy_to(old);
+	textfile->copyAllTo(old);
 
-	old->set_access_mode(FAM_READ);
+	old->setAccessMode(IOAM_READ);
 
-	textfile->set_layered_assume(old, true);
-
-	temp->done();
-	delete temp;
-
-	free(oldname);
+	textfile->set_layered_assume(old, true, true);
 
 	if (undo_list) {
 		undo_list->mark_clean();
@@ -2566,7 +2541,7 @@ void ht_text_editor::show_protocol()
 	b.y=(c.h-b.h)/2;
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "protocol", FS_KILLER | FS_TITLE | FS_MOVE);
-	BOUNDS_ASSIGN(b, 1, 0, b.w-4, 1);
+	b.assign(1, 0, b.w-4, 1);
 	ht_statictext *text;
 	NEW_OBJECT(text, ht_statictext, &b, " ", align_left);
 	dialog->insert(text);
@@ -2584,7 +2559,7 @@ void ht_text_editor::show_protocol()
 	list->insert_str(0, od, "--- initial state ---");
 	for (uint i=0; i<undo_list->count(); i++) {
 		char buf[1024];
-		((ht_undo_data*)undo_list->get(i))->gettext(buf, 1024);
+		((ht_undo_data*)(*undo_list)[i])->gettext(buf, 1024);
 		if (undo_list->is_clean(i+1)) {
 			od = "disk";
 		} else {
@@ -2669,7 +2644,7 @@ void ht_text_editor::redo()
 {
 	if (undo_list) {
 		undo_list->redo(this);
-		if (undo_list->is_clean()) textfile->cntl(FCNTL_MODS_CLEAR_DIRTY);
+		if (undo_list->is_clean()) textfile->cntl(FCNTL_MODS_CLEAR_DIRTY_RANGE, 0ULL, 0ULL);
 	}
 }
 
@@ -2677,7 +2652,7 @@ void ht_text_editor::undo(bool place_cursor_first)
 {
 	if (undo_list) {
 		undo_list->undo(this, place_cursor_first);
-		if (undo_list->is_clean()) textfile->cntl(FCNTL_MODS_CLEAR_DIRTY);
+		if (undo_list->is_clean()) textfile->cntl(FCNTL_MODS_CLEAR_DIRTY_RANGE, 0ULL, 0ULL);
 	}
 }
 
