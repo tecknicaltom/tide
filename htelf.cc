@@ -343,9 +343,9 @@ void ht_elf::relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a)
 			// FIXME: nyi
 			continue;
 		}
-		Object *z = new ht_elf32_reloc_entry(
+		Object *z = new ht_elf32_reloc_entry(r.r_offset+s[si].sh_offset, 
 			ELF32_R_TYPE(r.r_info), A, P, S);
-		f->insert_reloc(r.r_offset+s[si].sh_offset, z);
+		f->insert_reloc(z);
 	}
 }
 
@@ -704,18 +704,18 @@ void	ht_elf32_reloc_file::reloc_apply(Object *reloc, byte *buf)
 	ht_elf32_reloc_entry *e=(ht_elf32_reloc_entry*)reloc;
 
 	switch (e->type) {
-		case ELF_R_386_32: {
-			uint32 v = createHostInt(buf, 4, data->byte_order);
-			v += e->relocs.r_32;
-			createForeignInt(buf, v, 4, data->byte_order);
-			break;
-		}
-		case ELF_R_386_PC32: {
-			uint32 v = createHostInt(buf, 4, data->byte_order);
-			v += e->relocs.r_pc32;
-			createForeignInt(buf, v, 4, data->byte_order);
-			break;
-		}
+	case ELF_R_386_32: {
+		uint32 v = createHostInt(buf, 4, data->byte_order);
+		v += e->relocs.r_32;
+		createForeignInt(buf, v, 4, data->byte_order);
+		break;
+	}
+	case ELF_R_386_PC32: {
+		uint32 v = createHostInt(buf, 4, data->byte_order);
+		v += e->relocs.r_pc32;
+		createForeignInt(buf, v, 4, data->byte_order);
+		break;
+	}
 	}
 }
 
