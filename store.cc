@@ -305,7 +305,7 @@ char *ObjectStreamText::getString(const char *desc)
 	readDesc(desc);
 	expect('=');
 	skipWhite();
-	if (cur=='"') {
+	if (cur == '"') {
 		String s;
 		do {
 			readChar();
@@ -317,10 +317,8 @@ char *ObjectStreamText::getString(const char *desc)
 			}
 		} while (cur != '"');
 		readChar();
-		int str2l = s.length();
-		char *str2 = (char *)smalloc(str2l);
-		unescape_special_str(str2, str2l, s);
-		return str2;
+		s.unescape();
+		return s.grabContentChar();
 	} else {
 		readDesc("NULL");
 		return NULL;
@@ -332,23 +330,21 @@ byte *ObjectStreamText::getLenString(int &len, const char *desc)
 	readDesc(desc);
 	expect('=');
 	skipWhite();
-	if (cur=='"') {
+	if (cur == '"') {
 		String s;
 		do {
 			readChar();
 			s += cur;
-			if (cur=='\\') {
+			if (cur == '\\') {
 				readChar();
 				s += cur;
 				cur = 0; // hackish
 			}
 		} while (cur != '"');
 		readChar();
-		len = s.length()-1;
-		if (!len) return NULL;
-		byte *str2 = (byte *)smalloc(len);
-		unescape_special(str2, len, s);
-		return str2;
+		s.unescape();
+		len = s.length();
+		return s.grabContent();
 	} else {
 		readDesc("NULL");
 		return NULL;
@@ -359,11 +355,11 @@ void ObjectStreamText::putBinary(const void *mem, uint size, const char *desc)
 {
 	putDesc(desc);
 	putChar('[');
-	for (uint i=0; i<size; i++) {
+	for (uint i=0; i < size; i++) {
 		byte a = *((byte *)mem+i);
 		putChar(hexchars[(a & 0xf0) >> 4]);
 		putChar(hexchars[(a & 0x0f)]);
-		if (i+1<size) putChar(' ');
+		if (i+1 < size) putChar(' ');
 	}
 	putS("]\n");
 }
@@ -420,13 +416,11 @@ void ObjectStreamText::putString(const char *string, const char *desc)
 {
 	putDesc(desc);
 	if (string) {
-		int strl=strlen(string)*4+1;
-		char *str = (char*)smalloc(strl);
+		String s(string);
 		putChar('"');
-		escape_special_str(str, strl, string, "\"");
-		putS(str);
+		s.escape("\"", true);
+		putS(s.contentChar());
 		putChar('"');
-		free(str);
 	} else {
 		putS("NULL");
 	}
