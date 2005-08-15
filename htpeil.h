@@ -32,7 +32,7 @@ public:
 	char *name;
 	uint32 offset;
 	uint32 size;
-	ht_il_metadata_entry(char *name, uint32 offset, uint32 size);
+	ht_il_metadata_entry(const char *name, uint32 offset, uint32 size);
 	~ht_il_metadata_entry();
 };
 
