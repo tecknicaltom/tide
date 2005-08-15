@@ -18,6 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#if 0
 #include <stdlib.h>
 #include <string.h>
 // #include <sys/select.h>
@@ -25,7 +26,7 @@
 #include "htctrl.h"
 #include "htidle.h"
 #include "htiobox.h"
-#include "htsys.h"
+#include "sys.h"
 #include "terminal.h"
 #include <unistd.h>
 
@@ -33,18 +34,16 @@
  *	CLASS Terminal
  */
 
-void Terminal::init(File *_in, File *_out, File *_err, int _sys_ipc_handle)
+Terminal::Terminal(File *_in, File *_out, File *_err, int _sys_ipc_handle)
+	: ht_ltextfile(new MemoryFile(), true, NULL)
 {
-	ht_mem_file *m = new ht_mem_file();
-	m->init();
-	ht_ltextfile::init(m, true, NULL);
 	in = _in;
 	out = _out;
 	err = _err;
 	sys_ipc_handle = _sys_ipc_handle;
 }
 
-void Terminal::done()
+Terminal::~Terminal()
 {
 	delete in;
 	delete out;
@@ -206,3 +205,4 @@ void TerminalViewer::get_pindicator_str(char *buf)
 	sprintf(buf, term->connected() ? " connected " : " disconnected ");
 }
 
+#endif
