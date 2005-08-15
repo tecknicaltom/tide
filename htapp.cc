@@ -1893,16 +1893,16 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, char *title,
 	ht_text_editor *text_editor=new ht_text_editor();
 	text_editor->init(&b, true, file, syntax_lexers, TEXTEDITOPT_INPUTTABS|TEXTEDITOPT_UNDO);
 
-	String fn, base, fn_suf;
+	IString fn, base, fn_suf;
 	file->getFilename(fn);
 	if (fn.rightSplit('.', base, fn_suf)) {
-		if ((ht_stricmp(fn_suf, "c") == 0) || (ht_stricmp(fn_suf, "cc") == 0)
-		|| (ht_stricmp(fn_suf, "cpp") == 0)
-		|| (ht_stricmp(fn_suf, "h") == 0) || (ht_stricmp(fn_suf, "hpp") == 0)) {
+		if (fn_suf == "c" || fn_suf == "cc"
+		 || fn_suf == "cpp"
+		 || fn_suf == "h" || fn_suf == "hpp") {
 			text_editor->set_lexer((ht_syntax_lexer*)(*syntax_lexers)[0], false);
 		}
 #ifdef HT_HTML_SYNTAX_LEXER
-		if (ht_stricmp(fn_suf, "htm") == 0 || ht_stricmp(fn_suf, "html") == 0) {
+		if (fn_suf == "htm" || fn_suf == "html") {
 			text_editor->set_lexer((ht_syntax_lexer*)(*syntax_lexers)[1], false);
 		}
 #endif
