@@ -19,6 +19,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <new>
 #include <cctype>
 #include <cstdlib>
 #include <cstring>
@@ -174,6 +175,16 @@ void String::append(const String &s)
 	}
 }
 
+void String::append(const char *s)
+{
+	if (s && *s) {
+		int oldLength = mLength;
+		int slen = strlen(s);
+		realloc(mLength + slen);
+		memcpy(&mContent[oldLength], s, slen);
+	}
+}
+
 /**
  *   prepends |s| to the front
  */
@@ -209,6 +220,24 @@ int String::compareChar(char c1, char c2) const
 {
 	if (c1 < c2) return -1;
 	if (c1 > c2) return 1;
+	return 0;
+}
+
+int String::compare(const char *s) const
+{
+	if (!mLength) {
+		return (s) ? -1: 0;
+	}
+	if (!s) {
+		return 1;
+	}
+	int l = mLength;
+	for (int i=0; i < l; i++) {
+		if (!*s) return 1;
+		int r = compareChar(mContent[i], s[i]);
+		if (r) return r;
+	}
+	if (s[l]) return -1;
 	return 0;
 }
 
@@ -389,6 +418,25 @@ int String::findStringBwd(String &s, int start, int ith_match) const
 }
 
 /**
+ *	Get the content of the String.
+ *	The original String gets destroyed.
+ *	It's up to you to free the content.
+ */
+byte *String::grabContent()
+{
+	byte *res = mContent;
+	mContent = NULL;
+	return res;
+}
+
+char *String::grabContentChar()
+{
+	char *res = (char*)mContent;
+	mContent = NULL;
+	return res;
+}
+
+/**
  *	inserts |s| at postion |pos| in string.
  */
 void String::insert(const String &s, int pos)
@@ -430,6 +478,7 @@ void String::realloc(int aNewSize)
 {
 	mLength = aNewSize;
 	mContent = (byte*)::realloc(mContent, mLength+1);
+	if (!mContent) throw std::bad_alloc();
 	mContent[mLength] = 0;
 /*	if (mContent) {
 		if (aNewSize) {
