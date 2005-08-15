@@ -374,14 +374,14 @@ ht_info_textfile::ht_info_textfile(File *s, bool own_s, ht_syntax_lexer *l)
 	end = 0;
 }
 
-ht_ltextfile_line *ht_info_textfile::fetch_line(uint line)
+ht_ltextfile_line *ht_info_textfile::fetch_line(uint line) const
 {
 	if (line < linecount())
 		return ht_ltextfile::fetch_line(start+line);
 	return NULL;
 }
 
-uint ht_info_textfile::linecount()
+uint ht_info_textfile::linecount() const
 {
 	return end-start;
 }
