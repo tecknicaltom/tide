@@ -31,7 +31,8 @@ ht_view *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_class_shared_data *class_shared=(ht_class_shared_data *)group->get_shared_data();
 
-	LOG("%s: JAVA: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: JAVA: loading image (starting analyser)...", &file->getFilename(fn));
 	ClassAnalyser *a = new ClassAnalyser();
 	a->init(class_shared, file);
 
