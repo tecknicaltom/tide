@@ -138,14 +138,14 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 				createHostStruct(&sec_entry, IL_METADATA_SECTION_ENTRY_struct, little_endian);
 				String name("?");
 				getStringz(file, name);
-				int nlen = strlen(name)+1;
+				int nlen = name.length() + 1;
 				uint32 dummy;
 				if (nlen % 4) {
 					// align properly
 					file->read(&dummy, 4 - nlen % 4);
 				}
-				entry = new ht_il_metadata_entry(name, metadata_ofs+sec_entry.offset, sec_entry.size);
-//				fprintf(stderr, "%s %x %x\n", name, metadata_ofs+sec_entry.offset, sec_entry.size);
+				entry = new ht_il_metadata_entry(name.contentChar(), metadata_ofs+sec_entry.offset, sec_entry.size);
+//				fprintf(stderr, "%s %x %x\n", name.contentChar(), metadata_ofs+sec_entry.offset, sec_entry.size);
 				pe_shared->il->entries->insert(entry);
 			}
 			for (uint i=0; i<count; i++) {
