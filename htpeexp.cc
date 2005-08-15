@@ -153,7 +153,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 		file->seek(en);
 		getStringz(efile, s);
 
-		ht_pe_export_function *efd = new ht_pe_export_function(f, o+edir.ordinal_base, s);
+		ht_pe_export_function *efd = new ht_pe_export_function(f, o+edir.ordinal_base, s.contentChar());
 		pe_shared->exports.funcs->insert(efd);
 	}
 
