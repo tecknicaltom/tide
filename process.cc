@@ -22,33 +22,32 @@
 #include "htctrl.h"
 #include "htdialog.h"
 #include "htiobox.h"
-#include "htkeyb.h"
+#include "keyb.h"
 
 bool execute_process(process_func pp, Object *context)
 {
 	Bounds b;
 	get_std_progress_indicator_metrics(&b);
 	
-	ht_progress_indicator *pi=new ht_progress_indicator();
-	pi->init(&b, "ESC to cancel");
+	ht_progress_indicator pi;
+	pi.init(&b, "ESC to cancel");
 
 	bool cancelled=false;
 	bool p=true;
 	
 	while (p) {
-		p = pp(context, pi->text);
-		if (ht_keypressed()) {
-			if (ht_getkey()==K_Escape) {
-				cancelled=true;
+		p = pp(context, pi.text);
+		if (keyb_keypressed()) {
+			if (keyb_getkey() == K_Escape) {
+				cancelled = true;
 				break;
 			}
 		}
-		pi->sendmsg(msg_draw, 0);
+		pi.sendmsg(msg_draw, 0);
 		screen->show();
 	}
 
-	pi->done();
-	delete pi;
+	pi.done();
 
 	return !cancelled;
 }
