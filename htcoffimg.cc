@@ -34,7 +34,8 @@ static ht_view *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_coff_shared_data *coff_shared = (ht_coff_shared_data *)group->get_shared_data();
 
-	LOG("%s: COFF: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: COFF: loading image (starting analyser)...", &file->getFilename(fn));
 	CoffAnalyser *p = new CoffAnalyser();
 	p->init(coff_shared, file);
 
