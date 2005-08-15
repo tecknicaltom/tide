@@ -170,12 +170,12 @@ int escape_special(char *result, int resultmaxlen, const void *S, int len, const
 	if (!specialchars) specialchars="";
 	while (len--) {
 		if (*s && strchr(specialchars, *s)) {
-			*result++='\\';
+			*result++ = '\\';
 			if (--resultmaxlen<2) break;
-			*result++=*s;
+			*result++ = *s;
 			if (--resultmaxlen<2) break;
-		} else if (*s<32 || (bit7 && (*s>0x7f)) || *s=='\\') {
-			*result++='\\';
+		} else if (*s < 32 || (bit7 && (*s > 0x7f)) || *s=='\\') {
+			*result++ = '\\';
 			if (--resultmaxlen<2) break;
 			switch (*s) {
 				case '\0':
