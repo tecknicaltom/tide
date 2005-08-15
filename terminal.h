@@ -18,6 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#if 0
 #ifndef __TERMINAL_H__
 #define __TERMINAL_H__
 
@@ -65,3 +66,4 @@ public:
 
 #endif /* __TERMINAL_H__ */
 
+#endif
