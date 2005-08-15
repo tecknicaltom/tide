@@ -23,7 +23,7 @@
 #include <cstring>
 
 // <debug>
-#include "debug.h"
+#include "htdebug.h"
 #include "snprintf.h"
 // </debug>
 
@@ -207,7 +207,7 @@ bool FileModificator::cut1(ObjHandle h, FileOfs rstart, FileOfs size)
 			c->src_start += size;
 		}
 	} else {
-		ASSERT(a->getObjectID() == OBJID_MFA);
+		assert(a->getObjectID() == OBJID_MFA);
 		ModifiedFileArea *m = (ModifiedFileArea*)a;
 		memmove(m->buf + rstart, m->buf + rstart+size, m->size-rstart-size);
 		m->size -= size;
@@ -235,17 +235,17 @@ bool FileModificator::cut1(ObjHandle h, FileOfs rstart, FileOfs size)
  *	fast and functional...
  */
 #define STREAM_COPYBUF_SIZE	(64*1024)
-uint FileModificator::copyAllTo(Stream *stream)
+FileOfs FileModificator::copyAllTo(Stream *stream)
 {
 	byte *buf = new byte[STREAM_COPYBUF_SIZE];
-	uint result = 0;
+	FileOfs result = 0;
 	uint r, t;
 	do {
 		uint k = STREAM_COPYBUF_SIZE;
 		r = read(buf, k);
-		ASSERT(r <= k);
+		assert(r <= k);
 		t = stream->write(buf, r);
-		ASSERT(t <= r);
+		assert(t <= r);
 		result += t;
 		if (t != k) break;
 	} while (t);
@@ -253,17 +253,17 @@ uint FileModificator::copyAllTo(Stream *stream)
 	return result;
 }
 
-uint FileModificator::copyTo(Stream *stream, uint count)
+FileOfs FileModificator::copyTo(Stream *stream, FileOfs count)
 {
 	byte *buf = new byte[STREAM_COPYBUF_SIZE];
-	uint result = 0;
+	FileOfs result = 0;
 	while (count) {
-		uint k = STREAM_COPYBUF_SIZE;
+		FileOfs k = STREAM_COPYBUF_SIZE;
 		if (k > count) k = count;
 		uint r = read(buf, k);
-		ASSERT(r <= k);
+		assert(r <= k);
 		uint t = stream->write(buf, r);
-		ASSERT(t <= r);
+		assert(t <= r);
 		count -= t;
 		result += t;
 		if (t != k) break;
@@ -284,7 +284,7 @@ void FileModificator::cut(uint size)
 //	int i = 1;
 	while (size) {
 //		printf("it %d\n", i++);
-		ASSERT(h != invObjHandle)
+		assert(h != invObjHandle)
 		FileArea *a = (FileArea*)mods.get(h);
 		FileOfs s = o - a->start;
 		FileOfs z = a->size - s;
@@ -588,7 +588,7 @@ void FileModificator::makeAreaModified(ObjHandle h, FileOfs rstart, FileOfs size
 			ObjHandle ha = findArea(min_ofs);
 			while (min_addsize != 0) {
 				FileArea *a = (FileArea*)mods.get(ha);
-				ASSERT(dynamic_cast<ModifiedFileArea*>(a));
+				assert(dynamic_cast<ModifiedFileArea*>(a));
 				FileOfs k = min_addsize;
 				if (k > a->size- (min_ofs-a->start)) k = a->size- (min_ofs-a->start);
 				write1(a, min_ofs - a->start, buf, k);
@@ -610,7 +610,7 @@ void FileModificator::read1(FileArea *a, FileOfs rstart, byte *buf, uint count)
 	} else if ((c = dynamic_cast<CopiedFileArea*>(a))) {
 		mFile->seek(c->src_start+rstart);
 		mFile->read(buf, count);
-	} else ASSERT(0);
+	} else assert(0);
 }
 
 uint FileModificator::read(void *buf, uint size)
@@ -819,7 +819,7 @@ int FileModificator::vcntl(uint cmd, va_list vargs)
 
 void FileModificator::write1(FileArea *a, FileOfs rstart, const byte *buf, uint count)
 {
-	ASSERT(a->getObjectID() == OBJID_MFA);
+	assert(a->getObjectID() == OBJID_MFA);
 //	ObjectID id = a->getObjectID();
 	ModifiedFileArea *m = (ModifiedFileArea*)a;
 	memcpy(m->buf+rstart, buf, count);
