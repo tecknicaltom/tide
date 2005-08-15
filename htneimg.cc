@@ -35,7 +35,8 @@ static ht_view *htneimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_ne_shared_data *ne_shared=(ht_ne_shared_data *)group->get_shared_data();
 
-	LOG("%s: NE: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: NE: loading image (starting analyser)...", &file->getFilename(fn));
 	NEAnalyser *p = new NEAnalyser();
 	p->init(ne_shared, file);
 
