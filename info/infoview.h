@@ -71,11 +71,11 @@ class ht_info_textfile: public ht_ltextfile {
 protected:
 	uint start, end;
 
-	virtual ht_ltextfile_line *fetch_line(uint line);
+	virtual ht_ltextfile_line *fetch_line(uint line) const;
 public:
 		ht_info_textfile(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
 /* overwritten */
-	virtual	uint linecount();
+	virtual	uint linecount() const;
 /* new */	
 			void set_node(uint ofs, uint len);
 };
