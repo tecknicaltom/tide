@@ -129,15 +129,15 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 			uint16 count;
 			file->read(&count, 2);
 			count = createHostInt(&count, 2, little_endian);
-			pe_shared->il->entries = new ht_clist();
-			pe_shared->il->entries->init();
-			for (uint i=0; i<count; i++) {
+			pe_shared->il->entries = new Array(true);
+			for (uint i=0; i < count; i++) {
 				IL_METADATA_SECTION_ENTRY sec_entry;
 				ht_il_metadata_entry *entry;
 				// FIXME: error handling
 				file->read(&sec_entry, sizeof sec_entry);
 				createHostStruct(&sec_entry, IL_METADATA_SECTION_ENTRY_struct, little_endian);
-				char *name = fgetstrz(file);
+				String name("?");
+				getStringz(file, name);
 				int nlen = strlen(name)+1;
 				uint32 dummy;
 				if (nlen % 4) {
@@ -147,11 +147,9 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 				entry = new ht_il_metadata_entry(name, metadata_ofs+sec_entry.offset, sec_entry.size);
 //				fprintf(stderr, "%s %x %x\n", name, metadata_ofs+sec_entry.offset, sec_entry.size);
 				pe_shared->il->entries->insert(entry);
-
-				free(name);
 			}
 			for (uint i=0; i<count; i++) {
-				ht_il_metadata_entry *entry = (ht_il_metadata_entry *)pe_shared->il->entries->get(i);
+				ht_il_metadata_entry *entry = (ht_il_metadata_entry *)(*pe_shared->il->entries)[i];
 				if (strcmp(entry->name, "#~") == 0) {
 					// token index
 					char dummy[8];
@@ -196,16 +194,13 @@ void ht_pe_il_viewer::done()
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)format_group->get_shared_data();
 	if (pe_shared && pe_shared->il) {
 		if (pe_shared->il->string_pool) free(pe_shared->il->string_pool);
-		if (pe_shared->il->entries) {
-		    pe_shared->il->entries->destroy();
-		    delete pe_shared->il->entries;
-		}
+		delete pe_shared->il->entries;
 		delete pe_shared->il;
 	}
 	ht_uformat_viewer::done();
 }
 
-ht_il_metadata_entry::ht_il_metadata_entry(char *n, uint32 o, uint32 s)
+ht_il_metadata_entry::ht_il_metadata_entry(const char *n, uint32 o, uint32 s)
 {
 	name = ht_strdup(n);
 	offset = o;
