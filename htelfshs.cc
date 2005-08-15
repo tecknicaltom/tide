@@ -118,15 +118,16 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 
 		elf_shared->shnames = (char**)malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
 		FileOfs so=elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset;
-		for (uint i=0; i<elf_shared->sheaders.count; i++) {
-			String s("?");
+		String s;
+		for (uint i=0; i < elf_shared->sheaders.count; i++) {
+			s = "?";
 
 			file->seek(so+elf_shared->sheaders.sheaders32[i].sh_name);
 			getStringz(file, s);
 
 			char t[1024];
 			ht_snprintf(t, sizeof t, "section %d: %y", i, &s);
-			elf_shared->shnames[i] = ht_strdup(s);
+			elf_shared->shnames[i] = ht_strdup(s.contentChar());
 
 			ht_mask_sub *n = new ht_mask_sub();
 			n->init(file, i);
