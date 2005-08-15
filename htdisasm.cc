@@ -52,7 +52,7 @@ ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
 	v->init(b, DESC_DISASM, VC_EDIT | VC_GOTO | VC_SEARCH, file, group, assembler, disassembler, t1632);
 
 	ht_disasm_sub *d=new ht_disasm_sub();
-	d->init(file, 0, file->get_size(),
+	d->init(file, 0, file->getSize(),
 		disassembler, false, X86DIS_STYLE_OPTIMIZE_ADDR);
 
 	v->insertsub(d);
@@ -75,7 +75,7 @@ static int opcode_compare(const char *a, const char *b)
 	if (al > bl) return 1; else if (al < bl) return -1; else return strcmp(a, b);
 }
 
-void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, uint want_length)
+void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, int want_length)
 {
 	char instr[257] = "";
 	if (default_str) strcpy(instr, default_str);
@@ -99,12 +99,12 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 			center_bounds(&b);
 			ht_dialog *dialog = new ht_dialog();
 			dialog->init(&b, "choose opcode", FS_KILLER | FS_TITLE | FS_MOVE);
-			BOUNDS_ASSIGN(b, 1, 0, 56, 1);
+			b.assign(1, 0, 56, 1);
 			ht_listbox_title *text = new ht_listbox_title();
 			text->init(&b);
 			text->setText(2, "opcode", "disassembly");
 			dialog->insert(text);
-			BOUNDS_ASSIGN(b, 1, 1, 56, 12);
+			b.assign(1, 1, 56, 12);
 			ht_text_listbox *list=new ht_text_listbox();
 			list->init(&b, 2, 0);
 			list->attachTitle(text);
@@ -113,7 +113,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 			int best = 0;
 			while (ac2) {
 				char s[1024]="", *tmp = s;
-				for (uint i=0; i<ac2->size; i++) {
+				for (int i=0; i < ac2->size; i++) {
 					tmp += sprintf(tmp, "%02x ", ac2->data[i]);
 				}
 				if ((best == 0) && (want_length == ac2->size)) {
@@ -163,7 +163,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 		}
 		if (ok) {
 			baseview->sendmsg(cmd_edit_mode_i, f->get_file(), NULL);
-			if (f->get_file() && (f->get_file()->get_access_mode() & FAM_WRITE)) {
+			if (f->get_file() && (f->get_file()->getAccessMode() & IOAM_WRITE)) {
 				f->vwrite(vaddr, chosen_ac->data, chosen_ac->size);
 			}
 		}
@@ -194,7 +194,7 @@ void ht_disasm_viewer::get_pindicator_str(char *buf)
 {
 	FileOfs o;
 	if (get_current_offset(&o)) {
-		sprintf(buf, " %s %08x/%u ", edit() ? "edit" : "view", o, o);
+		sprintf(buf, " %s 0x%08qx/%qu ", edit() ? "edit" : "view", o, o);
 	} else {
 		strcpy(buf, "?");
 	}
@@ -202,9 +202,9 @@ void ht_disasm_viewer::get_pindicator_str(char *buf)
 	
 bool ht_disasm_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
-	int s=file->get_size();
+	FileOfs s=file->getSize();
 	if (s) {
-		int z=MIN(size.h*16, s-(int)top.line_id.id1);
+		int z = MIN(size.h*16, s-(int)top.line_id.id1);
 		return scrollbar_pos(top.line_id.id1, z, s, pstart, psize);
 	}
 	return false;
@@ -336,7 +336,7 @@ int ht_disasm_viewer::ref_sel(LINE_ID *id)
 bool ht_disasm_viewer::qword_to_pos(uint64 q, viewer_pos *p)
 {
 	ht_linear_sub *s = get_disasm_sub();
-	FileOfs ofs = QWORD_GET_INT(q);
+	FileOfs ofs = q;
 	clear_viewer_pos(p);
 	p->u.sub = s;
 	p->u.tag_idx = 0;
@@ -446,7 +446,7 @@ bool ht_disasm_sub::getline(char *line, const LINE_ID line_id)
 		s = "db ?";
 		c = 0;
 	}
-	l=mkhexd(l, ofs);
+	l += sprintf(l, "%08x", ofs);
 	*l++=' ';
 	for (int i=0; i<15; i++) {
 		if (i<c) {
