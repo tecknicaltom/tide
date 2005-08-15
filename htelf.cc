@@ -343,9 +343,8 @@ void ht_elf::relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a)
 			// FIXME: nyi
 			continue;
 		}
-		Object *z = new ht_elf32_reloc_entry(r.r_offset+s[si].sh_offset, 
-			ELF32_R_TYPE(r.r_info), A, P, S);
-		f->insert_reloc(z);
+		Object *z = new ht_elf32_reloc_entry(ELF32_R_TYPE(r.r_info), A, P, S);
+		f->insert_reloc(r.r_offset+s[si].sh_offset, z);
 	}
 }
 
