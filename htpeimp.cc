@@ -154,7 +154,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 			thunk_rva = fthunk_rva;
 			thunk_ofs = fthunk_ofs;
 		}
-		ht_pe_import_library *lib=new ht_pe_import_library(dllname);
+		ht_pe_import_library *lib=new ht_pe_import_library(dllname.contentChar());
 		pe_shared->imports.libs->insert(lib);
 
 		PE_THUNK_DATA thunk;
@@ -218,7 +218,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					file->readx(&hint, 2);
 					hint = createHostInt(&hint, 2, little_endian);
 					getStringz(file, s);
-					func = new ht_pe_import_function(dll_index, fthunk_rva, s, hint);
+					func = new ht_pe_import_function(dll_index, fthunk_rva, s.contentChar(), hint);
 				}
 			} else {
 				thunk64 = *(thunk_table64+i);
@@ -236,7 +236,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					file->readx(&hint, 2);
 					hint = createHostInt(&hint, 2, little_endian);
 					getStringz(file, s);
-					func = new ht_pe_import_function(dll_index, fthunk_rva, s, hint);
+					func = new ht_pe_import_function(dll_index, fthunk_rva, s.contentChar(), hint);
 				}
 			}
 			pe_shared->imports.funcs->insert(func);
