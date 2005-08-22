@@ -175,44 +175,42 @@ RegNodeFile::RegNodeFile(const char *nn, uint am, uint om)
 		throw IOException(EINVAL);
 	}
 	
-	ht_registry_node_type type;
-	ht_registry_data *data;
+	ht_registry_node *node;
 	if (!(om & FOM_CREATE)) {
-		if (!registry->find_data_entry(nodename, &data, &type, false)) {
+		if (!registry->find_data_entry(nodename, &node, false)) {
 			throw IOException(ENOENT);
 		}
 	}
-	if (am & FAM_READ) {
+	if (am & IOAM_READ) {
 		if (om & FOM_CREATE) {
 			throw IOException(EINVAL);
 		}
-		ObjectStreamBin o(this);
-			
-		store_node(o, type, data);
-			
+		ObjectStreamBin o(this, false);
+
+		store_node(o, node);
+
 		seek(0);
 	}
 }
 
 RegNodeFile::~RegNodeFile()
 {
-	if (access_mode & FAM_WRITE) {
-		ht_registry_node_type type;
-		ht_registry_data *data;
+	if (getAccessMode() & IOAM_WRITE) {
+		ht_registry_node *node;
 
 		seek(0);
 
-		ObjectStreamBin o(this);
+		ObjectStreamBin o(this, false);
 
-		int e=load_node(o, &type, &data);
+		int e = load_node(o, &node);
 		
 		if (e==0) {
 			if (open_mode & FOM_CREATE) {
-				if ((e = registry->create_node(nodename, type))) {
+				if ((e = registry->create_node(nodename, node->type))) {
 //					set_error(e);
 				}
 			}
-			registry->set_node(nodename, type, data);
+			registry->set_node(nodename, node->type, node->data);
 
 			htmsg m;
 			m.msg = msg_config_changed;
@@ -223,45 +221,38 @@ RegNodeFile::~RegNodeFile()
 	free(nodename);
 }
 
-int RegNodeFile::load_node(ObjectStream &s, ht_registry_node_type *type, ht_registry_data **data)
+int RegNodeFile::load_node(ObjectStream &s, ht_registry_node **node)
 {
 	byte magic[4];
-	int n = s->read(magic, sizeof magic);
+	ht_registry_node_type type;
+	ht_registry_data *data;
+	int n = s.read(magic, sizeof magic);
 	if ((n != sizeof magic) || memcmp(magic, REGNODE_FILE_MAGIC, 4)==0) {
-		*type = s->getIntDec(4, NULL);
-		*data = (ht_registry_data*)s->getObject(NULL);
-		return s->get_error();
-	}
-	
-	ht_mem_file *g = new ht_mem_file();
-	g->init();
-	g->write(magic, n);
-	s->copy_to(g);
-	ht_registry_data_raw *d = new ht_registry_data_raw(g->bufptr(), g->get_size());
-	g->done();
-	delete g;
-	
-	*type=RNT_RAW;
-	*data=d;
-	return s->get_error();
-}
-
-void	RegNodeFile::store_node(ObjectStream &s, ht_registry_node_type type, ht_registry_data *data)
-{
-	if (type==RNT_RAW) {
-		ht_registry_data_raw *d=(ht_registry_data_raw*)data;
-		s->write(d->value, d->size);
+		type = s.getInt(4, NULL);
+		s.getObject((Object*&)data, NULL);
 	} else {
-		s->write((void*)REGNODE_FILE_MAGIC, 4);
-		s->putIntDec(type, 4, NULL);
-		s->putObject(data, NULL);
+		MemoryFile g;
+		g.write(magic, n);
+		s.copyAllTo(&g);
+		ht_registry_data_raw *d = new ht_registry_data_raw(g.getBufPtr(), g.getSize());
+
+		type = RNT_RAW;
+		data = d;
 	}
+	*node = new ht_registry_node(type, NULL, data);
+	return 0;
 }
 
-bool	RegNodeFile::set_access_mode(uint am)
+void	RegNodeFile::store_node(ObjectStream &s, ht_registry_node *node)
 {
-	access_mode = access_mode0;
-	return (am == access_mode0);
+	if (node->type == RNT_RAW) {
+		ht_registry_data_raw *d = (ht_registry_data_raw*)node->data;
+		s.write(d->value, d->size);
+	} else {
+		s.write((void*)REGNODE_FILE_MAGIC, 4);
+		s.putInt(node->type, 4, NULL);
+		s.putObject(node->data, NULL);
+	}
 }
 
 /*
@@ -282,11 +273,10 @@ void RegistryFs::done()
 
 int RegistryFs::canonicalize(char *result, const char *filename, const char *cwd)
 {
-	ht_registry_data *data;
-	ht_registry_node_type type;
+	ht_registry_node *node;
 	
 	sys_common_canonicalize(result, filename, cwd, unix_is_path_delim);
-	return registry->find_data_entry(result, &data, &type, 0);
+	return registry->find_data_entry(result, &node, 0);
 }
 
 void RegistryFs::create_pfind_t(pfind_t *f, const char *key, ht_registry_data *data, ht_registry_node_type type)
@@ -353,8 +343,8 @@ void *RegistryFs::enumFiletype(uint *type, char **name, void *handle)
 
 int RegistryFs::compareFilenames(const char *a, const char *b)
 {
-	if (strcmp(a, "..")==0) return -1;
-	if (strcmp(b, "..")==0) return 1;
+	if (strcmp(a, "..") == 0) return -1;
+	if (strcmp(b, "..") == 0) return 1;
 	return strcmp(a, b);
 }
 
