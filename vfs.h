@@ -40,13 +40,11 @@ protected:
 	uint open_mode;
 
 /* overwritten */
-		   int		load_node(ObjectStream &s, ht_registry_node_type *type, ht_registry_data **data);
-		   void		store_node(ObjectStream &s, ht_registry_node_type type, ht_registry_data *data);
+		   int		load_node(ObjectStream &s, ht_registry_node **node);
+		   void		store_node(ObjectStream &s, ht_registry_node *node);
 public:
 		RegNodeFile(const char *nodename, uint am, uint om);
 	virtual ~RegNodeFile();
-/* overwritten */
-	virtual bool		set_access_mode(uint access_mode);
 };
 
 /*
