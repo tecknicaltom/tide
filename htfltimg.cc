@@ -33,7 +33,8 @@ static ht_view *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)group->get_shared_data();
 
-	LOG("%s: FLAT: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: FLAT: loading image (starting analyser)...", &file->getFilename(fn));
 	FLTAnalyser *p = new FLTAnalyser();
 	p->init(flt_shared, file);
 
