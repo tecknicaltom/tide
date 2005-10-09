@@ -186,26 +186,26 @@ public:
 		void init();
 	virtual	void done();
 /* new */
-			int create_node(const char *key, ht_registry_node_type type);
-			int create_subdir(const char *key);
-			int delete_node(const char *key);
-			ht_registry_node *enum_next(const char *dir, ht_registry_node *prevkey);
-			ht_registry_node *enum_prev(const char *dir, ht_registry_node *nextkey);
+		int create_node(const char *key, ht_registry_node_type type);
+		int create_subdir(const char *key);
+		int delete_node(const char *key);
+		ht_registry_node *enum_next(const char *dir, ht_registry_node *prevkey);
+		ht_registry_node *enum_prev(const char *dir, ht_registry_node *nextkey);
 			
-			bool find_any_entry(const char *key, ht_registry_node **node);
-			bool find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks);
-			/* node type*/
-			ht_registry_node_type lookup_node_type(const char *identifier);
-			ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, char **identifier);
-			ht_registry_node_type have_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
-			ht_registry_node_type register_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
-			/**/
-			int set_dword(const char *key, uint32 d);
-			int set_raw(const char *key, const void *data, uint size);
-			int set_node(const char *key, ht_registry_node_type type, ht_registry_data *data);
-			int set_string(const char *key, const char *string);
-			int set_symlink(const char *key, const char *dest);
-			bool valid_nodename(const char *nodename);
+		bool find_any_entry(const char *key, ht_registry_node **node);
+		bool find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks);
+		/* node type*/
+		ht_registry_node_type lookup_node_type(const char *identifier);
+		ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, char **identifier);
+		ht_registry_node_type have_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
+		ht_registry_node_type register_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
+		/**/
+		int set_dword(const char *key, uint32 d);
+		int set_raw(const char *key, const void *data, uint size);
+		int set_node(const char *key, ht_registry_node_type type, ht_registry_data *data);
+		int set_string(const char *key, const char *string);
+		int set_symlink(const char *key, const char *dest);
+		bool valid_nodename(const char *nodename);
 /* overwritten */
 	virtual	void load(ObjectStream &f);
 	virtual	void store(ObjectStream &f) const;
