@@ -35,9 +35,10 @@ void		sys_get_driver_desc(char *buf, int len);
 // return time slice to system
 void		sys_suspend();
 
-bool		sys_native_clipboard_read(void *buf, int bufsize);
+int		sys_native_clipboard_read(void *buf, int bufsize);
 bool		sys_native_clipboard_write(const void *buf, int bufsize);
 int		sys_native_clipboard_get_size();
+const char *	sys_native_clipboard_name();
 
 const char *	sys_get_name();
 
