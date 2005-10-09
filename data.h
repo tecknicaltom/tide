@@ -40,7 +40,7 @@ struct BuildCtorArg {
  *	Macro for creating object build functions
  */
 #define BUILDER(reg, obj, parent) obj::obj(BuildCtorArg&a):parent(a) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
-#define BUILDER2(reg, obj) obj::obj(BuildCtorArg&a) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
+#define BUILDER2(reg, obj) Object *build_##obj(){BuildCtorArg a;return new obj(a);}
 
 /**
  *	Registers builder function by object id.
@@ -93,12 +93,12 @@ struct BuildCtorArg {
  */
 class Object {
 public:
-				Object(BuildCtorArg&);
-				Object(){};
+				Object(BuildCtorArg&) {};
+				Object() {};
 
-	virtual			~Object(){};
-		void		init(){};
-	virtual	void		done(){};
+	virtual			~Object() {};
+		void		init() {};
+	virtual	void		done() {};
 /* new */
 
 /**
@@ -170,8 +170,8 @@ const uint invIdx = ((uint)-1);
  */
 class Enumerator: public Object {
 public:
-				Enumerator(BuildCtorArg&);
-				Enumerator();
+				Enumerator(BuildCtorArg&a): Object(a) {};
+				Enumerator() {};
 	/* extends Object */
 	virtual Enumerator *	clone() const = 0;
 	virtual	int		toString(char *buf, int buflen) const;
@@ -385,7 +385,7 @@ protected:
 
 	virtual	void		notifyInsertOrSet(const Object *o);
 public:
-				Container(BuildCtorArg&);
+				Container(BuildCtorArg&a): Enumerator(a) {};
 				Container();
 				
 	/* extends Enumerator */
@@ -475,8 +475,8 @@ public:
  */
 class List: public Container {
 public:
-				List(BuildCtorArg&);
-				List();
+				List(BuildCtorArg&a): Container(a) {};
+				List() {};
 	/* extends Enumerator */
 	virtual List *		clone() const = 0;
 	
