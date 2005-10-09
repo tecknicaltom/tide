@@ -138,6 +138,17 @@ int Display::printW(int x, int y, vcp color, const AbstractChar *widestr)
 	return widestr-owidestr;
 }
 
+int Display::nprintW(int x, int y, vcp color, const AbstractChar *widestr, int maxstrlen)
+{
+	const AbstractChar *owidestr = widestr;
+	// FIXME: speed ?
+	while (widestr->codepage != CP_INVALID && maxstrlen--) {
+		if (!printChar(x++, y, color, widestr->chr, widestr->codepage)) break;
+		widestr++;
+	}
+	return widestr-owidestr;
+}
+
 int Display::printChar(int x, int y, vcp color, char chr, Codepage cp)
 {
 	// FIXME: speed ?
