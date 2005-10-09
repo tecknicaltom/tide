@@ -66,8 +66,7 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	ht_xbe_shared_data *xbe_shared = (ht_xbe_shared_data*)malloc(sizeof (ht_xbe_shared_data));
 	shared_data = xbe_shared;
 
-	xbe_shared->imports.funcs = new ht_clist();
-	xbe_shared->imports.funcs->init();
+	xbe_shared->imports.funcs = new Array(true);
 
 	xbe_shared->v_image = NULL;
 	xbe_shared->v_imports = NULL;
