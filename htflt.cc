@@ -62,7 +62,9 @@ void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_FLT, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_flt");
 
-	LOG("%s: FLAT: found header at %08x", file->get_filename(), header_ofs);
+	String fn;
+	file->getFilename(fn);
+	LOG("%y: FLAT: found header at %08qx", &fn, header_ofs);
 	
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)malloc(sizeof(ht_flt_shared_data));
 	
