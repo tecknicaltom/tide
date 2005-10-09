@@ -62,6 +62,8 @@ uint get_timer_tick(timer_handle h);
 #	define assert(a) ((void)0)
 #endif
 
+#define ASSERT(a) assert(a)
+
 #define HERE __FILE__, __LINE__
 
 #endif /* !__HTDEBUG_H__ */
