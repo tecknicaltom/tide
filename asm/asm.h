@@ -75,7 +75,7 @@ protected:
 		void pushcode();
 public:
 			Assembler(bool bigendian);
-			Assembler(BuildCtorArg&);
+			Assembler(BuildCtorArg&) {};
 	virtual		~Assembler();
 /* new */
 	virtual	asm_insn *alloc_insn();
@@ -124,7 +124,7 @@ protected:
 			void disable_highlighting();
 public:
 		Disassembler();
-		Disassembler(BuildCtorArg&);
+		Disassembler(BuildCtorArg&) {};
 /* new */
 	virtual	dis_insn *createInvalidInsn();
 	virtual	dis_insn *decode(byte *code, int maxlen, CPU_ADDR cur_address)=0;
