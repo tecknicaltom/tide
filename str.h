@@ -56,6 +56,7 @@ public:
 
 		void		append(const String &s);
 		void		append(const char *s);
+		void		appendChar(char c);
 	inline	char &		at(int aIndex) const;
 	inline	bool		chop();
 		void		clear();
@@ -70,10 +71,10 @@ public:
 		void		crop(int aNewLength);
 		void		del(int pos, int aLength);
 		void		escape(const char *aSpecialChars, bool bit7 = true);
-	virtual	int		findCharFwd(char c, int start = -1, int ith_match = 1) const;
-	virtual	int		findCharBwd(char c, int start = -1, int ith_match = 1) const;
-	virtual	int		findStringFwd(String &s, int start = -1, int ith_match = 1) const;
-	virtual	int		findStringBwd(String &s, int start = -1, int ith_match = 1) const;
+	virtual	int		findCharFwd(char c, int start = -1, int ith_match = 0) const;
+	virtual	int		findStringFwd(const String &s, int start = -1, int ith_match = 0) const;
+	virtual	int		findCharBwd(char c, int start = -1, int ith_match = 0) const;
+	virtual	int		findStringBwd(const String &s, int start = -1, int ith_match = 0) const;
 	inline	char		firstChar() const;
 		void		insert(const String &s, int pos);
 	virtual	bool		instanceOf(ObjectID id) const;
@@ -101,14 +102,14 @@ public:
 	virtual	char *		toString() const;
 		void		unescape();
 
-	inline	char &		operator [](int aIndex) const;
+	inline	char &	operator [](int aIndex) const;
 
 	inline	String &	operator =(const String &s);
 	inline	String &	operator =(const char *s);
 	inline	String &	operator +=(const String &s);
 	inline	String &	operator +=(const char *s);
 		String &	operator +=(char c);
-
+			
 	inline	bool		operator < (const String &s) const;
 	inline	bool		operator > (const String &s) const;
 	inline	bool		operator <=(const String &s) const;
@@ -122,7 +123,6 @@ public:
 	inline	bool		operator >=(const char *s) const;
 	inline	bool		operator ==(const char *s) const;
 	inline	bool		operator !=(const char *s) const;
-
 protected:
 		int		compare(const char *s) const;
 		void		realloc(int aNewSize);
@@ -152,13 +152,13 @@ public:
 //class MsgException;
 
 /**
- *   @returns char at position |aIndex|
- *	@throws exception if aIndex out of Bounds
+ *	@returns char at position |aIndex|
+ *	@throws exception if aIndex out of bounds
  */
 inline char &String::at(int aIndex) const
 {
 //	if ((uint)aIndex >= (uint)mLength) throw new MsgException("index out of bounds");
-	return (char&)mContent[aIndex];
+	return (char &)mContent[aIndex];
 }
 
 /**
