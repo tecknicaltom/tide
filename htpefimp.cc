@@ -21,7 +21,7 @@
 #include "formats.h"
 #include "htanaly.h"
 #include "htctrl.h"
-#include "htdata.h"
+#include "data.h"
 #include "endianess.h"
 #include "htiobox.h"
 #include "htpal.h"
@@ -120,9 +120,9 @@ ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 	g->insert(v);
 	//
 	for (uint i=0; i < pef_shared->imports.funcs->count(); i++) {
-		ht_pef_import_function *func = (ht_pef_import_function*)pef_shared->imports.funcs->get(i);
+		ht_pef_import_function *func = (ht_pef_import_function*)(*pef_shared->imports.funcs)[i];
 		assert(func);
-		ht_pef_import_library *lib = (ht_pef_import_library*)pef_shared->imports.libs->get(func->libidx);
+		ht_pef_import_library *lib = (ht_pef_import_library*)(*pef_shared->imports.libs)[func->libidx];
 		assert(lib);
 		char addr[32], name[256];
 		ht_snprintf(addr, sizeof addr, "%d", func->num);
@@ -137,7 +137,8 @@ ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 	pef_shared->v_imports = v;
 	return g;
 pef_read_error:
-	errorbox("%s: PEF import library description seems to be corrupted.", file->get_filename());
+	String fn;
+	errorbox("%y: PEF import library description seems to be corrupted.", &file->getFilename(fn));
 	g->done();
 	delete g;
 	v->done();
