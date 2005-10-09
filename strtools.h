@@ -77,10 +77,21 @@ bool hexd_ex(uint32 &result, const char *s);
  */
 class ht_string_list: public Array {
 public:
-		ht_string_list();
+	ht_string_list()
+		: Array(true)
+	{
+	}
+
 	/* new */
-		const char *get_string(uint i);
-		void insert_string(const char *s);
+	const char *get_string(uint i)
+	{
+		return ((String *)get(findByIdx(i)))->contentChar();
+	}
+
+	void insert_string(const char *s)
+	{
+		insert(new String(s));
+	}
 };
 
 #endif /* !__STRTOOLS_H__ */
