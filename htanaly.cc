@@ -53,7 +53,7 @@ extern "C" {
 #include <string.h>
 
 /* FIXME: test */
-#include "srt.h"
+//#include "srt.h"
 #include "out_html.h"
 #include "out_sym.h"
 
@@ -1112,7 +1112,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		sub->insert_entry("Data ~byte 8", "b", cmd_analyser_data_byte, 0, 1);
 		m->insert_submenu(sub);
 		m->insert_separator();
-		m->insert_entry("Symbol reg trace (exp!)", "Alt-Q", cmd_analyser_srt, K_Meta_Q, 1);
+//		m->insert_entry("Symbol reg trace (exp!)", "Alt-Q", cmd_analyser_srt, K_Meta_Q, 1);
 
 		msg->msg = msg_retval;
 		msg->data1.ptr = m;
@@ -1471,7 +1471,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		return;
 	}
 	/* FIXME: srt-experimental */
-	case cmd_analyser_srt: {
+/*	case cmd_analyser_srt: {
 		Address *current_addr;
 		if (getCurrentAddress(&current_addr)) {
 			test_srt(analy, current_addr);
@@ -1479,7 +1479,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		}
 		clearmsg(msg);
 		return;
-	}
+	}*/
 	case msg_get_analyser: {
 		msg->msg=msg_retval;
 		msg->data1.ptr=analy;
