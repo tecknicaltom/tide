@@ -95,6 +95,11 @@ void InvalidAddress::getFromCPUAddress(CPU_ADDR *ca)
 {
 }
 
+bool InvalidAddress::getFromUInt64(uint64 u)
+{
+	return false;
+}
+
 bool InvalidAddress::isValid()
 {
 	return false;
@@ -112,6 +117,11 @@ ObjectID InvalidAddress::getObjectID() const
 
 void InvalidAddress::putIntoArray(byte *array) const
 {
+}
+
+bool InvalidAddress::putIntoUInt64(uint64 &u) const
+{
+	return false;
 }
 
 int InvalidAddress::stringify(char *s, int max_length, int format) const
@@ -192,6 +202,16 @@ void AddressFlat32::getFromCPUAddress(CPU_ADDR *ca)
 	addr = ca->addr32.offset;
 }
 
+bool AddressFlat32::getFromUInt64(uint64 u)
+{
+	if (u <= 0xffffffff) {
+		addr = u;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void AddressFlat32::load(ObjectStream &st)
 {
 	GET_INT32X(st, addr);
@@ -215,6 +235,12 @@ void AddressFlat32::putIntoArray(byte *array) const
 void AddressFlat32::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.offset = addr;
+}
+
+bool AddressFlat32::putIntoUInt64(uint64 &u) const
+{
+	u = addr;
+	return true;
 }
 
 void AddressFlat32::store(ObjectStream &st) const
@@ -310,6 +336,12 @@ void AddressFlat64::getFromCPUAddress(CPU_ADDR *ca)
 	addr = ca->flat64.addr;
 }
 
+bool AddressFlat64::getFromUInt64(uint64 u)
+{
+	addr = u;
+	return true;
+}
+
 void AddressFlat64::load(ObjectStream &st)
 {
 	GET_INT64X(st, addr);
@@ -333,6 +365,12 @@ void AddressFlat64::putIntoArray(byte *array) const
 void AddressFlat64::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->flat64.addr = addr;
+}
+
+bool AddressFlat64::putIntoUInt64(uint64 &u) const
+{
+	u = addr;
+	return true;
 }
 
 void AddressFlat64::store(ObjectStream &st) const
