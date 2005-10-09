@@ -2881,3 +2881,4 @@ void center_bounds(Bounds *b)
 	b->y = (c.h - b->h) / 2;     
 }
 
+BUILDER(ATOM_HT_DIALOG, ht_dialog, ht_window);
