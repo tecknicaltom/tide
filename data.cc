@@ -118,10 +118,6 @@ void	Object::store(ObjectStream &s) const
 /*
  *	Enumerator
  */
-Enumerator::Enumerator()
-{
-}
-
 /*Object *Enumerator::operator [] (int idx) const
 {
 	ObjHandle h = findByIdx(idx);
@@ -275,13 +271,6 @@ void Container::notifyInsertOrSet(const Object *o)
 Object *Container::removeObj(const Object *sig)
 {
 	return remove(find(sig));
-}
-
-/*
- *	List
- */
-List::List()
-{
 }
 
 /*
