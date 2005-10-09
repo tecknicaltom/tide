@@ -37,9 +37,9 @@ void SIGCHLD_sigaction(int i, siginfo_t *info, void *v);
 void SIGTRAP_sigaction(int i, siginfo_t *info, void *v);
 void SIGWINCH_sigaction(int i, siginfo_t *info, void *v);
 
-bool initSystem()
+bool init_system()
 {
-	setuid( getuid() );
+	setuid(getuid());
 	struct sigaction sa;
 
 	sa.sa_sigaction = SIGCHLD_sigaction;
@@ -60,7 +60,7 @@ bool initSystem()
 	return initKeyb() && initSysEvent();
 }
 
-void doneSystem()
+void done_system()
 {
 	doneSysEvent();
 	doneKeyb();
