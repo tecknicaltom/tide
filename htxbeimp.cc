@@ -21,7 +21,7 @@
 #include "formats.h"
 #include "htanaly.h"
 #include "htctrl.h"
-#include "htdata.h"
+#include "data.h"
 #include "endianess.h"
 #include "htiobox.h"
 #include "htpal.h"
@@ -470,7 +470,7 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 	g->insert(v);
 	//
 	for (uint i=0; i<xbe_shared->imports.funcs->count(); i++) {
-		ht_xbe_import_function *func = (ht_xbe_import_function*)xbe_shared->imports.funcs->get(i);
+		ht_xbe_import_function *func = (ht_xbe_import_function*)(*xbe_shared->imports.funcs)[i];
 		assert(func);
 		char addr[32], name[256];
 		ht_snprintf(addr, sizeof addr, "%08x", func->address);
@@ -490,7 +490,8 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 	return g;
 xbe_read_error:
 	delete_timer(h0);
-	errorbox("%s: XBE import section seems to be corrupted.", file->get_filename());
+	String fn;
+	errorbox("%y: XBE import section seems to be corrupted.", &file->getFilename(fn));
 	g->done();
 	delete g;
 	v->done();
@@ -635,7 +636,7 @@ bool ht_xbe_import_viewer::select_entry(void *entry)
 
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)format_group->get_shared_data();
 
-	ht_xbe_import_function *e = (ht_xbe_import_function*)xbe_shared->imports.funcs->get(i->id);
+	ht_xbe_import_function *e = (ht_xbe_import_function*)(*xbe_shared->imports.funcs)[i->id];
 	if (!e) return true;
 	if (xbe_shared->v_image) {
 		ht_aviewer *av = (ht_aviewer*)xbe_shared->v_image;
