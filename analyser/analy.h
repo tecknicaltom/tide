@@ -44,7 +44,7 @@ class Analyser;
 class Address: public Object {
 public:
 				Address() {};
-				Address(BuildCtorArg&);
+				Address(BuildCtorArg&) {};
 	virtual	bool		add(int offset) = 0;
 	virtual	int		byteSize() = 0;
 	virtual Address	*	clone() const = 0;
@@ -179,7 +179,7 @@ public:
 	Analyser		*analy;
 	Disassembler		*disasm;
 					AnalyDisassembler();
-					AnalyDisassembler(BuildCtorArg &);
+					AnalyDisassembler(BuildCtorArg &) {};
 
 		void			init(Analyser *A);
 	virtual	void			done();
@@ -328,7 +328,7 @@ public:
 	int			location_count;
 
 				Analyser() {};
-				Analyser(BuildCtorArg&);
+				Analyser(BuildCtorArg&) {};
 
 		void		init();
 	virtual	void		load(ObjectStream &s);
