@@ -185,6 +185,12 @@ void String::append(const char *s)
 	}
 }
 
+void String::appendChar(char c)
+{
+	realloc(mLength+1);
+	mContent[mLength-1] = c;
+}
+
 /**
  *   prepends |s| to the front
  */
@@ -352,7 +358,7 @@ int String::findCharFwd(char c, int start, int ith_match) const
 	if (!mLength) return -1;
 	if (start >= mLength) return -1;
 	if (start < 0) start = 0;
-	for (int i=start; i<mLength; i++) {
+	for (int i=start; i < mLength; i++) {
 		if (compareChar(mContent[i], c) == 0) {
 			if (ith_match <= 1) return i;
 			ith_match--;
@@ -387,7 +393,7 @@ int String::findCharBwd(char c, int start, int ith_match) const
  *	@param start first character position to look for
  *	@returns position of character or number < 0 if not found
  */
-int String::findStringFwd(String &s, int start, int ith_match) const
+int String::findStringFwd(const String &s, int start, int ith_match) const
 {
 	if (start < 0) start = 0;
 	if (!mLength || !s.mLength || (start+s.mLength > mLength)) return -1;
@@ -410,7 +416,7 @@ notfound:;
  *	@param start first character position to look for
  *	@returns position of character or number < 0 if not found
  */
-int String::findStringBwd(String &s, int start, int ith_match) const
+int String::findStringBwd(const String &s, int start, int ith_match) const
 {
 	assert("not yet implemented" && 0);
 	if (!mLength) return -1;
@@ -454,6 +460,19 @@ bool String::instanceOf(ObjectID id) const
 {
 	if (id == getObjectID()) return true;
 	return Object::instanceOf(id);
+}
+
+bool String::leftSplit(char chr, String &initial, String &rem) const
+{
+	int pivot = findCharFwd(chr);
+	if (pivot < 0) {
+		initial = *this;
+		rem.clear();
+		return false;
+	}
+	subString(0, pivot, initial);
+	subString(pivot+1, length(), rem);
+	return true;
 }
 
 void String::load(ObjectStream &s)
@@ -546,6 +565,19 @@ int String::replace(String &what, String &with)
 		p = findStringFwd(what, p+withlen);
 	}
 	return numRepl;
+}
+
+bool String::rightSplit(char chr, String &initial, String &rem) const
+{
+	int pivot = findCharBwd(chr);
+	if (pivot < 0) {
+		initial = *this;
+		rem.clear();
+		return false;
+	}
+	subString(0, pivot, initial);
+	subString(pivot+1, length(), rem);
+	return true;
 }
 
 /**
@@ -747,4 +779,3 @@ ObjectID IString::getObjectID() const
 {
 	return OBJID_ISTRING;
 }
-
