@@ -57,7 +57,7 @@ public:
 			void init(Bounds *b, char *desc, int caps, ht_clipboard *clipboard, ht_format_group *format_group);
 /* overwritten */
 	virtual	void draw();
-	virtual 	void handlemsg(htmsg *msg);
+	virtual void handlemsg(htmsg *msg);
 	virtual	void pselect_add(FileOfs start, FileOfs end);
 	virtual	void pselect_set(FileOfs start, FileOfs end);
 /* new */
@@ -66,10 +66,10 @@ public:
 
 /* clipboard functions */
 
-void clipboard_add_copy_history_entry(char *source, FileOfs start, FileOfs size, time_t time);
-FileOfs clipboard_copy(char *source_desc, void *buf, uint len);
-FileOfs clipboard_copy(char *source_desc, File *streamfile, FileOfs offset, FileOfs len);
-FileOfs clipboard_paste(void *buf, uint32 maxlen);
+void clipboard_add_copy_history_entry(const char *source, FileOfs start, FileOfs size, time_t time);
+FileOfs clipboard_copy(const char *source_desc, void *buf, uint len);
+FileOfs clipboard_copy(const char *source_desc, File *streamfile, FileOfs offset, FileOfs len);
+FileOfs clipboard_paste(void *buf, FileOfs maxlen);
 FileOfs clipboard_paste(File *streamfile, FileOfs offset);
 bool clipboard_clear();
 FileOfs clipboard_getsize();
