@@ -43,7 +43,7 @@ class Analyser;
 //#define DUP_ADDR(a) ((Address*)(a)->clone())
 class Address: public Object {
 public:
-				Address();
+				Address() {};
 				Address(BuildCtorArg&);
 	virtual	bool		add(int offset) = 0;
 	virtual	int		byteSize() = 0;
@@ -65,7 +65,7 @@ public:
 
 class InvalidAddress: public Address {
 public:
-				InvalidAddress();
+				InvalidAddress() {};
 				InvalidAddress(BuildCtorArg&);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
@@ -327,7 +327,7 @@ public:
 	int			symbol_count;
 	int			location_count;
 
-				Analyser();
+				Analyser() {};
 				Analyser(BuildCtorArg&);
 
 		void		init();
