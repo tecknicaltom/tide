@@ -126,65 +126,6 @@
 #define S_IXOTH 0
 #endif
 
-int sys_basename(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash=(slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		int l=strlen(filename);
-		strncpy(result, slash+1, l-(slash-filename)-1);
-		result[l-(slash-filename)-1]=0;
-		return 0;
-	}
-	strcpy(result, filename);
-	return 0;
-}
-
-int sys_dirname(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash = (slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		strncpy(result, filename, slash-filename);
-		result[slash-filename] = 0;
-		return 0;
-	}
-	strcpy(result, ".");
-	return 0;
-}
-
-/* filename and pathname must be canonicalized */
-int sys_relname(char *result, const char *filename, const char *cwd)
-{
-	const char *f = filename, *p = cwd;
-	while ((*f == *p) && (*f)) {
-		f++;
-		p++;
-	}
-	if (*f == '/') f++;
-	const char *last = f, *h = f;
-	while (*h) {
-		if (*h == '/') {
-			*(result++) = '.';
-			*(result++) = '.';
-			*(result++) = '/';
-			last = h+1;
-		}
-		h++;
-	}
-	while (f<last) {
-		*(result++) = *f;
-		f++;
-	}
-	*result = 0;
-	strcat(result, last);
-	return 0;
-}
-
 int sys_ht_mode(int mode)
 {
 	int m = 0;
@@ -243,49 +184,5 @@ static int flatten_path(char *path, is_path_delim delim)
 		pp--;
 	}
 	return pp;
-}
-
-bool sys_path_is_absolute(const char *filename, is_path_delim delim)
-{
-	return delim(filename[0]) || (isalpha(filename[0]) && (filename[1] == ':'));
-}
-
-int sys_common_canonicalize(char *result, const char *filename, const char *cwd, is_path_delim delim)
-{
-	char *o = result;
-	if (!sys_path_is_absolute(filename, delim)) {
-		if (cwd) strcpy(o, cwd); else return EINVAL;
-		int ol = strlen(o);
-		if (ol && !delim(o[ol-1])) {
-			o[ol] = '/';
-			o[ol+1] = 0;
-		}
-	} else *o = 0;
-	strcat(o, filename);
-	int k = flatten_path(o, delim);
-	return (k==0) ? 0 : EINVAL;
-}
-
-char *sys_filename_suffix(const char *fn)
-{
-	const char *s = NULL;
-	while (fn && *fn) {
-		if (sys_is_path_delim(*fn)) s = fn+1;
-		fn++;
-	}
-	char *p = s ? strrchr(s, '.') : NULL;
-	return p ? p+1 : NULL;
-}
-
-int sys_tmpfile_fd()
-{
-#if 1
-// FIXME: this might leak something...
-	FILE *f = tmpfile();
-	return fileno(f);
-#else
-// is this better ?
-     return open(tmpnam(NULL), O_RDWR | O_EXCL | O_CREAT);
-#endif
 }
 
