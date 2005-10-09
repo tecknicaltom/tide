@@ -27,12 +27,12 @@
 
 // file open modes
 
-#define FOM_AUTO					0
+#define FOM_AUTO				0
 #define FOM_BIN					1
-#define FOM_TEXT					2
+#define FOM_TEXT				2
 
 //
-#define VIEWERGROUP_NAME				"viewergroup"
+#define VIEWERGROUP_NAME			"viewergroup"
 
 /*
  *	CLASS ht_status
@@ -64,7 +64,7 @@ public:
 	virtual	void handlemsg(htmsg *msg);
 	virtual	bool idle();
 private:
-			void render();
+		void render();
 	virtual	char *defaultpalette();
 };
 
@@ -74,7 +74,7 @@ private:
 
 class ht_keyline: public ht_view {
 public:
-			void init(Bounds *b);
+		void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -323,7 +323,7 @@ protected:
 public:
 	ht_view *menu;
 
-		ht_app();
+		ht_app() {};
 		ht_app(BuildCtorArg &);
 		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, FileLayer *layer);
 
