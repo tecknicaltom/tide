@@ -191,7 +191,7 @@ void ht_clipboard_viewer::get_pindicator_str(char *buf)
 
 /* clipboard functions */
 
-void clipboard_add_copy_history_entry(char *source, FileOfs start, FileOfs size, time_t time)
+void clipboard_add_copy_history_entry(const char *source, FileOfs start, FileOfs size, time_t time)
 {
 	clipboard->copy_history->insert(new ht_clipboard_copy_history(source, start, size, time));
 }
@@ -199,7 +199,7 @@ void clipboard_add_copy_history_entry(char *source, FileOfs start, FileOfs size,
 #define CLIPBOARD_TRANSFER_BUF_SIZE	32*1024
 //#define CLIPBOARD_TRANSFER_BUF_SIZE	2
 
-FileOfs clipboard_copy(char *source_desc, void *buf, uint len)
+FileOfs clipboard_copy(const char *source_desc, void *buf, uint len)
 {
 	uint r = 0;
 	if (len) {
@@ -213,7 +213,7 @@ FileOfs clipboard_copy(char *source_desc, void *buf, uint len)
 	return r;
 }
 
-FileOfs clipboard_copy(char *source_desc, File *file, FileOfs offset, FileOfs len)
+FileOfs clipboard_copy(const char *source_desc, File *file, FileOfs offset, FileOfs len)
 {
 	if (!len) return 0;
 
