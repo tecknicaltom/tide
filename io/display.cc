@@ -408,7 +408,7 @@ bool SystemRDisplay::read(uint &rawchar, vcp &color, int x, int y) const
 
 void SystemRDisplay::setBounds(const Bounds &b)
 {
-     RDisplay::setBounds(b);
+	RDisplay::setBounds(b);
 }
 
 void SystemRDisplay::setCursor(int x, int y, CursorMode mode)
