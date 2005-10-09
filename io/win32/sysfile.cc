@@ -3,7 +3,7 @@
  *	sysfile.cc - file system functions for Win32
  *
  *	Copyright (C) 1999-2003 Sebastian Biallas (sb@biallas.net)
- *	Copyright (C) 1999-2002 Stefan Weyergraf (stefan@weyergraf.de)
+ *	Copyright (C) 1999-2002 Stefan Weyergraf
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -286,3 +286,31 @@ FileOfs	sys_ftell(SYS_FILE *file)
 {
 	return ftell((FILE *)file);
 }
+
+const char *sys_get_name()
+{
+	return "win32";
+}
+
+int sys_get_caps()
+{
+	return SYSCAP_NATIVE_CLIPBOARD;
+}
+
+/*
+ *	INIT
+ */
+
+bool init_system()
+{
+	return true;
+}
+
+/*
+ *	DONE
+ */
+
+void done_system()
+{
+}
+
