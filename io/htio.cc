@@ -1,3 +1,4 @@
+asfasdf
 /* 
  *	HT Editor
  *	io.cc
@@ -125,65 +126,6 @@
 #ifndef S_IXOTH
 #define S_IXOTH 0
 #endif
-
-int sys_basename(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash=(slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		int l=strlen(filename);
-		strncpy(result, slash+1, l-(slash-filename)-1);
-		result[l-(slash-filename)-1]=0;
-		return 0;
-	}
-	strcpy(result, filename);
-	return 0;
-}
-
-int sys_dirname(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash = (slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		strncpy(result, filename, slash-filename);
-		result[slash-filename] = 0;
-		return 0;
-	}
-	strcpy(result, ".");
-	return 0;
-}
-
-/* filename and pathname must be canonicalized */
-int sys_relname(char *result, const char *filename, const char *cwd)
-{
-	const char *f = filename, *p = cwd;
-	while ((*f == *p) && (*f)) {
-		f++;
-		p++;
-	}
-	if (*f == '/') f++;
-	const char *last = f, *h = f;
-	while (*h) {
-		if (*h == '/') {
-			*(result++) = '.';
-			*(result++) = '.';
-			*(result++) = '/';
-			last = h+1;
-		}
-		h++;
-	}
-	while (f<last) {
-		*(result++) = *f;
-		f++;
-	}
-	*result = 0;
-	strcat(result, last);
-	return 0;
-}
 
 int sys_ht_mode(int mode)
 {
