@@ -78,7 +78,7 @@ TAGSTRING *tag_make_ref(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 i
 	return tag_make_ref_len(buf, id128_1, id128_2, id128_3, id128_4, string, strlen(string));
 }
 
-TAGSTRING *tag_make_flags(TAGSTRING *buf, FileOfs ofs, uint32 id)
+TAGSTRING *tag_make_flags(TAGSTRING *buf, uint32 id, FileOfs ofs)
 {
 	ht_tag_flags *tag=(ht_tag_flags*)buf;
 	tag->escape = '\e';
