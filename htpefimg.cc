@@ -31,7 +31,8 @@ ht_view *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
-	LOG("%s: PEF: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: PEF: loading image (starting analyser)...", &file->getFilename(fn));
 	PEFAnalyser *p = new PEFAnalyser();
 	p->init(pef_shared, file);
 
