@@ -523,7 +523,7 @@ bool String::regexMatch(const String &aRegEx, Container *resultStrings) const
 	regex_t rx;
 
 	int r = regcomp(&rx, re, REG_EXTENDED | ((compareChar('A','a')==0) ? REG_ICASE : 0));
-	if (r) throw new MsgException("EINVAL");
+	if (r) throw MsgException("EINVAL");
 
 	regmatch_t pmatch[MAX_REGEX_MATCHES];
 	if (regexec(&rx, (char*)mContent, MAX_REGEX_MATCHES, pmatch, 0) != 0) return false;
