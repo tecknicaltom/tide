@@ -35,7 +35,9 @@ static ht_view *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
 
 //	if (macho_shared->ident.e_ident[MACHO_EI_CLASS]!=MACHOCLASS32) return 0;
 
-	LOG("%s: Mach-O: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	file->getFilename(fn);
+	LOG("%y: Mach-O: loading image (starting analyser)...", &fn);
 	MachoAnalyser *p = new MachoAnalyser();
 	p->init(macho_shared, file);
 
