@@ -20,9 +20,9 @@
  
 #include <cstring>
 
-#include "debug.h"
+#include "htdebug.h"
 #include "endianess.h"
-#include "system/types.h"
+#include "io/types.h"
 
 void createForeignInt(void *buf, int i, int size, Endianess to_endianess)
 {
