@@ -1459,11 +1459,14 @@ void ht_app::init(Bounds *pq)
 	edit->insert_separator();
 	edit->insert_entry("Copy ~from file...", 0, cmd_edit_copy_from_file, 0, 1);
 	edit->insert_entry("Paste ~into file...", 0, cmd_edit_paste_into_file, 0, 1);
-#ifdef SYS_SUPPORT_NATIVE_CLIPBOARD
-	edit->insert_separator();
-	edit->insert_entry("Copy from "SYS_NATIVE_CLIPBOARD_NAME, 0, cmd_edit_copy_native, 0, 1);
-	edit->insert_entry("Paste into "SYS_NATIVE_CLIPBOARD_NAME, 0, cmd_edit_paste_native, 0, 1);
-#endif
+	if (sys_get_caps() & SYSCAP_NATIVE_CLIPBOARD) {
+		char s[100];
+		edit->insert_separator();
+		ht_snprintf(s, sizeof s, "Copy from %s", sys_native_clipboard_name());
+		edit->insert_entry(s, 0, cmd_edit_copy_native, 0, 1);
+		ht_snprintf(s, sizeof s, "Paste into %s", sys_native_clipboard_name());
+		edit->insert_entry(s, 0, cmd_edit_paste_native, 0, 1);
+	}
 	edit->insert_separator();
 	edit->insert_entry("~Evaluate...", 0, cmd_popup_dialog_eval, 0, 1);
 	m->insert_menu(edit);
@@ -1652,7 +1655,7 @@ ht_window *ht_app::create_window_term(const char *cmd)
 
 ht_window *ht_app::create_window_clipboard()
 {
-	ht_window *w=get_window_by_type(AWT_CLIPBOARD);
+	ht_window *w = get_window_by_type(AWT_CLIPBOARD);
 	if (w) {
 		focus(w);
 		return w;
@@ -2010,7 +2013,7 @@ ht_window *ht_app::create_window_help(char *file, char *node)
 
 ht_window *ht_app::create_window_project()
 {
-	ht_window *w=get_window_by_type(AWT_PROJECT);
+	ht_window *w = get_window_by_type(AWT_PROJECT);
 	if (w) {
 		focus(w);
 		return w;
@@ -2290,14 +2293,12 @@ ObjHandle ht_app::get_window_listindex(ht_window *window)
 void ht_app::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-#ifdef SYS_SUPPORT_NATIVE_CLIPBOARD
 		case cmd_edit_copy_native: {
-			int dz = sys_get_native_clipboard_data_size();
+			int dz = sys_native_clipboard_get_size();
 			if (dz) {
 				void *data = smalloc(dz);
-				if (sys_read_data_from_native_clipboard(data, dz)) {
-					dz = strlen((char*)data);
-					clipboard_copy(SYS_NATIVE_CLIPBOARD_NAME, data, dz);
+				if ((dz = sys_native_clipboard_read(data, dz))) {
+					clipboard_copy(sys_native_clipboard_name(), data, dz);
 				}
 				free(data);
 			}
@@ -2308,11 +2309,10 @@ void ht_app::handlemsg(htmsg *msg)
 			byte *buf = (byte*)smalloc(maxsize);
 			int r = clipboard_paste(buf, maxsize);
 			if (r) {
-				sys_write_data_to_native_clipboard(buf, r);
+				sys_native_clipboard_write(buf, r);
 			}
 			free(buf);
 		}
-#endif
 		case cmd_file_save: {
 			ObjHandle oh = get_window_listindex((ht_window*)battlefield->current);
 			ht_app_window_entry *e = (ht_app_window_entry*)windows->get(oh);
