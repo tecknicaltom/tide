@@ -954,9 +954,9 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Meta_V:
 			case K_Shift_Insert: {
-				int maxsize=MIN(*maxtextlen-*textlen, (int)clipboard_getsize());
-				byte *buf=(byte*)malloc(maxsize);
-				int r=clipboard_paste(buf, maxsize);
+				int maxsize = MIN(*maxtextlen-*textlen, (int)clipboard_getsize());
+				byte *buf = (byte*)malloc(maxsize);
+				int r = clipboard_paste(buf, maxsize);
 				if (r) {
 					for (int i=0; i<r; i++) {
 						setbyte(buf[r-i-1]);
