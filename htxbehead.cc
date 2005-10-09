@@ -200,11 +200,11 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	ht_xbe_header_viewer *v=new ht_xbe_header_viewer();
 	v->init(b, DESC_XBE_HEADER, VC_EDIT | VC_SEARCH, file, group);
 
-	register_atom(ATOM_XBE_INIT_FLAGS, xbe_init_flags);
-	register_atom(ATOM_XBE_SECTION_FLAGS, xbe_section_flags);
-	register_atom(ATOM_XBE_MEDIA_FLAGS, xbe_media_flags);
-	register_atom(ATOM_XBE_REGION, xbe_region_codes);
-	register_atom(ATOM_XBE_LIBRARY_FLAGS, xbe_library_flags);
+	registerAtom(ATOM_XBE_INIT_FLAGS, xbe_init_flags);
+	registerAtom(ATOM_XBE_SECTION_FLAGS, xbe_section_flags);
+	registerAtom(ATOM_XBE_MEDIA_FLAGS, xbe_media_flags);
+	registerAtom(ATOM_XBE_REGION, xbe_region_codes);
+	registerAtom(ATOM_XBE_LIBRARY_FLAGS, xbe_library_flags);
 
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs;
