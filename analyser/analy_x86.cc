@@ -94,6 +94,16 @@ void AddressX86Flat32::getFromCPUAddress(CPU_ADDR *ca)
 	addr = ca->addr32.offset;
 }
 
+bool AddressX86Flat32::getFromUInt64(uint64 u)
+{
+	if (u <= 0xffffffff) {
+		addr = u;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void AddressX86Flat32::load(ObjectStream &s)
 {
 	GET_INT32X(s, addr);
@@ -117,6 +127,12 @@ void AddressX86Flat32::putIntoArray(byte *array) const
 void AddressX86Flat32::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.offset = addr;
+}
+
+bool AddressX86Flat32::putIntoUInt64(uint64 &u) const
+{
+	u = addr;
+	return true;
 }
 
 void AddressX86Flat32::store(ObjectStream &s) const
@@ -219,6 +235,11 @@ void AddressX86_1632::getFromCPUAddress(CPU_ADDR *ca)
 	addr = ca->addr32.offset;
 }
 
+bool AddressX86_1632::getFromUInt64(uint64 u)
+{
+	return false;
+}
+
 void AddressX86_1632::load(ObjectStream &s)
 {
 	GET_INT16X(s, seg);
@@ -245,6 +266,11 @@ void AddressX86_1632::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.seg = seg;
 	ca->addr32.offset = addr;
+}
+
+bool AddressX86_1632::putIntoUInt64(uint64 &u) const
+{
+	return false;
 }
 
 void AddressX86_1632::store(ObjectStream &s) const
@@ -346,6 +372,11 @@ void AddressX86_1616::getFromArray(const byte *array)
 	UNALIGNED_MOVE(seg, *(uint16*)(array+sizeof addr));
 }
 
+bool AddressX86_1616::getFromUInt64(uint64 u)
+{
+	return false;
+}
+
 void AddressX86_1616::getFromCPUAddress(CPU_ADDR *ca)
 {
 	seg = ca->addr32.seg;
@@ -378,6 +409,11 @@ void AddressX86_1616::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 	ca->addr32.seg = seg;
 	ca->addr32.offset = addr;
+}
+
+bool AddressX86_1616::putIntoUInt64(uint64 &u) const
+{
+	return false;
 }
 
 void AddressX86_1616::store(ObjectStream &s) const
