@@ -34,11 +34,11 @@
 
 #define ds_normal			0
 #define ds_term_ok			1
-#define ds_term_cancel		2
+#define ds_term_cancel			2
 
-#define button_cancel		0
+#define button_cancel			0
 #define button_ok			1
-#define button_yes            button_ok
+#define button_yes			button_ok
 #define button_no			2
 #define button_skip			button_no
 #define button_all			3
@@ -62,7 +62,7 @@ protected:
 	virtual	char *defaultpalette();
 			ht_queued_msg *dequeuemsg();
 public:
-			ht_dialog();
+			ht_dialog() {};
 			ht_dialog(BuildCtorArg&);
 		void	init(Bounds *b, const char *desc, uint framestyle);
 	virtual	void	done();
