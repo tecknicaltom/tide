@@ -68,7 +68,8 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_PEF, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_pef");
 
-	LOG("%s: PEF: found header at %08x", file->get_filename(), header_ofs);
+	String fn;
+	LOG("%y: PEF: found header at %08qx", &file->getFilename(fn), header_ofs);
 
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)malloc(sizeof(ht_pef_shared_data));
 	memset(pef_shared, 0, sizeof *pef_shared);
@@ -78,11 +79,10 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	pef_shared->byte_order = big_endian;
 	pef_shared->header_ofs = 0;
 
-	pef_shared->imports.funcs = new ht_clist();
+	pef_shared->imports.funcs = new Array(true);
 	pef_shared->imports.funcs->init();
 
-	pef_shared->imports.libs = new ht_clist();
-	pef_shared->imports.libs->init();
+	pef_shared->imports.libs = new Array(true);
 
 	pef_shared->v_imports = NULL;
 	
@@ -129,14 +129,8 @@ void ht_pef::done()
 	ht_format_group::done();
 	
 	ht_pef_shared_data *pef_shared = (ht_pef_shared_data*)shared_data;
-	if (pef_shared->imports.funcs) {
-		pef_shared->imports.funcs->destroy();
-		delete pef_shared->imports.funcs;
-	}
-	if (pef_shared->imports.libs) {
-		pef_shared->imports.libs->destroy();
-		delete pef_shared->imports.libs;
-	}
+	delete pef_shared->imports.funcs;
+	delete pef_shared->imports.libs;
 	free(shared_data);
 }
 
@@ -267,13 +261,13 @@ class ht_pef_reloc_file: public ht_reloc_file {
 protected:
 	ht_pef_shared_data *data;
 /* overwritten */
-	virtual void	reloc_apply(ht_data *reloc, byte *data);
-	virtual bool	reloc_unapply(ht_data *reloc, byte *data);
+	virtual void	reloc_apply(Object *reloc, byte *data);
+	virtual bool	reloc_unapply(Object *reloc, byte *data);
 public:
 
-void init(File *s, bool own_s, ht_pef_shared_data *d)
+ht_pef_reloc_file(File *s, bool own_s, ht_pef_shared_data *d)
+	:ht_reloc_file(s, own_s)
 {
-	ht_reloc_file::init(s, own_s);
 	data = d;
 }
 
