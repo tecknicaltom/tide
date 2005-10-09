@@ -37,6 +37,10 @@
 /*
  *	CLASS ht_textfile
  */
+ht_textfile::ht_textfile(File *file, bool own_file)
+	: FileLayer(file, own_file)
+{
+}
 
 /*
  *	CLASS ht_layer_textfile
