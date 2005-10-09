@@ -90,7 +90,8 @@ String &IOException::reason(String &result) const
  *	EOFException
  */
 EOFException::EOFException()
-{
+	: IOException(0)
+{	
 }
 
 String &EOFException::reason(String &result) const
