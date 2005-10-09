@@ -62,12 +62,14 @@ format_viewer_if htmacho_if = {
 /*
  *	CLASS ht_macho
  */
-void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, endianess image_endianess)
+void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess image_endianess)
 {
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_MACHO, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_macho");
 
-	LOG("%s: Mach-O: found header at %08x", file->get_filename(), header_ofs);
+	String fn;
+	file->getFilename(fn);
+	LOG("%y: Mach-O: found header at %08qx", &fn, header_ofs);
 	
 	ht_macho_shared_data *macho_shared=(ht_macho_shared_data *)malloc(sizeof(ht_macho_shared_data));
 
