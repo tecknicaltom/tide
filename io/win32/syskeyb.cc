@@ -334,7 +334,7 @@ ht_key keyb_getkey()
 	return k;
 }
 
-bool initKeyb()
+bool init_keyb()
 {
 	gInputHandle = GetStdHandle(STD_INPUT_HANDLE);
 	SetConsoleMode(gInputHandle, 0); //ENABLE_PROCESSED_INPUT);
@@ -355,7 +355,7 @@ bool initKeyb()
 	return true;
 }
 
-void doneKeyb()
+void done_keyb()
 {
 #ifdef KEY_DEBUG
 	fclose(kd);
