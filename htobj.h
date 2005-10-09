@@ -330,7 +330,7 @@ class ht_text: public ht_view {
 public:
 /* new */
 		ht_text() {}
-		ht_text(BuildCtorArg&);
+		ht_text(BuildCtorArg&) {};
 	virtual	void settext(const char *text);
 };
 
