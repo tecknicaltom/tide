@@ -64,7 +64,7 @@ void	ObjectStreamInter::getObject(Object *&object, const char *name, ObjectID id
 		}
 	}
 	object_builder build = (object_builder)getAtomValue(id);
-	if (!build) throw new ObjectNotRegisteredException(id);
+	if (!build) throw ObjectNotRegisteredException(id);
 	object = build();
 	object->load(*this);
 }
@@ -76,7 +76,7 @@ void	ObjectStreamInter::putObject(const Object *object, const char *name, Object
 			PUTX_INT32X(*this, 0, "id");
 			return;
 		} else {
-			throw new IllegalArgumentException(HERE);
+			throw IllegalArgumentException(HERE);
 		}
 	}
 	if (id == OBJID_INVALID) {
@@ -93,7 +93,7 @@ void	ObjectStreamInter::putObject(const Object *object, const char *name, Object
 	}
 	object_builder build = (object_builder)getAtomValue(id);
 	if (!build) {
-		throw new ObjectNotRegisteredException(id);
+		throw ObjectNotRegisteredException(id);
 	}
 	object->store(*this);
 }
@@ -457,7 +457,7 @@ void	ObjectStreamText::setSyntaxError()
 // FIXME: errorline still usable ?
 	if (!errorline) {
 		errorline = line;
-		throw new TextSyntaxError(line);
+		throw TextSyntaxError(line);
 	}
 }
 
@@ -583,7 +583,7 @@ uint64 ObjectStreamNative::getInt(uint size, const char *desc)
 			return i;
 		}
 	}
-	throw new IllegalArgumentException(HERE);
+	throw IllegalArgumentException(HERE);
 }
 
 void ObjectStreamNative::getObject(Object *&object, const char *name, ObjectID id)
@@ -648,7 +648,7 @@ void	ObjectStreamNative::putInt(uint64 i, uint size, const char *desc, uint int_
 			return;
 		}
 	}
-	throw new IllegalArgumentException(HERE);
+	throw IllegalArgumentException(HERE);
 }
 
 void ObjectStreamNative::putObject(const Object *object, const char *name, ObjectID id)
