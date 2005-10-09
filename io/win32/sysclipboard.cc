@@ -3,7 +3,7 @@
  *	clipboard.cc - Win32-specific (windows-)clipboard functions
  *
  *	Copyright (C) 1999-2003 Sebastian Biallas (sb@biallas.net)
- *	Copyright (C) 1999-2002 Stefan Weyergraf (stefan@weyergraf.de)
+ *	Copyright (C) 1999-2002 Stefan Weyergraf
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -23,7 +23,7 @@
 #include <windows.h>
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
-bool sys_write_data_to_native_clipboard(const void *data, int size)
+bool sys_native_clipboard_write(const void *data, int size)
 {
 	// FIXME:
 	if (!OpenClipboard(0)) return false;
@@ -31,7 +31,7 @@ bool sys_write_data_to_native_clipboard(const void *data, int size)
         hdata = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, size);
         if (hdata) {
         	void *ptr = GlobalLock(hdata);
-        	memmove(ptr, data, size);
+        	memcpy(ptr, data, size);
         	GlobalUnlock(hdata);
 	        if (SetClipboardData(CF_OEMTEXT, hdata)) {
 			CloseClipboard();
@@ -42,24 +42,39 @@ bool sys_write_data_to_native_clipboard(const void *data, int size)
        	return false;
 }
 
-int sys_get_native_clipboard_data_size()
+int sys_native_clipboard_get_size()
 {
-	return 0;
+	if (!OpenClipboard(NULL)) return false;
+	HANDLE h = GetClipboardData(CF_OEMTEXT);
+	int len = 0;
+	if (h) {
+		void *mem = GlobalLock(h);
+		len = strlen((char*)mem);
+		GlobalUnlock(h);		
+	}
+	CloseClipboard();
+	return len;
 }
 
-bool sys_read_data_from_native_clipboard(void *data, int max_size)
+int sys_native_clipboard_read(void *data, int max_size)
 {
 	if (!OpenClipboard(0)) return false;
         HANDLE hdata = GetClipboardData(CF_OEMTEXT);
         if (!hdata) {        	
 		CloseClipboard();
-		return false;
+		return 0;
         }
 	int size = GlobalSize(hdata);
 	void *ptr = GlobalLock(hdata);
-	memmove(data, ptr, MIN(size, max_size));
+	int r = MIN(size, max_size);
+	memcpy(data, ptr, r);
 	GlobalUnlock(hdata);
 	CloseClipboard();
-	return true;
+	return r;
+}
+
+const char *sys_native_clipboard_name()
+{
+	return "Windows Clipboard";
 }
 
