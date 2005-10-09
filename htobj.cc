@@ -105,12 +105,12 @@ void ht_view::init(Bounds *b, int o, const char *d)
 	prev = NULL;
 	next = NULL;
 	setoptions(o);
-	buf = 0;
+	buf = NULL;
 	enabled = true;
 
 	growmode = MK_GM(GMH_LEFT, GMV_TOP);
 	
-	Bounds rel(0, 0, b->w - b->x, b->h - b->y);
+	Bounds rel(0, 0, b->w, b->h);
 	if (options & VO_OWNBUFFER) {
 		buf = new BufferedRDisplay(rel);
 		enable_buffering();
@@ -298,7 +298,7 @@ void ht_view::disable_buffering()
 {
 	if (options & VO_OWNBUFFER) {
 		delete buf;
-		Bounds rel(0, 0, size.w - size.x, size.h - size.y);
+		Bounds rel(0, 0, size.w, size.h);
 		buf = new SystemRDisplay(screen, rel);
 		setoptions(options & ~VO_OWNBUFFER);
 	}
@@ -317,7 +317,7 @@ void ht_view::enable_buffering()
 {
 	if (!(options & VO_OWNBUFFER)) {
 		delete buf;
-		Bounds rel(0, 0, size.w - size.x, size.h - size.y);
+		Bounds rel(0, 0, size.w, size.h);
 		buf = new BufferedRDisplay(rel);
 		setoptions(options | VO_OWNBUFFER);
 	}
@@ -672,7 +672,7 @@ void ht_view::setbounds(Bounds *b)
 void ht_view::setvisualbounds(Bounds *b)
 {
 	vsize = *b;
-	Bounds rel(0, 0, b->w - b->x, b->h - b->y);
+	Bounds rel(0, 0, b->w, b->h);
 	buf->setBounds(rel);
 }
 
