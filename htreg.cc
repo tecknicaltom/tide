@@ -272,6 +272,11 @@ ht_registry_node::~ht_registry_node()
 	free(name);
 }
 
+int ht_registry_node::compareTo(const Object *o) const
+{
+	return strcmp(name, ((ht_registry_node*)o)->name);
+}
+
 void ht_registry_node::load(ObjectStream &f)
 {
 	GET_INT32X(f, type);
