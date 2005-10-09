@@ -97,6 +97,11 @@ OutLine *OutAddr::getLine(int i)
 	return (OutLine*) (*lines)[i];
 }
 
+int OutAddr::compareTo(const Object *o) const
+{
+	return addr->compareTo(((OutAddr*)o)->addr);
+}
+
 void OutAddr::updateTime(uint Time)
 {
 	time = Time;
