@@ -33,7 +33,7 @@ public:
 	File		*file;
 	Area			*validarea;
 
-				MachoAnalyser();
+				MachoAnalyser() {};
 				MachoAnalyser(BuildCtorArg&);
 		void		init(ht_macho_shared_data *macho_shared, File *File);
 		void		load(ObjectStream &f);
