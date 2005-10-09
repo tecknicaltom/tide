@@ -25,9 +25,9 @@
 #include "stream.h"
 
 #if defined(WIN32) || defined(__WIN32__) || defined(MSDOS) || defined(DJGPP)
-#define SYSTEM_CONFIG_FILE_NAME "ht.cfg"
+#define SYSTEM_CONFIG_FILE_NAME "ht_neu.cfg"
 #else
-#define SYSTEM_CONFIG_FILE_NAME ".htcfg"
+#define SYSTEM_CONFIG_FILE_NAME ".htcfg_neu"
 #endif
 
 enum loadstore_result {
