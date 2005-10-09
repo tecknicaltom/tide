@@ -896,7 +896,9 @@ bool init_registry()
 	ConstMemMapFile f(default_reg, sizeof default_reg);
 	ObjectStreamBin o(&f, false);
 
-	GET_OBJECT(o, registry);
+//	GET_OBJECT(o, registry);
+	registry = new ht_registry;
+	registry->init();
 
 	return true;
 }
