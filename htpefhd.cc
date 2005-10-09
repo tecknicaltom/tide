@@ -140,9 +140,9 @@ ht_view *htpefheader_init(Bounds *b, File *file, ht_format_group *group)
 	m->init(file, 0);
 	char info[128];
 	ht_snprintf(info, sizeof info, "* PEF header at offset %08x", pef_shared->header_ofs);
-	register_atom(ATOM_PEF_ARCH, pef_arch);
-	register_atom(ATOM_PEF_SHARE_KIND, pef_shareKind);
-	register_atom(ATOM_PEF_SECTION_KIND, pef_sectionKind);
+	registerAtom(ATOM_PEF_ARCH, pef_arch);
+	registerAtom(ATOM_PEF_SHARE_KIND, pef_shareKind);
+	registerAtom(ATOM_PEF_SECTION_KIND, pef_sectionKind);
 	m->add_mask(info);
 	m->add_staticmask_ptable(pef_header, pef_shared->header_ofs, true);
 	v->insertsub(m);
