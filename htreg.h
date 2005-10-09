@@ -32,7 +32,7 @@ class ht_registry_data: public Object {
 public:
 /* new */
 		ht_registry_data() {};
-		ht_registry_data(BuildCtorArg&);
+		ht_registry_data(BuildCtorArg&) {};
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
 };
