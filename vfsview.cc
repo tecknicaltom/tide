@@ -102,7 +102,7 @@ static char *format_property[VFSV_FORMAT_PROPERTIES]={
 #define GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt) ((dfmt) & 0x80000000)
 #define GET_DISPLAY_FORMAT_IS_MIN_SIZE(dfmt) (!GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt))
 
-void VfsListbox::init(Bounds *b, ht_list *vl, ht_text *sp)
+void VfsListbox::init(Bounds *b, Container *vl, ht_text *sp)
 {
 	cvfs = NULL;
 	show_pos = sp;
@@ -137,8 +137,8 @@ int VfsListbox::changeURL(const char *url)
 		if (pend-url > VFS_PROTO_MAX) return EINVAL;
 		strncpy(protoname, url, pend-url);
 		protoname[pend-url] = 0;
-		for (int i=0; i<c; i++) {
-			Vfs *v = (Vfs*)vfs_list->get(i);
+		for (int i = 0; i < c; i++) {
+			Vfs *v = (Vfs*)(*vfs_list)[i];
 			if (strcmp(protoname, v->getProtoName()) == 0) {
 				newVfs = v;
 				break;
