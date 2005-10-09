@@ -363,11 +363,11 @@ void ht_registry_node_type_desc::store(ObjectStream &f) const
 void ht_registry::init()
 {
 // build registry root
-	AVLTree *s=new AVLTree(true);
-	root=new ht_registry_node(RNT_SUBDIR, "/", new ht_registry_data_stree(s));
+	AVLTree *s = new AVLTree(true);
+	root = new ht_registry_node(RNT_SUBDIR, "/", new ht_registry_data_stree(s));
 
 // build node_types tree
-	node_types=new AVLTree(true);
+	node_types = new AVLTree(true);
 
 	struct bla {
 		char *identifier;
@@ -885,9 +885,9 @@ bool init_registry()
 	registerAtom(ATOM_HT_CREATE_EMPTY_STRING, (void*)create_empty_string);
 	registerAtom(ATOM_HT_CREATE_EMPTY_RAW, (void*)create_empty_raw);
 
-/*
- *	load default registry
- */
+	/*
+	 *	load default registry
+	 */
 	ConstMemMapFile f(default_reg, sizeof default_reg);
 	ObjectStreamBin o(&f, false);
 
