@@ -345,7 +345,7 @@ byte *ht_memmem(const byte *haystack, int haystack_len, const byte *needle, int 
 }
 
 /* common string parsing functions */
-void whitespaces(const char *&str)
+void whitespaces(char *&str)
 {
 	while ((unsigned char)*str<=32) {
 		if (!*str) return;
@@ -353,14 +353,14 @@ void whitespaces(const char *&str)
 	}
 }
 
-void non_whitespaces(const char *&str)
+void non_whitespaces(char *&str)
 {
 	while ((unsigned char)*str>32) {
 		str++;
 	}
 }
 
-bool waitforchar(const char *&str, char b)
+bool waitforchar(char *&str, char b)
 {
 	while (*str != b) {
 		if (!*str) return false;
