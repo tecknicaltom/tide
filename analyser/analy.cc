@@ -43,10 +43,6 @@
 
 int global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 
-Address::Address()
-{
-}
-
 int Address::compareDelinear(Address *obj)
 {
 	return compareTo(obj);
@@ -60,10 +56,6 @@ bool Address::isValid()
 int Address::toString(char *s, int maxlen) const
 {
 	return stringify(s, maxlen, global_analyser_address_string_format);
-}
-
-InvalidAddress::InvalidAddress()
-{
 }
 
 bool InvalidAddress::add(int offset)
@@ -465,10 +457,6 @@ const char *CommentList::getName(uint i)
 /*
  *
  */
-Analyser::Analyser()
-{
-}
-
 void	Analyser::init()
 {
 	active = false;
