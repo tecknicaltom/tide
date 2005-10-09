@@ -20,13 +20,13 @@
  */
 
 #include "atom.h"
-#include "debug.h"
+#include "htdebug.h"
 #include "except.h"
 #include "snprintf.h"
 #include "stream.h"
 #include "strtools.h"
 #include "tools.h"
-#include "system/types.h"
+#include "io/types.h"
 
 #include <cctype>
 #include <cstdarg>
@@ -388,11 +388,21 @@ static bool bnstr2bin(uint64 &u64, const char *&str, int base)
 bool parseIntStr(const char *&str, uint64 &u64, int defaultbase)
 {
 	int base = defaultbase;
-	if ((base == 10) && strncmp("0x", str, 2) == 0) {
+	if (base == 10 && strncmp("0x", str, 2) == 0) {
 		str += 2;
 		base = 16;
 	}
 	return bnstr2bin(u64, str, base);
+}
+
+bool parseIntStr(char *&str, uint64 &u64, int defaultbase)
+{
+	int base = defaultbase;
+	if (base == 10 && strncmp("0x", str, 2) == 0) {
+		str += 2;
+		base = 16;
+	}
+	return bnstr2bin(u64, (const char *&)str, base);
 }
 
 /* hex/string functions */
