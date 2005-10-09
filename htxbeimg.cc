@@ -31,7 +31,8 @@ static ht_view *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
-	LOG("%s: XBE: loading image (starting analyser)...", file->get_filename());
+	String fn;
+	LOG("%y: XBE: loading image (starting analyser)...", &file->getFilename(fn));
 	XBEAnalyser *p = new XBEAnalyser();
 	p->init(xbe_shared, file);
 
@@ -102,7 +103,7 @@ format_viewer_if htxbeimage_if = {
 static int xbe_viewer_func_rva(eval_scalar *result, eval_int *i)
 {
 	ht_xbe_aviewer *aviewer = (ht_xbe_aviewer*)eval_get_context();
-	RVA rva = QWORD_GET_INT(i->value);
+	RVA rva = i->value;
 	viewer_pos p;
 	FileOfs ofs;
 	if (xbe_rva_to_ofs(&aviewer->xbe_shared->sections, rva, &ofs)
@@ -123,8 +124,8 @@ static int xbe_viewer_func_rva(eval_scalar *result, eval_int *i)
 static int xbe_viewer_func_section_int(eval_scalar *result, eval_int *q)
 {
 	ht_xbe_aviewer *aviewer = (ht_xbe_aviewer*)eval_get_context();
-	uint i = QWORD_GET_INT(q->value)-1;
-	if (!QWORD_GET_HI(q->value) && (i >= 0) &&
+	sint64 i = q->value-1;
+	if (i >= 0 &&
 	(i < aviewer->xbe_shared->sections.number_of_sections)) {
 		viewer_pos p;
 		FileOfs ofs;
