@@ -93,17 +93,17 @@ void *LocalFs::enumFiletype(uint *type, char **name, void *handle)
 
 bool LocalFs::findFirst(const char *dirname, pfind_t *f)
 {
-	return (sys_findfirst(*f, dirname)==0);
+	return (sys_findfirst(*f, dirname) == 0);
 }
 
 bool LocalFs::findNext(pfind_t *f)
 {
-	return (sys_findnext(*f)==0);
+	return (sys_findnext(*f) == 0);
 }
 
 bool LocalFs::findClose(pfind_t *f)
 {
-	return (sys_findclose(*f)==0);
+	return (sys_findclose(*f) == 0);
 }
 
 int LocalFs::getCaps()
