@@ -39,6 +39,18 @@ char oidchar(ObjectID oID, int byte)
 	return c;
 }
 
+void putIDComment(ObjectStream &o, uint32 id)
+{
+	char buf[64];
+	char id_str[4];
+	id_str[3] = id&0xff;
+	id_str[2] = (id>>8)&0xff;
+	id_str[1] = (id>>16)&0xff;
+	id_str[0] = (id>>24)&0xff;
+	escape_special(buf, sizeof buf, id_str, 4);
+	o.putComment(buf);
+}
+
 ObjectNotRegisteredException::ObjectNotRegisteredException(ObjectID aID)
 	: MsgfException("Object %x/%c%c%c-%x not registered.", aID,
 	  oidchar(aID, 3), oidchar(aID, 2), oidchar(aID, 1), aID & 0xff)
@@ -81,14 +93,7 @@ void	ObjectStreamInter::putObject(const Object *object, const char *name, Object
 	}
 	if (id == OBJID_INVALID) {
 		id = object->getObjectID();
-		char buf[64];
-		char id_str[4];
-		id_str[3] = id&0xff;
-		id_str[2] = (id>>8)&0xff;
-		id_str[1] = (id>>16)&0xff;
-		id_str[0] = (id>>24)&0xff;
-		escape_special(buf, sizeof buf, id_str, 4);
-		putComment(buf);
+		putIDComment(*this, id);
 		PUTX_INT32X(*this, id, "id");
 	}
 	object_builder build = (object_builder)getAtomValue(id);
@@ -307,15 +312,16 @@ char *ObjectStreamText::getString(const char *desc)
 	skipWhite();
 	if (cur == '"') {
 		String s;
-		do {
-			readChar();
+		readChar();
+		while (cur != '"') {
 			s += cur;
-			if (cur=='\\') {
+			if (cur == '\\') {
 				readChar();
 				s += cur;
 				cur = 0; // hackish
 			}
-		} while (cur != '"');
+			readChar();
+		}
 		readChar();
 		s.unescape();
 		return s.grabContentChar();
@@ -332,15 +338,16 @@ byte *ObjectStreamText::getLenString(int &len, const char *desc)
 	skipWhite();
 	if (cur == '"') {
 		String s;
-		do {
-			readChar();
+		readChar();
+		while (cur != '"') {
 			s += cur;
 			if (cur == '\\') {
 				readChar();
 				s += cur;
 				cur = 0; // hackish
 			}
-		} while (cur != '"');
+			readChar();
+		}
 		readChar();
 		s.unescape();
 		len = s.length();
