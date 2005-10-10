@@ -49,18 +49,18 @@
 
 void bounds_and(Bounds *a, Bounds *b)
 {
-	if (b->x>a->x) {
-		a->w-=b->x-a->x;
-		a->x=b->x;
+	if (b->x > a->x) {
+		a->w -= b->x-a->x;
+		a->x = b->x;
 	}
-	if (b->y>a->y) {
-		a->h-=b->y-a->y;
-		a->y=b->y;
+	if (b->y > a->y) {
+		a->h -= b->y-a->y;
+		a->y = b->y;
 	}
-	if (a->x+a->w>b->x+b->w) a->w-=a->x+a->w-b->x-b->w;
-	if (a->y+a->h>b->y+b->h) a->h-=a->y+a->h-b->y-b->h;
-	if (a->w<0) a->w=0;
-	if (a->h<0) a->h=0;
+	if (a->x + a->w > b->x+b->w) a->w -= a->x + a->w - b->x - b->w;
+	if (a->y + a->h > b->y+b->h) a->h -= a->y + a->h - b->y - b->h;
+	if (a->w < 0) a->w = 0;
+	if (a->h < 0) a->h = 0;
 }
 
 void put_bounds(ObjectStream &s, Bounds *b)
@@ -73,8 +73,8 @@ void put_bounds(ObjectStream &s, Bounds *b)
 
 void clearmsg(htmsg *msg)
 {
-	msg->msg=msg_empty;
-	msg->type=mt_empty;
+	msg->msg = msg_empty;
+	msg->type = mt_empty;
 }
 
 /*
@@ -94,14 +94,11 @@ void ht_view::init(Bounds *b, int o, const char *d)
 	Object::init();
 	VIEW_DEBUG_NAME("ht_view");
 	desc = ht_strdup(d);
-	group = 0;
-	focused = 0;
+	group = NULL;
+	focused = false;
 	browse_idx = 0;
 	view_is_dirty = true;
-	size.x = 0;
-	size.y = 0;
-	size.w = 0;
-	size.h = 0;
+	size = *b;
 	prev = NULL;
 	next = NULL;
 	setoptions(o);
@@ -110,13 +107,11 @@ void ht_view::init(Bounds *b, int o, const char *d)
 
 	growmode = MK_GM(GMH_LEFT, GMV_TOP);
 	
-	Bounds rel(0, 0, b->w, b->h);
+//	Bounds rel(0, 0, b->w, b->h);
 	if (options & VO_OWNBUFFER) {
-		buf = new BufferedRDisplay(rel);
-		enable_buffering();
+		buf = new BufferedRDisplay(size);
 	} else {
-		buf = new SystemRDisplay(screen, rel);
-		disable_buffering();
+		buf = new SystemRDisplay(screen, size);
 	}
 
 	g_hdist = 0;
@@ -247,7 +242,7 @@ void ht_view::cleanview()
 
 void ht_view::clear(int c)
 {
-	buf->fill(0, 0, vsize.w, vsize.h, c, ' ');
+	buf->fill(0, 0, size.w, size.h, c, ' ');
 }
 
 void ht_view::clipbounds(Bounds *b)
@@ -298,8 +293,8 @@ void ht_view::disable_buffering()
 {
 	if (options & VO_OWNBUFFER) {
 		delete buf;
-		Bounds rel(0, 0, size.w, size.h);
-		buf = new SystemRDisplay(screen, rel);
+//		Bounds rel(0, 0, size.w, size.h);
+		buf = new SystemRDisplay(screen, size);
 		setoptions(options & ~VO_OWNBUFFER);
 	}
 }
@@ -317,8 +312,8 @@ void ht_view::enable_buffering()
 {
 	if (!(options & VO_OWNBUFFER)) {
 		delete buf;
-		Bounds rel(0, 0, size.w, size.h);
-		buf = new BufferedRDisplay(rel);
+//		Bounds rel(0, 0, size.w, size.h);
+		buf = new BufferedRDisplay(size);
 		setoptions(options | VO_OWNBUFFER);
 	}
 }
@@ -328,9 +323,9 @@ bool view_line_exposed(ht_view *v, int y, int x1, int x2)
 	ht_group *g=v->group;
 	while (g) {
 		if (y >= g->size.y && y < g->size.y+g->size.h) {
-			if (x1<g->size.x) x1 = g->size.x;
-			if (x2>g->size.x + g->size.w) x2=g->size.x+g->size.w;
-			ht_view *n=g->first;
+			if (x1 < g->size.x) x1 = g->size.x;
+			if (x2 > g->size.x + g->size.w) x2 = g->size.x+g->size.w;
+			ht_view *n = g->first;
 			while (n && n!=v) n=n->next;
 			if (n) {
 				n=n->next;
@@ -377,7 +372,7 @@ ht_view *ht_view::enum_next(int *handle)
 bool ht_view::exposed()
 {
 #if 1
-	for (int y=0; y<size.h; y++) {
+	for (int y=0; y < size.h; y++) {
 		if (view_line_exposed(this, size.y+y, size.x, size.x+size.w)) return 1;
 	}
 	return 0;
@@ -388,18 +383,14 @@ bool ht_view::exposed()
 
 void ht_view::fill(int x, int y, int w, int h, int c, char chr, Codepage cp)
 {
-	Bounds b;
-	b.x=size.x+x;
-	b.y=size.y+y;
-	b.w=w;
-	b.h=h;
+	Bounds b(x+size.x, y+size.y, w, h);
 	bounds_and(&b, &vsize);
-	buf->fill(b.x, b.y, b.w, b.h, c, chr, cp);
+	buf->fill(b.x-size.x, b.y-size.y, b.w, b.h, c, chr, cp);
 }
 
 int ht_view::focus(ht_view *view)
 {
-	if (view==this) {
+	if (view == this) {
 		if (!focused) receivefocus();
 		return 1;
 	}
@@ -408,7 +399,7 @@ int ht_view::focus(ht_view *view)
 
 void ht_view::getbounds(Bounds *b)
 {
-	*b=size;
+	*b = size;
 }
 
 vcp ht_view::getcolor(uint index)
@@ -538,7 +529,7 @@ void ht_view::move(int rx, int ry)
 	size.x += rx;
 	size.y += ry;
 	buf->move(rx, ry);
-	vsize=size;
+	vsize = size;
 	if (group) group->clipbounds(&vsize);
 	app->clipbounds(&vsize);
 }
@@ -550,13 +541,15 @@ ObjectID ht_view::getObjectID() const
 
 int ht_view::pointvisible(int x, int y)
 {
-	return ((x>=vsize.x) && (y>=vsize.y) && (x<vsize.x+vsize.w) && (y<vsize.y+vsize.h));
+	x += size.x;
+	y += size.y;
+	return (x >= vsize.x && y >= vsize.y && x < vsize.x+vsize.w && y < vsize.y+vsize.h);
 }
 
 void ht_view::receivefocus()
 {
 	dirtyview();
-	focused=1;
+	focused = true;
 }
 
 void ht_view::redraw()
@@ -578,8 +571,8 @@ void ht_view::redraw()
 void ht_view::resize(int sx, int sy)
 {
 	if (options & VO_RESIZE) {
-		if (size.w+sx <= 0) sx=-size.w+1;
-		if (size.h+sy <= 0) sy=-size.h+1;
+		if (size.w+sx <= 0) sx =- size.w+1;
+		if (size.h+sy <= 0) sy =- size.h+1;
 		size.w += sx;
 		size.h += sy;
 		buf->resize(sx, sy);
@@ -672,13 +665,13 @@ void ht_view::setbounds(Bounds *b)
 void ht_view::setvisualbounds(Bounds *b)
 {
 	vsize = *b;
-	Bounds rel(0, 0, b->w, b->h);
-	buf->setBounds(rel);
+//	Bounds rel(0, 0, b->w, b->h);
+	buf->setBounds(*b);
 }
 
 void ht_view::setcursor(int x, int y, CursorMode c)
 {
-	if (pointvisible(size.x+x, size.y+y)) {
+	if (pointvisible(x, y)) {
 		screen->setCursor(size.x+x, size.y+y);
 		screen->setCursorMode(c);
 	} else {
@@ -1008,16 +1001,16 @@ void ht_group::insert(ht_view *view)
 	view->move(c.x, c.y);
 
 	if (last) last->next=view;
-	view->prev=last;
-	view->next=0;
-	last=view;
-	if (!first) first=view;
+	view->prev = last;
+	view->next = NULL;
+	last = view;
+	if (!first) first = view;
 	view->setgroup(this);
-	view->browse_idx=view_count++;
-	if ((!current) || ((current) && (!(current->options & VO_SELECTABLE)) && (view->options & VO_SELECTABLE))) {
-		current=view;
+	view->browse_idx = view_count++;
+	if (!current || (current && (!(current->options & VO_SELECTABLE)) && (view->options & VO_SELECTABLE))) {
+		current = view;
 	}
-	if ((current) && (current->options & VO_SELECTABLE)) {
+	if (current && (current->options & VO_SELECTABLE)) {
 		if (focused) {
 			focus(current);
 		} else {
@@ -1028,20 +1021,20 @@ void ht_group::insert(ht_view *view)
 
 int ht_group::isaclone(ht_view *view)
 {
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
-		if ((v!=view) && (v->countselectables())) return 0;
-		v=v->next;
+		if (v != view && v->countselectables()) return 0;
+		v = v->next;
 	}
 	return 1;
 }
 
 int ht_group::isviewdirty()
 {
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
 		if (v->isviewdirty()) return 1;
-		v=v->next;
+		v = v->next;
 	}
 	return 0;
 }
@@ -1053,10 +1046,10 @@ void ht_group::load(ObjectStream &f)
 void ht_group::move(int rx, int ry)
 {
 	ht_view::move(rx, ry);
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
 		v->move(rx, ry);
-		v=v->next;
+		v = v->next;
 	}
 }
 
