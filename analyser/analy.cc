@@ -1282,7 +1282,7 @@ Location *Analyser::enumLocations(Address *Addr)
 {
 	Location *result = NULL;
 	if (locations) analyserenum_addrs(locations, Addr, result);
-	while ((result) && (result->flags & AF_DELETED)) {
+	while (result && (result->flags & AF_DELETED)) {
 		Address *a = result->addr;
 		result = NULL;
 		analyserenum_addrs(locations, a, result);
