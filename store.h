@@ -141,4 +141,6 @@ public:
 	virtual void		putLenString(const byte *string, int length, const char *desc);
 };
 
+void putIDComment(ObjectStream &o, uint32 id);
+
 #endif
