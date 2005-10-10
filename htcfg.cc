@@ -94,7 +94,8 @@ loadstore_result save_systemconfig()
 		char q[16];
 
 		int system_ostream_type = get_config_dword("misc/config format");
-	
+	        system_ostream_type =object_stream_txt;
+
 		sprintf(q, "%04x", ht_systemconfig_fileversion);
 		memcpy(h.version, q, sizeof h.version);
 
