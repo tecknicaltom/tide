@@ -277,7 +277,7 @@ void ht_menu::draw()
 		ht_context_menu *c = get_context_menu(i);
 		char *n = c->get_name();
 		char *s = c->get_shortcut();
-		if (i==curmenu) {
+		if (i == curmenu) {
 			buf->printChar(c->xpos-1, 0, getcolor(palidx_generic_text_selected), ' ');
 			buf->print(c->xpos, 0, getcolor(palidx_generic_text_selected), n);
 			buf->printChar(c->xpos+strlen(n), 0, getcolor(palidx_generic_text_selected), ' ');
@@ -606,35 +606,35 @@ void ht_context_menu_window_body::draw()
 				break;
 			}
 		}
-		e=context_menu->enum_entry_next();
+		e = context_menu->enum_entry_next();
 	}
 }
 
 void ht_context_menu_window_body::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_keypressed) {
+	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 			case K_Up:
-				selected=prev_selectable(selected);
+				selected = prev_selectable(selected);
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Down:
-				selected=next_selectable(selected);
+				selected = next_selectable(selected);
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Control_PageUp:
 			case K_PageUp:
 			case K_Home:
-				selected=next_selectable(-1);
+				selected = next_selectable(-1);
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Control_PageDown:
 			case K_PageDown:
 			case K_End:
-				selected=prev_selectable(0);
+				selected = prev_selectable(0);
 				dirtyview();
 				clearmsg(msg);
 				return;
@@ -677,23 +677,23 @@ int ht_context_menu_window_body::next_selectable(int to)
 	if (s>c-1) s=0;
 	while (s!=to) {
 		ht_context_menu_entry *e=context_menu->get_entry(s);
-		if ((e->type == CME_ENTRY) || (e->type == CME_SUBMENU)) return s;
+		if (e->type == CME_ENTRY || e->type == CME_SUBMENU) return s;
 		s++;
-		if (s>c-1) s=0;
+		if (s > c-1) s=0;
 	}
 	return to;
 }
 
 int ht_context_menu_window_body::prev_selectable(int to)
 {
-	int s=to-1;
-	int c=context_menu->count();
-	if (s<0) s=c-1;
-	while (s!=to) {
+	int s = to-1;
+	int c = context_menu->count();
+	if (s < 0) s = c-1;
+	while (s != to) {
 		ht_context_menu_entry *e=context_menu->get_entry(s);
-		if ((e->type == CME_ENTRY) || (e->type == CME_SUBMENU)) return s;
+		if (e->type == CME_ENTRY || e->type == CME_SUBMENU) return s;
 		s--;
-		if (s<0) s=c-1;
+		if (s < 0) s = c-1;
 	}
 	return to;
 }
@@ -740,7 +740,7 @@ void ht_menu_window::getdata(ObjectStream &s)
 
 void ht_menu_window::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_button_pressed) {
+	if (msg->msg == msg_button_pressed) {
 		switch (msg->data1.integer) {
 			case button_ok: {
 				ht_menu_window_data a;
@@ -789,7 +789,7 @@ void ht_menu_window_body::done()
 
 void ht_menu_window_body::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_keypressed) {
+	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 			case K_Left:
 				((ht_dialog*)baseview)->setstate(ds_term_ok, button_left);
