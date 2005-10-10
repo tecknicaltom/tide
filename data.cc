@@ -35,6 +35,7 @@
 #include "htdebug.h"
 #include "snprintf.h"
 #include "stream.h"
+#include "store.h"
 
 int autoCompare(const Object *a, const Object *b)
 {
@@ -361,15 +362,19 @@ void Array::load(ObjectStream &s)
 	own_objects = true;
 
 	GET_INT32D(s, ecount);
-	GET_INT32X(s, hom_objid);
 	acount = 0;
 	elems = NULL;
 	realloc(ecount);
+	if (ecount) {
+		GET_INT32X(s, hom_objid);
 
-	for (uint i=0; i<ecount; i++) {
-		Object *obj;
-		s.getObject(obj, "element", hom_objid);
-		elems[i] = obj;
+		for (uint i=0; i<ecount; i++) {
+			Object *obj;
+			s.getObject(obj, "element", hom_objid);
+			elems[i] = obj;
+		}
+	} else {
+		hom_objid = OBJID_TEMP;	
 	}
 }
 
@@ -381,11 +386,14 @@ ObjectID Array::getObjectID() const
 void Array::store(ObjectStream &s) const
 {
 	PUT_INT32D(s, ecount);
-	PUT_INT32X(s, hom_objid);
+	if (ecount) {
+		assert(hom_objid != OBJID_TEMP);
+		putIDComment(s, hom_objid);
+		PUT_INT32X(s, hom_objid);
 
-	assert((ecount == 0) || (hom_objid != OBJID_TEMP));
-	for (uint i = 0; i<ecount; i++) {
-		s.putObject(elems[i], "element", hom_objid);
+		for (uint i = 0; i<ecount; i++) {
+			s.putObject(elems[i], "element", hom_objid);
+		}
 	}
 }
 
@@ -694,12 +702,15 @@ void SLinkedList::load(ObjectStream &s)
 	ecount = 0;
 	int ecount;
 	GET_INT32D(s, ecount);
-	GET_INT32X(s, hom_objid);
-
-	for (int i=0; i<ecount; i++) {
-		Object *obj;
-		s.getObject(obj, "element", hom_objid);
-		insert(obj);
+	if (ecount) {
+		GET_INT32X(s, hom_objid);
+		for (int i=0; i < ecount; i++) {
+			Object *obj;
+			s.getObject(obj, "element", hom_objid);
+			insert(obj);
+		}
+	} else {
+		hom_objid = OBJID_TEMP;
 	}
 }
 
@@ -711,15 +722,18 @@ ObjectID SLinkedList::getObjectID() const
 void SLinkedList::store(ObjectStream &s) const
 {
 	PUT_INT32D(s, ecount);
-	PUT_INT32X(s, hom_objid);
+	if (ecount) {
+		putIDComment(s, hom_objid);
+		PUT_INT32X(s, hom_objid);
 
-	ObjHandle h = findFirst();
-	assert((h == invObjHandle) || (hom_objid != OBJID_TEMP));
-	while (h != invObjHandle) {
-		Object *o = get(h);
+		ObjHandle h = findFirst();
+		assert(h == invObjHandle || hom_objid != OBJID_TEMP);
+		while (h != invObjHandle) {
+			Object *o = get(h);
 
-		s.putObject(o, "element", hom_objid);
-		h = findNext(h);
+			s.putObject(o, "element", hom_objid);
+			h = findNext(h);
+		}
 	}
 }
 
@@ -993,12 +1007,16 @@ void DLinkedList::load(ObjectStream &s)
 	ecount = 0;
 	int ecount;
 	GET_INT32D(s, ecount);
-	GET_INT32X(s, hom_objid);
+	if (ecount) {
+		GET_INT32X(s, hom_objid);
 
-	for (int i=0; i<ecount; i++) {
-		Object *obj;
-		s.getObject(obj, "element", hom_objid);
-		insert(obj);
+		for (int i=0; i<ecount; i++) {
+			Object *obj;
+			s.getObject(obj, "element", hom_objid);
+			insert(obj);
+		}
+	} else {
+		hom_objid = OBJID_TEMP;
 	}
 }
 
@@ -1010,15 +1028,18 @@ ObjectID DLinkedList::getObjectID() const
 void DLinkedList::store(ObjectStream &s) const
 {
 	PUT_INT32D(s, ecount);
-	PUT_INT32X(s, hom_objid);
+	if (ecount) {
+		putIDComment(s, hom_objid);
+		PUT_INT32X(s, hom_objid);
 
-	ObjHandle h = findFirst();
-	assert((h == invObjHandle) || (hom_objid != OBJID_TEMP));
-	while (h != invObjHandle) {
-		Object *o = get(h);
+		ObjHandle h = findFirst();
+		assert(h == invObjHandle || hom_objid != OBJID_TEMP);
+		while (h != invObjHandle) {
+			Object *o = get(h);
 
-		s.putObject(o, "element", hom_objid);
-		h = findNext(h);
+			s.putObject(o, "element", hom_objid);
+			h = findNext(h);
+		}
 	}
 }
 
@@ -1253,88 +1274,87 @@ BinTreeNode **BinaryTree::findNodePtr(BinTreeNode **nodeptr, const Object *obj) 
 
 BinTreeNode *BinaryTree::findNode(BinTreeNode *node, const Object *obj) const
 {
-	BinTreeNode *x = node;
-	while (x) {
-		int c = compareObjects(x->key, obj);
+	while (node) {
+		int c = compareObjects(node->key, obj);
 		if (c < 0) {
-			x = x->right;
+			node = node->right;
 		} else if (c > 0) {
-			x = x->left;
+			node = node->left;
 		} else break;
 	}
-	return x;
+	return node;
 }
 
 BinTreeNode *BinaryTree::findNodeG(BinTreeNode *node, const Object *obj) const
 {
-	BinTreeNode *x = node;
+	if (!node) return NULL;
 	BinTreeNode *lastGreater = NULL;
-	while (x) {
-		int c = compareObjects(x->key, obj);
+	while (true) {
+		int c = compareObjects(obj, node->key);
 		if (c < 0) {
-			if (!x->right) return lastGreater;
-			x = x->right;
-		} else if (c > 0) {
-			if (!x->left) return x;
-			lastGreater = x;
-			x = x->left;
-		} else return lastGreater;
+			if (!node->left) return node;
+			lastGreater = node;
+			node = node->left;
+		} else {
+			if (!node->right) return lastGreater;
+			node = node->right;
+		}
 	}
-	return NULL;
 }
 
 BinTreeNode *BinaryTree::findNodeGE(BinTreeNode *node, const Object *obj) const
 {
-	BinTreeNode *x = node;
+	if (!node) return NULL;
 	BinTreeNode *lastGreater = NULL;
-	while (x) {
-		int c = compareObjects(x->key, obj);
+	while (true) {
+		int c = compareObjects(obj, node->key);
 		if (c < 0) {
-			if (!x->right) return lastGreater;
-			x = x->right;
+			if (!node->left) return node;
+			lastGreater = node;
+			node = node->left;
 		} else if (c > 0) {
-			if (!x->left) return x;
-			lastGreater = x;
-			x = x->left;
-		} else return x;
+			if (!node->right) return lastGreater;
+			node = node->right;
+		} else {
+			return node;
+		}
 	}
-	return NULL;
 }
 
 BinTreeNode *BinaryTree::findNodeL(BinTreeNode *node, const Object *obj) const
 {
-	BinTreeNode *x = node;
+	if (!node) return NULL;
 	BinTreeNode *lastLower = NULL;
-	while (x) {
-		int c = compareObjects(x->key, obj);
-		if (c < 0) {
-			if (!x->right) return x;
-			lastLower = x;
-			x = x->right;
-		} else if (c > 0) {
-			if (!x->left) return lastLower;
-			x = x->left;
-		} else return lastLower;
+	while (true) {
+		int c = compareObjects(obj, node->key);
+		if (c <= 0) {
+			if (!node->left) return lastLower;
+			node = node->left;
+		} else {
+			if (!node->right) return node;
+			lastLower = node;
+			node = node->right;
+		}
 	}
-	return NULL;
 }
 
 BinTreeNode *BinaryTree::findNodeLE(BinTreeNode *node, const Object *obj) const
 {
-	BinTreeNode *x = node;
+	if (!node) return NULL;
 	BinTreeNode *lastLower = NULL;
-	while (x) {
-		int c = compareObjects(x->key, obj);
+	while (true) {
+		int c = compareObjects(obj, node->key);
 		if (c < 0) {
-			if (!x->right) return x;
-			lastLower = x;
-			x = x->right;
+			if (!node->left) return lastLower;
+			node = node->left;
 		} else if (c > 0) {
-			if (!x->left) return lastLower;
-			x = x->left;
-		} else return x;
+			if (!node->right) return node;
+			lastLower = node;
+			node = node->right;
+		} else {
+			return node;
+		}
 	}
-	return NULL;
 }
 
 void BinaryTree::freeAll(BinTreeNode *n)
@@ -1430,15 +1450,18 @@ void BinaryTree::loadR(ObjectStream &s, BinTreeNode **n, int l, int r)
 void BinaryTree::load(ObjectStream &s)
 {
 	const void *m = getAtomValue(GETX_INT32(s, "comparator"));
-	if (!m) throw MsgException("BinaryTree::load() : invalid 'comparator' !");
+	if (!m) throw MsgException("BinaryTree::load() : invalid comparator!");
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
-	GET_INT32X(s, hom_objid);
 	root = NULL;
 	own_objects = true;
-
-	if (ecount) loadR(s, &root, 0, ecount-1);
+	if (ecount) {
+		GET_INT32X(s, hom_objid);
+		loadR(s, &root, 0, ecount-1);
+	} else {
+		hom_objid = OBJID_TEMP;
+	}
 }
 
 ObjectID BinaryTree::getObjectID() const
@@ -1459,14 +1482,17 @@ void BinaryTree::storeR(ObjectStream &s, BinTreeNode *n) const
 void	BinaryTree::store(ObjectStream &s) const
 {
 	int aId = getAtomId((void*)compare);
-	if (!aId) throw MsgException("BinaryTree::store() : comparator not registered !");
+	if (!aId) throw MsgException("BinaryTree::store() : comparator not registered!");
+	putIDComment(s, aId);
 	PUTX_INT32X(s, aId, "comparator");
 
 	PUT_INT32D(s, ecount);
-	PUT_INT32X(s, hom_objid);
-
-	assert(hom_objid != OBJID_TEMP);
-	storeR(s, root);
+	if (ecount) {
+		assert(hom_objid != OBJID_TEMP);
+		putIDComment(s, hom_objid);
+		PUT_INT32X(s, hom_objid);
+		storeR(s, root);
+	}
 }
 
 uint BinaryTree::count() const
@@ -1763,11 +1789,14 @@ void AVLTree::load(ObjectStream &s)
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
-	GET_INT32X(s, hom_objid);
 	root = NULL;
 	own_objects = true;
-
-	loadR(s, root, 0, ecount-1);
+	if (ecount) {
+		GET_INT32X(s, hom_objid);
+		loadR(s, root, 0, ecount-1);
+	} else {
+		hom_objid = OBJID_TEMP;
+	}
 }
 
 ObjectID AVLTree::getObjectID() const
