@@ -30,7 +30,8 @@ enum Codepage {
 	CP_INVALID = 0,
 	CP_DEVICE,
 	CP_GRAPHICAL,
-	CP_WINDOWS
+	CP_WINDOWS,
+	CP_UNICODE,
 };
 
 /* "graphical" chars (ie. lines, corners and patterns like in ASCII) */
@@ -127,14 +128,14 @@ vcp mixColors(vcp base, vcp layer);
  */
 
 struct AbstractChar {
-	Codepage codepage PACKED;
-	char chr PACKED;
+	Codepage codepage;
+	uint32 chr;
 };
 
 struct AbstractColoredChar {
-	Codepage codepage PACKED;
-	char chr PACKED;
-	vcp color PACKED;
+	Codepage codepage;
+	vcp color;
+	uint32 chr;
 };
 
 enum CursorMode { CURSOR_OFF, CURSOR_NORMAL, CURSOR_BOLD };
