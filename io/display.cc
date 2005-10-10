@@ -39,27 +39,27 @@ inline vc mixSingleColor(vc base, vc layer)
 {
 	if (VC_GET_BASECOLOR(base) > 7) return layer;
 	switch (VC_GET_BASECOLOR(layer)) {
-		case VC_TRANSPARENT_EXCLUSIVE_DOM:
-		case VC_TRANSPARENT_EXCLUSIVE:
-		case VC_TRANSPARENT:	return base;
-		case VC_DARKEN:		return VC_GET_BASECOLOR(base);
-		case VC_LIGHTEN:	return VC_LIGHT(base);
-		case VC_MONOCHROME: {
-			switch (base) {
-			case VC_CYAN:
-			case VC_MAGENTA:
-			case VC_YELLOW:
-			case VC_WHITE:
-				return VC_WHITE;
-			case VC_RED:
-			case VC_BLACK:
-			case VC_BLUE:
-			case VC_GREEN:
-			default:
-				return VC_BLACK;
-			}
+	case VC_TRANSPARENT_EXCLUSIVE_DOM:
+	case VC_TRANSPARENT_EXCLUSIVE:
+	case VC_TRANSPARENT:	return base;
+	case VC_DARKEN:		return VC_GET_BASECOLOR(base);
+	case VC_LIGHTEN:	return VC_LIGHT(base);
+	case VC_MONOCHROME: {
+		switch (base) {
+		case VC_CYAN:
+		case VC_MAGENTA:
+		case VC_YELLOW:
+		case VC_WHITE:
+			return VC_WHITE;
+		case VC_RED:
+		case VC_BLACK:
+		case VC_BLUE:
+		case VC_GREEN:
+		default:
+			return VC_BLACK;
 		}
-		case VC_INVERSE:	return VC_GET_INVERSE(VC_GET_BASECOLOR(base));
+	}
+	case VC_INVERSE:	return VC_GET_INVERSE(VC_GET_BASECOLOR(base));
 	}
 	return layer;
 }
@@ -267,7 +267,7 @@ BufferedRDisplay::~BufferedRDisplay()
 void BufferedRDisplay::fill(int x, int y, int w, int h, vcp color, char chr, Codepage cp)
 {
 	uint rawchar = mapCharToSystemCP(chr, cp);
-	bool transparent = (cp == CP_GRAPHICAL) && (chr == GC_TRANSPARENT);
+	bool transparent = (cp == CP_GRAPHICAL && chr == GC_TRANSPARENT);
 	for (int iy = y; iy < y+h; iy++) {
 		if (iy >= this->h) break;
 		ColoredChar *b = buf+x+ iy * this->w;
@@ -296,7 +296,7 @@ int BufferedRDisplay::nprint(int ix, int iy, vcp color, const char *str, int max
 	ColoredChar *b = buf+ix+ iy * w;
 	if (y < h) {
 		while ((ix+i < w) && (str[i]) && (i<maxstrlen)) {
-			bool transparent = (cp == CP_GRAPHICAL) && (str[i] == GC_TRANSPARENT);
+			bool transparent = (cp == CP_GRAPHICAL && str[i] == GC_TRANSPARENT);
 			if (!transparent) b->rawchar = mapCharToSystemCP(str[i], cp);
 			b->color = mixColors(b->color, color);
 			i++;
@@ -415,7 +415,7 @@ void SystemRDisplay::setCursor(int x, int y, CursorMode mode)
 {
 	x += this->x;
 	y += this->y;
-	system_display->setCursor(x,y,mode);
+	system_display->setCursor(x, y, mode);
 }
 
 void SystemRDisplay::setCursorMode(CursorMode mode)
