@@ -48,22 +48,22 @@ struct pal_layout {
 /* palette layout: tags */
 pal_layout pal_layout_tags[]={
 {palidx_tags_edit_tag_cursor_select,	"edit-tag cursor select"},
-{palidx_tags_edit_tag_cursor_edit,		"edit-tag cursor edit"},
+{palidx_tags_edit_tag_cursor_edit,	"edit-tag cursor edit"},
 {palidx_tags_edit_tag_cursor_unfocused,	"edit-tag cursor unfocused"},
 {palidx_tags_edit_tag_selected,		"edit-tag selected"},
 {palidx_tags_edit_tag_modified,		"edit-tag modified"},
-{palidx_tags_edit_tag,				"edit-tag"},
+{palidx_tags_edit_tag,			"edit-tag"},
 {palidx_tags_sel_tag_cursor_focused,	"sel-tag cursor focused"},
 {palidx_tags_sel_tag_cursor_unfocused,	"sel-tag cursor unfocused"},
-{palidx_tags_sel_tag,				"sel-tag"},
+{palidx_tags_sel_tag,			"sel-tag"},
 {0, NULL}
 };
 
 /* palette layout: generic */
 pal_layout pal_layout_generic[] = {
-{palidx_generic_body,				"body"},
+{palidx_generic_body,			"body"},
 
-{palidx_generic_text_focused,			"text focused"},
+{palidx_generic_text_focused,		"text focused"},
 {palidx_generic_text_unfocused,		"text unfocused"},
 {palidx_generic_text_shortcut,		"text shortcut"},
 {palidx_generic_text_shortcut_selected,	"text shortcut selected"},
@@ -71,57 +71,57 @@ pal_layout pal_layout_generic[] = {
 {palidx_generic_text_disabled,		"text disabled"},
 
 {palidx_generic_frame_focused,		"frame focused"},
-{palidx_generic_frame_unfocused,		"frame unfocused"},
-{palidx_generic_frame_move_resize,		"frame move-resize"},
-{palidx_generic_frame_killer,			"frame killer"},
+{palidx_generic_frame_unfocused,	"frame unfocused"},
+{palidx_generic_frame_move_resize,	"frame move-resize"},
+{palidx_generic_frame_killer,		"frame killer"},
 
-{palidx_generic_scrollbar,			"scrollbar"},
+{palidx_generic_scrollbar,		"scrollbar"},
 
 {palidx_generic_input_focused,		"input focused"},
-{palidx_generic_input_unfocused,		"input unfocused"},
+{palidx_generic_input_unfocused,	"input unfocused"},
 {palidx_generic_input_selected,		"input selected"},
-{palidx_generic_input_clip,			"input clip-chars"},
+{palidx_generic_input_clip,		"input clip-chars"},
 
 {palidx_generic_button_focused,		"button focused"},
-{palidx_generic_button_unfocused,		"button unfocused"},
+{palidx_generic_button_unfocused,	"button unfocused"},
 {palidx_generic_button_shadow,		"button shadow"},
-{palidx_generic_button_shortcut,		"button shortcut"},
+{palidx_generic_button_shortcut,	"button shortcut"},
 
 {palidx_generic_list_focused_selected, 	"list focused & selected"},
 {palidx_generic_list_focused_unselected, "list focused & unselected"},
 {palidx_generic_list_unfocused_selected, "list unfocused & selected"},
 {palidx_generic_list_unfocused_unselected, "list unfocused & unselected"},
 
-{palidx_generic_cluster_focused,		"cluster focused"},
-{palidx_generic_cluster_unfocused,		"cluster unfocused"},
-{palidx_generic_cluster_shortcut,		"cluster shortcut"},
+{palidx_generic_cluster_focused,	"cluster focused"},
+{palidx_generic_cluster_unfocused,	"cluster unfocused"},
+{palidx_generic_cluster_shortcut,	"cluster shortcut"},
 
 {0, NULL}
 };
 
 /* palette layout: syntax */
 pal_layout pal_layout_syntax[] = {
-{palidx_syntax_whitespace,			"whitespace"},
-{palidx_syntax_comment,				"comment"},
-{palidx_syntax_identifier,			"identifier"},
-{palidx_syntax_reserved,				"reserved"},
-{palidx_syntax_intnum,				"integer number"},
-{palidx_syntax_floatnum,				"float number"},
-{palidx_syntax_string,				"string"},
-{palidx_syntax_char,				"character"},
-{palidx_syntax_symbol,				"symbol"},
-{palidx_syntax_preprocess,			"preprocess"},
-{palidx_syntax_meta, 				"meta"}
+{palidx_syntax_whitespace,		"whitespace"},
+{palidx_syntax_comment,			"comment"},
+{palidx_syntax_identifier,		"identifier"},
+{palidx_syntax_reserved,		"reserved"},
+{palidx_syntax_intnum,			"integer number"},
+{palidx_syntax_floatnum,		"float number"},
+{palidx_syntax_string,			"string"},
+{palidx_syntax_char,			"character"},
+{palidx_syntax_symbol,			"symbol"},
+{palidx_syntax_preprocess,		"preprocess"},
+{palidx_syntax_meta, 			"meta"}
 };
 
 /* palette layout: analyser */
 pal_layout pal_layout_analyser[] = {
-{palidx_analyser_default,			"default"},
-{palidx_analyser_comment,			"comment"},
-{palidx_analyser_label,				"label"},
-{palidx_analyser_number,				"number"},
-{palidx_analyser_string,				"string"},
-{palidx_analyser_symbol,				"symbol-character"},
+{palidx_analyser_default,		"default"},
+{palidx_analyser_comment,		"comment"},
+{palidx_analyser_label,			"label"},
+{palidx_analyser_number,		"number"},
+{palidx_analyser_string,		"string"},
+{palidx_analyser_symbol,		"symbol-character"},
 };
 
 /* all layouts */
@@ -134,8 +134,8 @@ struct pal_class {
 pal_class pal_layouts[] =
 {
 {pal_layout_generic,	"generic"},
-{pal_layout_tags,		"tags"},
-{pal_layout_syntax,		"syntax"},
+{pal_layout_tags,	"tags"},
+{pal_layout_syntax,	"syntax"},
 {pal_layout_analyser,	"analyser"},
 {NULL, NULL}
 };
@@ -285,29 +285,29 @@ void palette_entry::store(ObjectStream &f) const
 
 void palette_entry::strvalue(char *buf32bytes)
 {
-	char *p=buf32bytes;
+	char *p = buf32bytes;
 	char *text;
-	int fg=VCP_FOREGROUND(color);
-	int bg=VCP_BACKGROUND(color);
-	if ((fg==VC_TRANSPARENT) && (bg==VC_TRANSPARENT)) {
-		text="transparent";
-		fg=VC_WHITE;
-		bg=VC_BLACK;
-	} else if (fg==VC_TRANSPARENT) {
-		text="fgtrans";
-		fg=VC_WHITE;
-		if (bg==fg) fg=VC_BLACK;
+	int fg = VCP_FOREGROUND(color);
+	int bg = VCP_BACKGROUND(color);
+	if (fg==VC_TRANSPARENT && bg==VC_TRANSPARENT) {
+		text = "transparent";
+		fg = VC_WHITE;
+		bg = VC_BLACK;
+	} else if (fg == VC_TRANSPARENT) {
+		text = "fgtrans";
+		fg = VC_WHITE;
+		if (bg==fg) fg = VC_BLACK;
 	} else if (bg==VC_TRANSPARENT) {
-		text="bgtrans";
-		bg=VC_BLACK;
-		if (bg==fg) fg=VC_WHITE;
+		text = "bgtrans";
+		bg = VC_BLACK;
+		if (bg==fg) fg = VC_WHITE;
 	} else {
 		text="normal";
 	}
-	p=tag_make_color(p, VCP(fg, bg));
-	p+=sprintf(p, text);
-	p=tag_make_default_color(p);
-	*p=0;
+	p = tag_make_color(p, VCP(fg, bg));
+	p += sprintf(p, text);
+	p = tag_make_default_color(p);
+	*p = 0;
 }
 
 ht_registry_data *create_empty_palette_entry()
