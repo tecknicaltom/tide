@@ -657,7 +657,7 @@ int ht_inputfield::insertbyte(byte *pos, byte b)
 
 void ht_inputfield::isetcursor(uint pos)
 {
-	if (pos<(uint)*textlen) *curchar=*text+pos;
+	if (pos < (uint)*textlen) *curchar = *text + pos;
 }
 
 void ht_inputfield::query(byte ***c, byte ***t, byte ***ss, byte ***se, int **tl, int **mtl)
@@ -752,13 +752,13 @@ void ht_strinputfield::draw()
 {
 	int c=focused ? getcolor(palidx_generic_input_focused) :
 		getcolor(palidx_generic_input_unfocused);
-	byte *t=*text+ofs;
-	int l=*textlen-ofs;
-	if (l>size.w) l = size.w;
+	byte *t = *text + ofs;
+	int l = *textlen - ofs;
+	if (l > size.w) l = size.w;
 	int y=0;
 	fill(0, 0, size.w, size.h, c, ' ');
 	if (ofs) buf->printChar(0, y, getcolor(palidx_generic_input_clip), '<');
-	for (int k=0; k<*textlen-ofs; k++) {
+	for (int k=0; k < *textlen-ofs; k++) {
 		if (1+k-y*(size.w-2) > size.w-2) {
 			if (y+1 < size.h) y++; else break;
 		}
@@ -780,8 +780,8 @@ void ht_strinputfield::draw()
 			cx = size.w-1;
 			cy = size.h-1;
 		} else {
-			cx = (*curchar-*text-ofs) % (size.w-2)+1;
-			cy = (*curchar-*text-ofs) / (size.w-2);
+			cx = (*curchar - *text - ofs) % (size.w-2)+1;
+			cy = (*curchar - *text - ofs) / (size.w-2);
 		}
 		setcursor(cx, cy, insert ? CURSOR_NORMAL : CURSOR_BOLD);
 	}
