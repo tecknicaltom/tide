@@ -118,7 +118,7 @@ ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, h
 {
 	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf(form, &d, sizeof d);
 	
 	ht_fxbin_search_request *request;
 	
@@ -140,7 +140,7 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 {
 	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "hex/ascii");
@@ -181,7 +181,7 @@ ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht
 #define EVALSTR_MAXSTRLEN		256
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
 	ht_evalstr_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 	
 	ht_fxbin_search_request *request = NULL;
 		
@@ -218,7 +218,7 @@ void create_desc_evalstr(char *buf, int buflen, ht_view *f)
 {
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
 	ht_evalstr_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "eval str");
@@ -281,7 +281,7 @@ ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_
 #define VREGEX_MAXSTRLEN		256
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 
 	ht_regex_search_request *request=NULL;
 
@@ -305,7 +305,7 @@ void create_desc_vregex(char *buf, int buflen, ht_view *f)
 {
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "regex");
@@ -385,7 +385,7 @@ ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_vi
 #define EXPR_MAXSTRLEN		256
 	ht_expr_search_form *form=(ht_expr_search_form*)f;
 	ht_expr_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 	
 	ht_expr_search_request *request = NULL;
 
@@ -409,7 +409,7 @@ void create_desc_expr(char *buf, int buflen, ht_view *f)
 {
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "expr");
@@ -879,7 +879,7 @@ ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
 Object* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen)
 {
 	ht_replace_hexascii_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 	
 	ht_replace_bin_context *ctx = (ht_replace_bin_context*)
 	create_replace_bin_context(file, ofs, len, d.str.text, d.str.textlen, return_repllen);
@@ -1326,7 +1326,7 @@ void ht_search_dialog::handlemsg(htmsg *msg)
 	if (msg->msg==msg_keypressed) {
 		ht_dialog::handlemsg(msg);
 		ht_listpopup_data data;
-		search_mode_popup->databuf_get(&data, sizeof data);
+		ViewDataBuf vdb(search_mode_popup, &data, sizeof data);
 		if ((int)data.cursor_pos != smodeidx) {
 			smodeidx = data.cursor_pos;
 			select_search_mode_bymodeidx();
@@ -1438,7 +1438,7 @@ void ht_replace_dialog::handlemsg(htmsg *msg)
 	if (msg->msg == msg_keypressed) {
 		ht_search_dialog::handlemsg(msg);
 		ht_listpopup_data data;
-		replace_mode_popup->databuf_get(&data, sizeof data);
+		ViewDataBuf vdb(replace_mode_popup, &data, sizeof data);
 		if ((int)data.cursor_pos != rmodeidx) {
 			rmodeidx=data.cursor_pos;
 			select_replace_mode_bymodeidx();
