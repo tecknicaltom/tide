@@ -128,7 +128,7 @@ int sys_findnext(pfind_t *pfind)
 int sys_pstat(pstat_t *s, const char *filename)
 {
 	char fn[HT_NAME_MAX];
-	strncpy(fn, filename, sizeof fn);
+	ht_strlcpy(fn, filename, sizeof fn);
 	int flen = strlen(fn);
 	if (flen && sys_is_path_delim(fn[flen-1]) && (flen !=3) || (fn[1]!=':')) fn[flen-1] = 0;
 	struct stat st;
