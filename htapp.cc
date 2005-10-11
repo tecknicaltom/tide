@@ -868,7 +868,7 @@ char	*ht_project_listbox::quickfindCompletition(char *s)
 			if (!res) {
 				res = ht_strdup(getStr(0, item));
 			} else {
-				int a = strccomm(res, getStr(0, item));
+				int a = ht_strccomm(res, getStr(0, item));
 				res[a] = 0;
 			}
 		}
@@ -973,7 +973,7 @@ void ht_status::init(Bounds *b)
 void ht_status::done()
 {
 	unregister_idle_object(this);
-	if (format) free(format);
+	free(format);
 	ht_view::done();
 }
 
@@ -994,7 +994,7 @@ void ht_status::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_config_changed:
-			if (format) free(format);
+			free(format);
 			format = get_config_string("misc/statusline");
 			break;
 	}
@@ -3217,7 +3217,7 @@ void done_app()
 	UNREGISTER(ATOM_HT_PROJECT_ITEM, ht_project_item);
 	
 	out_of_memory_func = &out_of_memory;
-	if (app_memory_reserve) free(app_memory_reserve);
+	free(app_memory_reserve);
 
 	delete ((ht_project*)project);
 	delete virtual_fs_list;
