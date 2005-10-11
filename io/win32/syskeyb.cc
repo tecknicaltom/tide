@@ -66,7 +66,7 @@ static ht_key_keycode ht_win32_key_defs[] = {
 	{K_Control_L,			(0x00c+HT_VK_CTRL)},
 	{K_Return,			(VK_RETURN+HT_VK)},
 	{K_Control_M,			(0x00d+HT_VK_CTRL)},
-	{K_Control_N,			(0x00e + HT_VK_CTRL)},	// cpp-bug :-)
+	{K_Control_N,			(0x00e + HT_VK_CTRL)},	// preprocessor problem :-)
 	{K_Control_O,			(0x00f+HT_VK_CTRL)},
 	{K_Control_P,			(0x010+HT_VK_CTRL)},
 	{K_Control_Q,			(0x011+HT_VK_CTRL)},
@@ -246,16 +246,16 @@ bool keyb_keypressed()
 		if (!read) return false;
 		ReadConsoleInputA(gInputHandle, &key_event_record, 1, &read);
 		if (key_event_record.EventType & KEY_EVENT) {
+
 			switch (key_event_record.Event.KeyEvent.wVirtualKeyCode) {
-				case VK_CONTROL:
-					k_ctrl_state=key_event_record.Event.KeyEvent.bKeyDown;
-					continue;
-				case VK_MENU:
-					k_alt_state=key_event_record.Event.KeyEvent.bKeyDown;
-					continue;
-				case VK_SHIFT:
-					continue;
+			case VK_CONTROL:
+				k_ctrl_state = key_event_record.Event.KeyEvent.bKeyDown;
+				break;
+			case VK_MENU:
+				k_alt_state = key_event_record.Event.KeyEvent.bKeyDown;
+				break;
 			}
+
 			if (key_event_record.Event.KeyEvent.bKeyDown) {
 				key_pending = true;
 				return true;
@@ -264,11 +264,11 @@ bool keyb_keypressed()
 	}
 }
 
-static int ht_key_meta(bool shift, bool alt)
+int ht_key_meta(bool shift, bool control, bool alt)
 {
-    return (((key_event_record.Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED) && (shift)) ? HT_VK_SHIFT : 0)
-		+((key_event_record.Event.KeyEvent.dwControlKeyState &(LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED)) ? HT_VK_CTRL : 0)
-		+(((key_event_record.Event.KeyEvent.dwControlKeyState &(LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED)) && (alt)) ? HT_VK_ALT : 0);
+    return (((key_event_record.Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED) && shift) ? HT_VK_SHIFT : 0)
+	+(((key_event_record.Event.KeyEvent.dwControlKeyState & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED)) && control) ? HT_VK_CTRL : 0)
+	+(((key_event_record.Event.KeyEvent.dwControlKeyState & (LEFT_ALT_PRESSED|RIGHT_ALT_PRESSED)) && alt) ? HT_VK_ALT : 0);
 }
 
 int keyb_getrawkey()
@@ -292,7 +292,7 @@ int keyb_getrawkey()
 	        	case VK_RETURN:
 	        	case VK_ESCAPE:
 	        	case VK_CLEAR:
-				return key_event_record.Event.KeyEvent.wVirtualKeyCode + HT_VK + ht_key_meta(true, true);
+				return key_event_record.Event.KeyEvent.wVirtualKeyCode + HT_VK + ht_key_meta(true, true, true);
 	        }
 		/*
 		 *	Local keys, which can only be access via AltGr
@@ -309,20 +309,12 @@ int keyb_getrawkey()
 			case '}':
 			case '[':
 			case ']':
-				return ((unsigned char)key_event_record.Event.KeyEvent.uChar.AsciiChar) + ht_key_meta(false, false);
-			default: {
-				// Alt+F --> Alt+f
-				// FIXME: tolower() ok?
-                                int km = ht_key_meta(false, true);
-				if (km) {
-					return ((unsigned char)tolower(key_event_record.Event.KeyEvent.uChar.AsciiChar)) + km;
-				} else {
-					return ((unsigned char)key_event_record.Event.KeyEvent.uChar.AsciiChar) + km;
-				}
-			}
+				return ((unsigned char)key_event_record.Event.KeyEvent.uChar.AsciiChar) + ht_key_meta(false, false, false);
+			default:
+				return ((unsigned char)key_event_record.Event.KeyEvent.uChar.AsciiChar) + ht_key_meta(false, true, true);
 		}
 	} else {
-		return key_event_record.Event.KeyEvent.wVirtualKeyCode + HT_VK + ht_key_meta(true, true);
+		return key_event_record.Event.KeyEvent.wVirtualKeyCode + HT_VK + ht_key_meta(true, true, true);
 	}
 }
 
@@ -330,7 +322,7 @@ ht_key keyb_getkey()
 {
 	UINT r = keyb_getrawkey();
 	ht_key k = keyb_rawkey2key(r);
-	if ((k == K_INVALID) && (r<=255)) return (ht_key)r;
+	if (k == K_INVALID && r <= 255) return (ht_key)r;
 	return k;
 }
 
