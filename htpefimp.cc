@@ -162,7 +162,7 @@ ht_pef_import_library::ht_pef_import_library(char *n)
 
 ht_pef_import_library::~ht_pef_import_library()
 {
-	if (name) free(name);
+	free(name);
 }
 
 /*
