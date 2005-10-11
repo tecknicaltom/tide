@@ -545,12 +545,11 @@ void ObjectStreamText::putS(const char *s)
  */
 
 ObjectStreamNative::ObjectStreamNative(Stream *s, bool own_s, bool d)
-: ObjectStream(s, own_s), allocd(true)
+: ObjectStream(s, own_s), allocd(true), duplicate(d)
 {
-	duplicate = d;
 }
 
-void	*ObjectStreamNative::duppa(const void *p, int size)
+void *ObjectStreamNative::duppa(const void *p, int size)
 {
 	if (duplicate) {
 		MemArea *m = new MemArea(p, size, true);
@@ -558,7 +557,7 @@ void	*ObjectStreamNative::duppa(const void *p, int size)
 		return m->ptr;
 	} else {
 		// FIXME: un-const'ing p
-		return (void*)p;
+		return const_cast<void*>(p);
 	}
 }
 
@@ -566,7 +565,7 @@ void ObjectStreamNative::getBinary(void *buf, uint size, const char *desc)
 {
 	void *pp;
 	mStream->readx(&pp, sizeof pp);
-	memmove(buf, pp, size);
+	memcpy(buf, pp, size);
 }
 
 bool ObjectStreamNative::getBool(const char *desc)
@@ -579,16 +578,26 @@ bool ObjectStreamNative::getBool(const char *desc)
 uint64 ObjectStreamNative::getInt(uint size, const char *desc)
 {
 	switch (size) {
-		case 1:case 2:case 4: {
-			uint i = 0;
-			mStream->readx(&i, size);
-			return i;
-		}
-		case 8: {
-			uint64 i;
-			mStream->readx(&i, size);
-			return i;
-		}
+	case 1: {
+		uint8 i;
+		mStream->readx(&i, size);
+		return i;
+	}
+	case 2: {
+		uint16 i;
+		mStream->readx(&i, size);
+		return i;
+	}
+	case 4: {
+		uint32 i;
+		mStream->readx(&i, size);
+		return i;
+	}
+	case 8: {
+		uint64 i;
+		mStream->readx(&i, size);
+		return i;
+	}
 	}
 	throw IllegalArgumentException(HERE);
 }
@@ -635,25 +644,24 @@ void	ObjectStreamNative::putComment(const char *comment)
 void	ObjectStreamNative::putInt(uint64 i, uint size, const char *desc, uint int_fmt_hint)
 {
 	switch (size) {
-		case 1: {
-			uint8 x = i;
-			mStream->writex(&x, size);
-			return;
-		}
-		case 2: {
-			uint16 x = i;
-			mStream->writex(&x, size);
-			return;
-		}
-		case 4: {
-			uint32 x = i;
-			mStream->writex(&x, size);
-			return;
-		}
-		case 8: {
-			mStream->writex(&i, size);
-			return;
-		}
+	case 1: {
+		uint8 x = i;
+		mStream->writex(&x, size);
+		return;
+	}
+	case 2: {
+		uint16 x = i;
+		mStream->writex(&x, size);
+		return;
+	}
+	case 4: {
+		uint32 x = i;
+		mStream->writex(&x, size);
+		return;
+	}
+	case 8:
+		mStream->writex(&i, size);
+		return;
 	}
 	throw IllegalArgumentException(HERE);
 }
