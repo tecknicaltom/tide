@@ -22,6 +22,7 @@
 #include <cstring>
 
 #include "keyb.h"
+#include "strtools.h"
 
 ht_key keyb_unmetakey(ht_key key)
 {
@@ -227,9 +228,8 @@ bool keyb_getkeydesc(char *buf, int bufsize, ht_key k)
 			}
 		}			
 	}
-	if (bufsize>0) {
-		buf[bufsize-1] = 0;
-		strncpy(buf, b, bufsize-1);
+	if (bufsize > 0) {
+		ht_strlcpy(buf, b, bufsize);
 	}
 	return r;
 }
