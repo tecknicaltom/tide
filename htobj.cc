@@ -130,8 +130,8 @@ void ht_view::init(Bounds *b, int o, const char *d)
 
 void ht_view::done()
 {
-	if (desc) free(desc);
-	if (pal.data) free(pal.data);
+	free(desc);
+	free(pal.data);
 	delete buf;
 	Object::done();
 }
@@ -1552,7 +1552,7 @@ void ht_frame::setstyle(uint s)
 
 void ht_frame::settext(const char *text)
 {
-	if (desc) free(desc);
+	free(desc);
 	desc = ht_strdup(text);
 	dirtyview();
 }
@@ -1899,8 +1899,8 @@ void ht_window::setpindicator(ht_text *p)
 
 void ht_window::settitle(char *title)
 {
-	if (desc) free(desc);
-	desc=ht_strdup(title);
+	free(desc);
+	desc = ht_strdup(title);
 	if (frame) frame->settext(title);
 }
 
