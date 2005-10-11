@@ -68,8 +68,7 @@ OutAddr::OutAddr(Address *aAddr, uint aTime)
 	updateTime(aTime);
 	lines = new Array(true);
 	size = 0;
-	bytes = 0;
-	
+	bytes = 0;	
 }
 
 OutAddr::~OutAddr()
