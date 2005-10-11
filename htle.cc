@@ -118,13 +118,13 @@ void ht_le::done()
 
 	ht_le_shared_data *le_shared=(ht_le_shared_data*)shared_data;
 	
-	if (le_shared->objmap.header) free(le_shared->objmap.header);
-	if (le_shared->objmap.vsize) free(le_shared->objmap.vsize);
-	if (le_shared->objmap.psize) free(le_shared->objmap.psize);
+	free(le_shared->objmap.header);
+	free(le_shared->objmap.vsize);
+	free(le_shared->objmap.psize);
 	
-	if (le_shared->pagemap.offset) free(le_shared->pagemap.offset);
-	if (le_shared->pagemap.vsize) free(le_shared->pagemap.vsize);
-	if (le_shared->pagemap.psize) free(le_shared->pagemap.psize);
+	free(le_shared->pagemap.offset);
+	free(le_shared->pagemap.vsize);
+	free(le_shared->pagemap.psize);
 
 	delete le_shared->linear_file;
 	delete le_shared->reloc_file;
