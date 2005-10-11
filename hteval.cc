@@ -323,11 +323,11 @@ void eval_dialog()
 
 	d->init(&b, "evaluate", FS_TITLE | FS_MOVE | FS_RESIZE);
 
-	List *ehist=(List*)getAtomValue(HISTATOM_EVAL_EXPR);
+	List *ehist = (List*)getAtomValue(HISTATOM_EVAL_EXPR);
 
 	/* input line */
 	b.assign(1, 1, c.w-14, 1);
-	ht_strinputfield *s=new ht_strinputfield();
+	ht_strinputfield *s = new ht_strinputfield();
 	s->init(&b, 255, ehist);
 	d->insert(s);
 	/* help button */
@@ -345,10 +345,10 @@ void eval_dialog()
 	int button;
 	while ((button = d->run(false)) != button_cancel) {
 		switch (button) {
-		case button_ok:
+		case button_ok: {
 			ht_strinputfield_data str;
 			char b[1024];
-			s->databuf_get(&str, sizeof str);
+			ViewDataBuf vdb(s, &str, sizeof str);
 			if (str.textlen) {
 				bin2str(b, str.text, str.textlen);
 				insert_history_entry(ehist, b, 0);
@@ -357,6 +357,7 @@ void eval_dialog()
 				t->settext(hint);
 			}
 			break;
+		}
 		case BUTTON_HELP:
 			dialog_eval_help(NULL, NULL, NULL);
 			break;
