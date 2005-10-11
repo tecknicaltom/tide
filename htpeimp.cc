@@ -321,7 +321,7 @@ ht_pe_import_library::ht_pe_import_library(const char *n)
 
 ht_pe_import_library::~ht_pe_import_library()
 {
-	if (name) free(name);
+	free(name);
 }
 
 /*
@@ -347,7 +347,7 @@ ht_pe_import_function::ht_pe_import_function(uint li, RVA a, const char *n, uint
 
 ht_pe_import_function::~ht_pe_import_function()
 {
-	if (byname && name.name) free(name.name);
+	if (byname) free(name.name);
 }
 
 /*
