@@ -810,7 +810,7 @@ void ht_aviewer::generateOutputDialog()
 		viewer_pos start, end;
 		bool by_lines;
 		output_dialog_data odd;
-		dialog->databuf_get(&odd, sizeof odd);
+		ViewDataBuf vdb(dialog, &odd, sizeof odd);
 		getdatastr(&odd.id1, filename);
 		getdatastr(&odd.id2, start_str);
 		getdatastr(&odd.id3, end_str);
@@ -987,7 +987,7 @@ void ht_aviewer::exportFileDialog()
 	while (dialog->run(false) == button_ok) {
 		char filename[260];
 		export_dialog_data edd;
-		dialog->databuf_get(&edd, sizeof edd);
+		ViewDataBuf vdb(dialog, &edd, sizeof edd);
 		getdatastr(&edd.id1, filename);
 		
 		String name(filename);
@@ -1658,7 +1658,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 	int r = dialog->run(false);
 	if (r == button_ok) {
 		ht_treeview_data tvd;
-		dialog->databuf_get(&tvd, sizeof tvd);
+		ViewDataBuf vdb(dialog, &tvd, sizeof tvd);
 		gotoAddress(((CallChainNode*)tvd.selected)->xa, this);
 	}
 	dialog->done();
@@ -1809,7 +1809,7 @@ void ht_aviewer::showSymbols(Address *addr)
 	if (r == button_ok) {
 		// goto selected symbol
 		ht_listbox_data d;
-		sym->databuf_get(&d, sizeof d);
+		ViewDataBuf vdb(sym, &d, sizeof d);
 		if (d.cursor_ptr) gotoAddress(((Symbol *)d.cursor_ptr)->location->addr, this);
 	}
 	dialog->done();
@@ -1885,7 +1885,7 @@ restart:
 		dialog->insert(new_xref);
 		int r = dialog->run(false);
 		ht_listbox_data data;
-		list->databuf_get(&data, sizeof data);
+		ViewDataBuf vdb(list, &data, sizeof data);
 		switch (r) {
 			case 666:
 				searchForXRefs(Addr);
