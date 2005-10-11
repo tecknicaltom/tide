@@ -448,8 +448,7 @@ const char *PEFAnalyser::getSegmentNameByAddress(Address *Addr)
 	if (pef_shared->sheaders.sheaders[i].nameOffset == 0xffffffff) {
 		ht_snprintf(pef_sectionname, sizeof pef_sectionname, "unnamed%d", i);
 	} else {
-//		strncpy(pef_sectionname, pef_shared->shnames[i], 32);
-//		pef_sectionname[32]=0;
+//		ht_strlcpy(pef_sectionname, pef_shared->shnames[i], 32);
 		strcpy(pef_sectionname, "nyi");
 	}
 	return pef_sectionname;
