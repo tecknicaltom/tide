@@ -309,43 +309,43 @@ public:
 	ht_listbox_title *title;
 
 public:
-			void		init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
-	virtual	void		done();
-			void		attachTitle(ht_listbox_title *title);
-			void		adjustPosHack();
-			void		adjustScrollbar();
-	virtual	int		calcCount() = 0;
-			void		clearQuickfind();
-	virtual	int		cursorAdjust();
-			int		cursorUp(int n);
-			int		cursorDown(int n);
-	virtual	int		datasize();
+		void	init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
+	virtual	void	done();
+		void	attachTitle(ht_listbox_title *title);
+		void	adjustPosHack();
+		void	adjustScrollbar();
+	virtual	int	calcCount() = 0;
+		void	clearQuickfind();
+	virtual	int	cursorAdjust();
+		int	cursorUp(int n);
+		int	cursorDown(int n);
+	virtual	int	datasize();
 	virtual	char *	defaultpalette();
-	virtual	void		draw();
-	virtual	int		estimateEntryPos(void *entry);
-	virtual	void		getdata(ObjectStream &s);
+	virtual	void	draw();
+	virtual	int	estimateEntryPos(void *entry);
+	virtual	void	getdata(ObjectStream &s);
 	virtual	void *	getFirst() = 0;
 	virtual	void *	getLast() = 0;
 	virtual	void *	getNext(void *entry) = 0;
 	virtual	void *	getPrev(void *entry) = 0;
 	virtual	char *	getStr(int col, void *entry) = 0;
-			void		gotoItemByEntry(void *entry, bool clear_quickfind = true);
-	virtual	void		gotoItemByPosition(uint pos);
-	virtual	void		handlemsg(htmsg *msg);
-	virtual	int		numColumns();
+		void	gotoItemByEntry(void *entry, bool clear_quickfind = true);
+	virtual	void	gotoItemByPosition(uint pos);
+	virtual	void	handlemsg(htmsg *msg);
+	virtual	int	numColumns();
 	virtual	void *	quickfind(char *s) = 0;
 	virtual	char *	quickfindCompletition(char *s);
-	virtual	void		redraw();
-	virtual	void		resize(int rw, int rh);
-	virtual	bool		selectEntry(void *entry);
-	virtual	void		setdata(ObjectStream &s);
-	virtual	void		stateChanged();
-	virtual	void		update();
-			void		updateCursor();
-	virtual	Object *	vstate_create();
-			void		vstate_save();
+	virtual	void	redraw();
+	virtual	void	resize(int rw, int rh);
+	virtual	bool	selectEntry(void *entry);
+	virtual	void	setdata(ObjectStream &s);
+	virtual	void	stateChanged();
+	virtual	void	update();
+		void	updateCursor();
+	virtual	Object *vstate_create();
+		void	vstate_save();
 protected:
-			void		rearrangeColumns();
+		void	rearrangeColumns();
 };
 
 /*
@@ -368,43 +368,43 @@ struct ht_text_listbox_sort_order {
 
 class ht_text_listbox: public ht_listbox {
 protected:
-	int					cols, keycol, count;
+	int			cols, keycol, count;
 	ht_text_listbox_item	*first, *last;
-	int					Cursor_adjust;
+	int			Cursor_adjust;
 
 public:
-			void		init(Bounds *b, int Cols=1, int Keycol=0, uint Listboxcaps=LISTBOX_QUICKFIND);
-	virtual	void		done();
-	virtual   int		calcCount();
-	virtual	int		compare_strn(char *s1, char *s2, int l);
-	virtual	int		compare_ccomm(char *s1, char *s2);
-	virtual   int		cursorAdjust();
-			void *	getEntryByID(uint id);
-	virtual   void *	getFirst();
-	virtual   void *	getLast();
-			uint		getID(void *entry);
-	virtual   void *	getNext(void *entry);
-	virtual   void *	getPrev(void *entry);
-	virtual   char *	getStr(int col, void *entry);
-			void		insert_str(int id, char *str, ...);
-			void		insert_str(int id, char **strs);
-			void		insert_str_extra(int id, void *extra_data, char *str, ...);
-			void		insert_str_extra(int id, void *extra_data, char **strs);
-	virtual   int		numColumns();
+		void	init(Bounds *b, int Cols=1, int Keycol=0, uint Listboxcaps=LISTBOX_QUICKFIND);
+	virtual	void	done();
+	virtual	int	calcCount();
+	virtual	int	compare_strn(char *s1, char *s2, int l);
+	virtual	int	compare_ccomm(char *s1, char *s2);
+	virtual	int	cursorAdjust();
+		void *	getEntryByID(uint id);
+	virtual	void *	getFirst();
+	virtual	void *	getLast();
+		uint	getID(void *entry);
+	virtual	void *	getNext(void *entry);
+	virtual	void *	getPrev(void *entry);
+	virtual	char *	getStr(int col, void *entry);
+		void	insert_str(int id, char *str, ...);
+		void	insert_str(int id, char **strs);
+		void	insert_str_extra(int id, void *extra_data, char *str, ...);
+		void	insert_str_extra(int id, void *extra_data, char **strs);
+	virtual	int	numColumns();
 	virtual	void *	quickfind(char *s);
 	virtual	char *	quickfindCompletition(char *s);
-			void		sort(int count, ht_text_listbox_sort_order *so);
-	virtual   void		update();
+		void	sort(int count, ht_text_listbox_sort_order *so);
+	virtual	void	update();
 protected:
-	virtual	void		clearAll();
-	virtual	void		freeExtraData(void *extra_data);
+	virtual	void	clearAll();
+	virtual	void	freeExtraData(void *extra_data);
 };
 
 #define ht_itext_listbox_data ht_text_listbox_data
 
 class ht_itext_listbox: public ht_text_listbox {
 public:
-			void	init(Bounds *b, int Cols=1, int Keycol=0);
+		void	init(Bounds *b, int Cols=1, int Keycol=0);
 	virtual	void	done();
 	virtual	int	compare_strn(char *s1, char *s2, int l);
 	virtual	int	compare_ccomm(char *s1, char *s2);
@@ -424,7 +424,7 @@ enum statictext_align {
 #define ALIGN_CHAR_ESCAPE	'\e'
 #define ALIGN_CHAR_LEFT		'l'
 #define ALIGN_CHAR_CENTER	'c'
-#define ALIGN_CHAR_RIGHT		'r'
+#define ALIGN_CHAR_RIGHT	'r'
  
 struct ht_statictext_linedesc {
 	int ofs;
@@ -442,10 +442,10 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(Bounds *b, const char *text, statictext_align align, bool breaklines=true, bool transparent=false);
+		void	init(Bounds *b, const char *text, statictext_align align, bool breaklines=true, bool transparent=false);
 	virtual	void	done();
 /* overwritten */
-	virtual 	void draw();
+	virtual	void draw();
 	virtual	char *gettext();
 /* new */
 	virtual	vcp gettextcolor();
@@ -466,17 +466,17 @@ protected:
 	ht_listbox *listbox;
 	virtual	void init_text_listbox(Bounds *b);
 public:
-			void init(Bounds *b, char *desc);
+		void init(Bounds *b, char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	char *defaultpalette();
-	virtual	int	datasize();
+	virtual	int  datasize();
 	virtual	void getdata(ObjectStream &s);
-			void	insertstring(char *string);
+		void insertstring(char *string);
 	virtual	void setdata(ObjectStream &s);
 /* new */
-			void select_next();
-			void select_prev();
+		void select_next();
+		void select_prev();
 };
 
 /*
@@ -489,20 +489,20 @@ class ht_listpopup: public ht_statictext {
 protected:
 	ht_listpopup_dialog *listpopup;
 /* new */	
-			int	run_listpopup();
+		int	run_listpopup();
 public:
-			void	init(Bounds *b);
+		void	init(Bounds *b);
 	virtual	void	done();
 /* overwritten */
 	virtual	int  datasize();
-	virtual 	void draw();
+	virtual void draw();
 	virtual	vcp  gettextcolor();
 	virtual	void getdata(ObjectStream &s);
 	virtual	char *gettext();
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void setdata(ObjectStream &s);
 /* new */
-			void	insertstring(char *string);
+		void	insertstring(char *string);
 };
 
 /*
@@ -552,7 +552,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(Bounds *b, const char *text, ht_view *connected);
+		void	init(Bounds *b, const char *text, ht_view *connected);
 	virtual	void	done();
 /* overwritten */
 	virtual	void draw();
