@@ -240,7 +240,7 @@ char	*SymbolBox::quickfindCompletition(char *s)
 	strcpy(res, tmp->name);
 	while (tmp2 && (ht_strncmp(tmp2->name, s, slen)==0)) {
 //		fprintf(stdout, "while(%s, %s, %d)\n", tmp2->name, s, slen);
-		int a = strccomm(res, tmp2->name);
+		int a = ht_strccomm(res, tmp2->name);
 		res[a] = 0;
 		tmp2 = analy->enumSymbols(tmp2);
 	}
@@ -547,8 +547,7 @@ bool ht_aviewer::pos_to_string(viewer_pos p, char *result, int maxlen)
 	if (!convertViewerPosToAddress(p, &a)) return false;
 	Location *addr = analy->getLocationByAddress(a);
 	if (addr && addr->label) {
-		// FIXME: strncpy
-		ht_snprintf(result, maxlen, "%s", addr->label->name);
+		ht_strlcpy(result, addr->label->name, maxlen);
 		return true;
 	}
 	addr = analy->getFunctionByAddress(a);
@@ -1286,8 +1285,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		if (analy->validAddress(addr, scvalid)) {
 			char n[255];
 			Symbol *l = analy->getSymbolByAddress(addr);
-			// FIXME strncpy
-			if (l) ht_snprintf(n, sizeof n, "%s", l->name); else n[0] = 0;
+			if (l) ht_strlcpy(n, l->name, sizeof n); else n[0] = 0;
 			ht_snprintf(str, sizeof str, "name for address %y", addr);
 			while (inputbox(str, "~label name:", n, 255, HISTATOM_NAME_ADDR)) {
 				if (n[0]) {
