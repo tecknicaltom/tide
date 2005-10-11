@@ -989,7 +989,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 			case button_ok: {
 				int dsize = input->datasize();
 				ht_inputfield_data *data = (ht_inputfield_data*)malloc(dsize);
-				input->databuf_get(data, dsize);
+				ViewDataBuf vdb(input, data, dsize);
 				bin2str(result, data->text, data->textlen);
 				delete data;
 				if (hist) insert_history_entry(hist, result, 0);
@@ -3481,7 +3481,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 
 		if (g->run(false)==button_ok) {
 			ht_listbox_data da;
-			l->databuf_get(&da, sizeof da);
+			ViewDataBuf vdb(l, &da, sizeof da);
 			int i = l->getID(da.cursor_ptr);
 			if (desc[i].value != d) {
 				baseview->sendmsg(cmd_edit_mode_i, file, NULL);
