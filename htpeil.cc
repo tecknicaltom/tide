@@ -193,7 +193,7 @@ void ht_pe_il_viewer::done()
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)format_group->get_shared_data();
 	if (pe_shared && pe_shared->il) {
-		if (pe_shared->il->string_pool) free(pe_shared->il->string_pool);
+		free(pe_shared->il->string_pool);
 		delete pe_shared->il->entries;
 		delete pe_shared->il;
 	}
