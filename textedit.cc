@@ -47,7 +47,7 @@ static ht_search_request* create_request_hexascii(text_search_pos *start, text_s
 {
 	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
-	form->databuf_get(&d, sizeof d);
+	ViewDataBuf(form, &d, sizeof d);
 	
 	ht_fxbin_search_request *request;
 	
@@ -1794,7 +1794,7 @@ void ht_text_viewer::popup_change_highlight()
 			ht_listbox_data type;
 		} data;
 
-		d->databuf_get(&data, sizeof data);
+		ViewDataBuf(d, &data, sizeof data);
 
 		ht_syntax_lexer *l = (ht_syntax_lexer*)(*lexers)[
 			mode_input->getID(data.type.cursor_ptr)];
@@ -2572,7 +2572,7 @@ void ht_text_editor::show_protocol()
 	dialog->insert(list);
 	if (dialog->run(false) == button_ok) {
 		ht_listbox_data d;
-		list->databuf_get(&d, sizeof d);
+		ViewDataBuf vdb(list, &d, sizeof d);
 		int a = list->getID(d.cursor_ptr);
 		int b = cp;
 		
