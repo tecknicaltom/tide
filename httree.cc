@@ -367,7 +367,7 @@ void ht_static_treeviewdone_r(static_node *node)
 {
 	while (node) {
 		ht_static_treeviewdone_r(node->child);
-		if (node->text) free(node->text);
+		free(node->text);
 		if (node->data) {
 			node->data->done();
 			delete node->data;
