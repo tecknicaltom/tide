@@ -597,7 +597,7 @@ char *ht_sorted_string_list::get_string(char *s)
 	Object *d = new ht_data_string(s);
 	uint i=find(d);
 	char *ret=NULL;
-	if (i!=LIST_UNDEFINED) {
+	if (i != LIST_UNDEFINED) {
 		Object *r=get(i);
 		if (r) ret=((ht_data_string *)r)->value;
 	}
