@@ -24,6 +24,7 @@
 
 #include "except.h"
 #include "snprintf.h"
+#include "strtools.h"
 
 /*
  *	Exception
@@ -47,8 +48,7 @@ MsgException::MsgException()
 
 MsgException::MsgException(const char *e)
 {
-	strncpy(estr, e, sizeof estr-1);
-	estr[sizeof estr-1] = 0;
+	ht_strlcpy(estr, e, sizeof estr);
 }
 
 String &MsgException::reason(String &result) const
