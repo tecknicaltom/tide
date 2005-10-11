@@ -47,7 +47,7 @@ public:
 	}
 	
 	virtual ~ht_clipboard_copy_history() {
-		if (source) free(source);
+		free(source);
 	}
 };
 
