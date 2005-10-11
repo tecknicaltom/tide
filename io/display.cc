@@ -294,8 +294,8 @@ int BufferedRDisplay::nprint(int ix, int iy, vcp color, const char *str, int max
 {
 	int i = 0;
 	ColoredChar *b = buf+ix+ iy * w;
-	if (y < h) {
-		while ((ix+i < w) && (str[i]) && (i<maxstrlen)) {
+	if (iy < h) {
+		while (ix+i < w && str[i] && i < maxstrlen) {
 			bool transparent = (cp == CP_GRAPHICAL && str[i] == GC_TRANSPARENT);
 			if (!transparent) b->rawchar = mapCharToSystemCP(str[i], cp);
 			b->color = mixColors(b->color, color);
