@@ -360,8 +360,8 @@ void ht_c_syntax_lexer::init()
 
 void ht_c_syntax_lexer::done()
 {
-	if (c_pal.data) free(c_pal.data);
-	if (c_reserved_sorted) free(c_reserved_sorted);
+	free(c_pal.data);
+	free(c_reserved_sorted);
 	ht_lang_syntax_lexer::done();
 }
 
@@ -570,8 +570,8 @@ void ht_html_syntax_lexer::init()
 
 void ht_html_syntax_lexer::done()
 {
-//	if (c_pal.data) free(c_pal.data);
-//	if (c_reserved_sorted) free(c_reserved_sorted);
+//	free(c_pal.data);
+//	free(c_reserved_sorted);
 	ht_lang_syntax_lexer::done();
 }
 
