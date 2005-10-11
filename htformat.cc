@@ -79,7 +79,12 @@ public:
 
 	ht_data_tagstring(const char *tagstr = NULL)
 	{
-		value=tag_strdup(tagstr);
+		value = tag_strdup(tagstr);
+	}
+
+	~ht_data_tagstring()
+	{
+		free(value);
 	}
 };
 
@@ -4386,14 +4391,7 @@ int ht_hex_sub::next_line_id(LINE_ID *line_id, int n)
 void ht_mask_sub::init(File *f, uint u)
 {
 	ht_sub::init(f);
-	masks = new ht_string_list();
 	uid = u;
-}
-
-void ht_mask_sub::done()
-{
-	delete masks;
-	ht_sub::done();
 }
 
 void ht_mask_sub::first_line_id(LINE_ID *line_id)
@@ -4406,7 +4404,7 @@ void ht_mask_sub::first_line_id(LINE_ID *line_id)
 bool ht_mask_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id2 != uid) return false;
-	const char *s = masks->get_string(line_id.id1);
+	const char *s = ((ht_data_tagstring *)masks[line_id.id1])->value;
 	if (s) {
 		tag_strcpy(line, s);
 		return true;
@@ -4417,7 +4415,7 @@ bool ht_mask_sub::getline(char *line, const LINE_ID line_id)
 void ht_mask_sub::last_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
-	line_id->id1 = masks->count()-1;
+	line_id->id1 = masks.count()-1;
 	line_id->id2 = uid;
 }
 
@@ -4425,36 +4423,36 @@ int ht_mask_sub::next_line_id(LINE_ID *line_id, int n)
 {
 	int r=n;
 	if (line_id->id2 != uid) return 0;
-	int c=masks->count();
+	int c = masks.count();
 	ID i1 = line_id->id1;
 	i1 += n;
-	if ((int)i1>c-1) {
-		r-=i1-c+1;
-		i1=c-1;
+	if ((int)i1 > c-1) {
+		r -= i1-c+1;
+		i1 = c-1;
 	}
-	if (r) line_id->id1=i1;
+	if (r) line_id->id1 = i1;
 	return r;
 }
 
 int ht_mask_sub::prev_line_id(LINE_ID *line_id, int n)
 {
 	int r;
-	if (line_id->id2!=uid) return 0;
-	ID i1=line_id->id1;
-	if (i1<(uint32)n) {
-		r=i1;
-		i1=0;
+	if (line_id->id2 != uid) return 0;
+	ID i1 = line_id->id1;
+	if (i1 < (uint32)n) {
+		r = i1;
+		i1 = 0;
 	} else {
-		r=n;
-		i1-=n;
+		r = n;
+		i1 -= n;
 	}
-	if (r) line_id->id1=i1;
+	if (r) line_id->id1 = i1;
 	return r;
 }
 
 void ht_mask_sub::add_mask(char *tagstr)
 {
-	masks->insert(new ht_data_tagstring(tagstr));
+	masks += new ht_data_tagstring(tagstr);
 }
 
 void ht_mask_sub::add_mask_table(char **tagstr)
@@ -4466,7 +4464,7 @@ void ht_mask_sub::add_staticmask(char *statictag_str, FileOfs reloc, bool std_bi
 {
 	char tag_str[1024];	/* FIXME: possible buffer overflow */
 	statictag_to_tag(statictag_str, tag_str, reloc, std_bigendian);
-	masks->insert(new ht_data_tagstring(tag_str));
+	masks += new ht_data_tagstring(tag_str);
 }
 
 void ht_mask_sub::add_staticmask_table(char **statictag_table, FileOfs reloc, bool std_bigendian)
@@ -4482,8 +4480,8 @@ void ht_mask_sub::add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOf
 	while (statictag_ptable->desc || statictag_ptable->fields) {
 		s[0]=0;
 		if (statictag_ptable->desc) strcpy(s, statictag_ptable->desc);
-		int n=strlen(s);
-		while (n<ht_MASK_STD_INDENT) {
+		int n = strlen(s);
+		while (n < ht_MASK_STD_INDENT) {
 			s[n]=' ';
 			n++;
 		}
@@ -4592,7 +4590,7 @@ void ht_collapsable_sub::init(File *file, ht_sub *sub, bool own_sub, char *ns, b
 
 void ht_collapsable_sub::done()
 {
-	if (nodestring) free(nodestring);
+	free(nodestring);
 	ht_layer_sub::done();
 }
 
