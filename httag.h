@@ -426,7 +426,7 @@ enum tag_endian { tag_endian_big, tag_endian_little, tag_endian_var };
 
 typedef char TAGSTRING;
 
-void statictag_to_tag(char *statictag_str, TAGSTRING *tag_str, uint32 relocation, bool std_bigendian);
+void statictag_to_tag(const char *statictag_str, TAGSTRING *tag_str, uint64 relocation, bool std_bigendian);
 
 TAGSTRING *tag_findnext(const TAGSTRING *tagstring);
 
@@ -445,7 +445,7 @@ bool tag_get_desc_id(const TAGSTRING *tagstring, uint32 *id);
 void tag_set_offset(TAGSTRING *tagstring, FileOfs offset);
 void tag_set_value(TAGSTRING *tagstring, uint32 value);
 
-int tag_is_editable(const TAGSTRING *tagstring);
+bool tag_is_editable(const TAGSTRING *tagstring);
 
 void tag_strcat(TAGSTRING *dest, const TAGSTRING *src);
 void tag_strcpy(TAGSTRING *dest, const TAGSTRING *src);
@@ -460,9 +460,9 @@ TAGSTRING *tag_get_selectable_tag(const TAGSTRING *tagstring, int n, int group);
 TAGSTRING *tag_get_group(const TAGSTRING *tagstring, int group);
 int tag_get_class(const TAGSTRING *tagstring);
 
-TAGSTRING *tag_make_sel(TAGSTRING *buf, char *string);
-TAGSTRING *tag_make_ref(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 id128_3, uint32 id128_4, char *string);
-TAGSTRING *tag_make_ref_len(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 id128_3, uint32 id128_4, char *string, int strlen);
+TAGSTRING *tag_make_sel(TAGSTRING *buf, const char *string);
+TAGSTRING *tag_make_ref(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 id128_3, uint32 id128_4, const char *string);
+TAGSTRING *tag_make_ref_len(TAGSTRING *buf, uint32 id128_1, uint32 id128_2, uint32 id128_3, uint32 id128_4, const char *string, int strlen);
 TAGSTRING *tag_make_flags(TAGSTRING *buf, uint32 id, FileOfs offset);
 TAGSTRING *tag_make_group(TAGSTRING *buf);
 TAGSTRING *tag_make_color(TAGSTRING *buf, uint32 color);
