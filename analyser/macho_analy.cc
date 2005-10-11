@@ -322,8 +322,7 @@ const char *MachoAnalyser::getSegmentNameByAddress(Address *Addr)
 	MACHOAddress ea;
 	if (!convertAddressToMACHOAddress(Addr, &ea)) return NULL;
 	if (!macho_addr_to_section(sections, 0, ea, &i)) return NULL;
-	strncpy(macho_sectionname, (char*)sections->sections[i].sectname, 16);
-	macho_sectionname[16] = 0;
+	ht_strlcpy(macho_sectionname, (char*)sections->sections[i].sectname, sizeof macho_sectionname);
 	return macho_sectionname;
 }
 
