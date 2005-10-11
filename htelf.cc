@@ -240,15 +240,15 @@ void ht_elf::done()
 			free(elf_shared->shnames[i]);
 		free(elf_shared->shnames);
 	}		
-	if (elf_shared->shrelocs) free(elf_shared->shrelocs);
+	free(elf_shared->shrelocs);
 	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
 	case ELFCLASS32:
-		if (elf_shared->sheaders.sheaders32) free(elf_shared->sheaders.sheaders32);
-		if (elf_shared->pheaders.pheaders32) free(elf_shared->pheaders.pheaders32);
+		free(elf_shared->sheaders.sheaders32);
+		free(elf_shared->pheaders.pheaders32);
 		break;
 	case ELFCLASS64:
-		if (elf_shared->sheaders.sheaders64) free(elf_shared->sheaders.sheaders64);
-		if (elf_shared->pheaders.pheaders64) free(elf_shared->pheaders.pheaders64);
+		free(elf_shared->sheaders.sheaders64);
+		free(elf_shared->pheaders.pheaders64);
 		break;
 	}
 	delete elf_shared->undefined2fakeaddr;
