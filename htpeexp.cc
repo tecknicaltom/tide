@@ -194,21 +194,21 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 //	LOG("%s: PE: %d ticks (%d msec) to read exports", filename, get_timer_tick(h0), get_timer_msec(h0));
 	delete_timer(h0);
 
-	if (ename) free(ename);
+	free(ename);
 
-	if (efunct) free(efunct);
-	if (enamet) free(enamet);
-	if (eordt) free(eordt);
-	pe_shared->v_exports=v;
+	free(efunct);
+	free(enamet);
+	free(eordt);
+	pe_shared->v_exports = v;
 	delete efile;
-	if (esectionbuf) free(esectionbuf);
+	free(esectionbuf);
 	return g;
 pe_read_error:
 	delete_timer(h0);
 	errorbox("%y: PE export directory seems to be corrupted.", &filename);
-	if (efunct) free(efunct);
-	if (enamet) free(enamet);
-	if (eordt) free(eordt);
+	free(efunct);
+	free(enamet);
+	free(eordt);
 	if (g) {
 		g->done();
 		delete g;
@@ -218,7 +218,7 @@ pe_read_error:
 		delete v;
 	}
 	delete efile;
-	if (esectionbuf) free(esectionbuf);
+	free(esectionbuf);
 	return NULL;
 }
 
@@ -351,5 +351,5 @@ ht_pe_export_function::ht_pe_export_function(RVA addr, uint ord, const char *n)
 
 ht_pe_export_function::~ht_pe_export_function()
 {
-	if (byname && name) free(name);
+	if (byname) free(name);
 }
