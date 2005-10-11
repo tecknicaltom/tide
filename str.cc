@@ -101,7 +101,7 @@ String::String(char c, int count)
 
 String::~String()
 {
-	if (mContent) free(mContent);
+	free(mContent);
 }
 
 /**
