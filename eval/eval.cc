@@ -22,6 +22,7 @@
 #include "evalparse.h"
 #include "eval.h"
 #include "snprintf.h"
+#include "strtools.h"
 
 #ifdef EVAL_DEBUG
 
@@ -97,18 +98,6 @@ static int sprint_basen(char *buffer, int base, uint64 q)
 	return n;
 }
 */
-
-static int hexdigit(char a)
-{
-	if ((a>='0') && (a<='9')) {
-		return a-'0';
-	} else if ((a>='a') && (a<='f')) {
-		return a-'a'+10;
-	} else if ((a>='A') && (a<='F')) {
-		return a-'A'+10;
-	}
-	return -1;
-}
 
 static void str2int(char *str, uint64 *q, int base)
 {
@@ -1435,9 +1424,9 @@ int exec_evalfunc(eval_scalar *r, eval_scalarlist *params, eval_func *proto)
 	if (get_eval_error(&errmsg, &errpos)) {
 		char ee[MAX_ERRSTR_LEN+1];
 		ee[MAX_ERRSTR_LEN]=0;
-		strncpy(ee, proto->name, sizeof ee);
-		strncat(ee, "(): ", sizeof ee);
-		strncat(ee, errmsg, sizeof ee);
+		ht_strlcpy(ee, proto->name, sizeof ee);
+		ht_strlcat(ee, "(): ", sizeof ee);
+		ht_strlcat(ee, errmsg, sizeof ee);
 		set_eval_error_ex(errpos, "%s", ee);
 	}
 	return retv;
@@ -1449,8 +1438,7 @@ int evalsymbol(eval_scalar *r, char *sname)
 	if (g_eval_symbol_handler) s = g_eval_symbol_handler(r, sname);
 	if (!get_eval_error(NULL, NULL) && !s) {
 		char sname_short[MAX_SYMBOLNAME_LEN+1];
-		sname_short[MAX_SYMBOLNAME_LEN]=0;
-		strncpy(sname_short, sname, MAX_SYMBOLNAME_LEN);
+		ht_strlcpy(sname_short, sname, sizeof sname_short);
 		set_eval_error("unknown symbol: %s", sname_short);
 	}
 	return s;
