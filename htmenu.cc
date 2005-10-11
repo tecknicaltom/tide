@@ -744,7 +744,7 @@ void ht_menu_window::handlemsg(htmsg *msg)
 		switch (msg->data1.integer) {
 			case button_ok: {
 				ht_menu_window_data a;
-				databuf_get(&a, sizeof a);
+				ViewDataBuf vdb(this, &a, sizeof a);
 				int curentry = a.selected;
 				ht_context_menu_entry *e = menu->get_entry(a.selected);
 				if ((e->type == CME_ENTRY) && (e->entry.active)) {
