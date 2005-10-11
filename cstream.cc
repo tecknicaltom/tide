@@ -44,7 +44,7 @@ ht_compressed_stream::~ht_compressed_stream()
 	if (getAccessMode() & IOAM_WRITE) {
 		flush_compressed();
 	}
-	if (buffer) free(buffer);
+	free(buffer);
 }
 
 void ht_compressed_stream::flush_compressed()
