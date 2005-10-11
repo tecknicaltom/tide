@@ -498,12 +498,12 @@ struct ht_mask_ptable {
  
 class ht_mask_sub: public ht_sub {
 protected:
-	ht_string_list *masks;
-	char temp[512];	/* FIXME: possible buffer overflow */
+	Array masks;
 	uint uid;
 public:
-			void init(File *file, uint uid);
-	virtual 	void done();
+		ht_mask_sub(): masks(true) {}
+ 
+		void init(File *file, uint uid);
 /* overwritten */
 	virtual	void first_line_id(LINE_ID *line_id);
 	virtual	bool getline(char *line, const LINE_ID line_id);
