@@ -598,7 +598,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 			default: 
 		{
 		ht_blockop_dialog_data t;
-		d->databuf_get(&t, sizeof t);
+		ViewDataBuf vdb(d, &t, sizeof t);
 		
 		File *file=format->get_file();
 
