@@ -88,11 +88,11 @@ struct gsi_scrollbar_t {
 #define VO_OWNBUFFER		1
 #define VO_BROWSABLE		2
 #define VO_SELECTABLE		4
-#define VO_SELBOUND			8
+#define VO_SELBOUND		8
 #define VO_PREPROCESS		16
 #define VO_POSTPROCESS		32
 #define VO_MOVE			64
-#define VO_RESIZE			128
+#define VO_RESIZE		128
 #define VO_FORMAT_VIEW		256
 #define VO_TRANSPARENT_CHARS	512
 
@@ -101,11 +101,11 @@ struct gsi_scrollbar_t {
 #define VIEW_DEBUG_NAME(name)	ht_view::view_debug_name=name;
 
 #define GMV_TOP		0
-#define GMV_BOTTOM		1
+#define GMV_BOTTOM	1
 #define GMV_FIT		2
 
-#define GMH_LEFT		0
-#define GMH_RIGHT		1
+#define GMH_LEFT	0
+#define GMH_RIGHT	1
 #define GMH_FIT		2
 
 #define GET_GM_H(gm)	((gm)>>16)
@@ -117,9 +117,9 @@ void clearmsg(htmsg *msg);
 
 class ht_view: public Object {
 protected:
-			bool view_is_dirty;
+		bool view_is_dirty;
 			
-			void cleanview();
+		void cleanview();
 	virtual	char *defaultpalette();
 	virtual	char *defaultpaletteclass();
 	virtual	void reloadpalette();
@@ -150,7 +150,6 @@ public:
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 /* new */
-		void		*allocdatabuf(void *handle);
 	virtual	int		aclone();
 /*
 		int		buf_lprint(int x, int y, int c, int l, const char *text, Codepage cp = CP_DEVICE);
@@ -165,9 +164,8 @@ public:
 	virtual	void		clipbounds(Bounds *b);
 	virtual	void		config_changed();
 	virtual	int		countselectables();
-		void		databuf_freedup(void *handle);
-		void 		databuf_get(void *buf, int bufsize);
-		void		*databuf_getdup(void *buf, int bufsize);
+		void		databuf_free(void *handle);
+		void		*databuf_get(void *buf, int bufsize);
 		void		databuf_set(void *buf, int bufsize);
 	virtual	int		datasize();
 		void		dirtyview();
@@ -222,6 +220,25 @@ public:
 };
 
 /*
+ *	Easier use of data buffers:
+ */
+
+class ViewDataBuf: public Object {
+	void *mBuf;
+	ht_view *mView;
+public:
+	ViewDataBuf(ht_view *view, void *buf, int bufsize)
+		: mBuf(view->databuf_get(buf, bufsize)), mView(view)
+	{
+	}
+
+	virtual ~ViewDataBuf()
+	{
+		mView->databuf_free(mBuf);
+	}
+};
+
+/*
  *	CLASS ht_group
  */
 
@@ -247,23 +264,23 @@ public:
 	virtual	int focus(ht_view *view);
 	virtual	void getdata(ObjectStream &s);
 	virtual	ht_view *getselected();
-	virtual 	ht_view *getfirstchild();
+	virtual ht_view *getfirstchild();
 	virtual	void handlemsg(htmsg *msg);
 	virtual	int isaclone(ht_view *view);
-			int isviewdirty();
-	virtual	void		load(ObjectStream &s);
+		int isviewdirty();
+	virtual	void load(ObjectStream &s);
 	virtual	void move(int x, int y);
 	virtual	ObjectID	getObjectID() const;
 		void putontop(ht_view *view);
-	virtual 	void receivefocus();
+	virtual void receivefocus();
 	virtual	void resize(int rw, int rh);
-	virtual 	void releasefocus();
+	virtual void releasefocus();
 	virtual	int select(ht_view *view);
 	virtual	void selectfirst();
 	virtual	void selectlast();
 	virtual	void setdata(ObjectStream &s);
 	virtual	void setpalette(char *pal_name);
-	virtual	void		store(ObjectStream &s) const;
+	virtual	void store(ObjectStream &s) const;
 /* new */
 	virtual	void reorder_view(ht_view *v, int rx, int ry);
 		void remove(ht_view *view);
