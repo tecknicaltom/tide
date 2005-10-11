@@ -29,19 +29,20 @@
 
 char *ht_strdup(const char *str);
 char *ht_strndup(const char *str, size_t maxlen);
-int ht_strncpy(char *s1, const char *s2, size_t maxlen);
+size_t ht_strlcpy(char *s1, const char *s2, size_t maxlen);
+size_t ht_strlcat(char *s1, const char *s2, size_t maxlen);
 int ht_strncmp(const char *s1, const char *s2, size_t max);
 int ht_strnicmp(const char *s1, const char *s2, size_t max);
 int ht_stricmp(const char *s1, const char *s2);
 
-int strcicomm(const char *s1, const char *s2);
-int strccomm(const char *s1, const char *s2);
+size_t ht_strcicomm(const char *s1, const char *s2);
+size_t ht_strccomm(const char *s1, const char *s2);
 
-static inline char *strend(char *s) 
+static inline char *ht_strend(char *s) 
 {
 	return s+strlen(s);
 }
-static inline const char *strend(const char *s)
+static inline const char *ht_strend(const char *s)
 {
 	return s+strlen(s);
 }
