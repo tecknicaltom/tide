@@ -388,7 +388,7 @@ ht_ne_entrypoint::ht_ne_entrypoint(uint Ordinal, uint Seg, uint Offset, uint Fla
 
 ht_ne_entrypoint::~ht_ne_entrypoint()
 {
-	   if (name) free(name);
+	free(name);
 }
 
 /*
