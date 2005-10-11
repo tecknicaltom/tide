@@ -53,6 +53,7 @@ public:
 	ht_history_entry(BuildCtorArg&);
 	~ht_history_entry();
 /* overwritten */
+	virtual int	compareTo(const Object *) const;
 	virtual void	load(ObjectStream &s);
 	virtual void	store(ObjectStream &s) const;
 	virtual ObjectID getObjectID() const;
