@@ -158,7 +158,7 @@ ht_registry_data_raw::ht_registry_data_raw(const void *v, uint s)
 
 ht_registry_data_raw::~ht_registry_data_raw()
 {
-	if (value) free(value);
+	free(value);
 }
 
 bool ht_registry_data_raw::editdialog(const char *keyname)
@@ -215,16 +215,15 @@ ht_registry_data_string::ht_registry_data_string(const char *s)
 
 ht_registry_data_string::~ht_registry_data_string()
 {
-	if (value) free(value);
+	free(value);
 }
 
 bool ht_registry_data_string::editdialog(const char *keyname)
 {
 	char res[256];
-	strncpy(res, value, 255);
-	res[255] = 0;
-	if (inputbox("edit string", "string", res, 256, 0)) {
-		if (value) delete value;
+	ht_strlcpy(res, value, sizeof res);
+	if (inputbox("edit string", "string", res, sizeof res, 0)) {
+		free(value);
 		value = strdup(res);
 		return true;
 	}
@@ -248,8 +247,7 @@ void ht_registry_data_string::store(ObjectStream &f) const
 
 void ht_registry_data_string::strvalue(char *buf32bytes)
 {
-	strncpy(buf32bytes, value, 31);
-	buf32bytes[31] = 0;
+	ht_strlcpy(buf32bytes, value, 32);
 }
 
 /*
@@ -787,8 +785,7 @@ ht_registry_node *ht_registry::find_entry_i(Container **rdir, const char *key, b
 	while (1) {
 		s = strchr(key, '/');
 		if (s) {
-			strncpy(t, key, s-key);
-			t[s-key] = 0;
+			ht_strlcpy(t, key, s-key+1);
 			dir = find_entry_get_subdir(((ht_registry_data_stree*)dir->data)->tree, t);
 			if (!dir) break;
 			key = s+1;
@@ -954,8 +951,7 @@ bool ht_registry::splitfind(const char *key, const char **name, ht_registry_node
 	char dir[256]; /* FIXME: possible buffer overflow */
 	const char *n = strrchr(key, '/');
 	if (n) {
-		strncpy(dir, key, n-key);
-		dir[n-key]=0;
+		ht_strlcpy(dir, key, n-key+1);
 		n++;
 	} else {
 		dir[0]=0;
@@ -1053,7 +1049,7 @@ uint32 get_config_dword(char *ident)
 {
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
-	strncpy(ee, ident, sizeof (e) - (ee-e));
+	ht_strlcpy(ee, ident, sizeof (e) - (ee-e) + 1);
 	ht_registry_node *n;
 	if (registry->find_data_entry(e, &n, true)) {
 		if (n->type == RNT_DWORD) {
@@ -1072,7 +1068,7 @@ char *get_config_string(char *ident)
 {
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
-	strncpy(ee, ident, sizeof (e) - (ee-e));
+	ht_strlcpy(ee, ident, sizeof (e) - (ee-e) + 1);
 	ht_registry_node *n;
 	if (registry->find_data_entry(e, &n, true)) {
 		if (n->type == RNT_STRING) {
