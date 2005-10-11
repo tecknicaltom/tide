@@ -519,7 +519,7 @@ char	*ht_history_listbox::quickfindCompletition(char *s)
 			if (!res) {
 				res = ht_strdup(getStr(0, item));
 			} else {
-				int a = strccomm(res, getStr(0, item));
+				int a = ht_strccomm(res, getStr(0, item));
 				res[a] = 0;
 			}
 		}
@@ -618,7 +618,7 @@ char *ht_inputfield::defaultpalette()
 
 void ht_inputfield::freebuf()
 {
-	if (!attachedto && (text) && (*text)) free(*text);
+	if (!attachedto && text) free(*text);
 }
 
 void ht_inputfield::getdata(ObjectStream &s)
@@ -1303,18 +1303,18 @@ void ht_button::draw()
 
 void ht_button::handlemsg(htmsg *msg)
 {
-	if (msg->type==mt_postprocess) {
-		if (msg->msg==msg_keypressed) {
-			if (((shortcut1!=K_INVALID) && (msg->data1.integer==shortcut1)) ||
-			((shortcut2!=K_INVALID) && (msg->data1.integer==shortcut2))) {
+	if (msg->type == mt_postprocess) {
+		if (msg->msg == msg_keypressed) {
+			if ((shortcut1 != K_INVALID && msg->data1.integer==shortcut1) ||
+			(shortcut2 != K_INVALID && msg->data1.integer==shortcut2)) {
 				push();
 				dirtyview();
 				clearmsg(msg);
 				return;
 			}
 		}
-	} else if (msg->type==mt_empty) {
-		if (msg->msg==msg_keypressed) {
+	} else if (msg->type == mt_empty) {
+		if (msg->msg == msg_keypressed) {
 			switch (msg->data1.integer) {
 				case K_Return:
 				case K_Space:
@@ -1330,8 +1330,8 @@ void ht_button::handlemsg(htmsg *msg)
 
 void ht_button::push()
 {
-/* FIXME: wont work for encapsulated buttons... */
-/* FIXME: (thats why I hacked this now...) */
+	/* FIXME: wont work for encapsulated buttons... */
+	/* FIXME: (thats why I hacked this now...) */
 	app->sendmsg(msg_button_pressed, value);
 //	baseview->sendmsg(msg_button_pressed, value);	// why not like this ?
 	pressed=1;
@@ -1474,22 +1474,22 @@ void	ht_listbox::done()
 {
 	scrollbar->done();
 	delete scrollbar;
-	if (widths) free(widths);
+	free(widths);
 	ht_view::done();
 }
 
 void ht_listbox::adjustPosHack()
 {
-	if (e_cursor!=e_top) return;
+	if (e_cursor != e_top) return;
 	int i=0;
 	void *tmp = e_cursor;
 	if (!tmp) return;
-	while ((tmp) && (i<=visible_height)) {
+	while (tmp && i <= visible_height) {
 		tmp = getNext(tmp);
 		i++;
 	}
-	if (i<visible_height) {
-		cursorDown(cursorUp(visible_height-pos-i));
+	if (i < visible_height) {
+		cursorDown(cursorUp(visible_height - pos - i));
 	}
 }
 
@@ -1540,14 +1540,14 @@ int  ht_listbox::cursorUp(int n)
 	while (n--) {
 		tmp = getPrev(e_cursor);
 		if (!tmp) break;
-		if (e_cursor==e_top) {
+		if (e_cursor == e_top) {
 			e_top = tmp;
 		} else {
 			cursor--;
 		}
 		e_cursor = tmp;
 		pos--;
-		if (pos<0) pos = 0; // if cursor was out of sync
+		if (pos < 0) pos = 0; // if cursor was out of sync
 		i++;
 	}
 	return i;
@@ -1575,7 +1575,7 @@ int  ht_listbox::cursorDown(int n)
 
 int  ht_listbox::datasize()
 {
-	return sizeof(ht_listbox_data);
+	return sizeof (ht_listbox_data);
 }
 
 char *ht_listbox::defaultpalette()
@@ -1599,7 +1599,7 @@ void ht_listbox::draw()
 		void *entry = e_top;
 		int i=0;
 		while (entry && i < visible_height) {
-			int c=(i==cursor) ? (focused ? getcolor(palidx_generic_list_focused_selected) :
+			int c = (i==cursor) ? (focused ? getcolor(palidx_generic_list_focused_selected) :
 				getcolor(palidx_generic_list_unfocused_selected)) : fc;
 			if (i == cursor) {
 				fill(0, i, size.w, 1, c, ' ');
@@ -1669,7 +1669,7 @@ int  ht_listbox::estimateEntryPos(void *entry)
 	void *tmp = getFirst();
 	int res = 0;
 	while (tmp) {
-		if (tmp==entry) break;
+		if (tmp == entry) break;
 		tmp = getNext(tmp);
 		res++;
 	}
@@ -1695,7 +1695,7 @@ void ht_listbox::gotoItemByEntry(void *entry, bool clear_quickfind)
 	if (pos<0) pos = 0; // if cursor was out of sync
 	cursor = 0;
 
-	while ((tmp) && (i < visible_height)) {
+	while (tmp && i < visible_height) {
 		if (tmp == entry) {
 			ok = true;
 			break;
@@ -1731,7 +1731,7 @@ void ht_listbox::handlemsg(htmsg *msg)
 			e_top = vs->e_top;
 			e_cursor = vs->e_cursor;
 			update();
-			// FIXME: what about deleting entries !!!
+			// FIXME: what about deleting entries?
 			clearmsg(msg);
 			return;
 		}
@@ -1809,7 +1809,7 @@ void ht_listbox::handlemsg(htmsg *msg)
 						char *qc = quickfindCompletition(quickfinder);
 						if (qc) {
 							strcpy(quickfinder, qc);
-							qpos = strend(quickfinder);
+							qpos = ht_strend(quickfinder);
 							free(qc);
 							goto qf;
 						}
@@ -1867,7 +1867,7 @@ char	*ht_listbox::quickfindCompletition(char *s)
 
 void ht_listbox::rearrangeColumns()
 {
-	if (widths) free(widths);
+	free(widths);
 	cols = numColumns();
 	widths = (int*)calloc(cols*sizeof(int), 1);
 }
@@ -1938,7 +1938,7 @@ void ht_listbox::update()
 	if (cached_count <= size.h) {
 		if (!e_cursor) e_cursor = getFirst();
 		cursor = 0;
-		while (entry && (cursor < visible_height)) {
+		while (entry && cursor < visible_height) {
 			if (entry == e_cursor) {
 				e_top = getFirst();
 				goto ok;
@@ -1953,7 +1953,7 @@ void ht_listbox::update()
 	if (!e_cursor) e_cursor = e_top;
 	entry = e_top;
 	cursor = 0;
-	while (entry && (cursor < visible_height)) {
+	while (entry && cursor < visible_height) {
 		if (entry == e_cursor) goto ok;
 		entry = getNext(entry);
 		cursor++;
@@ -2008,7 +2008,7 @@ void ht_text_listbox::clearAll()
 	while (temp) {
 		ht_text_listbox_item *temp2 = temp->next;
 		freeExtraData(temp->extra_data);
-		for (int i=0; i<cols; i++) {
+		for (int i=0; i < cols; i++) {
 			free(temp->data[i]);
 		}
 		free(temp);
@@ -2039,7 +2039,7 @@ int	ht_text_listbox::compare_strn(char *s1, char *s2, int l)
 
 int	ht_text_listbox::compare_ccomm(char *s1, char *s2)
 {
-	return strccomm(s1, s2);
+	return ht_strccomm(s1, s2);
 }
 
 int  ht_text_listbox::cursorAdjust()
@@ -2320,7 +2320,7 @@ int	ht_itext_listbox::compare_strn(char *s1, char *s2, int l)
 
 int	ht_itext_listbox::compare_ccomm(char *s1, char *s2)
 {
-	return strcicomm(s1, s2);
+	return ht_strcicomm(s1, s2);
 }
 
 /*
@@ -2357,7 +2357,7 @@ void ht_statictext::init(Bounds *b, const char *t, statictext_align al, bool bre
 
 void ht_statictext::done()
 {
-	if (text) free(text);
+	free(text);
 	ht_view::done();
 }
 
@@ -2474,7 +2474,7 @@ char *ht_statictext::gettext()
 
 void ht_statictext::settext(const char *_text)
 {
-	if (text) free(text);
+	free(text);
 	text = ht_strdup(_text);
 	dirtyview();
 }
@@ -2697,7 +2697,7 @@ void ht_label::init(Bounds *b, const char *_text, ht_view *_connected)
 
 void ht_label::done()
 {
-	if (text) free(text);
+	free(text);
 	ht_view::done();
 }
 
