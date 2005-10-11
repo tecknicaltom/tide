@@ -185,7 +185,7 @@ ht_undo_data_delete_string::ht_undo_data_delete_string(text_viewer_pos *APos, te
 
 ht_undo_data_delete_string::~ht_undo_data_delete_string()
 {
-	if (string) free(string);
+	free(string);
 }
 
 bool ht_undo_data_delete_string::combine(ht_undo_data *ud)
@@ -269,7 +269,7 @@ ht_undo_data_delete_string2::ht_undo_data_delete_string2(text_viewer_pos *APos, 
 
 ht_undo_data_delete_string2::~ht_undo_data_delete_string2()
 {
-	if (string) free(string);
+	free(string);
 }
 
 bool ht_undo_data_delete_string2::combine(ht_undo_data *ud)
@@ -351,7 +351,7 @@ ht_undo_data_insert_string::ht_undo_data_insert_string(text_viewer_pos *APos, te
 
 ht_undo_data_insert_string::~ht_undo_data_insert_string()
 {
-	if (string) free(string);
+	free(string);
 }
 
 bool ht_undo_data_insert_string::combine(ht_undo_data *ud)
@@ -449,8 +449,8 @@ ht_undo_data_overwrite_string::ht_undo_data_overwrite_string(text_viewer_pos *AP
 
 ht_undo_data_overwrite_string::~ht_undo_data_overwrite_string()
 {
-	if (string) free(string);
-	if (string2) free(string2);
+	free(string);
+	free(string2);
 }
 
 bool ht_undo_data_overwrite_string::combine(ht_undo_data *ud)
@@ -799,7 +799,7 @@ ht_undo_data_delete_block::ht_undo_data_delete_block(text_viewer_pos *Apos, text
 
 ht_undo_data_delete_block::~ht_undo_data_delete_block()
 {
-	if (block) free(block);
+	free(block);
 }
 
 uint ht_undo_data_delete_block::getsize()
@@ -820,7 +820,7 @@ ObjectID ht_undo_data_delete_block::getObjectID() const
 
 void ht_undo_data_delete_block::apply(ht_text_editor *te)
 {
-	if (block) free(block);
+	free(block);
 	delete_text_block(te, apos, bpos, apos, sel_start, sel_end, true, &block, &size);
 }
 
@@ -1003,8 +1003,8 @@ void ht_text_viewer::done()
 		delete lexer;
 	}
 
-	if (EOL_string) free(EOL_string);
-	if (EOF_string) free(EOF_string);
+	free(EOL_string);
+	free(EOF_string);
 
 	ht_view::done();
 }
@@ -1031,8 +1031,8 @@ void ht_text_viewer::clipboard_copy_cmd()
 
 void ht_text_viewer::config_changed()
 {
-	if (EOL_string) free(EOL_string);
-	if (EOF_string) free(EOF_string);
+	free(EOL_string);
+	free(EOF_string);
 	EOL_string = get_config_string("editor/EOL");
 	EOF_string = get_config_string("editor/EOF");
 	tab_size = get_config_dword("editor/tab size");
