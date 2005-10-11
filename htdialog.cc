@@ -755,7 +755,7 @@ void ht_strinputfield::draw()
 	byte *t = *text + ofs;
 	int l = *textlen - ofs;
 	if (l > size.w) l = size.w;
-	int y=0;
+	int y = 0;
 	fill(0, 0, size.w, size.h, c, ' ');
 	if (ofs) buf->printChar(0, y, getcolor(palidx_generic_input_clip), '<');
 	for (int k=0; k < *textlen-ofs; k++) {
@@ -1001,7 +1001,7 @@ void ht_strinputfield::history_dialog()
 		l->init(&b, history);
 		if (l->run(false)) {
 			ht_listpopup_dialog_data d;
-			l->databuf_get(&d, sizeof d);
+			ViewDataBuf vdb(l, &d, sizeof d);
 
 			if (d.cursor_string) {
 				ht_history_entry *v=(ht_history_entry*)(*history)[d.cursor_pos];
@@ -1258,12 +1258,12 @@ void ht_button::init(Bounds *b, const char *Text, int Value)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, "some button");
 	VIEW_DEBUG_NAME("ht_button");
-	value=Value;
-	text=ht_strdup(Text);
-	pressed=0;
-	magicchar=strchr(text, '~');
+	value = Value;
+	text = ht_strdup(Text);
+	pressed = 0;
+	magicchar = strchr(text, '~');
 	if (magicchar) {
-		int l=strlen(text);
+		int l = strlen(text);
 		memmove(magicchar, magicchar+1, l-(magicchar-text));
 		shortcut1 = keyb_metakey((ht_key)tolower(*magicchar));
 		shortcut2 = (ht_key)tolower(*magicchar);
@@ -1275,7 +1275,7 @@ void ht_button::init(Bounds *b, const char *Text, int Value)
 
 void ht_button::done()
 {
-	if (text) free(text);
+	free(text);
 	ht_view::done();
 }
 
@@ -1289,10 +1289,10 @@ void ht_button::draw()
 	int c=focused ? getcolor(palidx_generic_button_focused) :
 		getcolor(palidx_generic_button_unfocused);
 	fill(0, 0, size.w-1, size.h-1, c, ' ');
-	int xp=(size.w-strlen(text))/2, yp=(size.h-1)/2;
+	int xp = (size.w - strlen(text))/2, yp = (size.h-1)/2;
 	buf->print(xp, yp, c, text);
 	if (magicchar) buf->printChar(xp+(magicchar-text), yp, getcolor(palidx_generic_button_shortcut), *magicchar);
-/* shadow */
+	/* shadow */
 	buf->printChar(0, 1, getcolor(palidx_generic_button_shadow), ' ');
 	for (int i=1; i<size.w-1; i++) {
 		buf->printChar(i, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
@@ -1352,7 +1352,7 @@ void	ht_listbox_title::init(Bounds *b)
 void	ht_listbox_title::done()
 {
 	if (texts) {
-		for (int i=0; i<cols; i++) {
+		for (int i=0; i < cols; i++) {
 			free(texts[i]);
 		}
 		free(texts);
@@ -1372,10 +1372,10 @@ void ht_listbox_title::draw()
 	if (!texts || !listbox) return;
 	int x = listbox->x;
 	x = 0;
-	for (int i=0; i<cols; i++) {     
+	for (int i=0; i < cols; i++) {     
 		buf->nprint(x, 0, color, texts[i], size.w);
 		x += listbox->widths[i];
-		if (i+1<cols) {
+		if (i+1 < cols) {
 			buf->printChar(x++, 0, color, ' ');
 			buf->printChar(x++, 0, color, GC_1VLINE, CP_GRAPHICAL);
 			buf->printChar(x++, 0, color, ' ');
@@ -1598,14 +1598,14 @@ void ht_listbox::draw()
 		clear(fc);
 		void *entry = e_top;
 		int i=0;
-		while ((entry) && (i < visible_height)) {
+		while (entry && i < visible_height) {
 			int c=(i==cursor) ? (focused ? getcolor(palidx_generic_list_focused_selected) :
 				getcolor(palidx_generic_list_unfocused_selected)) : fc;
-			if (i==cursor) {
+			if (i == cursor) {
 				fill(0, i, size.w, 1, c, ' ');
 			}
 			int X = -x;
-			for (int j=0; j<cols; j++) {
+			for (int j=0; j < cols; j++) {
 				char *s = getStr(j, entry);
 				int slen = strlen(s);
 				if (slen > widths[j]) {
@@ -1629,7 +1629,7 @@ void ht_listbox::draw()
 				} else {
 					X += widths[j];
 				}
-				if (j+1<cols) {
+				if (j+1 < cols) {
 					buf->printChar(X++, i, c, ' ');
 					buf->printChar(X++, i, c, GC_1VLINE, CP_GRAPHICAL);
 					buf->printChar(X++, i, c, ' ');
@@ -2513,7 +2513,7 @@ char *ht_listpopup_dialog::defaultpalette()
 void ht_listpopup_dialog::getdata(ObjectStream &s)
 {
 	ht_listbox_data d;
-	listbox->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(listbox, &d, sizeof d);
 
 	PUTX_INT32D(s, ((ht_text_listbox*)listbox)->getID(d.cursor_ptr), NULL);
 
@@ -2527,7 +2527,7 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 
 void ht_listpopup_dialog::init_text_listbox(Bounds *b)
 {
-	listbox=new ht_text_listbox();
+	listbox = new ht_text_listbox();
 	((ht_text_listbox *)listbox)->init(b);
 	insert(listbox);
 }
@@ -2608,7 +2608,8 @@ void ht_listpopup::getdata(ObjectStream &s)
 char *ht_listpopup::gettext()
 {
 	ht_listpopup_dialog_data d;
-	listpopup->databuf_get(&d, sizeof d);
+	ViewDataBuf vdb(listpopup, &d, sizeof d);
+	// FIXPORT:
 	return d.cursor_string;
 }
 
@@ -2619,9 +2620,9 @@ void ht_listpopup::handlemsg(htmsg *msg)
 			case K_Up: {
 				int r;
 				ht_listpopup_dialog_data d;
-				listpopup->databuf_get(&d, sizeof d);
+				ViewDataBuf vdb(listpopup, &d, sizeof d);
 				listpopup->select_prev();
-				r=run_listpopup();
+				r = run_listpopup();
 				clearmsg(msg);
 				if (!r) listpopup->databuf_set(&d, sizeof d);
 				return;
@@ -2629,7 +2630,7 @@ void ht_listpopup::handlemsg(htmsg *msg)
 			case K_Down: {
 				int r;
 				ht_listpopup_dialog_data d;
-				listpopup->databuf_get(&d, sizeof d);
+				ViewDataBuf vdb(listpopup, &d, sizeof d);
 				listpopup->select_next();
 				r=run_listpopup();
 				clearmsg(msg);
@@ -2645,7 +2646,7 @@ int ht_listpopup::run_listpopup()
 {
 	int r;
 	listpopup->relocate_to(this);
-	r=listpopup->run(false);
+	r = listpopup->run(false);
 	listpopup->unrelocate_to(this);
 	return r;
 }
@@ -2664,9 +2665,9 @@ void ht_listpopup::setdata(ObjectStream &s)
  *	CLASS ht_listbox_ptr
  */
 
-ht_listbox_ptr::ht_listbox_ptr(ht_listbox *_listbox)
+ht_listbox_ptr::ht_listbox_ptr(ht_listbox *aListbox)
 {
-	listbox=_listbox;
+	listbox = aListbox;
 }
 
 ht_listbox_ptr::~ht_listbox_ptr()
