@@ -135,8 +135,7 @@ int VfsListbox::changeURL(const char *url)
 		/* find matching protocol */
 		char protoname[VFS_PROTO_MAX+1];
 		if (pend-url > VFS_PROTO_MAX) return EINVAL;
-		strncpy(protoname, url, pend-url);
-		protoname[pend-url] = 0;
+		ht_strlcpy(protoname, url, pend-url+1);
 		for (int i = 0; i < c; i++) {
 			Vfs *v = (Vfs*)(*vfs_list)[i];
 			if (strcmp(protoname, v->getProtoName()) == 0) {
@@ -173,12 +172,12 @@ int VfsListbox::changeURL(const char *url)
 	char spath[VFS_DIR_MAX+1];
 	char spath2[VFS_DIR_MAX+1];
 	strcpy(spath, cdir);
-	char *p = strend(spath)-2;
+	char *p = ht_strend(spath)-2;
 	bool cdpp = false;
 	while (p >= spath) {
 		if (newVfs->isPathDelim()(*p)) {
 			strcpy(spath2, p+1);
-			*(strend(spath2)-1) = 0;
+			*(ht_strend(spath2)-1) = 0;
 			*(p+1) = 0;
 			if (newVfs->compareFilenames(path, spath) == 0) {
 				cdpp = true;
@@ -189,8 +188,8 @@ int VfsListbox::changeURL(const char *url)
 	}
 	
 	/* everything ok, set current to this */
-	strncpy(cproto, newVfs->getProtoName(), sizeof cproto-1);
-	strncpy(cdir, path, sizeof cdir-1);
+	ht_strlcpy(cproto, newVfs->getProtoName(), sizeof cproto);
+	ht_strlcpy(cdir, path, sizeof cdir);
 	cvfs = newVfs;
 
 	reread();
@@ -227,7 +226,7 @@ void VfsListbox::config_changed()
 	ht_text_listbox::config_changed();
 	char *dfmt = get_config_string("misc/vfs display format");
 	setDisplayFormat(dfmt ? dfmt : (char*)"name");
-	if (dfmt) free(dfmt);
+	free(dfmt);
 }
 
 int VfsListbox::cursorAdjust()
