@@ -524,7 +524,7 @@ ht_xbe_import_function::ht_xbe_import_function(RVA a, char *n, uint h)
 
 ht_xbe_import_function::~ht_xbe_import_function()
 {
-	if ((byname) && (name.name)) free(name.name);
+	if (byname) free(name.name);
 }
 
 /*
