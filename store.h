@@ -37,7 +37,7 @@ public:
 
 class ObjectStreamInter: public ObjectStream {
 public:
-				ObjectStreamInter(Stream *s, bool own_stream);
+			ObjectStreamInter(Stream *s, bool own_stream);
 	/* extends ObjectStream */
 	virtual void	getObject(Object *&object, const char *name, ObjectID id = OBJID_INVALID);
 	virtual void	putObject(const Object *object, const char *name, ObjectID id = OBJID_INVALID);
