@@ -59,7 +59,7 @@ char *ht_strndup(const char *str, size_t maxlen)
 		uint len = strlen(str)+1;
 		len = MIN(len, maxlen);
 		char *s = (char*)smalloc(len);
-		memmove(s, str, len);
+		memcpy(s, str, len);
 		s[len-1] = 0;
 		return s;
 	} else {
@@ -74,17 +74,38 @@ char *ht_strndup(const char *str, size_t maxlen)
  *	is always written if maxlen is > 0.
  *	@returns number of characters copied (without trailing zero)
  */
-int ht_strncpy(char *s1, const char *s2, size_t maxlen)
+size_t ht_strlcpy(char *s1, const char *s2, size_t maxlen)
 {
-	if (maxlen <= 0) return 0;
+	if (!maxlen) return 0;
 	char *os1 = s1;
-	while (maxlen && *s2) {
+	while (true) {
+		if (!--maxlen) {
+			*s1 = 0;
+			return s1 - os1;
+		}
 		*s1 = *s2;
+		if (!*s2) return s1 - os1;
+		s1++; s2++;
+	}
+}
+
+size_t ht_strlcat(char *s1, const char *s2, size_t maxlen)
+{
+	char *os1 = s1;
+	while (maxlen && *s1) {
 		maxlen--;
 		s1++;
 	}
-	s1[-1] = 0;
-	return s1-os1-1;
+	if (!maxlen) return os1-s1;
+	while (true) {
+		if (!--maxlen) {
+			*s1 = 0;
+			return s1 - os1;
+		}
+		*s1 = *s2;
+		if (!*s2) return s1 - os1;
+		s1++; s2++;
+	}
 }
 
 int ht_strncmp(const char *s1, const char *s2, size_t max)
@@ -129,30 +150,29 @@ int ht_stricmp(const char *s1, const char *s2)
 	while (1) {
 		if (!*s1) return *s2 ? -1 : 0;
 		if (!*s2) return *s1 ? 1 : 0;
-		char c1=tolower(*s1), c2=tolower(*s2);
-		if (c1>c2) {
+		char c1 = tolower(*s1), c2 = tolower(*s2);
+		if (c1 > c2) {
 			return 1;
-		} else if (c1<c2) {
+		} else if (c1 < c2) {
 			return -1;
 		}
-		s1++;s2++;
+		s1++; s2++;
 	}
-	return 0;
 }
 
-int strccomm(const char *s1, const char *s2)
+size_t ht_strccomm(const char *s1, const char *s2)
 {
 	if (!s1 || !s2) return 0;
 	int r=0;
-	while (*s1 && *s2 && (*s1==*s2)) { s1++; s2++; r++; }
+	while (*s1 && *s2 && *s1 == *s2) { s1++; s2++; r++; }
 	return r;
 }
 
-int strcicomm(const char *s1, const char *s2)
+size_t ht_strcicomm(const char *s1, const char *s2)
 {
 	if (!s1 || !s2) return 0;
 	int r=0;
-	while (*s1 && *s2 && (tolower(*s1)==tolower(*s2))) { s1++; s2++; r++; }
+	while (*s1 && *s2 && tolower(*s1) == tolower(*s2)) { s1++; s2++; r++; }
 	return r;
 }
 
@@ -329,8 +349,8 @@ void wide_char_to_multi_byte(char *result, const byte *Unicode, int maxlen)
 
 void memdowncase(byte *buf, int len)
 {
-	for (int i=0; i<len; i++) {
-		if ((buf[i]>='A') && (buf[i]<='Z')) buf[i]+=32;
+	for (int i=0; i < len; i++) {
+		if (buf[i] >= 'A' && buf[i] <= 'Z') buf[i] += 32;
 	}
 }
 
@@ -409,11 +429,11 @@ bool parseIntStr(char *&str, uint64 &u64, int defaultbase)
 
 int hexdigit(char a)
 {
-	if ((a>='0') && (a<='9')) {
+	if (a >= '0' && a <= '9') {
 		return a-'0';
-	} else if ((a>='a') && (a<='f')) {
+	} else if (a >= 'a' && a <= 'f') {
 		return a-'a'+10;
-	} else if ((a>='A') && (a<='F')) {
+	} else if (a >= 'A' && a <= 'F') {
 		return a-'A'+10;
 	}
 	return -1;
