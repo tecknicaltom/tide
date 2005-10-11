@@ -2617,7 +2617,7 @@ MemArea::MemArea(const void *p, uint s, bool d)
 		memcpy(ptr, p, size);
 	} else {
 		// FIXME: un-const'ing p
-		ptr = (void*)p;
+		ptr = const_cast<void*>(p);
 	}
 }
 
@@ -2646,7 +2646,7 @@ int MemArea::toString(char *buf, int buflen) const
 
 bool MemArea::instanceOf(ObjectID id) const
 {
-	return (id == getObjectID()) || Object::instanceOf(id);
+	return (id == getObjectID() || Object::instanceOf(id));
 }
 
 void MemArea::load(ObjectStream &s)
@@ -2681,7 +2681,7 @@ IntSet::IntSet(uint aMaxSetSize)
 
 IntSet::~IntSet()
 {
-	if (mSet) free(mSet);
+	free(mSet);
 }
 
 void IntSet::assign(const IntSet &from)
@@ -2768,13 +2768,13 @@ bool IntSet::findFirst(uint &i, bool set) const
 bool IntSet::findNext(uint &i, bool set) const
 {
 	// FIXME: naive impl
-	for (uint j=i+1; j<mSetSize; j++) {
+	for (uint j=i+1; j < mSetSize; j++) {
 		if (contains(j) == set) {
 			i = j;
 			return true;
 		}
 	}
-	if ((i+1>=mSetSize) && (i+1<mMaxSetSize) && !set) {
+	if (i+1 >= mSetSize && i+1 < mMaxSetSize && !set) {
 		i++;
 		return true;
 	}
@@ -2784,12 +2784,12 @@ bool IntSet::findNext(uint &i, bool set) const
 bool IntSet::findPrev(uint &i, bool set) const
 {
 	// FIXME: naive impl
-	if (i==0) return false;
-	if ((i-1>=mSetSize) && (i-1<mMaxSetSize) && !set) {
+	if (i == 0) return false;
+	if (i-1 >= mSetSize && i-1 < mMaxSetSize && !set) {
 		i--;
 		return true;
 	}
-	for (uint j=i-1; j>=0; j--) {
+	for (uint j=i-1; j >= 0; j--) {
 		if (contains(j) == set) {
 			i = j;
 			return true;
