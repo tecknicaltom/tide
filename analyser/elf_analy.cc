@@ -557,8 +557,7 @@ const char *ElfAnalyser::getSegmentNameByAddress(Address *Addr)
 	if (i == elf_shared->fake_undefined_shidx) {
 		strcpy(elf_sectionname, "$$HT_FAKE$$");
 	} else {
-		strncpy(elf_sectionname, elf_shared->shnames[i], 32);
-		elf_sectionname[32] = 0;
+		ht_strlcpy(elf_sectionname, elf_shared->shnames[i], sizeof elf_sectionname);
 	}
 	return elf_sectionname;
 }
