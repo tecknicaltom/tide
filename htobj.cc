@@ -418,32 +418,24 @@ struct databufdup_s {
 	ObjectStreamNative *s;
 };
 
-void ht_view::databuf_freedup(void *handle)
+void ht_view::databuf_free(void *handle)
 {
-	databufdup_s *s=(databufdup_s*)handle;	
+	databufdup_s *s = (databufdup_s*)handle;	
 	delete s->s;
 	delete s->f;
-	free(s);
+	delete s;
 }
 
-void ht_view::databuf_get(void *buf, int bufsize)
+void *ht_view::databuf_get(void *buf, int bufsize)
 {
-	MemMapFile f(buf, bufsize);
-	ObjectStreamNative s(&f, false, true);
-
-	getdata(s);
-}
-
-void *ht_view::databuf_getdup(void *buf, int bufsize)
-{
-	MemMapFile *f=new MemMapFile(buf, bufsize);	
+	MemMapFile *f = new MemMapFile(buf, bufsize);	
 	ObjectStreamNative *s = new ObjectStreamNative(f, false, true);
 	
 	getdata(*s);
 
-	databufdup_s *q=(databufdup_s*)malloc(sizeof (databufdup_s));
-	q->f=f;
-	q->s=s;
+	databufdup_s *q = new databufdup_s;
+	q->f = f;
+	q->s = s;
 	return q;
 }
 
@@ -1420,10 +1412,9 @@ void ht_frame::draw()
 {
 	int cornerul, cornerur, cornerll, cornerlr;
 	int lineh, linev;
-	ht_window *w=(ht_window*)group;
-	if ((framestate!=FST_MOVE) && (framestate!=FST_RESIZE)) {
-		if (w->focused) setframestate(FST_FOCUSED); else
-			setframestate(FST_UNFOCUSED);
+	ht_window *w = (ht_window*)group;
+	if (framestate != FST_MOVE && framestate != FST_RESIZE) {
+		setframestate(w->focused ? FST_FOCUSED : FST_UNFOCUSED); 
 	}
 	if (style & FS_THICK) {
 		cornerul = GC_2CORNER3;
@@ -1433,29 +1424,29 @@ void ht_frame::draw()
 		lineh = GC_2HLINE;
 		linev = GC_2VLINE;
 	} else {
-		cornerul = GC_2CORNER3;
-		cornerur = GC_2CORNER0;
-		cornerll = GC_2CORNER2;
+		cornerul = GC_1CORNER3;
+		cornerur = GC_1CORNER0;
+		cornerll = GC_1CORNER2;
 		cornerlr = GC_1CORNER1;
 		lineh = GC_1HLINE;
 		linev = GC_1VLINE;
 	}
 
-	vcp c=getcurcol_normal();
+	vcp c = getcurcol_normal();
 /* "ÚÄÄ...ÄÄ¿" */
 	buf->printChar(0, 0, c, cornerul, CP_GRAPHICAL);
-	for (int i=1; i<size.w-1; i++) buf->printChar(i, 0, c, lineh, CP_GRAPHICAL);
+	for (int i=1; i < size.w-1; i++) buf->printChar(i, 0, c, lineh, CP_GRAPHICAL);
 	buf->printChar(0+size.w-1, 0, c, cornerur, CP_GRAPHICAL);
 /* "ÀÄÄ...ÄÄÙ" */
 	buf->printChar(0, size.h-1, c, cornerll, CP_GRAPHICAL);
-	for (int i=1; i<size.w-1; i++) buf->printChar(i, size.h-1, c, lineh, CP_GRAPHICAL);
+	for (int i=1; i < size.w-1; i++) buf->printChar(i, size.h-1, c, lineh, CP_GRAPHICAL);
 /*	if (style & FS_RESIZE) {
 		buf->printChar(size.w-1, size.h-1, getcurcol_killer(), GC_1CORNER1, CP_GRAPHICAL);
 	} else {*/
 		buf->printChar(size.w-1, size.h-1, c, cornerlr, CP_GRAPHICAL);
 //     }
 /* "³", "³" */
-	for (int i=1; i<size.h-1; i++) {
+	for (int i=1; i < size.h-1; i++) {
 		buf->printChar(0, i, c, linev, CP_GRAPHICAL);
 		buf->printChar(size.w-1, i, c, linev, CP_GRAPHICAL);
 	}
