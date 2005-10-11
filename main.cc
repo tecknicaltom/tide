@@ -285,7 +285,7 @@ int main(int argc, char *argv[])
 	HMODULE h = GetModuleHandle(NULL);
 	GetModuleFileName(h, appname, sizeof appname-1);
 #else
-	strncpy(appname, argv[0], sizeof appname-1);
+	ht_strlcpy(appname, argv[0], sizeof appname);
 #endif
 
 	params(argc, argv, false);
