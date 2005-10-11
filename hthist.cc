@@ -20,6 +20,7 @@
 
 #include "atom.h"
 #include "data.h"
+#include "htdebug.h"
 #include "hthist.h"
 #include "strtools.h"
 #include "tools.h"
@@ -37,17 +38,15 @@ bool insert_history_entry(List *history, char *name, ht_view *view)
 		ObjectStreamBin *os = NULL;
 		MemoryFile *file = NULL;
 		if (view) {
-				file=new MemoryFile();
-				os=new ObjectStreamBin(file, true);
+				file = new MemoryFile();
+				os = new ObjectStreamBin(file, true);
 				view->getdata(*os);
 		}
 
-		ht_history_entry *e=new ht_history_entry(name, os, file);
+		ht_history_entry *e = new ht_history_entry(name, os, file);
 		ObjHandle li = history->find(e);
-		int r=0;
 		if (li == invObjHandle) {
 			history->prepend(e);
-			r=1;
 		} else {
 			delete e;
 			history->moveTo(li, history->findFirst());
@@ -68,15 +67,21 @@ bool insert_history_entry(List *history, char *name, ht_view *view)
 ht_history_entry::ht_history_entry(char *s, ObjectStreamBin *d, MemoryFile *df)
 {
 	desc = ht_strdup(s);
+	assert(desc);
 	data = d;
 	datafile = df;
 }
 
 ht_history_entry::~ht_history_entry()
 {
-	if (desc) free(desc);
+	free(desc);
 	delete data;
 	delete datafile;
+}
+
+int ht_history_entry::compareTo(const Object *o) const
+{
+	return strcmp(desc, ((ht_history_entry*)o)->desc);
 }
 
 void ht_history_entry::load(ObjectStream &s)
@@ -86,8 +91,8 @@ void ht_history_entry::load(ObjectStream &s)
 	GET_INT32D(s, size);
 
 	if (size) {
-		datafile=new MemoryFile();
-		data=new ObjectStreamBin(datafile, false);
+		datafile = new MemoryFile();
+		data = new ObjectStreamBin(datafile, false);
 
 		byte d[size];
 		GETX_BINARY(s, d, size, "data");
