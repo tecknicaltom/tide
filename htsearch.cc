@@ -446,7 +446,7 @@ ht_expr_search_request::ht_expr_search_request(uint search_class, uint flags, ch
 
 ht_expr_search_request::~ht_expr_search_request()
 {
-	if (expr) free(expr);
+	free(expr);
 }
 
 ht_expr_search_request *ht_expr_search_request::clone() const
