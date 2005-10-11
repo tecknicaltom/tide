@@ -29,6 +29,8 @@
 #include <cstring>
 #include <sys/stat.h>
 
+#include "strtools.h"
+
 /*
  *	COMMON SYS
  */
@@ -128,11 +130,10 @@ int sys_basename(char *result, const char *filename)
 	// FIXME: use is_path_delim
 	char *slash1 = strrchr(filename, '/');
 	char *slash2 = strrchr(filename, '\\');
-	char *slash=(slash1>slash2) ? slash1 : slash2;
+	char *slash = (slash1 > slash2) ? slash1 : slash2;
 	if (slash) {
-		int l=strlen(filename);
-		strncpy(result, slash+1, l-(slash-filename)-1);
-		result[l-(slash-filename)-1]=0;
+		int l = strlen(filename);
+		ht_strlcpy(result, slash+1, l-(slash-filename)+1);
 		return 0;
 	}
 	strcpy(result, filename);
@@ -144,10 +145,9 @@ int sys_dirname(char *result, const char *filename)
 	// FIXME: use is_path_delim
 	char *slash1 = strrchr(filename, '/');
 	char *slash2 = strrchr(filename, '\\');
-	char *slash = (slash1>slash2) ? slash1 : slash2;
+	char *slash = (slash1 > slash2) ? slash1 : slash2;
 	if (slash) {
-		strncpy(result, filename, slash-filename);
-		result[slash-filename] = 0;
+		ht_strlcpy(result, filename, slash-filename+1);
 		return 0;
 	}
 	strcpy(result, ".");
