@@ -218,8 +218,8 @@ ht_context_menu_entry::~ht_context_menu_entry()
 {
 	switch (type) {
 		case CME_ENTRY:
-			if (entry.name) free(entry.name);
-			if (entry.comment) free(entry.comment);
+			free(entry.name);
+			free(entry.comment);
 			break;
 		case CME_SUBMENU:
 			submenu->done();
