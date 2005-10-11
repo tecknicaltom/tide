@@ -25,6 +25,7 @@
 
 #include "x86asm.h"
 #include "snprintf.h"
+#include "strtools.h"
 
 #define X86ASM_PREFIX_NO			0
 #define X86ASM_PREFIX_0F			1
@@ -1368,9 +1369,8 @@ cont:
 		} else {
 			while (!strchr(" \t*+-[]()", *s) && *s) s++;
 		}
-		strncpy(buf, t, s-t);
-		buf[s-t]=0;
-		t=buf;
+		ht_strlcpy(buf, t, s-t);
+		t = buf;
 		if (*t=='+') {
 			sign=0;
 			continue;
@@ -1606,8 +1606,7 @@ void x86asm::splitstr(const char *s, char *name, char *op[3])
 	a=s;
 	while (isnotwhitespace(*s)) s++;
 	b=s;
-	strncpy(name, a, b-a);
-	name[b-a]=0;
+	ht_strlcpy(name, a, b-a);
 	/* find ops*/
 	for (int i=0; i<3; i++) {
 		while (iswhitespace(*s)) s++;
@@ -1619,8 +1618,7 @@ void x86asm::splitstr(const char *s, char *name, char *op[3])
 		b=s;
 		while (iswhitespace(*s)) s++;
 		if (!*s) wantbreak=1;
-		strncpy(op[i], a, b-a);
-		op[i][b-a]=0;
+		ht_strlcpy(op[i], a, b-a);
 		while (iswhitespace(*s)) s++;
 		if (wantbreak) break;
 		if (*s!=',') break;
