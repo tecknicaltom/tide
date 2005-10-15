@@ -75,9 +75,9 @@ void AnalyserInformation::done()
 	ht_statictext::done();
 }
 
-char *AnalyserInformation::gettext()
+int AnalyserInformation::gettext(char *buf, int maxlen)
 {
-	ht_snprintf(buf, sizeof buf,
+	return ht_snprintf(buf, maxlen,
 		"Analyser statistics:\n"
 		"====================\n\n"          
 		"Type: %s\nFile: %y\n"
@@ -87,7 +87,6 @@ char *AnalyserInformation::gettext()
 		atype, aname,
 		adis,
 		addrs, labels);
-	return buf;
 }
 
 bool AnalyserInformation::idle()
@@ -211,7 +210,7 @@ void *SymbolBox::quickfind(char *s)
 		int slen = strlen(s);
 		int tlen = strlen(tmp->name);
 		if (slen > tlen) return NULL;
-		if (strncmp(tmp->name, s, slen)==0) return tmp;
+		if (ht_strncmp(tmp->name, s, slen)==0) return tmp;
 		return NULL;
 	} else {
 		return NULL;
@@ -376,14 +375,12 @@ void	CallChain::select_node(void *node)
 /*
  *
  */
-#define ANALYINFOLINE_DISPLAYFORMAT_LENGTH 1024
 void AnalyInfoline::init(Bounds *b, ht_aviewer *A, char *Format)
 {
 	ht_statictext::init(b, 0, align_left);
 	VIEW_DEBUG_NAME("AnalyInfoline");
 	analy = A;
 	displayformat = ht_strdup(Format);
-	s = (char *)smalloc(ANALYINFOLINE_DISPLAYFORMAT_LENGTH);
 	addr = new InvalidAddress();
 	fofs = INVALID_FILE_OFS;
 }
@@ -391,13 +388,13 @@ void AnalyInfoline::init(Bounds *b, ht_aviewer *A, char *Format)
 void AnalyInfoline::done()
 {
 	free(displayformat);
-	free(s);
 	delete addr;
 	ht_statictext::done();
 }
 
-char *AnalyInfoline::gettext()
+int AnalyInfoline::gettext(char *buf, int maxlen)
 {
+	if (maxlen <= 0) return 0;
 	if (valid()) {
 		const char *sec = analy->analy->getSegmentNameByAddress(addr);
 		if (fofs != INVALID_FILE_OFS) {
@@ -405,49 +402,49 @@ char *AnalyInfoline::gettext()
 			const char *func = analy->analy->getSymbolNameByLocation(a);
 
 			char *d = displayformat;
-			char *ss = s;
+			char *ss = buf, *s = buf;
 			while (*d) {
-				if (*d=='%') {
+				if (*d == '%') {
 					d++;
 					switch (*d) {
-						case ANALY_STATUS_ARG_SECTION:
-							if (sec) ss+=ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), "%s", sec);
-							break;
-						case ANALY_STATUS_ARG_FILEOFFSET:
-							ss+=ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), "%08x", fofs);
-							break;
-						case ANALY_STATUS_ARG_RAW_UNASM: {
-							int length;
-							ss+=ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), "%s", analy->analy->getDisasmStr(addr, length));
-							break;
-						}
-						case ANALY_STATUS_ARG_FUNCTION: {
-							if (func) {
-								int d = 0;
-								addr->difference(d, a->addr);
-								char sign='+';
-								if (d<0) {
-									d=-d;
-									sign = '-';
-								}
-								ss+=ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), "%s%c%x", func, sign, d);
+					case ANALY_STATUS_ARG_SECTION:
+						if (sec) ss+=ht_snprintf(ss, maxlen-(ss-s), "%s", sec);
+						break;
+					case ANALY_STATUS_ARG_FILEOFFSET:
+						ss+=ht_snprintf(ss, maxlen-(ss-s), "%08x", fofs);
+						break;
+					case ANALY_STATUS_ARG_RAW_UNASM: {
+						int length;
+						ss += ht_snprintf(ss, maxlen-(ss-s), "%s", analy->analy->getDisasmStr(addr, length));
+						break;
+					}
+					case ANALY_STATUS_ARG_FUNCTION: {
+						if (func) {
+							int d = 0;
+							addr->difference(d, a->addr);
+							char sign = '+';
+							if (d < 0) {
+								d =- d;
+								sign = '-';
 							}
-							break;
+							ss += ht_snprintf(ss, maxlen-(ss-s), "%s%c%x", func, sign, d);
 						}
-						case ANALY_STATUS_ARG_OFFSET:
-							global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_ZEROS;
-							ss+=ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), "%y", addr);
-							break;
-						case '%':
-							if (ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s)) {
-								*ss++ = '%';
-							}
-							break;
-						default:
-							ss += ht_snprintf(ss, ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s), " error in format ");
+						break;
+					}
+					case ANALY_STATUS_ARG_OFFSET:
+						global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_ZEROS;
+						ss += ht_snprintf(ss, maxlen-(ss-s), "%y", addr);
+						break;
+					case '%':
+						if (maxlen-(ss-s) > 1) {
+							*ss++ = '%';
+						}
+						break;
+					default:
+						ss += ht_snprintf(ss, maxlen-(ss-s), " error in format ");
 					}
 				} else {
-					if (ANALYINFOLINE_DISPLAYFORMAT_LENGTH-(ss-s)>1) {
+					if (maxlen - (ss-s) > 1) {
 						// leave space for trailing zero
 						*ss++ = *d;
 					}
@@ -455,16 +452,16 @@ char *AnalyInfoline::gettext()
 				d++;
 			}
 			*ss = 0;
+			return ss - s;
 		} else {
 			if (!sec) {
-				ht_snprintf(s, ANALYINFOLINE_DISPLAYFORMAT_LENGTH, "[not in file]");
+				return ht_strlcpy(buf, "[not in file]", maxlen);
 			} else {
-				ht_snprintf(s, ANALYINFOLINE_DISPLAYFORMAT_LENGTH, "<%s> [not in file]", sec);
+				return ht_snprintf(buf, maxlen, "<%s> [not in file]", sec);
 			}
 		}
-		return s;
 	} else {
-		return "<no analyser>";
+		return ht_strlcpy(buf, "<no analyser>", maxlen);
 	}
 }
 
