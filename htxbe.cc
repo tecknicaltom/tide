@@ -297,7 +297,7 @@ bool xbe_section_name_to_section(xbe_section_headers *section_headers, const cha
 	int slen = strlen(name);
 
 	for (uint i=0; i < section_headers->number_of_sections; i++) {
-		if (strncmp(name, (char *)s->section_name_address, slen) == 0) {
+		if (ht_strncmp(name, (char *)s->section_name_address, slen) == 0) {
 			*section = i;
 			return true;
 		}
