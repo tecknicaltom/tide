@@ -93,16 +93,6 @@ bool	Object::idle()
 	return false;
 }
 
-bool	Object::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
-}
-
-bool	Object::instanceOf(Object *o) const
-{
-	return instanceOf(o->getObjectID());
-}
-
 void Object::load(ObjectStream &s)
 {
 }
@@ -347,14 +337,6 @@ Array *Array::clone() const
 		a->insert(e);
 	}
 	return a;
-}
-
-// SB: kann man die funktionen nicht alphabetisch sortieren?
-// SW: doch aber hab keinen bock dazu, kommt am schluss
-
-bool Array::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || List::instanceOf(id);
 }
 
 void Array::load(ObjectStream &s)
@@ -619,11 +601,6 @@ Object *Stack::pop()
 	return remove(findLast());
 }
 
-bool Stack::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || Array::instanceOf(id);
-}
-
 ObjectID Stack::getObjectID() const
 {
 	return OBJID_STACK;
@@ -687,11 +664,6 @@ SLinkedList *SLinkedList::clone() const
 		n = m;
 	}
 	return l;
-}
-
-bool SLinkedList::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || List::instanceOf(id);
 }
 
 void SLinkedList::load(ObjectStream &s)
@@ -994,11 +966,6 @@ DLinkedList *DLinkedList::clone() const
 	return l;
 }
 
-bool DLinkedList::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || List::instanceOf(id);
-}
-
 void DLinkedList::load(ObjectStream &s)
 {
 	own_objects = true;
@@ -1215,11 +1182,6 @@ Queue::Queue(bool own_objects) : SLinkedList(own_objects)
 }
 
 
-bool Queue::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || SLinkedList::instanceOf(id);
-}
-
 ObjectID Queue::getObjectID() const
 {
 	return OBJID_QUEUE;
@@ -1425,11 +1387,6 @@ BinaryTree *BinaryTree::clone() const
 	BinaryTree *c = new BinaryTree(own_objects, compare);
 	c->cloneR(root);
 	return c;
-}
-
-bool	BinaryTree::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || Container::instanceOf(id);
 }
 
 void BinaryTree::loadR(ObjectStream &s, BinTreeNode **n, int l, int r)
@@ -1750,11 +1707,6 @@ AVLTree *AVLTree::clone() const
 	AVLTree *c = new AVLTree(own_objects, compare);
 	c->cloneR((AVLTreeNode *)root);
 	return c;
-}
-
-bool AVLTree::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || BinaryTree::instanceOf(id);
 }
 
 int AVLTree::loadR(ObjectStream &s, BinTreeNode *&n, int l, int r)
@@ -2276,11 +2228,6 @@ Set::Set(bool oo)
 {
 }
 
-bool Set::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID()) || AVLTree::instanceOf(id);
-}
-
 ObjectID Set::getObjectID() const
 {
 	return OBJID_SET;
@@ -2333,11 +2280,6 @@ int KeyValue::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "[Key: %y; Value: %y]", mKey, mValue);
 }
 
-bool KeyValue::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
-}
-
 void KeyValue::load(ObjectStream &s)
 {
 	GET_OBJECT(s, mKey);
@@ -2377,11 +2319,6 @@ int SInt::compareTo(const Object *obj) const
 int SInt::toString(char *buf, int buflen) const
 {
 	return ht_snprintf(buf, buflen, "%d", value);
-}
-
-bool SInt::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
 }
 
 void SInt::load(ObjectStream &s)
@@ -2430,11 +2367,6 @@ int SInt64::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%qd", value);
 }
 
-bool SInt64::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
-}
-
 void SInt64::load(ObjectStream &s)
 {
 	GET_INT64D(s, value);
@@ -2479,11 +2411,6 @@ int UInt::compareTo(const Object *obj) const
 int UInt::toString(char *buf, int buflen) const
 {
 	return ht_snprintf(buf, buflen, "%u", value);
-}
-
-bool UInt::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
 }
 
 void UInt::load(ObjectStream &s)
@@ -2532,11 +2459,6 @@ int UInt64::toString(char *buf, int buflen) const
 	return ht_snprintf(buf, buflen, "%qu", value);
 }
 
-bool UInt64::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
-}
-
 void UInt64::load(ObjectStream &s)
 {
 	GET_INT64D(s, value);
@@ -2583,11 +2505,6 @@ int Float::compareTo(const Object *obj) const
 int Float::toString(char *buf, int buflen) const
 {
 	return ht_snprintf(buf, buflen, "%f", value);
-}
-
-bool Float::instanceOf(ObjectID id) const
-{
-	return id == getObjectID();
 }
 
 ObjectID Float::getObjectID() const
@@ -2642,11 +2559,6 @@ int MemArea::compareTo(const Object *obj) const
 int MemArea::toString(char *buf, int buflen) const
 {
 	throw NotImplementedException(HERE);
-}
-
-bool MemArea::instanceOf(ObjectID id) const
-{
-	return (id == getObjectID() || Object::instanceOf(id));
 }
 
 void MemArea::load(ObjectStream &s)
