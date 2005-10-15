@@ -46,13 +46,18 @@ bool match_sorted_stringtable(char *s, uint slen, char **strings, uint strings_c
 {
 	int a=0, b=strings_count-1;
 	int m;
-	while (a<=b) {
-		m=(a+b)>>1;
-		uint x=strlen(strings[m]);
-		if (slen>x) x=slen;
-		int d=strncmp(s, strings[m], x);
-		if (d<0) b=m-1; else
-			if (d>0) a=m+1; else return true;
+	while (a <= b) {
+		m = (a+b) >> 1;
+		uint x = strlen(strings[m]);
+		if (slen > x) x = slen;
+		int d = ht_strncmp(s, strings[m], x);
+		if (d < 0) {
+			b = m-1; 
+		} else if (d > 0) {
+			a = m+1; 
+		} else {
+			return true;
+		}
 	}
 	return false;
 }
