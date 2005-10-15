@@ -1295,33 +1295,33 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 
 	// typecast
 	while (strchr(" \t", *s) && *s) s++;
-	if (strncmp(s, "byte", 4)==0) {
+	if (ht_strncmp(s, "byte", 4)==0) {
 		hsize = 1;
 		s += 4;
-	} else if (strncmp(s, "word", 4)==0) {
+	} else if (ht_strncmp(s, "word", 4)==0) {
 		hsize = 2;
 		s += 4;
-	} else if (strncmp(s, "dword", 5)==0) {
+	} else if (ht_strncmp(s, "dword", 5)==0) {
 		hsize = 4;
 		s += 5;
-	} else if (strncmp(s, "pword", 5)==0) {
+	} else if (ht_strncmp(s, "pword", 5)==0) {
 		hsize = 6;
 		s += 5;
-	} else if (strncmp(s, "qword", 5)==0) {
+	} else if (ht_strncmp(s, "qword", 5)==0) {
 		hsize = 8;
 		s += 5;
-	} else if (strncmp(s, "oword", 5)==0) {
+	} else if (ht_strncmp(s, "oword", 5)==0) {
 		hsize = 16;
 		s += 5;
-	} else if (strncmp(s, "single", 6)==0) {
+	} else if (ht_strncmp(s, "single", 6)==0) {
 		hsize = 4;
 		s += 6;
 		floatptr = 1;
-	} else if (strncmp(s, "double", 6)==0) {
+	} else if (ht_strncmp(s, "double", 6)==0) {
 		hsize = 8;
 		s += 6;
 		floatptr = 1;
-	} else if (strncmp(s, "extended", 8)==0) {
+	} else if (ht_strncmp(s, "extended", 8)==0) {
 		hsize = 10;
 		s += 8;
 		floatptr = 1;
@@ -1329,7 +1329,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 	if (hsize) {
 		if (!strchr(" \t", *s) || !*s) return false;
 		while (strchr(" \t", *s) && *s) s++;
-		if (!strncmp(s, "ptr", 3) == 0) return false;
+		if (!ht_strncmp(s, "ptr", 3) == 0) return false;
 		opsize = hsize;
 		s += 3;
 		while (strchr(" \t", *s) && *s) s++;
@@ -1340,7 +1340,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 	for (int i = 0; i<8; i++) {
 		if (x86_segs[i]) {
 			int l = strlen(x86_segs[i]);
-			if (strncmp(s, x86_segs[i], l)==0 && s[l]==':') {
+			if (ht_strncmp(s, x86_segs[i], l)==0 && s[l]==':') {
 				s += l+1;
 				int c2p[8]={X86_PREFIX_ES, X86_PREFIX_CS, X86_PREFIX_SS, X86_PREFIX_DS, X86_PREFIX_FS, X86_PREFIX_GS, 0, 0};
 				asm_insn->segprefix=c2p[i];
@@ -1480,9 +1480,9 @@ bool x86asm::opspecialregs(x86_insn_op *op, char *xop)
 		op->size=10;
 		op->stx=0;
 		return true;
-	} else if ((strncmp(xop, "st", 2)==0) && (xop[2]=='(') && (xop[4]==')')) {
-		int w=strtol(xop+3, &e, 10);
-		if ((e!=xop+4) || (w>7)) return false;
+	} else if (ht_strncmp(xop, "st", 2)==0 && xop[2]=='(' && xop[4]==')') {
+		int w = strtol(xop+3, &e, 10);
+		if (e != xop+4 || w > 7) return false;
 		op->type=X86_OPTYPE_STX;
 		op->size=10;
 		op->stx=w;
@@ -1497,17 +1497,17 @@ bool x86asm::opspecialregs(x86_insn_op *op, char *xop)
 
 	int w=strtol(xop+2, &e, 10);
 	if ((*e) || (w>7)) return 0;
-	if (strncmp(xop, "cr", 2)==0) {
+	if (ht_strncmp(xop, "cr", 2)==0) {
 		op->type=X86_OPTYPE_CRX;
 		op->size=4;
 		op->crx=w;
 		return true;
-	} else if (strncmp(xop, "dr", 2)==0) {
+	} else if (ht_strncmp(xop, "dr", 2)==0) {
 		op->type=X86_OPTYPE_DRX;
 		op->size=4;
 		op->drx=w;
 		return true;
-	} else if (strncmp(xop, "tr", 2)==0) {
+	} else if (ht_strncmp(xop, "tr", 2)==0) {
 		op->type=X86_OPTYPE_TRX;
 		op->size=4;
 		op->trx=w;
@@ -1537,14 +1537,14 @@ int x86asm::translate_str(asm_insn *asm_insn, const char *s)
 	a=p;
 	while (isnotwhitespace(*p)) p++;
 	b=p;
-	if ((strncmp(a, "rep", b-a) == 0) || (strncmp(a, "repe", b-a) == 0)
-	 || (strncmp(a, "repz", b-a) == 0)) {
+	if (ht_strncmp(a, "rep", b-a) == 0 || ht_strncmp(a, "repe", b-a) == 0
+	 || ht_strncmp(a, "repz", b-a) == 0) {
 		insn->repprefix=X86_PREFIX_REPZ;
 		s = p;
-	} else if ((strncmp(a, "repne", b-a) == 0) || (strncmp(a, "repnz", b-a) == 0)) {
+	} else if (ht_strncmp(a, "repne", b-a) == 0 || ht_strncmp(a, "repnz", b-a) == 0) {
 		insn->repprefix=X86_PREFIX_REPNZ;
 		s = p;
-	} else if (strncmp(a, "lock", b-a) == 0) {
+	} else if (ht_strncmp(a, "lock", b-a) == 0) {
 		insn->lockprefix=X86_PREFIX_LOCK;
 		s = p;
 	}
