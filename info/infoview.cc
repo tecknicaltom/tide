@@ -452,7 +452,7 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 				char *os = s;
 				for (uint i=0; i<NUM_NODE_TAGS; i++) {
 					uint l = strlen(tags[i]);
-					if ((strncmp(s, tags[i], l) == 0) && (s[l] == ':')) {
+					if (ht_strncmp(s, tags[i], l) == 0 && s[l] == ':') {
 						s += l+1;
 						whitespaces(s);
 						char *e = strchr(s, ',');
@@ -460,9 +460,9 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 						if (!firstnode && (strcmp(tags[i], "Node") == 0)) {
 							firstnode = cr+1;
 						}
-						if ((strcmp(tags[i], "Node") == 0) &&
-						((size_t)(e-s) == strlen(node)) &&
-						(strncmp(s, node, e-s)==0)) {
+						if (strcmp(tags[i], "Node") == 0 &&
+						(size_t)(e-s) == strlen(node) &&
+						ht_strncmp(s, node, e-s)==0) {
 							return cr+1-infotext;
 						}
 						s = e+1;
