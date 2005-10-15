@@ -36,6 +36,13 @@ class ObjectStream;
 struct BuildCtorArg {
 };
 
+
+template <typename T1, typename T2>
+inline bool instanceOf(const T2 *o)
+{
+	return (dynamic_cast<const T1*>(o) != NULL);
+} 
+
 /**
  *	Macro for creating object build functions
  */
@@ -131,14 +138,6 @@ public:
  *	@returns true if working, false if really idle
  */
 	virtual	bool		idle();
-/**
- *	@returns true if <i>this</i> is an object or derived from an object of type <i>id</i>.
- */
-	virtual	bool		instanceOf(ObjectID id) const;
-/**
- *	@returns true if <i>this</i> is an object or derived from an object of the same type as <i>obj</i>.
- */
-		bool		instanceOf(Object *obj) const;
 /**
  *	Load object from object stream.
  *
@@ -582,7 +581,6 @@ public:
 	virtual			~Array();
 	/* extends Object */
 	virtual	Array *		clone() const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -633,7 +631,6 @@ public:
 	/* new */
 	virtual Object *	pop();
 	virtual void		push(Object *obj);
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	ObjectID	getObjectID() const;
 };
 
@@ -666,7 +663,6 @@ public:
 	virtual			~SLinkedList();
 	/* extends Object */
 	virtual	SLinkedList *	clone() const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -724,7 +720,6 @@ public:
 		insert(obj);
 	}
 
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	ObjectID	getObjectID() const;
 };
 
@@ -758,7 +753,6 @@ public:
 	virtual			~DLinkedList();
 	/* extends Object */
 	virtual	DLinkedList *	clone() const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -832,7 +826,6 @@ public:
 	virtual			~BinaryTree();
 	/* extends Object */
 	virtual	BinaryTree *	clone() const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -882,7 +875,6 @@ public:
 		bool		expensiveCheck() const;
 	/* extends Object */
 	virtual	AVLTree *	clone() const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	/* extends Container */
@@ -942,7 +934,6 @@ public:
 		return contains(obj);
 	}
 
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	ObjectID	getObjectID() const;
 };
 
@@ -995,7 +986,6 @@ public:
 	virtual	KeyValue *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -1014,7 +1004,6 @@ public:
 	virtual	SInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -1035,7 +1024,6 @@ public:
 	virtual	SInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -1054,7 +1042,6 @@ public:
 	virtual	UInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -1073,7 +1060,6 @@ public:
 	virtual UInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
@@ -1092,7 +1078,6 @@ public:
 	virtual	Float *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 //	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 //	virtual	void		store(ObjectStream &s) const;
@@ -1125,7 +1110,6 @@ public:
 	virtual	MemArea *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
 	virtual	int		toString(char *buf, int buflen) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
