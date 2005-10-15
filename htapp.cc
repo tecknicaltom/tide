@@ -336,9 +336,8 @@ bool file_chooser(const char *title, char *buf, int bufsize)
 		d->extract_url(b);
 
 		// FIXME: urls not fully supported...
-		if (strncmp(b, "local:", 6) == 0) {
-			ht_snprintf(buf, bufsize, "%s", b+6);
-
+		if (ht_strncmp(b, "local:", 6) == 0) {
+			ht_strlcpy(buf, b+6, bufsize);
 			if (hist) insert_history_entry(hist, buf, 0);
 
 			d->done();
@@ -423,8 +422,8 @@ bool file_open_dialog(char **name, uint *mode)
 		d->extract_url(buf);
 
 		// FIXME: urls not fully supported...
-		if (strncmp(buf, "local:", 6) == 0) {
-			*name = strdup(buf+6);
+		if (ht_strncmp(buf, "local:", 6) == 0) {
+			*name = ht_strdup(buf+6);
 
 			if (hist) insert_history_entry(hist, *name, 0);
 
