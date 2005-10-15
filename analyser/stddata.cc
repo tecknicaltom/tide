@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-#include "analy_register.h"
+#include "analy.h"
 
 #include "atom.h"
 #include "stddata.h"
@@ -143,7 +143,7 @@ static bool areacontains(area_s *p, Object *V)
 
 bool Area::contains(Object *v)
 {
-	if (v->instanceOf(ATOM_ADDRESS_INVALID)) return false;
+	if (instanceOf<InvalidAddress>(v)) return false;
 	return areacontains(a, v);
 }
 
