@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 
 #include "file.h"
+#include "strtools.h"
 
 /*
  *	COMMON SYS
@@ -174,10 +175,10 @@ static int flatten_path(char *path, is_path_delim delim)
 	char *q = next_delim(path, delim);
 	int pp = flatten_path(q, delim);
 	int ll = q ? (q-path-1) : strlen(path)-1;
-	if ((ll == 2) && (strncmp(path+1, "..", 2) == 0)) {
+	if ((ll == 2) && (ht_strncmp(path+1, "..", 2) == 0)) {
 		if (q) memmove(path, q, strlen(q)+1); else *path = 0;
 		pp++;
-	} else if ((ll == 1) && (strncmp(path+1, ".", 1) == 0)) {
+	} else if ((ll == 1) && (ht_strncmp(path+1, ".", 1) == 0)) {
 		if (q) memmove(path, q, strlen(q)+1); else *path = 0;
 	} else if (pp) {
 		if (q) memmove(path, q, strlen(q)+1); else *path = 0;
