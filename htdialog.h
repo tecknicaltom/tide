@@ -356,9 +356,9 @@ protected:
 
 struct ht_text_listbox_item {
 	ht_text_listbox_item	*next, *prev;
-	int					id;
-	void					*extra_data;
-	char					*data[0];
+	int			id;
+	void			*extra_data;
+	char			*data[0];
 };
 
 struct ht_text_listbox_sort_order {
@@ -446,10 +446,10 @@ public:
 	virtual	void	done();
 /* overwritten */
 	virtual	void draw();
-	virtual	char *gettext();
-/* new */
-	virtual	vcp gettextcolor();
 	virtual	void settext(const char *text);
+/* new */
+	virtual	int gettext(char *text, int maxlen);
+	virtual	vcp gettextcolor();
 };
 
 /*
@@ -498,7 +498,7 @@ public:
 	virtual void draw();
 	virtual	vcp  gettextcolor();
 	virtual	void getdata(ObjectStream &s);
-	virtual	char *gettext();
+	virtual	int gettext(char *text, int maxlen);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void setdata(ObjectStream &s);
 /* new */
