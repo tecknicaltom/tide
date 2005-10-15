@@ -456,12 +456,6 @@ void String::insert(const String &s, int pos)
 	memmove(&mContent[pos], s.mContent, s.mLength);
 }
 
-bool String::instanceOf(ObjectID id) const
-{
-	if (id == getObjectID()) return true;
-	return Object::instanceOf(id);
-}
-
 bool String::leftSplit(char chr, String &initial, String &rem) const
 {
 	int pivot = findCharFwd(chr);
@@ -767,12 +761,6 @@ int IString::compareChar(char c1, char c2) const
 	c1 = tolower(c1);
 	c2 = tolower(c2);
 	return String::compareChar(c1, c2);
-}
-
-bool IString::instanceOf(ObjectID id) const
-{
-	if (id == getObjectID()) return true;
-	return String::instanceOf(id);
 }
 
 ObjectID IString::getObjectID() const
