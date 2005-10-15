@@ -102,16 +102,16 @@ branch_enum_t AnalyIA64Disassembler::isBranch(OPCODE *opcode)
 {
 	IA64DisInsn *dis_insn = (IA64DisInsn *) opcode;
 	IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
-	if (strncmp(slot->opcode->name, "br.", 3)==0) {
-		if (strncmp(slot->opcode->name+3, "call", 4)==0) {
+	if (ht_strncmp(slot->opcode->name, "br.", 3)==0) {
+		if (ht_strncmp(slot->opcode->name+3, "call", 4)==0) {
 			return br_call;
-		} else if (strncmp(slot->opcode->name+3, "cond", 4)==0) {
+		} else if (ht_strncmp(slot->opcode->name+3, "cond", 4)==0) {
 			if (slot->qp) {
 				return br_jXX;
 			} else {
 				return br_jump;
 			}
-		} else if (strncmp(slot->opcode->name+3, "ret", 3)==0) {
+		} else if (ht_strncmp(slot->opcode->name+3, "ret", 3)==0) {
 			if (!slot->qp) return br_return;
 		}
 	}
