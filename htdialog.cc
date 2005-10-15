@@ -269,9 +269,9 @@ void ht_checkboxes::handlemsg(htmsg *msg)
 	if (msg->type==mt_postprocess) {
 		if (msg->msg==msg_keypressed) {
 			for (int i=0; i<scount; i++) {
-				if ((shortcuts[i]!=-1) && (msg->data1.integer==shortcuts[i])) {
-					sel=i;
-					state=state^(1<<sel);
+				if (shortcuts[i] != -1 && msg->data1.integer == shortcuts[i]) {
+					sel = i;
+					state = state ^ (1<<sel);
 					app->focus(this);
 					dirtyview();
 					clearmsg(msg);
@@ -282,35 +282,35 @@ void ht_checkboxes::handlemsg(htmsg *msg)
 	} else {
 		if (msg->msg==msg_keypressed) {
 			switch (msg->data1.integer) {
-				case K_Left:
-					sel-=size.h;
-					if (sel<0) sel=0;
-					dirtyview();
-					clearmsg(msg);
-					return;
-				case K_Right:
-					sel+=size.h;
-					if (sel>=scount) sel=scount-1;
-					dirtyview();
-					clearmsg(msg);
-					return;
-				case K_Up:
-					sel--;
-					if (sel<0) sel=0;
-					dirtyview();
-					clearmsg(msg);
-					return;
-				case K_Down:
-					sel++;
-					if (sel>=scount) sel=scount-1;
-					dirtyview();
-					clearmsg(msg);
-					return;
-				case K_Space:
-					state=state^(1<<sel);
-					dirtyview();
-					clearmsg(msg);
-					return;
+			case K_Left:
+				sel -= size.h;
+				if (sel < 0) sel=0;
+				dirtyview();
+				clearmsg(msg);
+				return;
+			case K_Right:
+				sel += size.h;
+				if (sel >= scount) sel = scount-1;
+				dirtyview();
+				clearmsg(msg);
+				return;
+			case K_Up:
+				sel--;
+				if (sel < 0) sel = 0;
+				dirtyview();
+				clearmsg(msg);
+				return;
+			case K_Down:
+				sel++;
+				if (sel >= scount) sel = scount-1;
+				dirtyview();
+				clearmsg(msg);
+				return;
+			case K_Space:
+				state = state ^ (1<<sel);
+				dirtyview();
+				clearmsg(msg);
+				return;
 			}
 		}
 	}
@@ -1834,7 +1834,7 @@ void ht_listbox::handlemsg(htmsg *msg)
 				return;
 			}
 			default: {
-				if ((listboxcaps & LISTBOX_QUICKFIND) && (msg->data1.integer > 31) && (msg->data1.integer < 0xff)) {
+				if ((listboxcaps & LISTBOX_QUICKFIND) && msg->data1.integer > 31 && msg->data1.integer < 0xff) {
 					*(qpos++) = msg->data1.integer;
 					*qpos = 0;
 					void *a = quickfind(quickfinder);
@@ -2383,31 +2383,32 @@ int get_ssst(char s)
 void ht_statictext::draw()
 {
 	if (!transparent) clear(gettextcolor());
-	char *t=gettext();
-	if (!t) return;
+	char text[size.w*size.h];
+	if (gettext(text, size.w*size.h) <= 0) return;
+	char *t = text;
 	if (breaklines) {
-/* format string... */	
+		/* format string... */	
 		ht_statictext_linedesc *orig_d=(ht_statictext_linedesc *)malloc(sizeof (ht_statictext_linedesc)*size.h);
 		ht_statictext_linedesc *d=orig_d;
 		statictext_align lalign=align;
 		int c=0;
-		while ((*t) && (c<size.h)) {
-/* custom alignment */
-			if ((*t==ALIGN_CHAR_ESCAPE) && (align==align_custom)) {
+		while (*t && c < size.h) {
+			/* custom alignment */
+			if (*t == ALIGN_CHAR_ESCAPE && align == align_custom) {
 				switch (t[1]) {
-					case ALIGN_CHAR_LEFT:
-						lalign=align_left;
-						break;
-					case ALIGN_CHAR_CENTER:
-						lalign=align_center;
-						break;
-					case ALIGN_CHAR_RIGHT:
-						lalign=align_right;
-						break;
+				case ALIGN_CHAR_LEFT:
+					lalign=align_left;
+					break;
+				case ALIGN_CHAR_CENTER:
+					lalign=align_center;
+					break;
+				case ALIGN_CHAR_RIGHT:
+					lalign=align_right;
+					break;
 				}
 				t+=2;
 			}
-/* determine line length */
+			/* determine line length */
 			int i=0, len=1;
 			char *bp=t+1, *n=t+1;
 			int ssst=get_ssst(t[i]);
@@ -2467,15 +2468,15 @@ vcp ht_statictext::gettextcolor()
 //	return VCP(VC_RED, VC_BLACK);
 }
 
-char *ht_statictext::gettext()
+int ht_statictext::gettext(char *aText, int maxlen)
 {
-	return text;
+	return ht_strlcpy(aText, text, maxlen);
 }
 
-void ht_statictext::settext(const char *_text)
+void ht_statictext::settext(const char *aText)
 {
 	free(text);
-	text = ht_strdup(_text);
+	text = ht_strdup(aText);
 	dirtyview();
 }
 
@@ -2563,7 +2564,7 @@ void ht_listpopup_dialog::setdata(ObjectStream &s)
 void	ht_listpopup::init(Bounds *b)
 {
 	ht_statictext::init(b, 0, align_left, 0);
-	setoptions(options|VO_SELECTABLE);
+	setoptions(options | VO_SELECTABLE);
 	VIEW_DEBUG_NAME("ht_listpopup");
 
 	Bounds c=*b;
@@ -2571,7 +2572,7 @@ void	ht_listpopup::init(Bounds *b)
 	c.y=0;
 	c.h=8;
 	
-	listpopup=new ht_listpopup_dialog();
+	listpopup = new ht_listpopup_dialog();
 	listpopup->init(&c, 0);
 }
 
@@ -2605,17 +2606,16 @@ void ht_listpopup::getdata(ObjectStream &s)
 	listpopup->getdata(s);
 }
 
-char *ht_listpopup::gettext()
+int ht_listpopup::gettext(char *text, int maxlen)
 {
 	ht_listpopup_dialog_data d;
 	ViewDataBuf vdb(listpopup, &d, sizeof d);
-	// FIXPORT:
-	return d.cursor_string;
+	return ht_strlcpy(text, d.cursor_string, maxlen);
 }
 
 void ht_listpopup::handlemsg(htmsg *msg)
 {
-	if (msg->msg==msg_keypressed) {
+	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 			case K_Up: {
 				int r;
@@ -2632,7 +2632,7 @@ void ht_listpopup::handlemsg(htmsg *msg)
 				ht_listpopup_dialog_data d;
 				ViewDataBuf vdb(listpopup, &d, sizeof d);
 				listpopup->select_next();
-				r=run_listpopup();
+				r = run_listpopup();
 				clearmsg(msg);
 				if (!r) listpopup->databuf_set(&d, sizeof d);
 				return;
