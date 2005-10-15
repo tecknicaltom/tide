@@ -408,7 +408,7 @@ static bool bnstr2bin(uint64 &u64, const char *&str, int base)
 bool parseIntStr(const char *&str, uint64 &u64, int defaultbase)
 {
 	int base = defaultbase;
-	if (base == 10 && strncmp("0x", str, 2) == 0) {
+	if (base == 10 && ht_strncmp("0x", str, 2) == 0) {
 		str += 2;
 		base = 16;
 	}
@@ -418,7 +418,7 @@ bool parseIntStr(const char *&str, uint64 &u64, int defaultbase)
 bool parseIntStr(char *&str, uint64 &u64, int defaultbase)
 {
 	int base = defaultbase;
-	if (base == 10 && strncmp("0x", str, 2) == 0) {
+	if (base == 10 && ht_strncmp("0x", str, 2) == 0) {
 		str += 2;
 		base = 16;
 	}
