@@ -18,12 +18,13 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <string.h>
+
 #include "analy_register.h"
 #include "analy_java.h"
 #include "htdebug.h"
 #include "javadis.h"
-
-#include <string.h>
+#include "strtools.h"
 
 /*
  *
@@ -115,13 +116,13 @@ branch_enum_t AnalyJavaDisassembler::isBranch(OPCODE *opcode)
 	} else if ((strcmp("tableswitch", opcode_str)==0)
 	|| (strcmp("lookupswitch", opcode_str)==0)) {
 		return br_jXX;
-	} else if (strncmp("ret", opcode_str, 3)==0
-	|| strncmp("ret", opcode_str+1, 3)==0
-	|| strncmp("athrow", opcode_str, 6)==0) {
+	} else if (ht_strncmp("ret", opcode_str, 3)==0
+	|| ht_strncmp("ret", opcode_str+1, 3)==0
+	|| ht_strncmp("athrow", opcode_str, 6)==0) {
 		return br_return;
-	} else if (strncmp("goto", opcode_str, 4)==0) {
+	} else if (ht_strncmp("goto", opcode_str, 4)==0) {
 		return br_jump;
-	} else if (strncmp("jsr", opcode_str, 3)==0) {
+	} else if (ht_strncmp("jsr", opcode_str, 3)==0) {
 		return br_call;
 	} else return br_nobranch;
 }
