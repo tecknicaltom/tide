@@ -77,7 +77,6 @@ public:
 	virtual	int		findStringBwd(const String &s, int start = -1, int ith_match = 0) const;
 	inline	char		firstChar() const;
 		void		insert(const String &s, int pos);
-	virtual	bool		instanceOf(ObjectID id) const;
 	inline	bool		isEmpty() const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -141,7 +140,6 @@ public:
 
 	virtual	IString *	clone() const;
 	virtual	int		compareChar(char c1, char c2) const;
-	virtual	bool		instanceOf(ObjectID id) const;
 	virtual	ObjectID	getObjectID() const;
 };
 
