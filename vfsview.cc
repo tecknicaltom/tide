@@ -339,7 +339,7 @@ char *VfsListbox::translateProp(char *fmt, int *type)
 {
 	for (int i=0; i<VFSV_FORMAT_PROPERTIES; i++) {
 		int l = strlen(format_property[i]);
-		if (strncmp(fmt, format_property[i], l)==0) {
+		if (ht_strncmp(fmt, format_property[i], l)==0) {
 			*type = i;
 			return fmt+l;
 		}
