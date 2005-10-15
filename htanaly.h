@@ -66,14 +66,13 @@ class ht_aviewer;
 
 class AnalyserInformation: public ht_statictext {
 	ht_aviewer	*analy;     
-	char		buf[1024];
 	int		addrs, labels;
 	const char	*atype, *adis;
 	String		*aname;
 public:
 		void	init(Bounds *b, ht_aviewer *a);
 	virtual	void done();
-	virtual	char *gettext();
+	virtual	int  gettext(char *text, int maxlen);
 	virtual	bool idle();
 };
 
@@ -144,15 +143,15 @@ private:
 class AnalyInfoline: public ht_statictext {
 public:
 	ht_aviewer	*analy;
-	char			*s;
+	char		*s;
 	FileOfs		fofs;
 	Address		*addr;
-	char			*displayformat;
-			void	init(Bounds *b, ht_aviewer *A, char *Format);
-	virtual	void done();
-	virtual	char *gettext();
-			void update(Address *cursor_addr, FileOfs ecursor_addr);
-			bool valid();
+	char		*displayformat;
+		void	init(Bounds *b, ht_aviewer *A, char *Format);
+	virtual	void	done();
+	virtual	int	gettext(char *text, int maxlen);
+		void	update(Address *cursor_addr, FileOfs ecursor_addr);
+		bool	valid();
 };
 
 /*
