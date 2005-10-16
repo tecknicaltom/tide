@@ -146,15 +146,15 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 			if (r == button_ok) {
 				ht_listbox_data d;
 				ViewDataBuf vdb(list, &d, sizeof d);
-				ht_text_listbox_item *i=(ht_text_listbox_item *)d.cursor_ptr;
+				ht_text_listbox_item *i = (ht_text_listbox_item *)d.data->cursor_ptr;
 				asm_code *ac3 = ac;
-				int ac3i=0;
+				int ac3i = 0;
 				while (ac3) {
-					if (ac3i==i->id) {
-						chosen_ac=ac3;
+					if (ac3i == i->id) {
+						chosen_ac = ac3;
 						break;
 					}
-					ac3=ac3->next;
+					ac3 = ac3->next;
 					ac3i++;
 				}
 			}
