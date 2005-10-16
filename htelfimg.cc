@@ -35,7 +35,7 @@ static ht_view *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 //	if (elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS32) return 0;
 
 	String fn;
-	LOG("%s: ELF: loading image (starting analyser)...", &file->getFilename(fn));
+	LOG("%y: ELF: loading image (starting analyser)...", &file->getFilename(fn));
 	ElfAnalyser *p = new ElfAnalyser();
 	p->init(elf_shared, file);
 
