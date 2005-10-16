@@ -240,3 +240,13 @@ FileOfs	sys_ftell(SYS_FILE *file)
 {
 	return ftello((FILE *)file);
 }
+
+const char *sys_get_name()
+{
+	return "POSIX";
+}
+
+int sys_get_caps()
+{
+	return 0;
+}
