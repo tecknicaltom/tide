@@ -148,13 +148,11 @@ bool file_new_dialog(uint *mode)
 
 	bool retval = false;
 	if (d->run(false)) {
-		struct {
-			ht_listbox_data type;
-		} data;
+		ht_listbox_data type;
 
-		ViewDataBuf vdb(d, &data, sizeof data);
+		ViewDataBuf vdb(mode_input, &type, sizeof type);
 
-		*mode = mode_input->getID(data.type.cursor_ptr);
+		*mode = mode_input->getID(type.data->cursor_ptr);
 		
 		retval = true;
 	}
@@ -289,7 +287,7 @@ void FileBrowser::listbox_changed()
 {
 	FileBrowserVfsListboxData l;
 	ViewDataBuf vdb(listbox, &l, sizeof l);
-	ht_text_listbox_item *t = (ht_text_listbox_item*)l.cursor_ptr;
+	ht_text_listbox_item *t = (ht_text_listbox_item*)l.data->cursor_ptr;
 	if (t) {
 		vfs_extra *x = (vfs_extra*)t->extra_data;
 		ht_strinputfield_data i;
@@ -2828,7 +2826,7 @@ ht_view *ht_app::popup_view_list(char *dialog_title)
 	if (dialog->run(false)) {
 		ht_listbox_data data;
 		ViewDataBuf vdb(listbox, &data, sizeof data);
-		result = (ht_view*)structure[listbox->getID(data.cursor_ptr)];
+		result = (ht_view*)structure[listbox->getID(data.data->cursor_ptr)];
 	}
 
 	dialog->done();
@@ -2908,7 +2906,7 @@ ht_window *ht_app::popup_window_list(char *dialog_title)
 	if (dialog->run(false)) {
 		ht_listbox_data data;
 		ViewDataBuf vdb(listbox, &data, sizeof data);
-		result = get_window_by_number(listbox->getID(data.cursor_ptr));
+		result = get_window_by_number(listbox->getID(data.data->cursor_ptr));
 	}
 	dialog->done();
 	delete dialog;
