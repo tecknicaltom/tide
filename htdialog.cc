@@ -29,6 +29,7 @@
 #include "htidle.h"
 #include "keyb.h"
 #include "htpal.h"
+#include "snprintf.h"
 #include "strtools.h"
 #include "tools.h"
 
@@ -1678,7 +1679,7 @@ int  ht_listbox::estimateEntryPos(void *entry)
 
 void ht_listbox::getdata(ObjectStream &s)
 {
-	ht_listbox_data d;
+	ht_listbox_data_internal d;
 	d.top_ptr = e_top;
 	d.cursor_ptr = e_cursor;
 	PUTX_BINARY(s, &d, sizeof d, NULL);
@@ -1902,7 +1903,7 @@ bool ht_listbox::selectEntry(void *entry)
 
 void ht_listbox::setdata(ObjectStream &s)
 {
-	ht_listbox_data d;
+	ht_listbox_data_internal d;
 	GET_BINARY(s, &d, sizeof d);
 	e_top = d.top_ptr;
 	e_cursor = d.cursor_ptr;
@@ -2308,11 +2309,6 @@ void	ht_itext_listbox::init(Bounds *b, int Cols, int Keycol)
 	ht_text_listbox::init(b, Cols, Keycol);
 }
 
-void	ht_itext_listbox::done()
-{
-	ht_text_listbox::done();
-}
-
 int	ht_itext_listbox::compare_strn(char *s1, char *s2, int l)
 {
 	return ht_strnicmp(s1, s2, l);
@@ -2516,9 +2512,9 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 	ht_listbox_data d;
 	ViewDataBuf vdb(listbox, &d, sizeof d);
 
-	PUTX_INT32D(s, ((ht_text_listbox*)listbox)->getID(d.cursor_ptr), NULL);
+	PUTX_INT32D(s, ((ht_text_listbox*)listbox)->getID(d.data->cursor_ptr), NULL);
 
-	ht_text_listbox_item *cursor = (ht_text_listbox_item*)d.cursor_ptr;
+	ht_text_listbox_item *cursor = (ht_text_listbox_item*)d.data->cursor_ptr;
 	if (cursor) {
 		PUTX_STRING(s, cursor->data[0], NULL);
 	} else {
