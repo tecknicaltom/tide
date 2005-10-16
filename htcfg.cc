@@ -18,6 +18,11 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
  
+#include <errno.h>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+
 #include "cstream.h"
 #include "htcfg.h"
 #include "htctrl.h"
@@ -29,10 +34,6 @@
 #include "store.h"
 #include "sys.h"
 #include "tools.h"
-
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
 
 /* VERSION 2 (for ht-0.4.4 and later) */
 
@@ -105,7 +106,7 @@ loadstore_result save_systemconfig()
 		f.writex(&h, sizeof h);
 	
 		/* write object stream type */
-		ObjectStream *d = create_object_stream(f, system_ostream_type);
+		std::auto_ptr<ObjectStream> d(create_object_stream(f, system_ostream_type));
 	   
 		switch (system_ostream_type) {
 		case object_stream_bin:
@@ -115,9 +116,7 @@ loadstore_result save_systemconfig()
 			break;
 		}
 		/* write config */
-		app->store(*d);
-		
-		delete d;
+		app->store(*d.get());
 	} catch (const IOException &) {
 		return LS_ERROR_WRITE;
 	}
@@ -127,7 +126,7 @@ loadstore_result save_systemconfig()
 bool load_systemconfig(loadstore_result *result, int *error_info)
 {
 	uint8 object_stream_type = 128;
-	ObjectStream *d = NULL;
+	std::auto_ptr<ObjectStream> d(NULL);
 	*error_info = 0;
 	try {
 		LocalFile f((String)systemconfig_file, IOAM_READ, FOM_EXISTS);
@@ -154,30 +153,31 @@ bool load_systemconfig(loadstore_result *result, int *error_info)
 			return false;
 		}
 
-		d = create_object_stream(f, object_stream_type);
-		if (!d) {
+		d.reset(create_object_stream(f, object_stream_type));
+		if (!d.get()) {
 			*result = LS_ERROR_FORMAT;
 			return false;
 		}
 
 		/* read config */
-		app->load(*d);
+		app->load(*d.get());
 	} catch (const ObjectNotRegisteredException &) {
 		*result = LS_ERROR_CORRUPTED;
-		if (object_stream_type==object_stream_txt && d) {
-			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		if (object_stream_type==object_stream_txt && d.get()) {
+			*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
 		}
-		delete d;
 		return false;
 	} catch (const IOException &e) {
-		*result = LS_ERROR_READ;
-		if (object_stream_type==object_stream_txt && d) {
-			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		if (e.mPosixErrno == ENOENT) {
+			*result = LS_ERROR_NOT_FOUND;
+		} else {
+			*result = LS_ERROR_READ;
+			if (object_stream_type == object_stream_txt && d.get()) {
+				*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
+			}
 		}
-		delete d;
 		return false;
 	}
-	delete d;
 	*result = LS_OK;
 	return true;
 }
@@ -199,15 +199,15 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 		int file_ostream_type = get_config_dword("misc/config format");
 	
 		sprintf(q, "%04x", version);
-		memmove(h.version, q, sizeof h.version);
+		memcpy(h.version, q, sizeof h.version);
 
 		sprintf(q, "%02x", file_ostream_type);
-		memmove(h.stream_type, q, sizeof h.stream_type);
+		memcpy(h.stream_type, q, sizeof h.stream_type);
 
 		f.writex(&h, sizeof h);
 
 		/* object stream type */
-		ObjectStream *d = create_object_stream(f, file_ostream_type);
+		std::auto_ptr<ObjectStream> d(create_object_stream(f, file_ostream_type));
 	   
 		switch (file_ostream_type) {
 		case object_stream_bin:
@@ -217,9 +217,7 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 			break;
 		}
 		/* write config */
-		store_func(*d, context);
-
-		delete d;
+		store_func(*d.get(), context);
 	} catch (const IOException &) {
 		return LS_ERROR_WRITE;
 	}
@@ -229,10 +227,10 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info)
 {
 	uint8 object_stream_type = 128;
-	ObjectStream *d = NULL;
 	*error_info = 0;
+	std::auto_ptr<ObjectStream> d(NULL);
 	try {
-		LocalFile f((String)systemconfig_file, IOAM_READ, FOM_EXISTS);
+		LocalFile f((String)fileconfig_file, IOAM_READ, FOM_EXISTS);
 		/* read file config header */
 		config_header h;
 
@@ -253,27 +251,29 @@ loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic,
 		}
 
 		/* object stream type */
-		ObjectStream *d = create_object_stream(f, object_stream_type);
-		if (!d) {
+		d.reset(create_object_stream(f, object_stream_type));
+
+		if (!d.get()) {
 			return LS_ERROR_FORMAT;
 		}		
 	   
-		load_func(*d, context);
+		load_func(*d.get(), context);
 		
 	} catch (const ObjectNotRegisteredException &) {
-		if (object_stream_type==object_stream_txt && d) {
-			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		if (object_stream_type==object_stream_txt && d.get()) {
+			*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
 		}
-		delete d;
 		return LS_ERROR_CORRUPTED;
 	} catch (const IOException &e) {
-		if (object_stream_type==object_stream_txt && d) {
-			*error_info = ((ObjectStreamText*)d)->getErrorLine();
+		if (e.mPosixErrno == ENOENT) {
+			return LS_ERROR_NOT_FOUND;
+		} else {
+			if (object_stream_type==object_stream_txt && d.get()) {
+				*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
+			}
+        		return LS_ERROR_READ;
 		}
-		delete d;
-		return LS_ERROR_READ;
 	}
-	delete d;
 	return LS_OK;
 }
 
