@@ -430,7 +430,7 @@ static key_keycode curses_key_defs[] = {
 	{K_Meta_F12,		META_KEY(KEY_F(12))},
 };
 
-bool initKeyb()
+bool init_keyb()
 {
 	uint i;
 
@@ -465,7 +465,7 @@ bool initKeyb()
 	return true;
 }
 
-void doneKeyb()
+void done_keyb()
 {
 #ifdef HAVE_TEXTMODE_X11
 	if (Xdisplay) XCloseDisplay(Xdisplay);
