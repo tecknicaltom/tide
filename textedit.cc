@@ -1790,14 +1790,12 @@ void ht_text_viewer::popup_change_highlight()
 	d->insert(mode_text);
 	
 	if (d->run(false)) {
-		struct {
-			ht_listbox_data type;
-		} data;
+		ht_listbox_data type;
 
-		ViewDataBuf(d, &data, sizeof data);
+		ViewDataBuf(mode_text, &type, sizeof type);
 
 		ht_syntax_lexer *l = (ht_syntax_lexer*)(*lexers)[
-			mode_input->getID(data.type.cursor_ptr)];
+			mode_input->getID(type.data->cursor_ptr)];
 		set_lexer(l, false);
 	}
 	
@@ -2573,9 +2571,9 @@ void ht_text_editor::show_protocol()
 	if (dialog->run(false) == button_ok) {
 		ht_listbox_data d;
 		ViewDataBuf vdb(list, &d, sizeof d);
-		int a = list->getID(d.cursor_ptr);
+		int a = list->getID(d.data->cursor_ptr);
 		int b = cp;
-		
+
 		if (a-b < 0) {
 			for (int i=0; i < b-a; i++) {
 				undo(false);
