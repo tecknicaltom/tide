@@ -1805,7 +1805,7 @@ void ht_aviewer::showSymbols(Address *addr)
 		// goto selected symbol
 		ht_listbox_data d;
 		ViewDataBuf vdb(sym, &d, sizeof d);
-		if (d.cursor_ptr) gotoAddress(((Symbol *)d.cursor_ptr)->location->addr, this);
+		if (d.data->cursor_ptr) gotoAddress(((Symbol *)d.data->cursor_ptr)->location->addr, this);
 	}
 	dialog->done();
 	delete dialog;
@@ -1887,7 +1887,7 @@ restart:
 				break;
 			case 667:
 				if (xcount) {
-					analy->deleteXRef(Addr, (Address*)list->getID(data.cursor_ptr));
+					analy->deleteXRef(Addr, (Address*)list->getID(data.data->cursor_ptr));
 					analy->makeDirty();
 					analy_sub->output->invalidateCache();
 				}
@@ -1919,7 +1919,7 @@ restart:
 				break;
 			}
 			case button_ok:
-				if (xcount) gotoAddress((Address*)list->getID(data.cursor_ptr), this);
+				if (xcount) gotoAddress((Address*)list->getID(data.data->cursor_ptr), this);
 				break;
 		}
 		dialog->getbounds(&b);
