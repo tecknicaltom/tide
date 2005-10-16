@@ -932,7 +932,7 @@ void ht_project_window::handlemsg(htmsg *msg)
 			break;
 		}
 		case msg_contextmenuquery: {
-			ht_static_context_menu *projects=new ht_static_context_menu();
+			ht_static_context_menu *projects = new ht_static_context_menu();
 			projects->init("~Project");
 			projects->insert_entry("~Add item", "Insert", cmd_project_add_item, K_Insert, 1);
 			projects->insert_entry("~Remove item", "Delete", cmd_project_remove_item, K_Delete, 1);
@@ -3105,12 +3105,12 @@ void ht_file_window::handlemsg(htmsg *msg)
 		}
 		break;
 		case cmd_analyser_save: {
-			char filename[1024];
-			String fn;
-			ht_snprintf(filename, sizeof filename, "%s%s", &file->getFilename(fn), HT_FILE_CONFIG_SUFFIX);
-			LOG("%s: saving config", filename);
-			save_fileconfig(filename, ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this);
-			LOG("%s: done", filename);
+			String filename;
+			file->getFilename(filename);
+			filename += HT_FILE_CONFIG_SUFFIX;
+			LOG("%y: saving config", &filename);
+			save_fileconfig(filename.contentChar(), ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this);
+			LOG("%y: done", &filename);
 			clearmsg(msg);
 			break;
 		}
