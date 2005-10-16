@@ -98,6 +98,7 @@ OutLine *OutAddr::getLine(int i)
 
 int OutAddr::compareTo(const Object *o) const
 {
+	uint oo = o->getObjectID();
 	return addr->compareTo(((OutAddr*)o)->addr);
 }
 
@@ -538,7 +539,8 @@ OutAddr *AnalyserOutput::getAddr(Address *Addr)
 		DPRINTF("not cached1 --");
 		delete addr;
 		addr = Addr->clone();
-		OutAddr *oa = (OutAddr*)out_addrs->get(out_addrs->find(Addr));
+		OutAddr oatmp(addr, 0);
+		OutAddr *oa = (OutAddr*)out_addrs->get(out_addrs->find(&oatmp));
 		if (!oa) {
 			DPRINTF("generate\n");
 			if (out_addrs->count() > 1024) {
