@@ -282,9 +282,13 @@ public:
  *	CLASS ht_listbox
  */
 
+struct ht_listbox_data_internal {
+	void *top_ptr;
+	void *cursor_ptr;
+};
+
 struct ht_listbox_data {
-	DDECL_PTR(void, top_ptr);
-	DDECL_PTR(void, cursor_ptr);
+	DDECL_PTR(ht_listbox_data_internal, data);
 };
 
 #define LISTBOX_NORMAL 0
@@ -405,7 +409,6 @@ protected:
 class ht_itext_listbox: public ht_text_listbox {
 public:
 		void	init(Bounds *b, int Cols=1, int Keycol=0);
-	virtual	void	done();
 	virtual	int	compare_strn(char *s1, char *s2, int l);
 	virtual	int	compare_ccomm(char *s1, char *s2);
 };
