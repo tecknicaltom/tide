@@ -46,7 +46,7 @@ httree.h lestruct.h main.cc mzstruct.h nestruct.h pestruct.h \
 regex.h store.cc store.h stream.cc stream.h tools.cc tools.h vxd.cc vxd.h \
 vxdserv.cc vxdserv.h cplus-dem.c demangle.h regex.c regex.h \
 syntax.cc syntax.h textfile.cc textfile.h textedit.cc textedit.h \
-classread.cc classview.cc class.h htexcept.cc htexcept.h httext.cc httext.h hteval.cc hteval.h \
+classread.cc classview.cc class.h httext.cc httext.h hteval.cc hteval.h \
 relfile.cc relfile.h process.cc process.h mfile.cc mfile.h elfstruc.cc \
 pestruct.cc coff_s.cc mzstruct.cc defreg.h defreg.c htdisasm.cc htdisasm.h \
 htcoffimg.cc htcoffimg.h nestruct.cc htneimg.cc htneimg.h htneimp.cc htneimp.h \
