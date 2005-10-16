@@ -264,7 +264,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 
 	stop_timer(h0);
-//	LOG("%s: PE: %d ticks (%d msec) to read imports", file->get_name(), get_timer_tick(h0), get_timer_msec(h0));
+//	LOG("%y: PE: %d ticks (%d msec) to read imports", file->get_name(), get_timer_tick(h0), get_timer_msec(h0));
 	delete_timer(h0);
 
 	ht_snprintf(iline, sizeof iline, "* PE import directory at offset %08x (%d functions from %d libraries)", iofs, function_count, dll_count);
