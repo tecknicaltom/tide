@@ -3487,7 +3487,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 		if (g->run(false)==button_ok) {
 			ht_listbox_data da;
 			ViewDataBuf vdb(l, &da, sizeof da);
-			int i = l->getID(da.cursor_ptr);
+			int i = l->getID(da.data->cursor_ptr);
 			if (desc[i].value != d) {
 				baseview->sendmsg(cmd_edit_mode_i, file, NULL);
 				if (edit()) {
