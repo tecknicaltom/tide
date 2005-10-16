@@ -40,6 +40,7 @@ void SIGWINCH_sigaction(int i, siginfo_t *info, void *v);
 bool init_system()
 {
 	setuid(getuid());
+#if 0
 	struct sigaction sa;
 
 	sa.sa_sigaction = SIGCHLD_sigaction;
@@ -56,12 +57,10 @@ bool init_system()
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGWINCH, &sa, &old_SIGWINCH);
-
-	return initKeyb() && initSysEvent();
+#endif
+	return true;
 }
 
 void done_system()
 {
-	doneSysEvent();
-	doneKeyb();
 }
