@@ -191,7 +191,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	g->setpalette(palkey_generic_window_default);
 
 	stop_timer(h0);
-//	LOG("%s: PE: %d ticks (%d msec) to read exports", filename, get_timer_tick(h0), get_timer_msec(h0));
+//	LOG("%y: PE: %d ticks (%d msec) to read exports", filename, get_timer_tick(h0), get_timer_msec(h0));
 	delete_timer(h0);
 
 	free(ename);
