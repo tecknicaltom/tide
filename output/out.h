@@ -49,7 +49,7 @@ public:
 	void		clear();
 	OutLine		*getLine(int i);
 	void		updateTime(uint Time);
-	
+
 	virtual int	compareTo(const Object *) const;
 };
 
