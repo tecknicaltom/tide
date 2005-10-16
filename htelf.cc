@@ -452,7 +452,7 @@ void ht_elf::auto_relocate32()
 		own_file = true;
 		file = rf;
 		String fn;
-		LOG("%s: ELF: relocation layer enabled (invented relocation addresses)", &file->getFilename(fn));
+		LOG("%y: ELF: relocation layer enabled (invented relocation addresses)", &file->getFilename(fn));
 	} else {
 		free(elf_shared->shrelocs);
 		elf_shared->shrelocs = NULL;
