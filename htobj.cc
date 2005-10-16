@@ -1764,8 +1764,8 @@ void ht_window::receivefocus()
 	m.msg = msg_contextmenuquery;
 	m.type = mt_empty;
 	sendmsg(&m);
-	ht_menu *q = (ht_menu*)((ht_app*)app)->menu;
 	if (m.msg == msg_retval) {
+		ht_menu *q = (ht_menu*)((ht_app*)app)->menu;
 		ht_context_menu *n = (ht_context_menu*)m.data1.ptr;
 		if (q) {
 			if (!q->set_local_menu(n)) {
@@ -1778,7 +1778,6 @@ void ht_window::receivefocus()
 			delete n;
 		}
 	}
-
 	ht_group::receivefocus();
 	if (frame) frame->setstyle(frame->getstyle() | FS_THICK);
 }
