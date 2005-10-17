@@ -350,8 +350,8 @@ void ht_menu::handlemsg(htmsg *msg)
 				for (int i=0; i<c; i++) {
 					ht_context_menu *m = get_context_menu(i);
 					int s = *m->get_shortcut();
-					if ((s>='A') && (s<='Z')) s+='a'-'A';
-					if (s==k) {
+					if (s >= 'A' && s <= 'Z') s += 'a'-'A';
+					if (s == k) {
 						if (last_context_menu_hack) {
 							last_context_menu_hack->done();
 							delete last_context_menu_hack;
