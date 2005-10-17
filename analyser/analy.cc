@@ -405,8 +405,13 @@ int AddressFlat64::stringSize() const
  
 AddrXRef::AddrXRef(Address *a, xref_enum_t Type)
 {
-	addr = a;
+	addr = a->clone();
 	type = Type;
+}
+
+AddrXRef::~AddrXRef()
+{
+	delete addr;
 }
 
 void AddrXRef::load(ObjectStream &f)
@@ -424,6 +429,12 @@ void AddrXRef::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, addr);
 	PUT_INTX(f, type, 1);
+}
+
+int AddrXRef::compareTo(const Object *o) const
+{
+	Address *a = ((AddrXRef*)o)->addr;
+	return addr->compareTo(a);
 }
 
 /*
@@ -796,7 +807,7 @@ bool Analyser::addSymbol(Address *Addr, const char *label, labeltype type, Locat
  */
 bool Analyser::addXRef(Address *from, Address *to, xref_enum_t action)
 {
-	if ((!validAddress(from, scvalid)) || (!validAddress(to, scvalid))) return false;
+	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return false;
 
 	Location *a = newLocation(from);
 	Container *x = a->xrefs;
@@ -806,9 +817,9 @@ bool Analyser::addXRef(Address *from, Address *to, xref_enum_t action)
 		if (x->find(&tmp)) return false;
 	} else {
 		x = new AVLTree(true);
+		a->xrefs = x;
 	}
 	x->insert(new AddrXRef(to, action));
-	a->xrefs = x;
 	
 	DPRINTF("xref %y->%y\n", from, to);
 	return true;
@@ -875,7 +886,7 @@ bool Analyser::assignSymbol(Address *Addr, const char *label, labeltype type, Lo
  */
 void Analyser::assignXRef(Address *from, Address *to, xref_enum_t action)
 {
-	if ((!validAddress(from, scvalid)) || (!validAddress(to, scvalid))) return;
+	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return;
 
 	Location	*a = newLocation(from);
 	Container	*x = a->xrefs;
@@ -891,9 +902,9 @@ void Analyser::assignXRef(Address *from, Address *to, xref_enum_t action)
 		}
 	} else {
 		x = new AVLTree(true);
+		a->xrefs = x;
 	}
 	x->insert(new AddrXRef(to, action));
-	a->xrefs = x;
 	
 	DPRINTF("xref %y->%y\n", from, to);
 }
@@ -1118,7 +1129,7 @@ void Analyser::deleteSymbol(Address *Addr)
  */
 bool Analyser::deleteXRef(Address *from, Address *to)
 {
-	if ((!validAddress(from, scvalid)) || (!validAddress(to, scvalid))) return false;
+	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return false;
 
 	Location *a = getLocationByAddress(from);
 	if (!a) return false;
