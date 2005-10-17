@@ -56,6 +56,7 @@ int autoCompare(const Object *a, const Object *b)
 
 int Object::compareTo(const Object *obj) const
 {
+	int a=1;
 	throw NotImplementedException(HERE);
 }
 
@@ -408,6 +409,7 @@ int Array::calcNewBufferSize(int curbufsize, int min_newbufsize) const
 void Array::checkShrink()
 {
 	// FIXME: implement automatic shrinking
+	memset(elems+ecount, 0, (acount-ecount) * sizeof (*elems));
 }
 
 void Array::freeObj(Object *obj)
@@ -536,7 +538,7 @@ Object *Array::remove(ObjHandle h)
 	if (!validHandle(h)) return NULL;
 	uint i = handleToNative(h);
 	Object *o = elems[i];
-	memmove(elems+i, elems+i+1, sizeof (*elems) * (ecount - i - 1));
+	if (i < ecount) memmove(elems+i, elems+i+1, sizeof (*elems) * (ecount - i - 1));
 	ecount--;
 	checkShrink();
 	return o;
