@@ -208,9 +208,11 @@ public:
 	xref_enum_t	type;
 				AddrXRef(Address *a, xref_enum_t aType = xrefread);
 				AddrXRef(BuildCtorArg&);
+	virtual			~AddrXRef();
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		store(ObjectStream &s) const;
+	virtual int		compareTo(const Object *) const;
 };
 
 class CommentList: public Array {
