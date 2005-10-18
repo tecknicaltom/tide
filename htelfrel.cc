@@ -36,9 +36,9 @@ static int_hash elf_r_386_type[] =
 	{ELF_R_386_GOT32,		"ELF_R_386_GOT32"},
 	{ELF_R_386_PLT32,		"ELF_R_386_PLT32"},
 	{ELF_R_386_COPY,		"ELF_R_386_COPY"},
-	{ELF_R_386_GLOB_DAT,	"ELF_R_386_GLOB_DAT"},
-	{ELF_R_386_JMP_SLOT,	"ELF_R_386_JMP_SLOT"},
-	{ELF_R_386_RELATIVE,	"ELF_R_386_RELATIVE"},
+	{ELF_R_386_GLOB_DAT,		"ELF_R_386_GLOB_DAT"},
+	{ELF_R_386_JMP_SLOT,		"ELF_R_386_JMP_SLOT"},
+	{ELF_R_386_RELATIVE,		"ELF_R_386_RELATIVE"},
 	{ELF_R_386_GOTOFF,		"ELF_R_386_GOTOFF"},
 	{ELF_R_386_GOTPC,		"ELF_R_386_GOTPC"},
 	{0, 0}
@@ -48,9 +48,9 @@ static ht_view *htelfreloctable_init(Bounds *b, File *file, ht_format_group *gro
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
-	if ((elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS32) ||
-	(elf_shared->ident.e_ident[ELF_EI_DATA]!=ELFDATA2LSB) ||
-	(elf_shared->header32.e_machine!=ELF_EM_386)) return NULL;
+	if (elf_shared->ident.e_ident[ELF_EI_CLASS] != ELFCLASS32
+	    || elf_shared->ident.e_ident[ELF_EI_DATA] != ELFDATA2LSB
+	    || elf_shared->header32.e_machine != ELF_EM_386) return NULL;
 	
 	uint skip = elf_shared->reloctables;
 	uint reloctab_shidx = ELF_SHN_UNDEF;
