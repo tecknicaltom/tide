@@ -37,12 +37,12 @@ extern "C" {
 
 ht_view *hthex_init(Bounds *b, File *file, ht_format_group *group)
 {
-	ht_hex_viewer *v=new ht_hex_viewer();
+	ht_hex_viewer *v = new ht_hex_viewer();
 	v->init(b, DESC_HEX, VC_EDIT | VC_GOTO | VC_SEARCH | VC_REPLACE | VC_RESIZE, file, group);
 
 	v->search_caps|=SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 
-	v->h=new ht_hex_file_sub();
+	v->h = new ht_hex_file_sub();
 	v->h->init(file, 0x0, file->getSize(), 16, 0);
 
 	v->insertsub(v->h);
@@ -66,25 +66,27 @@ void ht_hex_viewer::get_pindicator_str(char *buf)
 	if (get_current_offset(&o)) {
 		char ttemp[1024];
 		if (sel_end-sel_start > 0) {
-			ht_snprintf(ttemp, sizeof ttemp, "selection %xh-%xh (%d byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
+			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
 		} else {
-			ttemp[0]=0;
+			ttemp[0] = 0;
 		}
 		// FIXME: sizeof buf
-		ht_snprintf(buf, 1024, " %s %xh/%u %s", edit() ? "edit" : "view", o, o, ttemp);
+		ht_snprintf(buf, 1024, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
 	} else {
-		strcpy(buf, "?");
+		// FIXME: sizeof buf
+		ht_strlcpy(buf, "?", 2);
 	}
 }
 	
 bool ht_hex_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
-	FileOfs s=file->getSize();
+	FileOfs s = file->getSize();
 	if (s) {
-		int ll = h->get_line_length();
+		uint ll = h->get_line_length();
 		// FIXPORT
-		int z=MIN(size.h*ll, s - top.line_id.id1);
-		return scrollbar_pos(top.line_id.id1, z, s, pstart, psize);
+		FileOfs o = top.line_id.id2 - (uint64(top.line_id.id1) << 32);
+		int z = MIN(size.h * ll, s - o);
+		return scrollbar_pos(o, z, s, pstart, psize);
 	}
 	return false;
 }
@@ -136,7 +138,7 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 				byte buf[64];
 				if (pread(ofs, buf, 64)==64) {
 					int e = calc_entropy2(buf, 64);
-					infobox("64-byte entropy at offset %08x: %d %%", ofs, e);
+					infobox("64-byte entropy at offset %q08x: %d %%", ofs, e);
 				}
 			}
 			clearmsg(msg);
@@ -148,9 +150,9 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 			if (inputbox("Change display width", "~Line length (Bytes)", result, 256)) {
 				char *p;
 				int ll = strtoul(result, &p, 10);
-				if (ll>0 && ll<=32) {
+				if (ll > 0 && ll <= 32) {
 					h->set_line_length(ll);
-                    } else {
+				} else {
 					errorbox("Line length must be > 0 and <= 32!");
 				}
 			}
@@ -158,7 +160,7 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 		case msg_contextmenuquery: {
-			ht_static_context_menu *m=new ht_static_context_menu();
+			ht_static_context_menu *m = new ht_static_context_menu();
 			m->init("~Local-Hex");
 			m->insert_entry("~Block operations", "Ctrl+B", cmd_file_blockop, K_Control_B, 1);
 			m->insert_entry("~Replace", "Ctrl+E", cmd_file_replace, K_Control_E, 1);
@@ -175,17 +177,17 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 
 bool ht_hex_viewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
 {
-	*ofs = p.u.line_id.id1 + p.u.tag_idx;
+	*ofs = p.u.line_id.id2 + (uint64(p.u.line_id.id1) << 32) + p.u.tag_idx;
 	return true;
 }
 
 bool ht_hex_viewer::offset_to_pos(FileOfs ofs, viewer_pos *p)
 {
-	int ll = h->get_line_length();
+	uint ll = h->get_line_length();
 	clear_viewer_pos(p);
 	p->u.sub = first_sub;
-	p->u.line_id.id1 = ofs - (ofs % ll);
-	p->u.line_id.id2 = 0;
+	p->u.line_id.id1 = (ofs - (ofs % ll)) >> 32;
+	p->u.line_id.id2 = ofs - (ofs % ll);
 	p->u.tag_idx = ofs % ll;
 	return true;
 }
