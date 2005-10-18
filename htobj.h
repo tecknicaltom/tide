@@ -443,7 +443,7 @@ public:
 		void setvscrollbar(ht_scrollbar *scrollbar);
 };
 
-bool scrollbar_pos(int start, int size, int all, int *pstart, int *psize);
+bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psize);
 
 /*
  *	CLASS ht_hbar
