@@ -1287,13 +1287,13 @@ void	ht_xgroup::store(ObjectStream &s) const
  *	CLASS ht_scrollbar
  */
 
-bool scrollbar_pos(int start, int size, int all, int *pstart, int *psize)
+bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psize)
 {
 	if (!all) return false;
 	if (start+size >= all) {
 		if (size >= all) return false;
 		*psize = (int)(((double)size)*100/all);
-		*pstart = 100-*psize;
+		*pstart = 100 - *psize;
 	} else {
 		*psize = (int)(((double)size)*100/all);
 		*pstart = (int)(((double)start)*100/all);
