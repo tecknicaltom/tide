@@ -89,4 +89,5 @@ bool init_atom()
  
 void done_atom()
 {
+	atoms.delAll();
 }
