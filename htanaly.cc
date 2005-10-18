@@ -1043,7 +1043,7 @@ void ht_aviewer::get_pindicator_str(char *buf)
 		FileOfs o;
 		global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 		if (get_current_offset(&o)) {
-			ht_snprintf(buf, 1024, " %y/@%08x%s ", addr, o, (analy->isDirty())?" dirty":"");
+			ht_snprintf(buf, 1024, " %y/@%08qx%s ", addr, o, (analy->isDirty())?" dirty":"");
 		} else {
 			ht_snprintf(buf, 1024, " %y%s ", addr, (analy->isDirty())?" dirty":"");
 		}
