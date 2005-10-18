@@ -4266,8 +4266,8 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 {
 	if (offset >= fofs && offset < fofs+fsize) {
 		clear_line_id(line_id);
-		line_id->id1 = (offset - (offset%line_length)) + balign;
-		line_id->id2 = ((offset - (offset % line_length)) + balign) >> 32;
+		line_id->id1 = ((offset - (offset % line_length)) + balign) >> 32;
+		line_id->id2 = (offset - (offset % line_length)) + balign;
 		line_id->id3 = uid;
 		return true;
 	}
@@ -4276,47 +4276,49 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 
 bool ht_hex_sub::convert_id_to_ofs(const LINE_ID line_id, FileOfs *ofs)
 {
-	*ofs = line_id.id1 + ((uint64)line_id.id2 << 32);
+	*ofs = line_id.id2 + (uint64(line_id.id1) << 32);
 	return true;
 }
 
 bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 {
-	if (line_id.id2 != uid) return false;
-	FileOfs ofs = line_id.id1 + ((uint64)line_id.id2 << 32);
+	if (line_id.id3 != uid) return false;
+	FileOfs ofs = line_id.id2 + (uint64(line_id.id1) << 32);
 	uint c = MIN(line_length, (fofs+fsize-ofs));
 	if (c <= 0) return false;
-	c = MIN(line_length, c+ofs%line_length);
-	char *l=line;
-	l += ht_snprintf(l, 16, "%08qx", ofs + vaddrinc);
-	*l++=' ';
+	c = MIN(line_length, c + ofs%line_length);
+	char *l = line;
+	l += ht_snprintf(l, 17, "%08qx", ofs + vaddrinc);
+	*l++ = ' ';
 	if (ofs % line_length) ofs -= ofs % line_length;
-	for (uint32 i=0; i<line_length; i++) {
-		if (i<c && ofs+i>=fofs) {
-			l=tag_make_edit_byte(l, ofs+i);
+	for (uint i = 0; i < line_length; i++) {
+		if (i < c && ofs+i >= fofs) {
+			l = tag_make_edit_byte(l, ofs+i);
 		} else {
-			*l++=' ';
-			*l++=' ';
+			*l++ = ' ';
+			*l++ = ' ';
 		}
-		if (i+1<c && ofs+i>=fofs) {
-			if (i%8==7) {
-				l=tag_make_edit_selvis(l, ofs+i, '-');
+		if (i+1 < c && ofs+i >= fofs) {
+			if (i%8 == 7) {
+				l = tag_make_edit_selvis(l, ofs+i, '-');
 			} else {
-				l=tag_make_edit_selvis(l, ofs+i, ' ');
+				l = tag_make_edit_selvis(l, ofs+i, ' ');
 			}
-		} else *l++=' ';
+		} else {
+			*l++ = ' ';
+		}
 	}
 	l = tag_make_group(l);
-	*l++='|';
+	*l++ = '|';
 	for (uint32 i=0; i < line_length; i++) {
 		if (i < c && ofs+i >= fofs) {
-			l=tag_make_edit_char(l, ofs+i);
+			l = tag_make_edit_char(l, ofs+i);
 		} else {
-			*l++=' ';
+			*l++ = ' ';
 		}
 	}
-	*l++='|';
-	*l=0;
+	*l++ = '|';
+	*l = 0;
 	return true;
 }
 
@@ -4328,8 +4330,8 @@ void ht_hex_sub::handlemsg(htmsg *msg)
 void ht_hex_sub::first_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
-	line_id->id1 = fofs;
-	line_id->id2 = fofs << 32;
+	line_id->id1 = fofs << 32;
+	line_id->id2 = fofs;
 	line_id->id3 = uid;
 }
 
@@ -4338,11 +4340,11 @@ void ht_hex_sub::last_line_id(LINE_ID *line_id)
 	clear_line_id(line_id);
 	if (fsize) {
 		FileOfs k = fsize + (fofs % line_length);
-		line_id->id1 = (k - k%line_length) + (fofs - fofs%line_length);
-		line_id->id2 = ((k - k%line_length) + (fofs - fofs%line_length)) << 32;
+		line_id->id1 = (k - k%line_length) + (fofs - fofs%line_length) << 32;
+		line_id->id2 = ((k - k%line_length) + (fofs - fofs%line_length));
 	} else {
-		line_id->id1 = fofs;
-		line_id->id2 = fofs << 32;
+		line_id->id1 = fofs << 32;
+		line_id->id2 = fofs;
 	}
 	line_id->id3 = uid;
 }
@@ -4352,16 +4354,19 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 	if (line_id->id3 != uid) return 0;
 	int c=0;
 	while (n--) {
-		if (!line_id->id1 || line_id->id1 == fofs) break;
-		if (line_id->id1-line_length>line_id->id1) {
-			line_id->id1 = 0;
+		FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
+		if (!o || o == fofs) break;
+		if (line_length > o) {
+			o = 0;
 		} else {
-			if (line_id->id1-line_length<fofs) {
-				line_id->id1 = fofs;
+			if (o - line_length < fofs) {
+				o = fofs;
 			} else {
-				line_id->id1 -= line_length;
+				o -= line_length;
 			}
 		}
+		line_id->id1 = o << 32;
+		line_id->id2 = o;
 		c++;
 	}
 	return c;
@@ -4370,15 +4375,18 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 int ht_hex_sub::next_line_id(LINE_ID *line_id, int n)
 {
 	if (line_id->id3 != uid) return 0;
-	int c=0;
+	int c = 0;
 	while (n--) {
-		if (line_id->id1 % line_length) {
-			if (line_id->id1+(line_length - line_id->id1 % line_length) >= fofs+fsize) break;
-			line_id->id1 += line_length- line_id->id1 % line_length;
+		FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
+		if (o % line_length) {
+			if (o + (line_length - o % line_length) >= fofs + fsize) break;
+			o += line_length - o % line_length;
 		} else {
-			if (line_id->id1+line_length>=fofs+fsize) break;
-			line_id->id1 += line_length;
+			if (o + line_length >= fofs + fsize) break;
+			o += line_length;
 		}
+		line_id->id1 = o << 32;
+		line_id->id2 = o;
 		c++;
 	}
 	return c;
