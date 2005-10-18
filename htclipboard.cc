@@ -178,14 +178,14 @@ void ht_clipboard_viewer::get_pindicator_str(char *buf)
 	if (get_current_offset(&o)) {
 		char ttemp[1024];
 		if (sel_end-sel_start > 0) {
-			ht_snprintf(ttemp, sizeof ttemp, "selection %xh-%xh (%d byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
+			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
 		} else {
 			ttemp[0]=0;
 		}
 		// FIXME: sizeof buf
-		ht_snprintf(buf, 1024, " %s %xh/%u %s", edit() ? "edit" : "view", o, o, ttemp);
+		ht_snprintf(buf, 1024, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
 	} else {
-		strcpy(buf, "?");
+		ht_strlcpy(buf, "?", 2);
 	}
 }
 
