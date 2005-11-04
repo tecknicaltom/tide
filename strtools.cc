@@ -335,9 +335,9 @@ void wide_char_to_multi_byte(char *result, const byte *Unicode, int maxlen)
 		char c2;
 	};
 	doof *unicode = (doof*)Unicode;
-	for (int i=0; i<maxlen-1; i++) {
+	for (int i=0; i < maxlen - 1; i++) {
 		if (unicode->c2) {
-			*result++ = '?';
+			*result++ = 0xff;
 		} else {
 			if (!unicode->c1) break;
 			*result++ = unicode->c1;
