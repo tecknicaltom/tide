@@ -103,13 +103,13 @@ char *label_prefix(const char *p)
 
 bool valid_name(const char *str)
 {
-	if ((!str) || (!*str)) return false;
+	if (!str || !*str) return false;
 	char mc = mapchar[*str];
-	if ((mc == '_') || (mc == '?') || (mc == 'A') || (mc == '@')) {
+	if (mc == '_' || mc == '?' || mc == 'A' || mc == '@') {
 		str++;
 		while (*str) {
 			mc = mapchar[*str];
-			if ((mc == '_') || (mc == '?') || (mc == 'A') || (mc == '0') || (mc == ':') || (mc == '.') || (mc == '@')) {
+			if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 				str++;
 			} else return false;
 		}
@@ -127,13 +127,13 @@ void make_valid_name(char *result, const char *str)
 		return;
 	}
 	char mc = mapchar[*str];
-	if (!((mc == '_') || (mc == '?') || (mc == 'A') || (mc == '@'))) {
+	if (!(mc == '_' || mc == '?' || mc == 'A' || mc == '@')) {
 		*result++ = '_';
 		str++;
 	}
 	while (*str) {
 		mc = mapchar[*str];
-		if ((mc == '_') || (mc == '?') || (mc == 'A') || (mc == '0') || (mc == ':') || (mc == '.') || (mc == '@')) {
+		if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 			*result++ = *str;
 		} else {
 			*result++ = '_';
