@@ -419,9 +419,9 @@ void ht_info_viewer::done()
 {
 	delete history;
 	delete xrefs;
-	if (cwd) free(cwd);
-	if (node) free(node);
-	if (file) free(file);
+	free(cwd);
+	free(node);
+	free(file);
 	ht_text_viewer::done();
 }
 
