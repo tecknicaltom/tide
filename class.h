@@ -58,16 +58,16 @@ static const u1 CONSTANT_InterfaceMethodref = 11;
 static const u1 CONSTANT_NameAndType        = 12;
 
 typedef struct _cp_info {
-  u4 offset;
-  u1 tag;
-  union {
-    char   *string;
-    double dval;
-    float  fval;
-    long   lval;
-    int    ival;
-    long   llval[2];
-  } value;
+	u4 offset;
+	u1 tag;
+	union {
+		char   *string;
+		double dval;
+		float  fval;
+		long   lval;
+		int    ival;
+		long   llval[2];
+	} value;
 } cp_info;
 
 static const u2 ATTRIB_ConstantValue      =  1;
@@ -153,9 +153,9 @@ char *java_demangle_flags(char *result, int flags);
 
 class cview : public ht_format_group {
 public:
-  void init(bounds *, ht_streamfile *, format_viewer_if **,
-		  ht_format_group *, FILEOFS, void *shared);
-  virtual void done();
+	void init(bounds *, ht_streamfile *, format_viewer_if **,
+		    ht_format_group *, FILEOFS, void *shared);
+	virtual void done();
 };
 
 #define ClassAddress dword
