@@ -491,186 +491,180 @@ static void mf_view(ht_group_sub *g, ht_streamfile *f,
 
 static ht_view *class_view(bounds *b, ht_streamfile *file, ht_format_group *group)
 {
-  ht_mask_sub *s;
-  ht_collapsable_sub *cs, *cs2;
-  ht_group_sub *g, *g2, *g3;
-  classfile *clazz;
-  char info[128];
-  unsigned i, j, idx = 0;
+        ht_mask_sub *s;
+	ht_collapsable_sub *cs, *cs2;
+	ht_group_sub *g, *g2, *g3;
+	classfile *clazz;
+	char info[128];
+	unsigned i, j, idx = 0;
 
-  clazz = ((ht_class_shared_data *)group->get_shared_data())->file;
-  if (clazz) {
-    ht_uformat_viewer *v = new ht_uformat_viewer();
-    v->init(b, DESC_JAVA_HEADERS, VC_EDIT, file, group);
-    register_atom(ATOM_CLS_ACCESS, access_flags);
-    register_atom(ATOM_CLS_CPOOL,  cpool_tags);
+	clazz = ((ht_class_shared_data *)group->get_shared_data())->file;
+	if (clazz) {
+		ht_uformat_viewer *v = new ht_uformat_viewer();
+		v->init(b, DESC_JAVA_HEADERS, VC_EDIT, file, group);
+		register_atom(ATOM_CLS_ACCESS, access_flags);
+		register_atom(ATOM_CLS_CPOOL,  cpool_tags);
 
-    g = new ht_group_sub();
-    g->init(file);
+		g = new ht_group_sub();
+		g->init(file);
   
-    s = new ht_mask_sub();
-    s->init(file, idx++);
-    s->add_staticmask_ptable(cls_class1_hdr, clazz->offset, true);
-    g->insertsub(s);
+		s = new ht_mask_sub();
+		s->init(file, idx++);
+		s->add_staticmask_ptable(cls_class1_hdr, clazz->offset, true);
+		g->insertsub(s);
 
-    g2 = new ht_group_sub();
-    g2->init (file);
-    for (i=1; i<clazz->cpool_count; i++) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_staticmask_ptable(cpool_hdr, clazz->cpool[i]->offset, true);
-	 switch (clazz->cpool[i]->tag) {
-	 case CONSTANT_Utf8:
-	   s->add_staticmask_ptable(cpool_utf8, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_Integer:
-	 case CONSTANT_Float:
-	   s->add_staticmask_ptable(cpool_if, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_Long:
-	 case CONSTANT_Double:
-	   s->add_staticmask_ptable(cpool_ld, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_Class:
-	   s->add_staticmask_ptable(cpool_class, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_String:
-	   s->add_staticmask_ptable(cpool_str, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_Fieldref:
-	 case CONSTANT_Methodref:
-	 case CONSTANT_InterfaceMethodref:
-	   s->add_staticmask_ptable(cpool_fmi, clazz->cpool[i]->offset, true);
-	   break;
-	 case CONSTANT_NameAndType:
-	   s->add_staticmask_ptable(cpool_nat, clazz->cpool[i]->offset, true);
-	   break;
-	 }
-	 cs = new ht_collapsable_sub();
-	 ht_snprintf(info, sizeof info, "constant pool entry [%08x]: %s", i,
-		    (clazz->cpool[i]->tag == CONSTANT_Utf8) 
-		    ? clazz->cpool[i]->value.string : "");
-	 cs->init(file, s, 1, info, 1);
-	 g2->insertsub (cs);
-		if ((clazz->cpool[i]->tag == CONSTANT_Long) ||
-		(clazz->cpool[i]->tag == CONSTANT_Double)) {
+		g2 = new ht_group_sub();
+		g2->init (file);
+		for (i=1; i<clazz->cpool_count; i++) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_staticmask_ptable(cpool_hdr, clazz->cpool[i]->offset, true);
+			switch (clazz->cpool[i]->tag) {
+			case CONSTANT_Utf8:
+				s->add_staticmask_ptable(cpool_utf8, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_Integer:
+			case CONSTANT_Float:
+				s->add_staticmask_ptable(cpool_if, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_Long:
+			case CONSTANT_Double:
+				s->add_staticmask_ptable(cpool_ld, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_Class:
+				s->add_staticmask_ptable(cpool_class, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_String:
+				s->add_staticmask_ptable(cpool_str, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_Fieldref:
+			case CONSTANT_Methodref:
+			case CONSTANT_InterfaceMethodref:
+				s->add_staticmask_ptable(cpool_fmi, clazz->cpool[i]->offset, true);
+				break;
+			case CONSTANT_NameAndType:
+				s->add_staticmask_ptable(cpool_nat, clazz->cpool[i]->offset, true);
+				break;
+			}
+			cs = new ht_collapsable_sub();
+			ht_snprintf(info, sizeof info, "constant pool entry [%08x]: %s", i,
+				(clazz->cpool[i]->tag == CONSTANT_Utf8) 
+				? clazz->cpool[i]->value.string : "");
+			cs->init(file, s, 1, info, 1);
+			g2->insertsub(cs);
+			if (clazz->cpool[i]->tag == CONSTANT_Long 
+			 || clazz->cpool[i]->tag == CONSTANT_Double) {
 				i++;
+			}
 		}
+		cs2 = new ht_collapsable_sub();
+		cs2->init(file, g2, 1, "constant pool", 1);
+		g->insertsub(cs2);
+		s = new ht_mask_sub();
+		s->init(file, idx++);
+		s->add_staticmask_ptable(cls_class2_hdr, clazz->coffset, true);
+		g->insertsub(s);
+		g2 = new ht_group_sub();
+		g2->init(file);
+		if (!clazz->interfaces_count) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_mask("<none>");
+			g2->insertsub (s);
+		}
+		for (i=0; i<clazz->interfaces_count; i++) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_staticmask_ptable(iface_hdr, clazz->coffset+8+i*2, true);
+			cs = new ht_collapsable_sub();
+			j = clazz->cpool[clazz->interfaces[i]]->value.llval[0];
+			ht_snprintf(info, sizeof info, "interface entry [%08x]: %s", i,
+			clazz->cpool[j]->value.string);
+			cs->init(file, s, 1, info, 1);
+			g2->insertsub (cs);
+		}
+		cs2 = new ht_collapsable_sub();
+		cs2->init(file, g2, 1, "interfaces", 1);
+		g->insertsub(cs2);
+		s = new ht_mask_sub();
+		s->init(file, idx++);
+		s->add_staticmask_ptable(field_hdr, clazz->foffset, true);
+		g->insertsub(s);
+		g2 = new ht_group_sub();
+		g2->init(file);
+		if (!clazz->fields_count) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_mask("<none>");
+			g2->insertsub (s);
+		}
+		for (i=0; i<clazz->fields_count; i++) {
+			g3 = new ht_group_sub();
+			g3->init(file);
+			mf_view(g3, file, &idx, clazz, clazz->fields[i]);
+			cs = new ht_collapsable_sub();
+			ht_snprintf(info, sizeof info, "field entry [%08x]: %s", i, clazz->fields[i]->name);
+			cs->init(file, g3, 1, info, 1);
+			g2->insertsub (cs);
+		}
+		cs2 = new ht_collapsable_sub();
+		cs2->init(file, g2, 1, "fields", 1);
+		g->insertsub(cs2);
+		s = new ht_mask_sub();
+		s->init(file, idx++);
+		s->add_staticmask_ptable(method_hdr, clazz->moffset, true);
+		g->insertsub(s);
+		g2 = new ht_group_sub();
+		g2->init (file);
+		if (!clazz->methods_count) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_mask("<none>");
+			g2->insertsub (s);
+		}
+		for (i=0; i < clazz->methods_count; i++) {
+			g3 = new ht_group_sub();
+			g3->init(file);
+			mf_view(g3, file, &idx, clazz, clazz->methods[i]);
+			cs = new ht_collapsable_sub();
+			ht_snprintf(info, sizeof info, "method entry [%08x]: %s", i, clazz->methods[i]->name);
+			cs->init(file, g3, 1, info, 1);
+			g2->insertsub(cs);
+		}
+		cs2 = new ht_collapsable_sub();
+		cs2->init(file, g2, 1, "methods", 1);
+		g->insertsub (cs2);
+		s = new ht_mask_sub();
+		s->init(file, idx++);
+		s->add_staticmask_ptable(atr_hdr, clazz->aoffset, true);
+		g->insertsub(s);
+		g2 = new ht_group_sub();
+		g2->init (file);
+		if (!clazz->attribs_count) {
+			s = new ht_mask_sub();
+			s->init(file, idx++);
+			s->add_mask("<none>");
+			g2->insertsub (s);
+		}
+		for (i=0; i < clazz->attribs_count; i++) {
+			g3 = new ht_group_sub();
+			g3->init(file);
+			attrib_view(g3, file, &idx, clazz, clazz->attribs[i]);
+			cs = new ht_collapsable_sub();
+			j = clazz->attribs[i]->name;
+			ht_snprintf(info, sizeof info, "attribute entry [%08x]: %s", i,
+				clazz->cpool[j]->value.string);
+			cs->init(file, g3, 1, info, 1);
+			g2->insertsub (cs);
+		}
+		cs2 = new ht_collapsable_sub();
+		cs2->init(file, g2, 1, "attributes", 1);
+		g->insertsub (cs2);
+		v->insertsub(g);
+		return v;
+	} else {
+		return NULL;
 	}
-    cs2 = new ht_collapsable_sub();
-    cs2->init(file, g2, 1, "constant pool", 1);
-    g->insertsub (cs2);
-
-    s = new ht_mask_sub();
-    s->init(file, idx++);
-    s->add_staticmask_ptable(cls_class2_hdr, clazz->coffset, true);
-    g->insertsub(s);
-
-    g2 = new ht_group_sub();
-    g2->init (file);
-    if (!clazz->interfaces_count) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_mask("<none>");
-	 g2->insertsub (s);
-    }
-    for (i=0; i<clazz->interfaces_count; i++) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_staticmask_ptable(iface_hdr, clazz->coffset+8+i*2, true);
-	 cs = new ht_collapsable_sub();
-	 j = clazz->cpool[clazz->interfaces[i]]->value.llval[0];
-	 ht_snprintf(info, sizeof info, "interface entry [%08x]: %s", i,
-		    clazz->cpool[j]->value.string);
-	 cs->init(file, s, 1, info, 1);
-	 g2->insertsub (cs);
-    }
-    cs2 = new ht_collapsable_sub();
-    cs2->init(file, g2, 1, "interfaces", 1);
-    g->insertsub (cs2);
-
-    s = new ht_mask_sub();
-    s->init(file, idx++);
-    s->add_staticmask_ptable(field_hdr, clazz->foffset, true);
-    g->insertsub(s);
-    g2 = new ht_group_sub();
-    g2->init (file);
-    if (!clazz->fields_count) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_mask("<none>");
-	 g2->insertsub (s);
-    }
-    for (i=0; i<clazz->fields_count; i++) {
-	 g3 = new ht_group_sub();
-	 g3->init(file);
-	 mf_view(g3, file, &idx, clazz, clazz->fields[i]);
-	 cs = new ht_collapsable_sub();
-	 ht_snprintf(info, sizeof info, "field entry [%08x]: %s", i, clazz->fields[i]->name);
-	 cs->init(file, g3, 1, info, 1);
-	 g2->insertsub (cs);
-    }
-    cs2 = new ht_collapsable_sub();
-    cs2->init(file, g2, 1, "fields", 1);
-    g->insertsub (cs2);
-
-    s = new ht_mask_sub();
-    s->init(file, idx++);
-    s->add_staticmask_ptable(method_hdr, clazz->moffset, true);
-    g->insertsub(s);
-    g2 = new ht_group_sub();
-    g2->init (file);
-    if (!clazz->methods_count) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_mask("<none>");
-	 g2->insertsub (s);
-    }
-    for (i=0; i<clazz->methods_count; i++) {
-	 g3 = new ht_group_sub();
-	 g3->init(file);
-	 mf_view(g3, file, &idx, clazz, clazz->methods[i]);
-	 cs = new ht_collapsable_sub();
-	 ht_snprintf(info, sizeof info, "method entry [%08x]: %s", i, clazz->methods[i]->name);
-	 cs->init(file, g3, 1, info, 1);
-	 g2->insertsub (cs);
-    }
-    cs2 = new ht_collapsable_sub();
-    cs2->init(file, g2, 1, "methods", 1);
-    g->insertsub (cs2);
-
-    s = new ht_mask_sub();
-    s->init(file, idx++);
-    s->add_staticmask_ptable(atr_hdr, clazz->aoffset, true);
-    g->insertsub(s);
-    g2 = new ht_group_sub();
-    g2->init (file);
-    if (!clazz->attribs_count) {
-	 s = new ht_mask_sub();
-	 s->init(file, idx++);
-	 s->add_mask("<none>");
-	 g2->insertsub (s);
-    }
-    for (i=0; i<clazz->attribs_count; i++) {
-	 g3 = new ht_group_sub();
-	 g3->init(file);
-	 attrib_view(g3, file, &idx, clazz, clazz->attribs[i]);
-	 cs = new ht_collapsable_sub();
-	 j = clazz->attribs[i]->name;
-	 ht_snprintf(info, sizeof info, "attribute entry [%08x]: %s", i,
-		    clazz->cpool[j]->value.string);
-	 cs->init(file, g3, 1, info, 1);
-	 g2->insertsub (cs);
-    }
-    cs2 = new ht_collapsable_sub();
-    cs2->init(file, g2, 1, "attributes", 1);
-    g->insertsub (cs2);
-
-    v->insertsub(g);
-    return v;
-  } else {
-    return NULL;
-  }
 }
 
 void cview::init(bounds *b, ht_streamfile *f, format_viewer_if **ifs,
