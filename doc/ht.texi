@@ -51,7 +51,7 @@ be registered in certain jurisdictions.
 @titlepage
 
 @title{HT Manual}
-@subtitle{Edition 0.9.1, May 2005}
+@subtitle{Edition 0.9trunk, May 2005}
 
 @author{Stefan Weyergraf, Sebastian Biallas}
 @c The following two commands start the copyright page.
@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-0.9.1
+0.9.0
 @end macro
 
 @macro hturl
@@ -196,16 +196,16 @@ Window key bindings
 Analyser key bindings
 
 @multitable @columnfractions .25 .75
-@item c                    
+@item c
 @tab continue code analysis at cursor
-@item f                    
+@item f
 @tab follow dword ptr at address
-@item n                    
+@item n
 @tab name current address 
 (empty string to delete)
-@item x                    
+@item x
 @tab show xrefs (search for xrefs)
-@item #                    
+@item #
 @tab edit comments
 @item s
 @tab define a string
@@ -215,12 +215,12 @@ Analyser key bindings
 @tab define a halfword (16bit)
 @item b
 @tab define a byte (8bit)
-@item Ctrl+A               
+@item Ctrl+A
 @tab call assembler
-@item Ctrl+F               
+@item Ctrl+F
 @tab goto start of current function@*
 (indicated in the 2nd line)
-@item Ctrl+L               
+@item Ctrl+L
 @tab goto previous label
 @item Ctrl+T               
 @tab show recursive function references
@@ -258,6 +258,7 @@ nevertheless contains some very advanced and useful features:
 * Expression evaluation::
 * Block operations::
 * Search and its different modes::
+* Command line options::
 @end menu
 
 @node General features, , Features, Features
@@ -547,6 +548,34 @@ Note: the @code{entropy()} function is not the best of its kind, if you know of 
 one please let us know!
 
 @end enumerate
+
+@node Command line options, , Features, Features
+@unnumberedsec Command line options
+
+@multitable @columnfractions .10 .20 .70
+
+@item 
+@code{--}
+@tab
+
+@tab
+thread all additional parameters as file names
+
+@item 
+@code{-v}
+@tab
+@code{--version}
+@tab
+show version and copyright on console
+
+@item
+@code{-h}
+@tab
+@code{--help}
+@tab
+show help
+
+@end multitable
 
 @node Where to download?, , Top, Top
 @unnumberedsec Where to download?
