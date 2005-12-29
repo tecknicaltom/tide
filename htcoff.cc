@@ -138,7 +138,7 @@ void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_grou
 
 	String fn;
 	LOG("%y: COFF: found header at 0x%08qx", &file->getFilename(fn), h);
-	coff_shared = (ht_coff_shared_data *)malloc(sizeof(*coff_shared));
+	coff_shared = ht_malloc(sizeof(*coff_shared));
 	coff_shared->hdr_ofs = h;
 	coff_shared->sections.hdr_ofs = h;
 	coff_shared->v_image = NULL;
@@ -170,7 +170,7 @@ void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_grou
 
 	file->seek(h+os+24);
 	if (coff_shared->sections.section_count) {
-		coff_shared->sections.sections=(COFF_SECTION_HEADER*)malloc(coff_shared->sections.section_count * sizeof *coff_shared->sections.sections);
+		coff_shared->sections.sections = ht_malloc(coff_shared->sections.section_count * sizeof *coff_shared->sections.sections);
 		file->read(coff_shared->sections.sections, coff_shared->sections.section_count*sizeof *coff_shared->sections.sections);
 		for (uint i=0; i<coff_shared->sections.section_count; i++) {
 			createHostStruct(&coff_shared->sections.sections[i], COFF_SECTION_HEADER_struct, end);
