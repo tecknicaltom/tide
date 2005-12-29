@@ -993,7 +993,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 			}
 			case button_ok: {
 				int dsize = input->datasize();
-				ht_inputfield_data *data = (ht_inputfield_data*)malloc(dsize);
+				ht_inputfield_data *data = ht_malloc(dsize);
 				ViewDataBuf vdb(input, data, dsize);
 				bin2str(result, data->text, data->textlen);
 				delete data;
