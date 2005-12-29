@@ -217,7 +217,7 @@ x86asm::~x86asm()
 
 asm_insn *x86asm::alloc_insn()
 {
-	return (asm_insn *)malloc(sizeof(x86asm_insn));
+	return ht_malloc(sizeof (x86asm_insn));
 }
 
 void x86asm::delete_nonsense()
