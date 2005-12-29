@@ -39,7 +39,7 @@ char *ht_strdup(const char *str)
 {
 	if (str) {
 		int len = strlen(str)+1;
-		char *s = (char*)smalloc(len);
+		char *s = ht_malloc(len);
 		memcpy(s, str, len);
 		return s;
 	} else {
@@ -58,7 +58,7 @@ char *ht_strndup(const char *str, size_t maxlen)
 	if (str) {
 		uint len = strlen(str)+1;
 		len = MIN(len, maxlen);
-		char *s = (char*)smalloc(len);
+		char *s = ht_malloc(len);
 		memcpy(s, str, len);
 		s[len-1] = 0;
 		return s;
