@@ -1485,7 +1485,7 @@ char *fgetstrz(File *file)
 	bool found = false;
 	while (!found) {
 		s = file->read(buf, 64);
-		for (int i=0; i<s; i++) {
+		for (int i=0; i < s; i++) {
 			z++;
 			if (buf[i] == 0) {
 				found = true;
@@ -1493,8 +1493,8 @@ char *fgetstrz(File *file)
 			}
 		}
 	}
-/* read string */
-	char *str = (char*)malloc(z);
+	/* read string */
+	char *str = ht_malloc(z);
 	if (!str) throw std::bad_alloc();
 	file->seek(o);
 	file->readx(str, z);
@@ -1519,7 +1519,7 @@ char *getstrz(Stream *stream)
 		if (buf[z-1] == 0) break;
 	}
 	if (!z) return NULL;
-	char *str = (char*)malloc(z);
+	char *str = ht_malloc(z);
 	if (!str) throw std::bad_alloc();
 	memcpy(str, buf, z-1);
 	str[z-1] = 0;
@@ -1557,7 +1557,7 @@ char *getstrp(Stream *stream)
 {
 	unsigned char l;
 	stream->readx(&l, 1);
-	char *str = (char*)malloc(l+1);
+	char *str = ht_malloc(l+1);
 	if (!str) throw std::bad_alloc();
 	try {
 		stream->readx(str, l);
@@ -1582,9 +1582,10 @@ char *getstrw(Stream *stream)
 	byte lbuf[2];
 	stream->readx(lbuf, 2);
 	int l = lbuf[0] | lbuf[1] << 8;
-	char	*a = (char*)malloc(l+1);
+	char *a = ht_malloc(l+1);
 	if (!a) throw std::bad_alloc();
-	for (int i=0; i<l; i++) {
+	for (int i=0; i < l; i++) {
+		// FIXME: this looks wrong
 		stream->readx(&t, 2);
 		a[i] = (char)t;
 	}
