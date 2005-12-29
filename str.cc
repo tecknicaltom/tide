@@ -502,7 +502,7 @@ void String::realloc(int aNewSize)
 		}
 	} else {
 		if (aNewSize) {
-			mContent = (byte*)malloc(aNewSize);
+			mContent = (byte*)::malloc(aNewSize);
 		}
 	}
 	mLength = aNewSize;*/
