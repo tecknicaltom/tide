@@ -108,20 +108,20 @@ ht_data_ptr::ht_data_ptr(const void *v)
  *	CLASS ht_data_mem
  */
 
-ht_data_mem::ht_data_mem(const void *v, uint _size)
+ht_data_mem::ht_data_mem(const void *v, uint s)
 {
-	size=_size;
+	size = s;
 	if (size) {
-		value=malloc(size);
-		memmove(value, v, size);
+		value = ht_malloc(size);
+		memcpy(value, v, size);
 	} else {
-		value=NULL;
+		value = NULL;
 	}
 }
 
 ht_data_mem::~ht_data_mem()
 {
-	if (value) free(value);
+	free(value);
 }
 
 int ht_data_mem::load(ObjectStream &s)
