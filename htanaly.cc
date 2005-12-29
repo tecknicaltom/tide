@@ -114,7 +114,7 @@ void SymbolBox::init(Bounds *b, Analyser *Analy)
 {
 	analy = Analy;
 	ht_listbox::init(b);
-	str = (char *)smalloc(1024);
+	str = ht_malloc(1024);
 	symbols = analy->getSymbolCount();
 	idle_count = 1;
 }
@@ -235,7 +235,7 @@ char	*SymbolBox::quickfindCompletition(char *s)
 	if (!ht_strncmp(tmp->name, tmp2->name, slen)==0) {
 		return ht_strdup(tmp->name);
 	}
-	char *res = (char *)smalloc(1024); // buffer bla
+	char *res = ht_malloc(1024); // buffer bla
 	strcpy(res, tmp->name);
 	while (tmp2 && (ht_strncmp(tmp2->name, s, slen)==0)) {
 //		fprintf(stdout, "while(%s, %s, %d)\n", tmp2->name, s, slen);
@@ -281,7 +281,7 @@ void	CallChain::adjust(void *node, bool expand)
 
 CallChainNode *CallChain::createNode(Address *a)
 {
-	CallChainNode *n = (CallChainNode *)smalloc(sizeof(CallChainNode));
+	CallChainNode *n = ht_malloc(sizeof(CallChainNode));
 	n->next = NULL;
 	n->prev = NULL;
 	n->child = NULL;
@@ -1343,7 +1343,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		b = analy->createAddress();
 		uint bz = b->byteSize();
 		if (!bz) break;
-		byte *buf = (byte*)smalloc(bz);
+		byte *buf = ht_malloc(bz);
 		if (analy->bufPtr(c, buf, bz) != bz) break;
 		b->getFromArray(buf);
 		if (analy->validAddress(b, scvalid)) {
