@@ -884,7 +884,7 @@ void tag_strcpy(TAGSTRING *dest, const TAGSTRING *src)
 TAGSTRING *tag_strdup(const TAGSTRING *tagstring)
 {
 	int l = tag_strlen(tagstring);
-	TAGSTRING *s = (TAGSTRING*)malloc((sizeof(TAGSTRING)+1)*l);
+	TAGSTRING *s = ht_malloc((sizeof(TAGSTRING)+1)*l);
 	memcpy(s, tagstring, sizeof(TAGSTRING)*l);
 	s[l]=0;
 	return s;
