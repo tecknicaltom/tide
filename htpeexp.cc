@@ -83,7 +83,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	LOG("%y: PE: reading export directory at offset 0x%08qx, rva %08x, size %08x...", &filename, eofs, erva, esize);
 
 /* make a memfile out of this section */
-	esectionbuf=(char*)malloc(esize);
+	esectionbuf = ht_malloc(esize);
 	file->seek(eofs);
 	file->readx(esectionbuf, esize);
 
@@ -100,7 +100,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	ename=fgetstrz(efile);
 /* read in function entrypoint table */
 	FileOfs efunct_ofs;
-	efunct=(uint32*)malloc(edir.function_count*sizeof *efunct);
+	efunct = ht_malloc(edir.function_count*sizeof *efunct);
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.function_table_address, &efunct_ofs)) goto pe_read_error;
 	file->seek(efunct_ofs);
 	file->readx(efunct, edir.function_count*sizeof *efunct);
@@ -109,7 +109,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 /* read in name address table */
 	FileOfs enamet_ofs;
-	enamet=(uint32*)malloc(edir.name_count*sizeof *enamet);
+	enamet = ht_malloc(edir.name_count*sizeof *enamet);
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_table_address, &enamet_ofs)) goto pe_read_error;
 	file->seek(enamet_ofs);
 	file->readx(enamet, edir.name_count*sizeof *enamet);
@@ -118,7 +118,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 /* read in ordinal table */
 	FileOfs eordt_ofs;
-	eordt=(uint16*)malloc(edir.name_count*sizeof *eordt);
+	eordt = ht_malloc(edir.name_count*sizeof *eordt);
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.ordinal_table_address, &eordt_ofs)) goto pe_read_error;
 	file->seek(eordt_ofs);
 	file->readx(eordt, edir.name_count*sizeof *eordt);
@@ -126,7 +126,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 		eordt[i] = createHostInt(eordt+i, sizeof *eordt, little_endian);
 	}
 
-	lord=(bool*)malloc(sizeof *lord*edir.function_count);
+	lord = ht_malloc(sizeof *lord*edir.function_count);
 	memset(lord, 0, sizeof *lord*edir.function_count);
 	for (uint i=0; i < edir.name_count; i++) {
 		if (eordt[i] < edir.function_count) {
