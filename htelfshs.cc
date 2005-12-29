@@ -116,7 +116,7 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 
 		v->insertsub(m);
 
-		elf_shared->shnames = (char**)malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
+		elf_shared->shnames = ht_malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
 		FileOfs so=elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset;
 		String s;
 		for (uint i=0; i < elf_shared->sheaders.count; i++) {
@@ -159,7 +159,7 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 
 		v->insertsub(m);
 
-		elf_shared->shnames=(char**)malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
+		elf_shared->shnames = ht_malloc(elf_shared->sheaders.count * sizeof *elf_shared->shnames);
 
 		FileOfs so=elf_shared->sheaders.sheaders64[elf_shared->header64.e_shstrndx].sh_offset;
 		for (uint i=0; i < elf_shared->sheaders.count; i++) {
