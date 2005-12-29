@@ -63,7 +63,7 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_XBE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_xbe");
 
-	ht_xbe_shared_data *xbe_shared = (ht_xbe_shared_data*)malloc(sizeof (ht_xbe_shared_data));
+	ht_xbe_shared_data *xbe_shared = ht_malloc(sizeof (ht_xbe_shared_data));
 	shared_data = xbe_shared;
 
 	xbe_shared->imports.funcs = new Array(true);
@@ -72,7 +72,7 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	xbe_shared->v_imports = NULL;
 	xbe_shared->v_header = NULL;
 
-/* read header */
+	/* read header */
 	file->seek(0);
 	file->read(&xbe_shared->header, sizeof xbe_shared->header);
 	createHostStruct(&xbe_shared->header.base_address, XBE_IMAGE_HEADER_struct, little_endian);
@@ -81,38 +81,38 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	xbe_shared->header.entry_point ^= 0xA8FC57AB;
 	xbe_shared->header.kernel_image_thunk_address ^= 0x5B6D40B6;
 
-/* read headerspace XXX: UGLY*/
+	/* read headerspace XXX: UGLY*/
 	file->seek(0);
-	xbe_shared->headerspace=(char *)malloc(xbe_shared->header.size_of_headers+4);
+	xbe_shared->headerspace = ht_malloc(xbe_shared->header.size_of_headers+4);
 	file->read(xbe_shared->headerspace, xbe_shared->header.size_of_headers);
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers]=0;
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers+1]=0;
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers+2]=0;
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers+3]=0;
 
-/* read certificate */	
+	/* read certificate */	
 	file->seek(xbe_shared->header.certificate_address-xbe_shared->header.base_address);
 	file->read(&xbe_shared->certificate, sizeof xbe_shared->certificate);
 	createHostStruct(&xbe_shared->certificate, XBE_CERTIFICATE_struct, little_endian);
 
-/* read library versions */
+	/* read library versions */
 	file->seek(xbe_shared->header.library_versions_address-xbe_shared->header.base_address);
 	
-	xbe_shared->libraries=(XBE_LIBRARY_VERSION*)malloc(xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
+	xbe_shared->libraries = ht_malloc(xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
 	file->read(xbe_shared->libraries, xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
 
 	for (uint i=0; i<xbe_shared->header.number_of_library_versions; i++) {
 		createHostStruct(&xbe_shared->libraries[i], XBE_LIBRARY_VERSION_struct, little_endian);
 	}
 
-/* read section headers */
+	/* read section headers */
 	file->seek(xbe_shared->header.section_header_address-xbe_shared->header.base_address);
 	
-	xbe_shared->sections.sections=(XBE_SECTION_HEADER*)malloc(xbe_shared->header.number_of_sections * sizeof *xbe_shared->sections.sections);
+	xbe_shared->sections.sections = ht_malloc(xbe_shared->header.number_of_sections * sizeof *xbe_shared->sections.sections);
 	file->read(xbe_shared->sections.sections, xbe_shared->header.number_of_sections * sizeof *xbe_shared->sections.sections);
 
-	xbe_shared->sections.number_of_sections=xbe_shared->header.number_of_sections;
-	xbe_shared->sections.base_address=xbe_shared->header.base_address;
+	xbe_shared->sections.number_of_sections = xbe_shared->header.number_of_sections;
+	xbe_shared->sections.base_address = xbe_shared->header.base_address;
 
 	for (uint i=0; i<xbe_shared->header.number_of_sections; i++) {
 		createHostStruct(&xbe_shared->sections.sections[i], XBE_SECTION_HEADER_struct, little_endian);
