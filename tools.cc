@@ -48,7 +48,7 @@ int compare_keys_uint_delinear(Object *key_a, Object *key_b)
 int *random_permutation(int max)
 {
 	if (!max) return NULL;
-	int *table= (int *)smalloc(max * sizeof(int));
+	int *table= ht_malloc(max * sizeof(int));
 	int i,j,k,l,m;
 	for (i=0; i<max; i++) table[i] = i;
 	for (i=0; i<max; i++) {
