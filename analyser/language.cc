@@ -110,7 +110,7 @@ int analy_string__raw_test(const byte *s, int len)
  */
 void analy_string::init(const byte *s, int Len)
 {
-	string = (byte*)smalloc(Len);
+	string = ht_malloc(Len);
 	memcpy(string, s, Len);
 	len = Len;
 }
@@ -187,7 +187,7 @@ void analy_unicode_string::render_string(char *result, int maxlen)
 int analy_unicode_string::string_test(const byte *s, int testlen, int &foundlen)
 {
 	// this is not good
-	byte *a = (byte*)smalloc(testlen/2+1);
+	byte *a = ht_malloc(testlen/2+1);
 	wide_char_to_multi_byte((char*)a, s, testlen/2);
 	// search for \0
 	byte *np = (byte *)memchr(a, 0, testlen/2);
