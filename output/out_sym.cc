@@ -162,7 +162,7 @@ int export_to_sym(Analyser *analy, File *file)
 
 	write_sym(file, 0xff000000, "_TEXT", &bytes_written);
 
-	uint16 *ptr_table = (uint16*)malloc(MAX_SYMBOLS_PER_SEGMENT * sizeof *ptr_table);
+	uint16 *ptr_table = ht_malloc(MAX_SYMBOLS_PER_SEGMENT * sizeof *ptr_table);
 
 	Symbol *sym = NULL;
 	while ((sym = analy->enumSymbols(sym))) {
