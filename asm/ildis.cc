@@ -163,7 +163,7 @@ restart:
 
 dis_insn *ILDisassembler::duplicateInsn(dis_insn *disasm_insn)
 {
-	ILDisInsn *insn = (ILDisInsn *)malloc(sizeof (ILDisInsn));
+	ILDisInsn *insn = ht_malloc(sizeof (ILDisInsn));
 	*insn = *(ILDisInsn *)disasm_insn;
 	return insn;
 }
