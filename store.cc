@@ -159,7 +159,7 @@ byte *ObjectStreamBin::getLenString(int &length, const char *desc)
 		break;
 	}
 	if (length==0) return NULL;
-	byte *p = (byte*)malloc(length);
+	byte *p = ht_malloc(length);
 	mStream->readx(p, length);
 	return p;
 }
@@ -439,7 +439,7 @@ void ObjectStreamText::putLenString(const byte *string, int len, const char *des
 	putDesc(desc);
 	if (string) {
 		int strl=len*4+1;
-		char *str = (char*)smalloc(strl);
+		char *str = ht_malloc(strl);
 		putChar('"');
 		escape_special(str, strl, string, len, "\"");
 		putS(str);
@@ -461,7 +461,7 @@ public:
 
 void	ObjectStreamText::setSyntaxError()
 {
-// FIXME: errorline still usable ?
+	// FIXME: errorline still usable ?
 	if (!errorline) {
 		errorline = line;
 		throw TextSyntaxError(line);
@@ -476,7 +476,7 @@ int	ObjectStreamText::getErrorLine()
 void	ObjectStreamText::expect(char c)
 {
 	skipWhite();
-	if (cur!=c) setSyntaxError();
+	if (cur != c) setSyntaxError();
 	readChar();
 }
 
@@ -484,33 +484,33 @@ void	ObjectStreamText::skipWhite()
 {
 	while (1) {
 		switch (mapchar[(byte)cur]) {
-			case '\n':
-				line++;  // fallthrough
-			case ' ':
+		case '\n':
+			line++;  // fallthrough
+		case ' ':
+			readChar();
+			break;
+		case '#':
+			do {
 				readChar();
-				break;
-			case '#':
-				do {
-					readChar();
-				} while (cur!='\n');
-				break;
-			default: return;
+			} while (cur != '\n');
+			break;
+		default: return;
 		}
 	}
 }
 
-char	ObjectStreamText::readChar()
+char ObjectStreamText::readChar()
 {
 	mStream->readx(&cur, 1);
 	return cur;
 }
 
-void	ObjectStreamText::readDesc(const char *desc)
+void ObjectStreamText::readDesc(const char *desc)
 {
 	skipWhite();
-	if (!desc) desc="data";
+	if (!desc) desc = "data";
 	while (*desc) {
-		if (*desc!=cur) setSyntaxError();
+		if (*desc != cur) setSyntaxError();
 		readChar();
 		desc++;
 	}
@@ -519,13 +519,13 @@ void	ObjectStreamText::readDesc(const char *desc)
 void ObjectStreamText::putDesc(const char *desc)
 {
 	putIndent();
-	if (desc) putS(desc); else putS("data");
+	putS(desc ? desc : "data");
 	putChar('=');
 }
 
 void ObjectStreamText::putIndent()
 {
-	for(int i=0; i<indent; i++) putChar(' ');
+	for(int i=0; i < indent; i++) putChar(' ');
 }
 
 void ObjectStreamText::putChar(char c)
