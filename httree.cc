@@ -419,7 +419,7 @@ void	ht_static_treeview::adjust(void *node, bool expand)
 
 static_node *ht_static_treeview::create_node(char *text, static_node *prev, Object *Data)
 {
-	static_node *node = (static_node *)malloc(sizeof(static_node));
+	static_node *node = ht_malloc(sizeof(static_node));
 	node->text = ht_strdup(text);
 	node->next = NULL;
 	node->prev = prev;
