@@ -74,7 +74,7 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	String fn;
 	LOG("%y: LE: found header at 0x%08qx", &file->getFilename(fn), h);
-	ht_le_shared_data *le_shared = (ht_le_shared_data*)malloc(sizeof(ht_le_shared_data));
+	ht_le_shared_data *le_shared = ht_malloc(sizeof (ht_le_shared_data));
 	shared_data = le_shared;
 	le_shared->v_header = NULL;
 	le_shared->v_objects = NULL;
@@ -137,8 +137,8 @@ void ht_le::do_fixups()
 	ht_le_shared_data *le_shared = (ht_le_shared_data*)shared_data;
 	FileOfs h = le_shared->hdr_ofs;
 
-	uint32 *page_fixup_ofs = (uint32*)malloc(sizeof (uint32) * (le_shared->hdr.pagecnt+1));
-	uint32 *page_fixup_size = (uint32*)malloc(sizeof (uint32) * (le_shared->hdr.pagecnt));
+	uint32 *page_fixup_ofs = ht_malloc(sizeof (uint32) * (le_shared->hdr.pagecnt+1));
+	uint32 *page_fixup_size = ht_malloc(sizeof (uint32) * (le_shared->hdr.pagecnt));
 
 	file->seek(h+le_shared->hdr.fpagetab);
 	for (uint i=0; i<le_shared->hdr.pagecnt+1; i++) {
@@ -318,9 +318,9 @@ void ht_le::read_pagemap()
 	FileOfs h = le_shared->hdr_ofs;
 
 	le_shared->pagemap.count=le_shared->hdr.pagecnt;
-	le_shared->pagemap.offset=(uint32*)malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.offset);
-	le_shared->pagemap.psize=(uint32*)malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.psize);
-	le_shared->pagemap.vsize=(uint32*)malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.vsize);
+	le_shared->pagemap.offset = ht_malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.offset);
+	le_shared->pagemap.psize = ht_malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.psize);
+	le_shared->pagemap.vsize = ht_malloc(le_shared->pagemap.count*sizeof *le_shared->pagemap.vsize);
 
 	uint32 last_page_offset=0, last_page=0;
 	for (uint32 i=0; i<le_shared->hdr.pagecnt; i++) {
@@ -354,9 +354,9 @@ void ht_le::read_objects()
 	FileOfs h = le_shared->hdr_ofs;
 
 	le_shared->objmap.count = le_shared->hdr.objcnt;
-	le_shared->objmap.header = (LE_OBJECT*)malloc(le_shared->objmap.count*sizeof *le_shared->objmap.header);
-	le_shared->objmap.vsize = (uint*)malloc(le_shared->objmap.count * sizeof *le_shared->objmap.vsize);
-	le_shared->objmap.psize = (uint*)malloc(le_shared->objmap.count * sizeof *le_shared->objmap.psize);
+	le_shared->objmap.header = ht_malloc(le_shared->objmap.count*sizeof *le_shared->objmap.header);
+	le_shared->objmap.vsize = ht_malloc(le_shared->objmap.count * sizeof *le_shared->objmap.vsize);
+	le_shared->objmap.psize = ht_malloc(le_shared->objmap.count * sizeof *le_shared->objmap.psize);
 
 	for (uint i=0; i<le_shared->hdr.objcnt; i++) {
 		file->seek(h+le_shared->hdr.objtab+i*24);
@@ -384,7 +384,7 @@ void ht_le::read_objects()
 	}
 
 /* create temporary address space for LEAddress's */
-/*	le_shared->le_addr = (LEAddress*)malloc(sizeof *le_shared->le_addr * le_shared->objmap.count);
+/*	le_shared->le_addr = ht_malloc(sizeof *le_shared->le_addr * le_shared->objmap.count);
 	uint a = 0;
 	for (uint i = 0; i<le_shared->objmap.count; i++) {
 		le_shared->le_addr[i] = a;
