@@ -77,7 +77,7 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	String fn;
 	LOG("%y: PE: found header at 0x%08qx", &file->getFilename(fn), header_ofs);
 
-	ht_pe_shared_data *pe_shared = (ht_pe_shared_data*)malloc(sizeof (ht_pe_shared_data));
+	ht_pe_shared_data *pe_shared = ht_malloc(sizeof (ht_pe_shared_data));
 	shared_data = pe_shared;
 	pe_shared->header_ofs = header_ofs;
 
@@ -130,7 +130,7 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	pe_shared->sections.section_count=pe_shared->coffheader.section_count;
 
 	file->seek(header_ofs+os+sizeof(COFF_HEADER)+4/*magic*/);
-	pe_shared->sections.sections=(COFF_SECTION_HEADER*)malloc(pe_shared->sections.section_count * sizeof *pe_shared->sections.sections);
+	pe_shared->sections.sections = ht_malloc(pe_shared->sections.section_count * sizeof *pe_shared->sections.sections);
 	file->readx(pe_shared->sections.sections, pe_shared->sections.section_count*sizeof *pe_shared->sections.sections);
 
 	for (uint i=0; i<pe_shared->sections.section_count; i++) {
