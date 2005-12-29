@@ -191,7 +191,7 @@ bool load_pal(char *pal_class, char *pal_flavour, palette *p)
 	pal_layout *pl = find_pal_layout(pal_layouts, pal_class, &psize);
 	if (!pl) return false;
 	p->size = psize;
-	p->data = (vcp*)malloc(sizeof *p->data * psize);
+	p->data = ht_malloc(sizeof *p->data * psize);
 
 	for (int i=0; i < psize; i++) p->data[i] = VCP(VC_WHITE, VC_RED);
 
