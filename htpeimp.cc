@@ -179,14 +179,14 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 		file->seek(thunk_ofs);
 		if (thunk_count) {
 			if (pe32) {
-				thunk_table=(PE_THUNK_DATA*)malloc(sizeof *thunk_table * thunk_count);
+				thunk_table = ht_malloc(sizeof *thunk_table * thunk_count);
 				file->readx(thunk_table, sizeof *thunk_table * thunk_count);
 				// FIXME: ?
 				for (uint i=0; i<thunk_count; i++) {
 					createHostStruct(thunk_table+i, PE_THUNK_DATA_struct, little_endian);
 				}
 			} else {
-				thunk_table64=(PE_THUNK_DATA_64*)malloc(sizeof *thunk_table64 * thunk_count);
+				thunk_table64 = ht_malloc(sizeof *thunk_table64 * thunk_count);
 				file->readx(thunk_table64, sizeof *thunk_table64 * thunk_count);
 				// FIXME: ?
 				for (uint i=0; i<thunk_count; i++) {
