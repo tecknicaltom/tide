@@ -213,7 +213,7 @@ uint ht_undo_data_delete_string::getsize()
 
 void ht_undo_data_delete_string::gettext(char *text, uint maxlen)
 {
-	char *buf = (char *) malloc(len+1);
+	char *buf = ht_malloc(len+1);
 	bin2str(buf, string, len);
 	ht_snprintf(text, maxlen, "deletion of '%s' at %d:%d", buf, bpos.line+1, bpos.pofs+1);
 	free(buf);
@@ -295,7 +295,7 @@ uint ht_undo_data_delete_string2::getsize()
 
 void ht_undo_data_delete_string2::gettext(char *text, uint maxlen)
 {
-	char *buf = (char *) malloc(len+1);
+	char *buf = ht_malloc(len+1);
 	bin2str(buf, string, len);
 	ht_snprintf(text, maxlen, "deletion of '%s' at %d:%d", buf, apos.line+1, apos.pofs+1);
 	free(buf);
@@ -378,7 +378,7 @@ uint ht_undo_data_insert_string::getsize()
 
 void ht_undo_data_insert_string::gettext(char *text, uint maxlen)
 {
-	char *buf = (char *) malloc(len+1);
+	char *buf = ht_malloc(len+1);
 	bin2str(buf, string, len);
 	ht_snprintf(text, maxlen, "insertion of '%s' at %d:%d", buf, apos.line+1, apos.pofs+1);
 	free(buf);
@@ -487,7 +487,7 @@ uint ht_undo_data_overwrite_string::getsize()
 
 void ht_undo_data_overwrite_string::gettext(char *text, uint maxlen)
 {
-	char *buf = (char *) malloc(len+1);
+	char *buf = ht_malloc(len+1);
 	bin2str(buf, string, len);
 	ht_snprintf(text, maxlen, "insertion of '%s' at %d:%d", buf, apos.line+1, apos.pofs+1);
 	free(buf);
@@ -2092,8 +2092,8 @@ bool ht_text_editor::concat_lines(uint a)
 {
 	uint b=a+1;
 	if (textfile->has_line(a) && textfile->has_line(b)) {
-		uint alen=textfile->getlinelength(a);
-		char *aline=(char*)malloc(alen+1);
+		uint alen = textfile->getlinelength(a);
+		char *aline = ht_malloc(alen+1);
 		uint alinelen;
 		textfile->getline(a, 0, aline, alen+1, &alinelen, NULL);
 	
@@ -2454,7 +2454,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 
 void ht_text_editor::indent(uint line, uint start, uint size)
 {
-	char *w = (char*)malloc(size);
+	char *w = ht_malloc(size);
 	memset(w, ' ', size);
 	textfile->insert_chars(line, start, w, size);
 	free(w);
@@ -2592,7 +2592,7 @@ void ht_text_editor::split_line(uint a, uint pos)
 {
 	uint l=textfile->getlinelength(a);
 	if (pos>l) pos=l;
-	char *aline=(char*)malloc(pos+1);
+	char *aline = ht_malloc(pos+1);
 	uint alinelen;
 	textfile->getline(a, 0, aline, pos+1, &alinelen, NULL);
 
