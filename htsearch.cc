@@ -251,7 +251,7 @@ ht_fxbin_search_request::ht_fxbin_search_request(uint search_class, uint flags, 
 	ht_search_request(search_class, ST_FXBIN, flags)
 {
 	data_size = ds;
-	data = (byte*)malloc(data_size);
+	data = ht_malloc(data_size);
 	memcpy(data, d, data_size);
 }
 
@@ -484,7 +484,7 @@ Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, 
 	ctx->ofs = ofs;
 	ctx->flags = flags;
 	ctx->len = len;
-	ctx->pat = (byte*)malloc(patlen);
+	ctx->pat = ht_malloc(patlen);
 	memmove(ctx->pat, pat, patlen);
 	ctx->patlen = patlen;
 
@@ -492,7 +492,7 @@ Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, 
 
 	if (ctx->flags & SFBIN_CASEINSENSITIVE) bufdowncase(ctx->pat, ctx->patlen);
 
-	ctx->buf = (byte*)malloc(SEARCH_BUF_SIZE);
+	ctx->buf = ht_malloc(SEARCH_BUF_SIZE);
 
 	ctx->return_ofs = return_ofs;
 	ctx->return_success = return_success;
@@ -1193,7 +1193,7 @@ Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl
 	ctx->file = file;
 	ctx->ofs = ofs;
 	ctx->len = len;
-	ctx->repl = (byte*)malloc(repllen);
+	ctx->repl = ht_malloc(repllen);
 	memcpy(ctx->repl, repl, repllen);
 	ctx->repllen = repllen;
 	if (repllen > len) {
@@ -1203,7 +1203,7 @@ Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl
 	}
 	ctx->z = REPLACE_COPY_BUF_SIZE;
 	if (len != repllen)
-		ctx->buf = (byte*)malloc(REPLACE_COPY_BUF_SIZE);
+		ctx->buf = ht_malloc(REPLACE_COPY_BUF_SIZE);
 	ctx->return_repllen = return_repllen;
 	return ctx;
 }
