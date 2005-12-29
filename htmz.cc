@@ -54,7 +54,7 @@ format_viewer_if htmz_if = {
 void ht_mz::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group)
 {
 	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_MZ, file, false, true, 0, format_group);
-	ht_mz_shared_data *mz_shared = (ht_mz_shared_data*)malloc(sizeof (ht_mz_shared_data));
+	ht_mz_shared_data *mz_shared = ht_malloc(sizeof (ht_mz_shared_data));
 	shared_data = mz_shared;
 	file->seek(0);
 	file->read(&mz_shared->header, sizeof mz_shared->header);
