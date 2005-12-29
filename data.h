@@ -27,6 +27,7 @@
 #endif
 
 #include "io/types.h"
+#include <cstdlib>
 
 typedef uint32 ObjectID;
 typedef uint32 ID;
@@ -42,6 +43,39 @@ inline bool instanceOf(const T2 *o)
 {
 	return (dynamic_cast<const T1*>(o) != NULL);
 } 
+
+/*
+ *	C style malloc support
+ */
+
+class HTMallocRes;
+HTMallocRes ht_malloc(size_t);
+
+class HTMallocRes
+{
+private:
+	friend HTMallocRes ht_malloc(size_t);
+	const size_t mSize;
+
+	HTMallocRes(size_t size)
+		: mSize(size)
+	{
+	}
+
+	HTMallocRes operator=(const HTMallocRes &); // not implemented
+
+public:
+	template <typename T> operator T* () const
+	{
+		return static_cast<T*>(::malloc(mSize));
+	}
+};
+
+inline HTMallocRes ht_malloc(size_t size)
+{
+	return HTMallocRes(size);
+}
+
 
 /**
  *	Macro for creating object build functions
