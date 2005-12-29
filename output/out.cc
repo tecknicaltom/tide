@@ -48,7 +48,7 @@ int compare_keys_addresses_delinear(Object *key_a, Object *key_b)
 OutLine::OutLine(byte *Text, int Textlen, int Bytes)
 {
 	textlen = Textlen;
-	text = (byte*)malloc(Textlen);
+	text = ht_malloc(Textlen);
 	memcpy(text, Text, textlen);
 	bytes = Bytes;
 }
@@ -121,9 +121,9 @@ void	AnalyserOutput::init(Analyser *Analy)
 	bytes_line = 0;
 	size = 0;
 	current_time = 0;
-	work_buffer_start = (byte*)malloc(WORKBUF_LEN);
+	work_buffer_start = ht_malloc(WORKBUF_LEN);
 	work_buffer = work_buffer_start;
-	temp_buffer = (byte*)malloc(WORKBUF_LEN);
+	temp_buffer = ht_malloc(WORKBUF_LEN);
 	dis_style = DIS_STYLE_HIGHLIGHT+DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE+X86DIS_STYLE_OPTIMIZE_ADDR;
 	changeConfig();
 }
