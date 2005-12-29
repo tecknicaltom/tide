@@ -55,7 +55,7 @@ bool Terminal::append(File *file)
 {
 #define STREAM_COPYBUF_SIZE	(128)
 	const int bufsize=STREAM_COPYBUF_SIZE;
-	byte *buf=(byte*)malloc(bufsize);
+	byte *buf = ht_malloc(bufsize);
 	int r, w = 0;
 	do {
 		r = file->read(buf, bufsize);
