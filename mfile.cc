@@ -71,7 +71,7 @@ int FileArea::compareTo(const Object *obj) const
 ModifiedFileArea::ModifiedFileArea(FileOfs start, FileOfs size)
 : FileArea(start, size)
 {
-	buf = (byte*)malloc(size);
+	buf = ht_malloc(size);
 }
 
 ModifiedFileArea::~ModifiedFileArea()
@@ -213,7 +213,7 @@ bool FileModificator::cut1(ObjHandle h, FileOfs rstart, FileOfs size)
 		m->size -= size;
 		m->buf = (byte*)realloc(m->buf, m->size);
 /*		if (have_head_gap) {
-			byte *newbuf = (byte*)malloc(m->size);
+			byte *newbuf = ht_malloc(m->size);
 			memcpy(newbuf, m->buf, rstart);
 			memcpy(newbuf+rstart, m->buf+rstart+size, m->size-rstart);
 			free(m->buf);
@@ -582,7 +582,7 @@ void FileModificator::makeAreaModified(ObjHandle h, FileOfs rstart, FileOfs size
 			mods += new CopiedFileArea(cstart, csize, csrc_start);
 		}
 		if (min_condition) {
-			byte *buf = (byte*)malloc(min_addsize);
+			byte *buf = ht_malloc(min_addsize);
 			mFile->seek(min_src_ofs);
 			mFile->readx(buf, min_addsize);
 			ObjHandle ha = findArea(min_ofs);
