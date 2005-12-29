@@ -913,7 +913,7 @@ int ht_vasprintf(char **ptr, const char *format, va_list ap)
 		return 0;
 	}
 
-	(*ptr) = (char *)malloc(ret+1);
+	(*ptr) = ht_malloc(ret+1);
 	if (!*ptr) return 0;
 	ret = ht_vsnprintf(*ptr, ret+1, format, ap);
 
