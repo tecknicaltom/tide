@@ -269,7 +269,7 @@ CursesSystemDisplay::CursesSystemDisplay(const char *title)
 CursesSystemDisplay::~CursesSystemDisplay()
 {
 	term_off();
-	if (buf) free(buf);
+	free(buf);
 }
 
 void CursesSystemDisplay::term_off()
@@ -414,8 +414,8 @@ bool CursesSystemDisplay::read(uint &rawchar, vcp &color, int x, int y) const
 void CursesSystemDisplay::setBounds(const Bounds &b)
 {
 	SystemDisplay::setBounds(b);
-	if (buf) free(buf);
-	buf = (CursesChar*)malloc(sizeof *buf * w * h);
+	free(buf);
+	buf = ht_malloc(sizeof *buf * w * h);
 	memset(buf, 0, sizeof *buf * w * h);
 	fill(x, y, w, h, VCP(VC_WHITE, VC_BLACK), ' ');
 }
