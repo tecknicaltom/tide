@@ -66,10 +66,10 @@ void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	file->getFilename(fn);
 	LOG("%y: FLAT: found header at %08qx", &fn, header_ofs);
 	
-	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)malloc(sizeof(ht_flt_shared_data));
+	ht_flt_shared_data *flt_shared = ht_malloc(sizeof (ht_flt_shared_data));
 	
-	shared_data=flt_shared;
-	flt_shared->header_ofs=header_ofs;
+	shared_data = flt_shared;
+	flt_shared->header_ofs = header_ofs;
 
 	/* read header */
 	file->seek(header_ofs);
