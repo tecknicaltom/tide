@@ -71,7 +71,7 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	String fn;
 	LOG("%y: PEF: found header at %08qx", &file->getFilename(fn), header_ofs);
 
-	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)malloc(sizeof(ht_pef_shared_data));
+	ht_pef_shared_data *pef_shared = ht_malloc(sizeof(ht_pef_shared_data));
 	memset(pef_shared, 0, sizeof *pef_shared);
 	
 	shared_data = pef_shared;
@@ -100,8 +100,8 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	/* read section headers */
 	pef_shared->sheaders.count = pef_shared->contHeader.sectionCount;
 	if (pef_shared->sheaders.count) {
-		pef_shared->sheaders.sheaders = (PEF_SECTION_HEADER*)
-			malloc(pef_shared->sheaders.count*sizeof (PEF_SECTION_HEADER));
+		pef_shared->sheaders.sheaders =
+			ht_malloc(pef_shared->sheaders.count*sizeof (PEF_SECTION_HEADER));
 		for (uint i=0; i<pef_shared->sheaders.count; i++) {
 			file->read(&pef_shared->sheaders.sheaders[i], sizeof pef_shared->sheaders.sheaders[i]);
 			createHostStruct(&pef_shared->sheaders.sheaders[i], PEF_SECTION_HEADER_struct, pef_shared->byte_order);
