@@ -166,8 +166,8 @@ void screendrawbuf::b_rmove(int rx, int ry)
 void screendrawbuf::b_setbounds(Bounds *b)
 {
 	genericdrawbuf::b_setbounds(b);
-	if (buf) delete buf;
-	buf=(unsigned short *)malloc(sizeof *buf * size.w * size.h);
+	delete buf;
+	buf = ht_malloc(sizeof *buf * size.w * size.h);
 	b_fill(size.x, size.y, size.w, size.h, VCP(VC_WHITE, VC_BLACK), ' ');
 }
 
