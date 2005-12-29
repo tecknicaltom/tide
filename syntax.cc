@@ -220,14 +220,14 @@ void ht_lang_syntax_lexer::set_lexer_rules(syntax_lexer_rule *lr)
 	while (lexer_rules[lexer_rules_count].needstate) {
 		lexer_rules_count++;
 	}
-	lexer_rules_precompiled=(void**)malloc(sizeof (void**) * lexer_rules_count);
-	for (int i=0; i<lexer_rules_count; i++) {
+	lexer_rules_precompiled = ht_malloc(sizeof (void**) * lexer_rules_count);
+	for (int i=0; i < lexer_rules_count; i++) {
 		if (lexer_rules[i].string_type==LRST_REGEX) {
-			regex_t *preg=(regex_t*)malloc(sizeof (regex_t));
+			regex_t *preg  =ht_malloc(sizeof (regex_t));
 
 			/* add an anchor in front of regex */
 			int rl=strlen(lexer_rules[i].string)+1;
-			char *regex=(char*)malloc(1+rl);
+			char *regex = ht_malloc(1+rl);
 			*regex='^';
 			memmove(regex+1, lexer_rules[i].string, rl);
 			
@@ -656,7 +656,7 @@ char **create_sorted_stringtable(char **table)
 {
 	char **x=table;
 	while (*x) x++;
-	char **stab=(char **)malloc(sizeof (char*) * (x-table+1));
+	char **stab = ht_malloc(sizeof (char*) * (x-table+1));
 	memmove(stab, table, sizeof (char*) * (x-table+1));
 	
 	qsort(stab, x-table, sizeof(char*), qsort_stringlist);
