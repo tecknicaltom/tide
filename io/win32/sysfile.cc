@@ -27,6 +27,7 @@
 
 #include "io/sys.h"
 #include "io/file.h"
+#include "data.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -106,7 +107,7 @@ static void sys_findfill(pfind_t &pfind)
 int sys_findfirst(pfind_t &pfind, const char *dirname)
 {
 	if (!sys_filename_is_absolute(dirname)) return ENOENT;
-	char *Dirname = (char *)malloc(strlen(dirname)+5);
+	char *Dirname = ht_malloc(strlen(dirname)+5);
 	strcpy(Dirname, dirname);
 	int dnl = strlen(dirname);
 	if ((dirname[dnl-1] != '\\') && (dirname[dnl-1] != '/')) {
