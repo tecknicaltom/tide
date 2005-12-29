@@ -238,7 +238,7 @@ dis_insn *Alphadis::decode(byte *code, int maxlen, CPU_ADDR addr)
 
 dis_insn *Alphadis::duplicateInsn(dis_insn *disasm_insn)
 {
-	alphadis_insn *insn = (alphadis_insn *)malloc(sizeof (alphadis_insn));
+	alphadis_insn *insn = ht_malloc(sizeof (alphadis_insn));
 	*insn = *(alphadis_insn *)disasm_insn;
 	return insn;
 }
