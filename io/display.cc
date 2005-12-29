@@ -261,7 +261,7 @@ BufferedRDisplay::BufferedRDisplay(const Bounds &b)
 
 BufferedRDisplay::~BufferedRDisplay()
 {
-	if (buf) free(buf);
+	free(buf);
 }
 
 void BufferedRDisplay::fill(int x, int y, int w, int h, vcp color, char chr, Codepage cp)
@@ -322,7 +322,7 @@ void BufferedRDisplay::setBounds(const Bounds &b)
 	RDisplay::setBounds(b);
 	ColoredChar *bufnew;
 	if (w * h) {
-		bufnew = (ColoredChar*)malloc(sizeof *buf * w * h);
+		bufnew = ht_malloc(sizeof *buf * w * h);
 		if (!bufnew) throw std::bad_alloc();
 		ColoredChar *bb = bufnew;
 		for (int iy = 0; iy < h; iy++) {
@@ -337,7 +337,7 @@ void BufferedRDisplay::setBounds(const Bounds &b)
 			}
 		}
 	} else bufnew = NULL;
-	if (buf) free(buf);
+	free(buf);
 	buf = bufnew;
 }
 
