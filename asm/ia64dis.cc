@@ -491,7 +491,7 @@ rev:
 
 dis_insn *IA64Disassembler::duplicateInsn(dis_insn *disasm_insn)
 {
-	IA64DisInsn *insn = (IA64DisInsn *)malloc(sizeof (IA64DisInsn));
+	IA64DisInsn *insn = ht_malloc(sizeof (IA64DisInsn));
 	*insn = *(IA64DisInsn *)disasm_insn;
 	return insn;
 }
