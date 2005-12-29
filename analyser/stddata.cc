@@ -41,12 +41,12 @@ void Area::init()
 
 static void areaload(ObjectStream &st, area_s *&p, int level, int &left)
 {
-	if (left<=0) {
+	if (left <= 0) {
 		p = NULL;
 		return;
 	}
-	p = (area_s *) smalloc0(sizeof(area_s));
-	if ((level<=1) || (left<=1)) {
+	p = ht_malloc(sizeof (area_s));
+	if (level <= 1 || left <= 1) {
 		st.getObject(p->start, "start");
 		st.getObject(p->end, "end");
 		p->left = p->right = NULL;
@@ -118,7 +118,7 @@ static void areaadd(area_s *&p, Object *Start, Object *End)
 					  else  areaadd(p->left, Start, End);
 	} else {
 		// new p
-		area_s *tmp = (area_s *) smalloc(sizeof(area_s));
+		area_s *tmp = ht_malloc(sizeof(area_s));
 		p = tmp;
 		p->start = Start->clone();
 		p->end = End->clone();
