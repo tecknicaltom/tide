@@ -571,25 +571,25 @@ void ht_inputfield::init(Bounds *b, int Maxtextlen, List *hist)
 	ht_view::init(b, VO_SELECTABLE, "some inputfield");
 	VIEW_DEBUG_NAME("ht_inputfield");
 
-	history=hist;
-	maxtextlenv=Maxtextlen;
+	history = hist;
+	maxtextlenv = Maxtextlen;
 	
-	textv=(byte*)malloc(maxtextlenv+1);
-	curcharv=textv;
-	textlenv=0;
-	selstartv=0;
-	selendv=0;
+	textv = ht_malloc(maxtextlenv+1);
+	curcharv = textv;
+	textlenv = 0;
+	selstartv = 0;
+	selendv = 0;
 
-	text=&textv;
-	curchar=&curcharv;
-	textlen=&textlenv;
-	maxtextlen=&maxtextlenv;
-	selstart=&selstartv;
-	selend=&selendv;
+	text = &textv;
+	curchar = &curcharv;
+	textlen = &textlenv;
+	maxtextlen = &maxtextlenv;
+	selstart = &selstartv;
+	selend = &selendv;
 
-	insert=1;
-	ofs=0;
-	attachedto=0;
+	insert = 1;
+	ofs = 0;
+	attachedto = 0;
 }
 
 void ht_inputfield::done()
@@ -956,7 +956,7 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 			case K_Meta_V:
 			case K_Shift_Insert: {
 				int maxsize = MIN(*maxtextlen-*textlen, (int)clipboard_getsize());
-				byte *buf = (byte*)malloc(maxsize);
+				byte *buf = ht_malloc(maxsize);
 				int r = clipboard_paste(buf, maxsize);
 				if (r) {
 					for (int i=0; i<r; i++) {
@@ -1409,7 +1409,7 @@ void ht_listbox_title::setTextv(int c, va_list vargs)
 	texts = NULL;
 	cols = c;
 	if (!c) return;
-	texts = (char**)malloc(c * sizeof(char*));
+	texts = ht_malloc(c * sizeof(char*));
 	for (int i=0; i<cols; i++) {
 		texts[i] = ht_strdup(va_arg(vargs, char* ));
 	}
@@ -2094,8 +2094,8 @@ char *ht_text_listbox::getStr(int col, void *entry)
 
 void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char **strs)
 {
-// FIXME: code duplication...
-	ht_text_listbox_item *item = (ht_text_listbox_item *)malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
+	// FIXME: code duplication...
+	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
 	item->next = NULL;
 	item->prev = last;
 	item->id = id;
@@ -2119,7 +2119,7 @@ void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char **strs)
 
 void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char *str, ...)
 {
-	ht_text_listbox_item *item = (ht_text_listbox_item *)malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
+	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
 	item->next = NULL;
 	item->prev = last;
 	item->id = id;
@@ -2153,8 +2153,8 @@ void	ht_text_listbox::insert_str(int id, char **strs)
 
 void ht_text_listbox::insert_str(int id, char *str, ...)
 {
-// FIXME: same as insert_str(id, NULL, str, ...)
-	ht_text_listbox_item *item = (ht_text_listbox_item *)malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
+	// FIXME: same as insert_str(id, NULL, str, ...)
+	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
 	item->next = NULL;
 	item->prev = last;
 	item->id = id;
@@ -2252,9 +2252,9 @@ void ht_text_listbox::sort(int count, ht_text_listbox_sort_order *so)
 	int i=0;
 	int cnt = calcCount();
 
-	if (cnt<2) return;
+	if (cnt < 2) return;
 	
-	list = (ht_text_listbox_item **)malloc(cnt*sizeof(void *));
+	list = ht_malloc(cnt*sizeof(void *));
 	tmp = first;
 	while (tmp) {
 		list[i++] = tmp;
@@ -2384,9 +2384,9 @@ void ht_statictext::draw()
 	char *t = text;
 	if (breaklines) {
 		/* format string... */	
-		ht_statictext_linedesc *orig_d=(ht_statictext_linedesc *)malloc(sizeof (ht_statictext_linedesc)*size.h);
-		ht_statictext_linedesc *d=orig_d;
-		statictext_align lalign=align;
+		ht_statictext_linedesc *orig_d = ht_malloc(sizeof (ht_statictext_linedesc)*size.h);
+		ht_statictext_linedesc *d = orig_d;
+		statictext_align lalign = align;
 		int c=0;
 		while (*t && c < size.h) {
 			/* custom alignment */
