@@ -226,7 +226,7 @@ FileOfs ht_ltextfile::copyAllTo(Stream *stream)
 	}*/
 #define STREAM_COPYBUF_SIZE (64*1024)
 	const uint bufsize=STREAM_COPYBUF_SIZE;
-	byte *buf=(byte*)malloc(bufsize);
+	byte *buf = ht_malloc(bufsize);
 	uint r;
 	FileOfs res = 0;
 	do {
@@ -247,7 +247,7 @@ void ht_ltextfile::delete_chars(uint line, uint ofs, uint count)
 		
 		if (ofs<olen) {
 			if (ofs+count>olen) count=olen-ofs;
-			char *nstr=(char*)malloc(olen-count);
+			char *nstr = ht_malloc(olen-count);
 			memcpy(nstr, ostr, ofs);
 			memcpy(nstr+ofs, ostr+ofs+count, olen-ofs-count);
 			free(ostr);
@@ -338,7 +338,7 @@ ht_ltextfile_line *ht_ltextfile::fetch_line_into_memory(uint line)
 	ht_ltextfile_line *e=fetch_line(line);
 	if (e) {
 		if (!e->is_in_memory) {
-			char *data=(char*)malloc(e->on_disk.len);
+			char *data = ht_malloc(e->on_disk.len);
 			mFile->seek(e->on_disk.ofs);
 			uint x=mFile->read(data, e->on_disk.len);
 
@@ -453,7 +453,7 @@ void ht_ltextfile::insert_lines(uint before, uint count, void **line_ends, int *
 		e->instate = instate;
 		e->on_disk.ofs = 0xffffffff;
 		e->on_disk.len = 0;
-		e->in_memory.data = (char*)malloc(1);
+		e->in_memory.data = ht_malloc(1);
 		e->in_memory.len = 0;
 		e->nofs = 0;
 		if (line_ends && line_end_lens) {
@@ -486,7 +486,7 @@ void ht_ltextfile::insert_chars(uint line, uint ofs, void *chars, uint len)
 
 			if (ofs>nlen) nlen=ofs;
 			nlen+=clen;
-			nstr=(char*)malloc(nlen);
+			nstr = ht_malloc(nlen);
 
 			memcpy(nstr, ostr, ofs);
 			memcpy(nstr+ofs, chars, clen);
@@ -715,8 +715,8 @@ void ht_ltextfile::split_line(uint a, uint pos, void *line_end, int line_end_len
 		insert_lines(a, 1, &line_end, &line_end_len);
 	} else {
 		uint l=getlinelength(a);
-		if (pos>l) pos=l;
-		char *aline=(char*)malloc(pos+1);
+		if (pos > l) pos = l;
+		char *aline = ht_malloc(pos+1);
 		uint alinelen;
 		getline(a, 0, aline, pos+1, &alinelen, NULL);
 	
