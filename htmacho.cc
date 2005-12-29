@@ -71,7 +71,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	file->getFilename(fn);
 	LOG("%y: Mach-O: found header at %08qx", &fn, header_ofs);
 	
-	ht_macho_shared_data *macho_shared=(ht_macho_shared_data *)malloc(sizeof(ht_macho_shared_data));
+	ht_macho_shared_data *macho_shared = ht_malloc(sizeof(ht_macho_shared_data));
 
 	shared_data = macho_shared;
 	macho_shared->image_endianess = image_endianess;
@@ -94,7 +94,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	/* read commands */
 	uint nsections = 0;
 	ofs = header_ofs+sizeof macho_shared->header;
-	macho_shared->cmds.cmds = (MACHO_COMMAND_U**)malloc(sizeof (MACHO_COMMAND_U*) * macho_shared->header.ncmds);
+	macho_shared->cmds.cmds = ht_malloc(sizeof (MACHO_COMMAND_U*) * macho_shared->header.ncmds);
 	macho_shared->cmds.count = 0;
 	for (uint i=0; i<macho_shared->header.ncmds; i++) {
 		MACHO_COMMAND cmd;
@@ -102,7 +102,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 		file->read(&cmd, sizeof cmd);
 		createHostStruct(&cmd, MACHO_COMMAND_struct, image_endianess);
 		if (cmd.cmdsize>1024) break;
-		macho_shared->cmds.cmds[i] = (MACHO_COMMAND_U*)malloc(cmd.cmdsize);
+		macho_shared->cmds.cmds[i] = ht_malloc(cmd.cmdsize);
 		file->seek(ofs);
 		if (file->read(macho_shared->cmds.cmds[i], cmd.cmdsize) != cmd.cmdsize) {
 			LOG_EX(LOG_ERROR, "%s: Mach-O: error processing command idx %d "
@@ -151,7 +151,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	/* read sections */
 	ofs = header_ofs+sizeof macho_shared->header;
 	macho_shared->sections.count = nsections;
-	macho_shared->sections.sections = (MACHO_SECTION*)malloc(sizeof (MACHO_SECTION) * macho_shared->sections.count);
+	macho_shared->sections.sections = ht_malloc(sizeof (MACHO_SECTION) * macho_shared->sections.count);
 	uint sec = 0;
 	for (uint i=0; i<macho_shared->cmds.count; i++) {
 		if (macho_shared->cmds.cmds[i]->cmd.cmd == LC_SEGMENT) {
