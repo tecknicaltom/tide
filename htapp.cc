@@ -2293,7 +2293,7 @@ void ht_app::handlemsg(htmsg *msg)
 		case cmd_edit_copy_native: {
 			int dz = sys_native_clipboard_get_size();
 			if (dz) {
-				void *data = smalloc(dz);
+				void *data = ht_malloc(dz);
 				if ((dz = sys_native_clipboard_read(data, dz))) {
 					clipboard_copy(sys_native_clipboard_name(), data, dz);
 				}
@@ -2303,7 +2303,7 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case cmd_edit_paste_native: {
 			int maxsize = clipboard_getsize();
-			byte *buf = (byte*)smalloc(maxsize);
+			byte *buf = ht_malloc(maxsize);
 			int r = clipboard_paste(buf, maxsize);
 			if (r) {
 				sys_native_clipboard_write(buf, r);
