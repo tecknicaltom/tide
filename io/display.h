@@ -23,6 +23,7 @@
 
 #include "bounds.h"
 #include "types.h"
+#include "data.h"
 
 /* codepages */
 
