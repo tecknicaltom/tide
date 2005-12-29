@@ -173,7 +173,7 @@ char *real_name(char *s)
 
 char *quote_string(char *s)
 {
-	char *s2 = (char *) smalloc(strlen(s)+2);
+	char *s2 = ht_malloc(strlen(s)+2);
 	s2[0] = M_PREFIX_DUP;
 	strcpy(&s2[1], s);
 	return s2;
