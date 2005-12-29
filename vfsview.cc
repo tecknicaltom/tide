@@ -28,7 +28,7 @@
 
 static vfs_extra *make_vfs_extra(const char *name, pstat_t s)
 {
-	vfs_extra *e = (vfs_extra*)malloc(sizeof *e);
+	vfs_extra *e = ht_malloc(sizeof *e);
 	e->stat = s;
 	e->name = strdup(name);
 	return e;
@@ -354,7 +354,7 @@ void VfsListbox::reread()
 	clearAll();
 	char *strs[VFSV_FORMAT_MAX_COLS];
 	for (int i=0; i<dfmt_cols; i++) {
-		strs[i] = (char*)malloc(VFSV_FORMAT_MAX_LENGTH);
+		strs[i] = ht_malloc(VFSV_FORMAT_MAX_LENGTH);
 	}
 	pfind_t f;
 	int k = 0;
