@@ -287,14 +287,14 @@ bool init_cfg()
 	char d[1024];	/* FIXME: !!!! */
 	sys_dirname(d, appname);
 	char *b = "\\"SYSTEM_CONFIG_FILE_NAME;
-	systemconfig_file = (char*)malloc(strlen(d)+strlen(b)+1);
+	systemconfig_file = ht_malloc(strlen(d)+strlen(b)+1);
 	strcpy(systemconfig_file, d);
 	strcat(systemconfig_file, b);
 #else
 	char *home = getenv("HOME");
 	char *b = "/"SYSTEM_CONFIG_FILE_NAME;
 	if (!home) home = "";
-	systemconfig_file = (char*)malloc(strlen(home)+strlen(b)+1);
+	systemconfig_file = ht_malloc(strlen(home)+strlen(b)+1);
 	strcpy(systemconfig_file, home);
 	strcat(systemconfig_file, b);
 #endif
