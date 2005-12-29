@@ -221,7 +221,7 @@ FileOfs clipboard_copy(const char *source_desc, File *file, FileOfs offset, File
 	FileOfs oldpos = file->tell();
 	FileOfs cpos = size;
 	FileOfs spos = offset;
-	byte *buf = (byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
+	byte *buf = ht_malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
 	FileOfs l = len, r = 0;
 
 	while (len && l) {
@@ -255,7 +255,7 @@ FileOfs clipboard_paste(File *file, FileOfs offset)
 	FileOfs len = clipboard->select_len;
 	FileOfs oldpos = file->tell();
 	FileOfs cpos = clipboard->select_start, spos=offset;
-	byte *buf = (byte*)malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
+	byte *buf = ht_malloc(CLIPBOARD_TRANSFER_BUF_SIZE);
 	FileOfs l = len, r = 0;
 	while (len && l) {
 		l = len;
