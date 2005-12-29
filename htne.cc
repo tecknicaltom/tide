@@ -96,7 +96,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	String fn;
 	LOG("%y: NE: found header at 0x%08qx", &file->getFilename(fn), h);
 
-	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)malloc(sizeof (ht_ne_shared_data));
+	ht_ne_shared_data *ne_shared = ht_malloc(sizeof (ht_ne_shared_data));
 	shared_data = ne_shared;
 
 	ne_shared->fake_segment = 0;
@@ -111,7 +111,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 
 /* read segment descriptors */
 	ne_shared->segments.segment_count = ne_shared->hdr.cseg;
-	ne_shared->segments.segments = (NE_SEGMENT *)malloc(sizeof (NE_SEGMENT) * ne_shared->segments.segment_count);
+	ne_shared->segments.segments = ht_malloc(sizeof (NE_SEGMENT) * ne_shared->segments.segment_count);
 
 	bool reloc_needed = false;
 	NE_SEGMENT *s = ne_shared->segments.segments;
@@ -168,7 +168,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	FileOfs no = h + ne_shared->hdr.imptab;
 	file->seek(o);
 	ne_shared->modnames_count = ne_shared->hdr.cmod;
-	ne_shared->modnames = (char**)malloc(sizeof *ne_shared->modnames * ne_shared->modnames_count);
+	ne_shared->modnames = ht_malloc(sizeof *ne_shared->modnames * ne_shared->modnames_count);
 	for (uint i=0; i<ne_shared->hdr.cmod; i++) {
 		char buf[2];
 		file->seek(o+i*2);
@@ -245,7 +245,7 @@ bool ht_ne::create_fake_segment()
 {
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
 	uint i = ne_shared->hdr.cseg;
-	NE_SEGMENT *newsegs = (NE_SEGMENT*)malloc(sizeof *newsegs * (ne_shared->segments.segment_count+1));
+	NE_SEGMENT *newsegs = ht_malloc(sizeof *newsegs * (ne_shared->segments.segment_count+1));
 	memcpy(newsegs, ne_shared->segments.segments, sizeof *newsegs * ne_shared->segments.segment_count);
 	ne_shared->segments.segment_count++;
 	free(ne_shared->segments.segments);
