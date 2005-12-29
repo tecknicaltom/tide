@@ -36,7 +36,7 @@ ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream)
 	}
 	bufferpos = 0;
 	buffersize = COMPRESSED_STREAM_DEFAULT_GRANULARITY;
-	buffer = (byte *)smalloc(buffersize);
+	buffer = ht_malloc(buffersize);
 }
 
 ht_compressed_stream::~ht_compressed_stream()
