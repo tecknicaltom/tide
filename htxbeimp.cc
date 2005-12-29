@@ -436,7 +436,7 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 
 	FileOfs ofs;
 	uint thunktablerva = xbe_shared->header.kernel_image_thunk_address - xbe_shared->header.base_address;
-	uint *thunktable = (uint *)malloc(sizeof(xbox_exports));
+	uint *thunktable = ht_malloc(sizeof (xbox_exports));
 	if (!thunktable) goto xbe_read_error;
 	memset(thunktable, 0, sizeof(xbox_exports));
 
