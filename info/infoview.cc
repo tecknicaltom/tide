@@ -90,7 +90,7 @@ public:
 // FIXME: this function is considered harmful
 char *memndup(const char *s, int n)
 {
-	char *q = (char*)malloc(n+1);
+	char *q = ht_malloc(n+1);
 	memcpy(q, s, n);
 	q[n] = 0;
 	return q;
@@ -495,7 +495,7 @@ uint ht_info_viewer::readfile(char *fn, char **text)
 	int size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	char *x = (char*)malloc(size+1);
+	char *x = ht_malloc(size+1);
 	uint len = fread(x, 1, size, f);
 	x[len] = 0;
 
