@@ -160,7 +160,7 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 //					file->read();
 				} else if (strcmp(entry->name, "#US")==0) {
 					// stringpool
-					pe_shared->il->string_pool = (char*)malloc(entry->size);
+					pe_shared->il->string_pool = ht_malloc(entry->size);
 					file->seek(entry->offset);
 					pe_shared->il->string_pool_size = file->read(pe_shared->il->string_pool, entry->size);
 				}
