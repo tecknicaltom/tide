@@ -179,7 +179,7 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 
 dis_insn *PPCDisassembler::duplicateInsn(dis_insn *disasm_insn)
 {
-	ppcdis_insn *insn = (ppcdis_insn *)malloc(sizeof (ppcdis_insn));
+	ppcdis_insn *insn = ht_malloc(sizeof (ppcdis_insn));
 	*insn = *(ppcdis_insn *)disasm_insn;
 	return insn;
 }
