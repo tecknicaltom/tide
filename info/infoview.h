@@ -50,7 +50,7 @@ public:
 	uint cx, cy;
 	ht_view *pal_from;
 	
-			void init(ht_view *pal_from);
+		void init(ht_view *pal_from);
 /* overwritten */
 	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();
@@ -102,10 +102,10 @@ public:
 /* overwritten */
 	virtual	void draw();
 	virtual	char *defaultpalette();
-	virtual void get_pindicator_str(char *buf);
+	virtual int get_pindicator_str(char *buf, int max_len);
 	virtual	void handlemsg(htmsg *msg);
 /* new */	
 	virtual	bool gotonode(char *file, char *node);
 };
 
-#endif /* __TEXTEDIT_H__ */
+#endif /* __INFOVIEW_H__ */
