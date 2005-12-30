@@ -1254,18 +1254,6 @@ void ht_logviewer::handlemsg(htmsg *msg)
 	switch (msg->msg) {
 		case msg_get_scrollinfo:
 			switch (msg->data1.integer) {
-/*				case gsi_pindicator: {
-					get_pindicator_str((char*)msg->data2.ptr);
-					break;
-				}*/
-/*				case gsi_hscrollbar: {
-					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
-					if (!get_hscrollbar_pos(&p->pstart, &p->psize)) {
-						p->pstart = 0;
-						p->psize = 100;
-					}
-					break;
-				}*/
 				case gsi_vscrollbar: {
 					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
 					if (!get_vscrollbar_pos(&p->pstart, &p->psize)) {
@@ -2303,12 +2291,15 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case cmd_edit_paste_native: {
 			int maxsize = clipboard_getsize();
-			byte *buf = ht_malloc(maxsize);
-			int r = clipboard_paste(buf, maxsize);
-			if (r) {
-				sys_native_clipboard_write(buf, r);
+			if (maxsize) {
+				byte *buf = ht_malloc(maxsize);
+				int r = clipboard_paste(buf, maxsize);
+				if (r) {
+					sys_native_clipboard_write(buf, r);
+				}
+				free(buf);
 			}
-			free(buf);
+			break;
 		}
 		case cmd_file_save: {
 			ObjHandle oh = get_window_listindex((ht_window*)battlefield->current);
