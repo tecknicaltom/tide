@@ -1389,13 +1389,15 @@ uint ht_text_viewer::get_line_vlength(uint line)
 	return vl;
 }
 
-void ht_text_viewer::get_pindicator_str(char *buf)
+int ht_text_viewer::get_pindicator_str(char *buf, int max_len)
 {
-	// FIXME api
 	ht_syntax_lexer *l = get_lexer();
 	const char *ln = l ? l->getname() : NULL;
-	buf += sprintf(buf, " %d:%d ", top_line+cursory+1, xofs+cursorx+1);
-	if (ln) sprintf(buf, "(%s) ", ln);
+	if (ln) {
+		return ht_snprintf(buf, max_len, " %d:%d (%s) ", top_line+cursory+1, xofs+cursorx+1, ln);
+	} else {
+		return ht_snprintf(buf, max_len, " %d:%d ", top_line+cursory+1, xofs+cursorx+1);
+	}
 }
 
 bool ht_text_viewer::get_vscrollbar_pos(int *pstart, int *psize)
@@ -1653,13 +1655,13 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			return;
 		}
+		case msg_get_pindicator: {
+			msg->data1.integer = get_pindicator_str((char*)msg->data2.ptr, msg->data1.integer);
+			clearmsg(msg);
+			return;
+		}
 		case msg_get_scrollinfo: {
 			switch (msg->data1.integer) {
-				case gsi_pindicator: {
-					get_pindicator_str((char*)msg->data2.ptr);
-					clearmsg(msg);
-					return;
-				}
 				case gsi_hscrollbar: {
 					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
 					if (!get_hscrollbar_pos(&p->pstart, &p->psize)) {
@@ -2197,14 +2199,17 @@ CursorMode ht_text_editor::get_cursor_mode()
 	return overwrite_mode ? CURSOR_BOLD : CURSOR_NORMAL;
 }
 
-void ht_text_editor::get_pindicator_str(char *buf)
+int ht_text_editor::get_pindicator_str(char *buf, int max_len)
 {
 	ht_syntax_lexer *l = get_lexer();
 	const char *ln = l ? l->getname() : NULL;
 	bool dirty = true;
 	textfile->cntl(FCNTL_MODS_IS_DIRTY, 0ULL, 0x7fffffffULL, &dirty);
-	buf += sprintf(buf, "%c%d:%d ", dirty ? '*' : ' ', top_line+cursory+1, xofs+cursorx+1);
-	if (ln) sprintf(buf, "(%s) ", ln);
+	if (ln) {
+		return ht_snprintf(buf, max_len, " %c%d:%d (%s) ", dirty ? '*' : ' ', top_line+cursory+1, xofs+cursorx+1, ln);
+	} else {
+		return ht_snprintf(buf, max_len, " %c%d:%d ", dirty ? '*' : ' ', top_line+cursory+1, xofs+cursorx+1);
+	}
 }
 
 void ht_text_editor::handlemsg(htmsg *msg)
