@@ -1786,28 +1786,30 @@ void ht_window::redraw()
 {
 	htmsg m;
 	
-	char buf[256];
-	buf[0]=0;
+	if (pindicator) {
+		char buf[256];
+		buf[0]=0;
 	
-	m.msg = msg_get_scrollinfo;
-	m.type = mt_empty;
-	m.data1.integer = gsi_pindicator;
-	m.data2.ptr = buf;
-	sendmsg(&m);
+		m.msg = msg_get_pindicator;
+		m.type = mt_empty;
+		m.data1.integer = sizeof buf;
+		m.data2.ptr = buf;
+		sendmsg(&m);
 
-	if (pindicator) pindicator->settext(buf);
+		pindicator->settext(buf);
+	}
 
 	gsi_scrollbar_t p;
 
-	p.pstart = 0;
-	p.psize = 200;
-	m.msg = msg_get_scrollinfo;
-	m.type = mt_empty;
-	m.data1.integer = gsi_hscrollbar;
-	m.data2.ptr = &p;
-	sendmsg(&m);
-
 	if (hscrollbar) {
+		p.pstart = 0;
+		p.psize = 200;
+		m.msg = msg_get_scrollinfo;
+		m.type = mt_empty;
+		m.data1.integer = gsi_hscrollbar;
+		m.data2.ptr = &p;
+		sendmsg(&m);
+
 		if (p.psize>=100) {
 			hscrollbar->disable();
 		} else {
@@ -1816,15 +1818,15 @@ void ht_window::redraw()
 		}
 	}
 
-	p.pstart = 0;
-	p.psize = 200;
-	m.msg = msg_get_scrollinfo;
-	m.type = mt_empty;
-	m.data1.integer = gsi_vscrollbar;
-	m.data2.ptr = &p;
-	sendmsg(&m);
-
 	if (vscrollbar) {
+		p.pstart = 0;
+		p.psize = 200;
+		m.msg = msg_get_scrollinfo;
+		m.type = mt_empty;
+		m.data1.integer = gsi_vscrollbar;
+		m.data2.ptr = &p;
+		sendmsg(&m);
+
 		if (p.psize>=100) {
 			vscrollbar->disable();
 		} else {
