@@ -120,7 +120,7 @@ protected:
 	bool duplicate;
 	Array allocd;
 
-		   void	*duppa(const void *p, int size);
+		void		*duppa(const void *p, int size);
 public:
 				ObjectStreamNative(Stream *s, bool own_s, bool duplicate);
 /* extends ObjectStream */
