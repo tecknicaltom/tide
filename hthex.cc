@@ -58,23 +58,21 @@ format_viewer_if hthex_if = {
  *	CLASS ht_hex_viewer
  */
 
-void ht_hex_viewer::get_pindicator_str(char *buf)
+int ht_hex_viewer::get_pindicator_str(char *buf, int max_len)
 {
 	FileOfs o;
-	FileOfs sel_start, sel_end;
-	pselect_get(&sel_start, &sel_end);
 	if (get_current_offset(&o)) {
+		FileOfs sel_start, sel_end;
+		pselect_get(&sel_start, &sel_end);
 		char ttemp[1024];
 		if (sel_end-sel_start > 0) {
-			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
+			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s) ", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
 		} else {
 			ttemp[0] = 0;
 		}
-		// FIXME: sizeof buf
-		ht_snprintf(buf, 1024, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
+		return ht_snprintf(buf, max_len, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
 	} else {
-		// FIXME: sizeof buf
-		ht_strlcpy(buf, "?", 2);
+		return ht_snprintf(buf, max_len, " ? ");
 	}
 }
 	
@@ -105,33 +103,6 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 
 			dirtyview();
 			return;
-/*		case msg_get_scrollinfo:
-			switch (msg->data1.integer) {
-				case gsi_pindicator: {
-					get_pindicator_str((char*)msg->data2.ptr);
-					clearmsg(msg);
-					return;
-				}
-				case gsi_hscrollbar: {
-					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
-					if (!get_hscrollbar_pos(&p->pstart, &p->psize)) {
-						p->pstart = 0;
-						p->psize = 100;
-					}
-					clearmsg(msg);
-					return;
-				}
-				case gsi_vscrollbar: {
-					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
-					if (!get_vscrollbar_pos(&p->pstart, &p->psize)) {
-						p->pstart = 0;
-						p->psize = 100;
-					}
-					clearmsg(msg);
-					return;
-				}
-			}
-			break;*/
 		case cmd_hex_entropy: {
 			FileOfs ofs;
 			if (get_current_offset(&ofs)) {
