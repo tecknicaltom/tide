@@ -55,7 +55,7 @@ private:
 	Terminal	*term;
 	
 			void do_update();
-			void get_pindicator_str(char *buf);
+			int get_pindicator_str(char *buf, int max_len);
 public:
 			void init(Bounds *b, Terminal *term, bool own_term);
 	virtual	void done();
