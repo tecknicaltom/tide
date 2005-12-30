@@ -172,7 +172,7 @@ public:
 	virtual	bool pos_to_offset(viewer_pos pos, FileOfs *ofs);
 	virtual	bool offset_to_pos(FileOfs ofs, viewer_pos *pos);
 	/* position indicator string */
-	virtual	void get_pindicator_str(char *buf);
+	virtual	int get_pindicator_str(char *buf, int max_len);
 	/* scrollbar pos */
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
@@ -260,7 +260,7 @@ public:
 			void getbounds(Bounds *b);
 	virtual 	ht_view *getfirstchild();
 	virtual	ht_view *getselected();
-	virtual	void get_pindicator_str(char *buf);
+	virtual	int get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
 	virtual	void handlemsg(htmsg *msg);
