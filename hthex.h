@@ -36,7 +36,7 @@ class ht_hex_viewer: public ht_uformat_viewer {
 public:
 	ht_hex_file_sub *h;
 protected:
-	virtual	void get_pindicator_str(char *buf);
+	virtual	int get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	bool offset_to_pos(FileOfs ofs, viewer_pos *p);
