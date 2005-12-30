@@ -258,15 +258,6 @@ void ht_pef_import_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		}
-/*		case msg_get_scrollinfo:
-			switch (msg->data1.integer) {
-				case gsi_pindicator: {
-					strcpy((char*)msg->data2.ptr, " Enter to view, Backspace to return here");
-					clearmsg(msg);
-					return;
-				}
-			}
-			break;*/
 		case msg_keypressed: {
 			if (msg->data1.integer == K_Return) {
 				select_entry(e_cursor);
