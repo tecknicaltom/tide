@@ -226,13 +226,14 @@ ht_view *ht_format_group::getselected()
 	return xgroup->getselected();
 }
 
-void ht_format_group::get_pindicator_str(char *buf)
+int ht_format_group::get_pindicator_str(char *buf, int max_len)
 {
-	ht_view *c=xgroup->current;
+	ht_view *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
-		((ht_format_viewer*)c)->get_pindicator_str(buf);
+		return ((ht_format_viewer*)c)->get_pindicator_str(buf, max_len);
 	} else {
-		*buf=0;
+		if (max_len > 0) *buf = 0;
+		return 0;
 	}
 }
 
@@ -572,9 +573,10 @@ File *ht_format_viewer::get_file()
 	return file;
 }
 
-void ht_format_viewer::get_pindicator_str(char *buf)
+int ht_format_viewer::get_pindicator_str(char *buf, int max_len)
 {
-	*buf=0;
+	if (max_len > 0) *buf = 0;
+	return 0;
 }
 
 bool ht_format_viewer::get_hscrollbar_pos(int *pstart, int *psize)
@@ -2135,13 +2137,12 @@ int ht_uformat_viewer::get_current_tag_size(uint32 *size)
 void ht_uformat_viewer::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
+		case msg_get_pindicator:
+			msg->data1.integer = get_pindicator_str((char*)msg->data2.ptr, msg->data1.integer);
+			clearmsg(msg);
+			return;
 		case msg_get_scrollinfo:
 			switch (msg->data1.integer) {
-				case gsi_pindicator: {
-					get_pindicator_str((char*)msg->data2.ptr);
-					clearmsg(msg);
-					return;
-				}
 				case gsi_hscrollbar: {
 					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
 					if (!get_hscrollbar_pos(&p->pstart, &p->psize)) {
