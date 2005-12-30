@@ -26,7 +26,7 @@
 bool sys_native_clipboard_write(const void *data, int size)
 {
 	// FIXME:
-	if (!OpenClipboard(0)) return false;
+	if (!OpenClipboard(NULL)) return false;
         HGLOBAL hdata;
         hdata = GlobalAlloc(GMEM_MOVEABLE | GMEM_DDESHARE, size);
         if (hdata) {
@@ -56,9 +56,11 @@ int sys_native_clipboard_get_size()
 	return len;
 }
 
+#include "snprintf.h"
 int sys_native_clipboard_read(void *data, int max_size)
 {
-	if (!OpenClipboard(0)) return false;
+	ht_printf("sys_native_clipboard_read(%d)\n", max_size);
+	if (!OpenClipboard(NULL)) return false;
         HANDLE hdata = GetClipboardData(CF_OEMTEXT);
         if (!hdata) {        	
 		CloseClipboard();
@@ -70,6 +72,7 @@ int sys_native_clipboard_read(void *data, int max_size)
 	memcpy(data, ptr, r);
 	GlobalUnlock(hdata);
 	CloseClipboard();
+	ht_printf("=%d\n", r);
 	return r;
 }
 
