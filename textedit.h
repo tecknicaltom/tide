@@ -326,7 +326,7 @@ public:
 			void get_selection(text_viewer_pos *start, text_viewer_pos *end);
 			bool goto_line(uint line);
 	/* position indicator string */
-	virtual	void get_pindicator_str(char *buf);
+	virtual	int get_pindicator_str(char *buf, int max_len);
 	/* scrollbar pos */
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
@@ -387,7 +387,7 @@ public:
 	virtual	char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
 	/* position indicator string */
-	virtual	void get_pindicator_str(char *buf);
+	virtual	int get_pindicator_str(char *buf, int max_len);
 	/* cursor mode */
 	virtual	CursorMode get_cursor_mode();
 /* new */
