@@ -56,6 +56,10 @@ uint get_timer_tick(timer_handle h);
 #define HT_TRACE(a...) ((void)0)
 #endif
 
+#ifdef assert
+#undef assert
+#endif
+
 #ifdef HTDEBUG
 #	define assert(a) if (!(a)) ht_assert_failed(__FILE__, __LINE__, (#a));
 #else
