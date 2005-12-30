@@ -18,7 +18,7 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <string.h>
+#include <cstring>
 
 #include "cmds.h"
 #include "htctrl.h"
@@ -27,6 +27,7 @@
 #include "htiobox.h"
 #include "htmenu.h"
 #include "httag.h"
+#include "snprintf.h"
 #include "x86asm.h"
 #include "x86dis.h"
 #include "ppcdis.h"
@@ -190,13 +191,13 @@ void ht_disasm_viewer::done()
 	if (disasm) delete disasm;
 }
 
-void ht_disasm_viewer::get_pindicator_str(char *buf)
+int ht_disasm_viewer::get_pindicator_str(char *buf, int max_len)
 {
 	FileOfs o;
 	if (get_current_offset(&o)) {
-		sprintf(buf, " %s 0x%08qx/%qu ", edit() ? "edit" : "view", o, o);
+		return ht_snprintf(buf, max_len, " %s 0x%08qx/%qu ", edit() ? "edit" : "view", o, o);
 	} else {
-		strcpy(buf, "?");
+		return ht_snprintf(buf, max_len, " ? ");
 	}
 }
 	
@@ -226,11 +227,6 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 		}
 		case msg_get_scrollinfo: {
 			switch (msg->data1.integer) {
-				case gsi_pindicator: {
-					get_pindicator_str((char*)msg->data2.ptr);
-					clearmsg(msg);
-					return;
-				}
 				case gsi_hscrollbar: {
 					gsi_scrollbar_t *p=(gsi_scrollbar_t*)msg->data2.ptr;
 					if (!get_hscrollbar_pos(&p->pstart, &p->psize)) {
