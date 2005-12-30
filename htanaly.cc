@@ -18,6 +18,10 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+
 #include "analy.h"
 #include "analy_names.h"
 #include "log.h"
@@ -48,9 +52,6 @@
 extern "C" {
 #include "evalx.h"
 }
-
-#include <stdlib.h>
-#include <string.h>
 
 /* FIXME: test */
 //#include "srt.h"
@@ -640,12 +641,11 @@ static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 		Address *a;
 		uint64 q;
 		aviewer->convertViewerPosToAddress(p, &a);
+		std::auto_ptr<Address> blub(a);
 		if (a->putIntoUInt64(q)) {
-			delete a;
 			scalar_create_int_q(result, q);
 			return 1;
 		}
-		delete a;
 	} else {
 		set_eval_error("invalid file offset or no corresponding address for '0%xh'", i->value);
 	}
@@ -669,11 +669,10 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, char *&s, uint64 &v)
 				return false;
 			}
 			aviewer->convertViewerPosToAddress(vp, &a);
+			std::auto_ptr<Address> blub(a);
 			if (a->putIntoUInt64(v)) {
-				delete a;
 				return true;
 			}
-			delete a;
 		}
 		// invalid number after @
 		return false;
@@ -692,7 +691,6 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, char *&s, uint64 &v)
 				delete a;
 				return true;
 			} else {
-				delete a;
 				return false;
 			}
 		}
@@ -1036,20 +1034,20 @@ bool ht_aviewer::get_hscrollbar_pos(int *pstart, int *psize)
 	return false;
 }
 
-void ht_aviewer::get_pindicator_str(char *buf)
+int ht_aviewer::get_pindicator_str(char *buf, int max_len)
 {
 	Address *addr;
 	if (analy && getCurrentAddress(&addr)) {
+		std::auto_ptr<Address> blub(addr);
 		FileOfs o;
 		global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 		if (get_current_offset(&o)) {
-			ht_snprintf(buf, 1024, " %y/@%08qx%s ", addr, o, (analy->isDirty())?" dirty":"");
+			return ht_snprintf(buf, max_len, " %y/@%08qx%s ", addr, o, (analy->isDirty())?" dirty":"");
 		} else {
-			ht_snprintf(buf, 1024, " %y%s ", addr, (analy->isDirty())?" dirty":"");
+			return ht_snprintf(buf, max_len, " %y%s ", addr, (analy->isDirty())?" dirty":"");
 		}
-		delete addr;
 	} else {
-		strcpy(buf, "?");
+		return ht_snprintf(buf, max_len, " ? ");
 	}
 }
 
