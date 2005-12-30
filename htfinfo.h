@@ -35,14 +35,13 @@ extern format_viewer_if htfinfo_if;
 class ht_finfo_text: public ht_statictext {
 protected:
 	File *file;
-	char finfotext[1024];
 	char *olddesc;
 	
 public:
-			void	init(Bounds *b, File *file);
+		void	init(Bounds *b, File *file);
 	virtual	void	done();
 /* overwritten */
-	virtual	char *gettext();
+	virtual	int     gettext(char *text, int max_len);
 };
 
 #endif /* __HTFINFO_H__ */
