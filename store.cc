@@ -545,7 +545,7 @@ void ObjectStreamText::putS(const char *s)
  */
 
 ObjectStreamNative::ObjectStreamNative(Stream *s, bool own_s, bool d)
-: ObjectStream(s, own_s), allocd(true), duplicate(d)
+: ObjectStream(s, own_s), duplicate(d), allocd(true)
 {
 }
 
