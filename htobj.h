@@ -53,21 +53,21 @@ struct palette {
 #define msg_accept_close		HT_MESSAGE(13)
 #define msg_file_changed		HT_MESSAGE(14)
 #define msg_get_scrollinfo		HT_MESSAGE(15)
-#define msg_get_analyser		HT_MESSAGE(16)
-#define msg_set_analyser		HT_MESSAGE(17)	// (Analyser *)
-#define msg_postinit			HT_MESSAGE(18)
-#define msg_contextmenuquery		HT_MESSAGE(19)
-#define msg_project_changed		HT_MESSAGE(20)
-#define msg_vstate_save			HT_MESSAGE(21)	// (Object *data, ht_view *)
-#define msg_vstate_restore		HT_MESSAGE(22) // (Object *data)
-#define msg_goto_offset			HT_MESSAGE(23) // (FileOfs ofs)
+#define msg_get_pindicator		HT_MESSAGE(16)
+#define msg_get_analyser		HT_MESSAGE(17)
+#define msg_set_analyser		HT_MESSAGE(18) // (Analyser *)
+#define msg_postinit			HT_MESSAGE(19)
+#define msg_contextmenuquery		HT_MESSAGE(20)
+#define msg_project_changed		HT_MESSAGE(21)
+#define msg_vstate_save			HT_MESSAGE(22) // (Object *data, ht_view *)
+#define msg_vstate_restore		HT_MESSAGE(23) // (Object *data)
+#define msg_goto_offset			HT_MESSAGE(24) // (FileOfs ofs)
 
 #define msg_filesize_changed		HT_MESSAGE(100)
 #define msg_log_changed			HT_MESSAGE(101)
 
-#define gsi_pindicator			1
-#define gsi_hscrollbar			2
-#define gsi_vscrollbar			3
+#define gsi_hscrollbar			1
+#define gsi_vscrollbar			2
 
 struct gsi_scrollbar_t {
 	int pstart;
