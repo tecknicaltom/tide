@@ -40,7 +40,7 @@ public:
 
 	ht_clipboard_copy_history(const char *aSource, FileOfs aStart, FileOfs aSize, time_t aTime)
 	{
-		aSource = ht_strdup(source);
+		source = ht_strdup(aSource);
 		start = aStart;
 		size = aSize;
 		time = aTime;
@@ -153,7 +153,7 @@ void ht_clipboard_viewer::update_content()
 		ht_clipboard_copy_history *j=(ht_clipboard_copy_history*)(*clipboard->copy_history)[i];
 
 		tm *t = localtime(&j->time);
-		ht_snprintf(title, sizeof title, "*** %02d:%02d:%02d, size %d(%xh), from %s", t->tm_hour, t->tm_min, t->tm_sec, j->size, j->size, j->source);
+		ht_snprintf(title, sizeof title, "*** %02d:%02d:%02d, size %qd(%qxh), from %s", t->tm_hour, t->tm_min, t->tm_sec, j->size, j->size, j->source);
 
 		ht_mask_sub *m=new ht_mask_sub();
 		m->init(clipboard, i);
@@ -170,22 +170,22 @@ void ht_clipboard_viewer::update_content()
 	sendmsg(msg_complete_init, 0);
 }
 
-void ht_clipboard_viewer::get_pindicator_str(char *buf)
+int ht_clipboard_viewer::get_pindicator_str(char *buf, int max_len)
 {
 	FileOfs o;
-	FileOfs sel_start, sel_end;
-	pselect_get(&sel_start, &sel_end);
 	if (get_current_offset(&o)) {
+		FileOfs sel_start, sel_end;
+		pselect_get(&sel_start, &sel_end);
 		char ttemp[1024];
 		if (sel_end-sel_start > 0) {
-			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s)", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
+			ht_snprintf(ttemp, sizeof ttemp, "selection %qxh-%qxh (%qd byte%s) ", sel_start, sel_end-1, sel_end-sel_start, sel_end-sel_start==1?"":"s");
 		} else {
 			ttemp[0]=0;
 		}
 		// FIXME: sizeof buf
-		ht_snprintf(buf, 1024, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
+		return ht_snprintf(buf, max_len, " %s %qxh/%qu %s", edit() ? "edit" : "view", o, o, ttemp);
 	} else {
-		ht_strlcpy(buf, "?", 2);
+		return ht_snprintf(buf, max_len, "?");
 	}
 }
 
@@ -303,4 +303,5 @@ void done_clipboard()
 {
 	delete clipboard;
 }
+
 
