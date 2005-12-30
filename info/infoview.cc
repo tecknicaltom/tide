@@ -25,8 +25,9 @@
 #include "htiobox.h"
 #include "htpal.h"
 #include "strtools.h"
-#include "infoview.h"
+#include "snprintf.h"
 #include "tools.h"
+#include "infoview.h"
 
 class info_pos: public Object {
 public:
@@ -589,10 +590,9 @@ bool ht_info_viewer::igotonode(char *f, char *n, bool add2hist)
 	return false;
 }
 
-void ht_info_viewer::get_pindicator_str(char *buf)
+int ht_info_viewer::get_pindicator_str(char *buf, int max_len)
 {
-	buf += sprintf(buf, " %d:%d ", top_line+cursory+1, xofs+cursorx+1);
-	sprintf(buf, "(%s) %s ", file, node);
+	return ht_snprintf(buf, max_len, " %d:%d (%s) %s ", top_line+cursory+1, xofs+cursorx+1, file, node);
 }
 
 void ht_info_viewer::handlemsg(htmsg *msg)
