@@ -542,7 +542,7 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 {
 	if (l > r) {
 		loc = NULL;
-		throw IOException(0);
+		return;
 	}
 	int m = (l+r)/2;
 	loc = new Location;
@@ -562,6 +562,7 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 	// must be resolved later (thisfunc is of type Location not Address)
 	GETX_OBJECT(st, loc->thisfunc, "func");
 	loc->flags = GETX_INT(st, 1, "flags");
+	loc->label = NULL;
 
 	loadlocations(st, loc->right, m+1, r);
 }
@@ -570,7 +571,7 @@ static void loadsymbols(Analyser *analy, ObjectStream &st, Symbol *&symbol, int 
 {
 	if (l > r) {
 		symbol = NULL;
-		throw IOException(0);
+		return;
 	}
 	int m = (l+r)/2;
 	symbol = new Symbol;
