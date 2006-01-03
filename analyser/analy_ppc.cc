@@ -33,10 +33,17 @@ AnalyPPCDisassembler::AnalyPPCDisassembler()
 {
 }
 
-void AnalyPPCDisassembler::init(Analyser *A)
+void AnalyPPCDisassembler::init(Analyser *A, int aMode)
 {
-	disasm = new PPCDisassembler();
+	mode = aMode;
+	disasm = new PPCDisassembler((aMode == ANALY_PPC_32) ? PPC_MODE_32 : PPC_MODE_64);
 	AnalyDisassembler::init(A);
+}
+
+void AnalyPPCDisassembler::load(ObjectStream &f)
+{
+	GET_INT32X(f, mode);
+	AnalyDisassembler::load(f);
 }
 
 /*
@@ -66,9 +73,13 @@ Address *AnalyPPCDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchty
 	return new InvalidAddress();
 }
 
-Address *AnalyPPCDisassembler::createAddress(uint32 offset)
+Address *AnalyPPCDisassembler::createAddress(uint64 offset)
 {
-	return new AddressFlat32(offset);
+	if (mode == ANALY_PPC_32) {
+		return new AddressFlat32(offset);
+	} else {
+		return new AddressFlat64(offset);
+	}
 }
 
 /*
@@ -137,3 +148,8 @@ branch_enum_t AnalyPPCDisassembler::isBranch(OPCODE *opcode)
 	return br_nobranch;
 }
 
+void AnalyPPCDisassembler::store(ObjectStream &f) const
+{
+	PUT_INT32X(f, mode);
+	AnalyDisassembler::store(f);
+}
