@@ -33,37 +33,42 @@ struct ppcdis_operand {
 		int freg;   // float register
 		int creg;   // condition register
 		int vreg;   // vector register
-		uint32 imm;
+		uint64 imm;
 		struct {
-			uint32 disp;
+			uint64 disp;
 			int gr;
 		} mem;
 		struct {
-			uint32 mem;
+			uint64 mem;
 		} abs;
 		struct {
-			uint32 mem;
+			uint64 mem;
 		} rel;
 	};
 };
 
 struct ppcdis_insn {
-	bool				valid;
-	int				size;
+	bool			valid;
+	int			size;
 	const char *		name;
 	uint32			data;
-	int				ops;
+	int			ops;
 	ppcdis_operand		op[8];
 };
+
+#define PPC_MODE_32 0
+#define PPC_MODE_64 1
 
 class PPCDisassembler: public Disassembler {
 protected:
 	char insnstr[256];
 	ppcdis_insn insn;
+	int mode;
 public:
-			PPCDisassembler();
+			PPCDisassembler(int mode);
 			PPCDisassembler(BuildCtorArg&);
 
+		void		load(ObjectStream &f);
 	virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn	*duplicateInsn(dis_insn *disasm_insn);
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
@@ -73,6 +78,7 @@ public:
 	virtual	char		*strf(dis_insn *disasm_insn, int style, char *format);
 	virtual	ObjectID getObjectID() const;
 	virtual	bool		validInsn(dis_insn *disasm_insn);
+	virtual void		store(ObjectStream &f) const;
 };
 
 #endif
