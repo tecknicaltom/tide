@@ -390,7 +390,7 @@ int AddressFlat64::stringify(char *s, int max_length, int format) const
 		"%s%016qx%s",
 		"",
 	};
-	return ht_snprintf(s, max_length, formats[format&7], (format & ADDRESS_STRING_FORMAT_ADD_0X) ? "0x":"", &addr, (format & ADDRESS_STRING_FORMAT_ADD_H) ? "h":"");
+	return ht_snprintf(s, max_length, formats[format&7], (format & ADDRESS_STRING_FORMAT_ADD_0X) ? "0x":"", addr, (format & ADDRESS_STRING_FORMAT_ADD_H) ? "h":"");
 }
 
 int AddressFlat64::stringSize() const
