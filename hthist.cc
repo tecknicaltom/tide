@@ -38,9 +38,9 @@ bool insert_history_entry(List *history, char *name, ht_view *view)
 		ObjectStreamBin *os = NULL;
 		MemoryFile *file = NULL;
 		if (view) {
-				file = new MemoryFile();
-				os = new ObjectStreamBin(file, true);
-				view->getdata(*os);
+			file = new MemoryFile();
+			os = new ObjectStreamBin(file, false);
+			view->getdata(*os);
 		}
 
 		ht_history_entry *e = new ht_history_entry(name, os, file);
@@ -64,12 +64,12 @@ bool insert_history_entry(List *history, char *name, ht_view *view)
  *	CLASS ht_history_entry
  */
 
-ht_history_entry::ht_history_entry(char *s, ObjectStreamBin *d, MemoryFile *df)
+ht_history_entry::ht_history_entry(char *s, ObjectStreamBin *d, MemoryFile *file)
 {
 	desc = ht_strdup(s);
 	assert(desc);
 	data = d;
-	datafile = df;
+	datafile = file;
 }
 
 ht_history_entry::~ht_history_entry()
@@ -92,7 +92,7 @@ void ht_history_entry::load(ObjectStream &s)
 
 	if (size) {
 		datafile = new MemoryFile();
-		data = new ObjectStreamBin(datafile, false);
+		data = new ObjectStreamBin(datafile, true);
 
 		byte d[size];
 		GETX_BINARY(s, d, size, "data");
