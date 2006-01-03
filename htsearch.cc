@@ -67,7 +67,7 @@ struct ht_replace_method {
 #include <stdlib.h>
 #include <string.h>
 
-bool test_str_to_ofs(FileOfs *ofs, byte *str, uint strlen, ht_format_viewer *format, char *desc)
+static bool test_str_to_ofs(FileOfs *ofs, byte *str, uint strlen, ht_format_viewer *format, const char *desc)
 {
 #define TEST_STR_TO_OFS_MAXSTRLEN       128
 	if (strlen > TEST_STR_TO_OFS_MAXSTRLEN) {
@@ -118,7 +118,7 @@ ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, h
 {
 	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
-	ViewDataBuf(form, &d, sizeof d);
+	ViewDataBuf vdb(form, &d, sizeof d);
 	
 	ht_fxbin_search_request *request;
 	
