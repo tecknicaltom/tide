@@ -1139,7 +1139,7 @@ ConstMemMapFile::ConstMemMapFile(const void *b, uint s, FileOfs o)
 
 String &ConstMemMapFile::getDesc(String &result) const
 {
-	result = "MemMapFile";
+	result = "ConstMemMapFile";
 	return result;
 }
 
@@ -1164,7 +1164,7 @@ void ConstMemMapFile::seek(FileOfs offset)
 
 FileOfs ConstMemMapFile::tell() const
 {
-	return pos;
+	return pos + ofs;
 }
 
 /*
