@@ -485,17 +485,17 @@ void PEFAnalyser::initUnasm()
 {
 	DPRINTF("pef_analy: ");
 	switch (pef_shared->arch) {
-		case PEFARCH_PowerPC:
-			DPRINTF("initing analy_ppc_disassembler\n");
-			analy_disasm = new AnalyPPCDisassembler();
-			((AnalyPPCDisassembler*)analy_disasm)->init(this);
-			break;
-		case PEFARCH_M68K:
-			DPRINTF("no disassembler for machine 'm68k'\n");
-			warnbox("No disassembler for machine 'm68k'!");
-			break;
-		default:
-			break;
+	case PEFARCH_PowerPC:
+		DPRINTF("initing analy_ppc_disassembler\n");
+		analy_disasm = new AnalyPPCDisassembler();
+		((AnalyPPCDisassembler*)analy_disasm)->init(this, ANALY_PPC_32);
+		break;
+	case PEFARCH_M68K:
+		DPRINTF("no disassembler for machine 'm68k'\n");
+		warnbox("No disassembler for machine 'm68k'!");
+		break;
+	default:
+		break;
 	}
 }
 
