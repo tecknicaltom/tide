@@ -540,9 +540,6 @@ void PEAnalyser::initUnasm()
 			warnbox("No disassembler for little endian POWER PC!");
 			break;
 		case COFF_MACHINE_POWERPC_BE:
-			analy_disasm = new AnalyPPCDisassembler();
-			((AnalyPPCDisassembler*)analy_disasm)->init(this, pe64 ? ANALY_PPC_64 : ANALY_PPC_32);
-			break;          
 		case COFF_MACHINE_POWERPC64_BE:
 			analy_disasm = new AnalyPPCDisassembler();
 			((AnalyPPCDisassembler*)analy_disasm)->init(this, pe64 ? ANALY_PPC_64 : ANALY_PPC_32);
