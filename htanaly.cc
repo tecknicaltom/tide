@@ -1066,7 +1066,6 @@ bool ht_aviewer::gotoAddress(Address *a, ht_view *source_object)
 
 void ht_aviewer::handlemsg(htmsg *msg)
 {
-	char str[1024];
 	switch (msg->msg) {
 	case msg_contextmenuquery: {
 		ht_static_context_menu *m=new ht_static_context_menu();
@@ -1105,7 +1104,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		sub->insert_entry("Data ~halfword 16", "h", cmd_analyser_data_half, 0, 1);
 		sub->insert_entry("Data ~byte 8", "b", cmd_analyser_data_byte, 0, 1);
 		m->insert_submenu(sub);
-		m->insert_separator();
+//		m->insert_separator();
 //		m->insert_entry("Symbol reg trace (exp!)", "Alt-Q", cmd_analyser_srt, K_Meta_Q, 1);
 
 		msg->msg = msg_retval;
@@ -1279,6 +1278,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_ZEROS;
 		if (analy->validAddress(addr, scvalid)) {
 			char n[255];
+			char str[1024];
 			Symbol *l = analy->getSymbolByAddress(addr);
 			if (l) ht_strlcpy(n, l->name, sizeof n); else n[0] = 0;
 			ht_snprintf(str, sizeof str, "name for address %y", addr);
@@ -1554,7 +1554,7 @@ bool ht_aviewer::offset_to_pos(FileOfs ofs, viewer_pos *p)
 
 int ht_aviewer::ref_sel(LINE_ID *id)
 {
-	if ((id->id1 | id->id2 |  id->id3 |id->id4) == 0) return 0;
+	if (!id->id1 && !id->id2 && !id->id3 && !id->id4) return 0;
 	switch (id->id4) {
 	case 0:
 		if (analy) {
