@@ -24,18 +24,25 @@
 #include "analy.h"
 #include "ppcdis.h"
 
-class AnalyPPCDisassembler: public AnalyDisassembler {
-public:
-					AnalyPPCDisassembler();
-					AnalyPPCDisassembler(BuildCtorArg&);
-		void			init(Analyser *A);
-	virtual void			done();
-	virtual	ObjectID		getObjectID() const;
+#define ANALY_PPC_32 0
+#define ANALY_PPC_64 1
 
-	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
-		Address			*createAddress(uint32 offset);
-	virtual	void			examineOpcode(OPCODE *opcode);
-	virtual	branch_enum_t 		isBranch(OPCODE *opcode);
+class AnalyPPCDisassembler: public AnalyDisassembler {
+	int mode;
+public:
+				AnalyPPCDisassembler();
+				AnalyPPCDisassembler(BuildCtorArg&);
+
+		void		init(Analyser *A, int mode);
+	virtual void		done();
+	virtual	ObjectID	getObjectID() const;
+		void 		load(ObjectStream &f);
+
+	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+		Address		*createAddress(uint64 offset);
+	virtual	void		examineOpcode(OPCODE *opcode);
+	virtual	branch_enum_t 	isBranch(OPCODE *opcode);
+	virtual	void		store(ObjectStream &f) const;
 };
 
 #endif
