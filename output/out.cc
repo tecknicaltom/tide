@@ -183,7 +183,7 @@ static char *analyser_output_addr_sym_func(CPU_ADDR Addr, int *symstrlen, void *
 	}*/
 	addr->getFromCPUAddress(&Addr);
 	Location *loc = output->analy->getLocationByAddress(addr);
-	
+
 	if (loc && loc->label) {
 		buf = output->link(loc->label->name, addr);
 		if (symstrlen) *symstrlen = output->elementLength(buf);
@@ -264,9 +264,12 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 					Addr->putIntoArray((byte*)&d);
 					t = externalLink(b, d, 0, 0, 1, NULL);
 				} else {
-					uint64 d;
+					struct {
+						uint32 a PACKED;
+						uint32 b PACKED;
+					} d;
 					Addr->putIntoArray((byte*)&d);
-					t = externalLink(b, d >> 32, d, 0, 1, NULL);
+					t = externalLink(b, d.a, d.b, 0, 1, NULL);
 				}
 				write(t);
 			} else {
