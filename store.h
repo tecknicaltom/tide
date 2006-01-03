@@ -61,6 +61,8 @@ public:
 	virtual void		putSeparator();
 	virtual void		putString(const char *string, const char *desc);
 	virtual void		putLenString(const byte *string, int length, const char *desc);
+
+	virtual void		corrupt();
 };
 
 class ObjectStreamText: public ObjectStreamInter {
@@ -89,6 +91,8 @@ public:
 	virtual void		putSeparator();
 	virtual void		putString(const char *string, const char *desc);
 	virtual void		putLenString(const byte *string, int length, const char *desc);
+
+	virtual void		corrupt();
 
 		   void		setSyntaxError();
 		   int		getErrorLine();
@@ -139,6 +143,8 @@ public:
 	virtual void		putSeparator();
 	virtual void		putString(const char *string, const char *desc);
 	virtual void		putLenString(const byte *string, int length, const char *desc);
+
+	virtual void		corrupt();
 };
 
 void putIDComment(ObjectStream &o, uint32 id);
