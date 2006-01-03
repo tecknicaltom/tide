@@ -208,11 +208,14 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 #define LABELINDENT 32
 #define MAX_XREF_COLS 3
 #define MAX_XREF_LINES 7
-/*               char tbuf[1024];
-			Addr->stringify(tbuf, 1024, 0);
-	printf("generate_addr(%s, ", tbuf);
-			addr->stringify(tbuf, 1024, 0);
-			printf("%s)\n", tbuf);*/
+	
+	char tbuf[1024];
+	Addr->stringify(tbuf, 1024, 0);
+//	printf("generate_addr(%s, ", tbuf);
+	char tbuf2[1024];
+	addr->stringify(tbuf2, 1024, 0);
+//	printf("%s)\n", tbuf2);
+
 	cur_addr = analy->getLocationByAddress(addr);
 	cur_out_addr = oa;
 	cur_out_addr->clear();
