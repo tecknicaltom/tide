@@ -359,19 +359,19 @@ void MachoAnalyser::initUnasm()
 	uint machine = macho_shared->header.cputype;
 	bool macho64 = false;
 	switch (machine) {
-		case MACHO_CPU_TYPE_I386: // Intel x86
-			DPRINTF("initing analy_x86_disassembler\n");
-			analy_disasm = new AnalyX86Disassembler();
-			((AnalyX86Disassembler*)analy_disasm)->init(this, macho64 ? ANALYX86DISASSEMBLER_FLAGS_FLAT64 : 0);
-			break;
-		case MACHO_CPU_TYPE_POWERPC:	// PowerPC
-			DPRINTF("initing analy_ppc_disassembler\n");
-			analy_disasm = new AnalyPPCDisassembler();
-			((AnalyPPCDisassembler*)analy_disasm)->init(this);
-			break;
-		default:
-			DPRINTF("no apropriate disassembler for machine %04x\n", machine);
-			warnbox("No disassembler for unknown machine type %04x!", machine);
+	case MACHO_CPU_TYPE_I386: // Intel x86
+		DPRINTF("initing analy_x86_disassembler\n");
+		analy_disasm = new AnalyX86Disassembler();
+		((AnalyX86Disassembler*)analy_disasm)->init(this, macho64 ? ANALYX86DISASSEMBLER_FLAGS_FLAT64 : 0);
+		break;
+	case MACHO_CPU_TYPE_POWERPC:	// PowerPC
+		DPRINTF("initing analy_ppc_disassembler\n");
+		analy_disasm = new AnalyPPCDisassembler();
+		((AnalyPPCDisassembler*)analy_disasm)->init(this, macho64 ? ANALY_PPC_64 : ANALY_PPC_32);
+		break;
+	default:
+		DPRINTF("no apropriate disassembler for machine %04x\n", machine);
+		warnbox("No disassembler for unknown machine type %04x!", machine);
 	}
 }
 
