@@ -68,11 +68,6 @@ static char *token_func(uint32 token, void *context);
  */
 void	PEAnalyser::load(ObjectStream &f)
 {
-	/*
-	ht_pe_shared_data 	*pe_shared;
-	ht_stream 		*file;
-	area				*validarea;
-	*/
 	GET_OBJECT(f, validarea);
 	Analyser::load(f);
 }
@@ -548,6 +543,10 @@ void PEAnalyser::initUnasm()
 			analy_disasm = new AnalyPPCDisassembler();
 			((AnalyPPCDisassembler*)analy_disasm)->init(this, pe64 ? ANALY_PPC_64 : ANALY_PPC_32);
 			break;          
+		case COFF_MACHINE_POWERPC64_BE:
+			analy_disasm = new AnalyPPCDisassembler();
+			((AnalyPPCDisassembler*)analy_disasm)->init(this, pe64 ? ANALY_PPC_64 : ANALY_PPC_32);
+			break;          
 		case COFF_MACHINE_IA64:
 			if (!pe64) {
 				errorbox("Intel IA64 cant be used in PE32 format.");
@@ -590,11 +589,6 @@ Address *PEAnalyser::nextValid(Address *Addr)
  */
 void PEAnalyser::store(ObjectStream &st) const
 {
-	/*
-	ht_pe_shared_data 	*pe_shared;
-	ht_stream 		*file;
-	area			*validarea;
-	*/
 	PUT_OBJECT(st, validarea);
 	Analyser::store(st);
 }
@@ -605,12 +599,12 @@ void PEAnalyser::store(ObjectStream &st) const
 int	PEAnalyser::queryConfig(int mode)
 {
 	switch (mode) {
-		case Q_DO_ANALYSIS:
-		case Q_ENGAGE_CODE_ANALYSER:
-		case Q_ENGAGE_DATA_ANALYSER:
-			return true;
-		default:
-			return 0;
+	case Q_DO_ANALYSIS:
+	case Q_ENGAGE_CODE_ANALYSER:
+	case Q_ENGAGE_DATA_ANALYSER:
+		return true;
+	default:
+		return 0;
 	}
 }
 
@@ -643,22 +637,22 @@ bool PEAnalyser::validAddress(Address *Addr, tsectype action)
 	if (!pe_rva_to_section(sections, r, &sec)) return false;
 	COFF_SECTION_HEADER *s=sections->sections+sec;
 	switch (action) {
-		case scvalid:
-			return true;
-		case scread:
-			return s->characteristics & COFF_SCN_MEM_READ;
-		case scwrite:
-			return s->characteristics & COFF_SCN_MEM_WRITE;
-		case screadwrite:
-			return s->characteristics & COFF_SCN_MEM_WRITE;
-		case sccode:
-			// FIXME: EXECUTE vs. CNT_CODE ?
-			if (!pe_rva_is_physical(sections, r)) return false;
-			return (s->characteristics & (COFF_SCN_MEM_EXECUTE | COFF_SCN_CNT_CODE));
-		case scinitialized:
-			if (!pe_rva_is_physical(sections, r)) return false;
-			return true;
-			// !(s->characteristics & COFF_SCN_CNT_UNINITIALIZED_DATA);
+	case scvalid:
+		return true;
+	case scread:
+		return s->characteristics & COFF_SCN_MEM_READ;
+	case scwrite:
+		return s->characteristics & COFF_SCN_MEM_WRITE;
+	case screadwrite:
+		return s->characteristics & COFF_SCN_MEM_WRITE;
+	case sccode:
+		// FIXME: EXECUTE vs. CNT_CODE ?
+		if (!pe_rva_is_physical(sections, r)) return false;
+		return (s->characteristics & (COFF_SCN_MEM_EXECUTE | COFF_SCN_CNT_CODE));
+	case scinitialized:
+		if (!pe_rva_is_physical(sections, r)) return false;
+		return true;
+		// !(s->characteristics & COFF_SCN_CNT_UNINITIALIZED_DATA);
 	}
 	return false;
 }
