@@ -18,6 +18,8 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cstring>
+
 #include "htapp.h"		// for queuemsg
 #include "htctrl.h"
 #include "keyb.h"
@@ -28,9 +30,7 @@
 #include "stream.h"
 #include "tools.h"
 
-#include <string.h>
-
-#define button_left		100
+#define button_left	100
 #define button_right	101
 
 char *shortcut_str(char *str)
@@ -637,21 +637,21 @@ void ht_context_menu_window_body::handlemsg(htmsg *msg)
 				return;
 		}
 		/* shortcuts */
-		int k=msg->data1.integer;
-//		int k=htalt2key(msg->data_int);
-//		if (k!=-1) {
+		int k = msg->data1.integer;
+//		int k = htalt2key(msg->data_int);
+//		if (k != -1) {
 			int c=context_menu->count();
-			ht_context_menu_entry *e=context_menu->enum_entry_first();
-			for (int i=0; i<c; i++) {
+			ht_context_menu_entry *e = context_menu->enum_entry_first();
+			for (int i=0; i < c; i++) {
 				char *shortcut = NULL;
-				if ((e->type == CME_ENTRY) && (e->entry.shortcut)) {
+				if (e->type == CME_ENTRY && e->entry.shortcut) {
 					shortcut = e->entry.shortcut;
-				} else if ((e->type == CME_SUBMENU) && (e->submenu->get_shortcut())) {
+				} else if (e->type == CME_SUBMENU && e->submenu->get_shortcut()) {
 					shortcut = e->submenu->get_shortcut();
 				}
 				if (shortcut) {
 					int s = *shortcut;
-					if ((s>='A') && (s<='Z')) s+='a'-'A';
+					if (s >= 'A' && s <= 'Z') s += 'a'-'A';
 					if (s==k) {
 						selected=i;
 						((ht_dialog*)group->group)->sendmsg(msg_button_pressed, button_ok);
