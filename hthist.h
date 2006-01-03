@@ -49,7 +49,7 @@ public:
 	ObjectStreamBin *data;
 	MemoryFile *datafile;
 	
-	ht_history_entry(char *str=0, ObjectStreamBin *data=0, MemoryFile *datafile=0);
+	ht_history_entry(char *str=0, ObjectStreamBin *data = NULL, MemoryFile *datafile = NULL);
 	ht_history_entry(BuildCtorArg&);
 	~ht_history_entry();
 /* overwritten */
