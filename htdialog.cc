@@ -2345,10 +2345,10 @@ void ht_statictext::init(Bounds *b, const char *t, statictext_align al, bool bre
 	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, "some statictext");
 	VIEW_DEBUG_NAME("ht_statictext");
 
-	align=al;
-	breaklines=breakl;
-	transparent=trans;
-	text=ht_strdup(t);
+	align = al;
+	breaklines = breakl;
+	transparent = trans;
+	text = ht_strdup(t);
 }
 
 void ht_statictext::done()
@@ -2466,7 +2466,12 @@ vcp ht_statictext::gettextcolor()
 
 int ht_statictext::gettext(char *aText, int maxlen)
 {
-	return ht_strlcpy(aText, text, maxlen);
+	if (text) {
+		return ht_strlcpy(aText, text, maxlen);
+	} else {
+		if (maxlen > 0) *aText = 0;
+		return 0;
+	}
 }
 
 void ht_statictext::settext(const char *aText)
