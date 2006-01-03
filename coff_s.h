@@ -66,6 +66,7 @@ typedef struct COFF_HEADER {
 #define COFF_MACHINE_THUMB			0x1c2   // THUMB
 #define COFF_MACHINE_POWERPC_BE		   	0x1df   // IBM PowerPC Big-Endian (?)
 #define COFF_MACHINE_POWERPC_LE		   	0x1f0   // IBM PowerPC Little-Endian
+#define COFF_MACHINE_POWERPC64_BE		0x1f2   // IBM PowerPC64 Big-Endian (?)
 #define COFF_MACHINE_IA64			0x200   // Intel IA64
 #define COFF_MACHINE_MIPS16			0x266   // MIPS16
 #define COFF_MACHINE_68k			0x268   // Motorola 68k
