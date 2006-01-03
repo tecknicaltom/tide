@@ -103,6 +103,8 @@ public:
 	virtual void		putSeparator() = 0;
 	virtual void		putString(const char *string, const char *desc) = 0;
 	virtual void		putLenString(const byte *string, int length, const char *desc) = 0;
+
+	virtual void		corrupt() = 0;
 };
 
 #define PUTX_BINARY(st, d, size, dstr)	(st).putBinary(d, size, dstr)
