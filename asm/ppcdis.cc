@@ -23,10 +23,17 @@
 #include "endianess.h"
 #include "ppcdis.h"
 #include "ppcopc.h"
+#include "snprintf.h"
 #include "tools.h"
 
-PPCDisassembler::PPCDisassembler()
+PPCDisassembler::PPCDisassembler(int aMode)
 {
+	mode = aMode;
+}
+
+void PPCDisassembler::load(ObjectStream &f)
+{
+	GET_INT32X(f, mode);
 }
 
 dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
@@ -89,7 +96,7 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 		need_paren = false;
 		int opidx = 0;
 		for (opindex = opcode->operands; *opindex != 0; opindex++) {
-			uint32 value;
+			sint32 value;
 
 			operand = powerpc_operands + *opindex;
 
@@ -122,19 +129,30 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 				need_comma = false;
 			}
 
-			/* Print the operand as directed by the flags.  */
-			if ((operand->flags & PPC_OPERAND_GPR) != 0) {
+			if (operand->flags & PPC_OPERAND_GPR_0) {
+				if (value) {
+					insn.op[opidx].flags |= PPC_OPERAND_GPR;
+					insn.op[opidx++].reg = value;
+				} else {
+					insn.op[opidx].flags = 0;
+					insn.op[opidx].imm = value;
+				}
+			} else if (operand->flags & PPC_OPERAND_GPR) {
 				insn.op[opidx++].reg = value;
-			} else if ((operand->flags & PPC_OPERAND_FPR) != 0) {
+			} else if (operand->flags & PPC_OPERAND_FPR) {
 				insn.op[opidx++].freg = value;
-			} else if ((operand->flags & PPC_OPERAND_VR) != 0) {
+			} else if (operand->flags & PPC_OPERAND_VR) {
 				insn.op[opidx++].vreg = value;
-			} else if ((operand->flags & PPC_OPERAND_RELATIVE) != 0) {
-				insn.op[opidx++].rel.mem = addr.addr32.offset + value;
+			} else if (operand->flags & PPC_OPERAND_RELATIVE) {
+				if (mode == PPC_MODE_32) {
+					insn.op[opidx++].rel.mem = addr.addr32.offset + value;
+				} else {
+					insn.op[opidx++].rel.mem = addr.flat64.addr + value;
+				}
 			} else if ((operand->flags & PPC_OPERAND_ABSOLUTE) != 0) {
 				insn.op[opidx++].abs.mem = value;
 			} else if ((operand->flags & PPC_OPERAND_CR) == 0 || (dialect & PPC_OPCODE_PPC) == 0) {
-				insn.op[opidx++].imm = value;
+				insn.op[opidx++].imm = (sint64)value;
 			} else {
 				insn.op[opidx++].creg = value;
 				if (operand->bits == 3) {
@@ -247,7 +265,7 @@ char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 				is += sprintf(is, "%s, ", cs_symbol);
 				need_comma = false;
 			}
-			if ((flags & PPC_OPERAND_GPR) != 0) {
+			if (flags & PPC_OPERAND_GPR) {
 				is += sprintf(is, "%sr%d", cs_default, ppc_insn->op[opidx].reg);
 			} else if ((flags & PPC_OPERAND_FPR) != 0) {
 				is += sprintf(is, "%sf%d", cs_default, ppc_insn->op[opidx].freg);
@@ -255,21 +273,25 @@ char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 				is += sprintf(is, "%svr%d", cs_default, ppc_insn->op[opidx].vreg);
 			} else if ((flags & PPC_OPERAND_RELATIVE) != 0) {
 				CPU_ADDR caddr;
-				caddr.addr32.offset = (uint32)ppc_insn->op[opidx].mem.disp;
+				if (mode == PPC_MODE_32) {
+					caddr.addr32.offset = (uint32)ppc_insn->op[opidx].mem.disp;
+				} else {
+					caddr.flat64.addr = ppc_insn->op[opidx].mem.disp;
+				}
 				int slen;
 				char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : 0;
 				if (s) {
 					is += sprintf(is, "%s", cs_default);
-					memmove(is, s, slen);
+					memcpy(is, s, slen);
 					is[slen] = 0;
 					is += slen;
 				} else {
-					is += sprintf(is, "%s0x%x", cs_number, ppc_insn->op[opidx].rel.mem);
+					is += ht_snprintf(is, 100, "%s0x%qx", cs_number, ppc_insn->op[opidx].rel.mem);
 				}
 			} else if ((flags & PPC_OPERAND_ABSOLUTE) != 0) {
-				is += sprintf(is, "%s0x%x", cs_number, ppc_insn->op[opidx].abs.mem);
+				is += ht_snprintf(is, 100, "%s0x%qx", cs_number, ppc_insn->op[opidx].abs.mem);
 			} else if ((flags & PPC_OPERAND_CR) == 0 || (dialect & PPC_OPCODE_PPC) == 0) {
-				is += sprintf(is, "%s%d", cs_number, ppc_insn->op[opidx].imm);
+				is += ht_snprintf(is, 100, "%s%qd", cs_number, ppc_insn->op[opidx].imm);
 			} else if (ppc_insn->op[opidx].op->bits == 3) {
 				is += sprintf(is, "%scr%d", cs_default, ppc_insn->op[opidx].creg);
 			} else {
@@ -305,6 +327,11 @@ char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 ObjectID PPCDisassembler::getObjectID() const
 {
 	return ATOM_DISASM_PPC;
+}
+
+void PPCDisassembler::store(ObjectStream &f) const
+{
+	PUT_INT32X(f, mode);
 }
 
 bool PPCDisassembler::validInsn(dis_insn *disasm_insn)
