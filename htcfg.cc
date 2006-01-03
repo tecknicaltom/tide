@@ -48,22 +48,19 @@ ObjectStream *create_object_stream(Stream &f, int object_stream_type)
 {
 	ObjectStream *s;
 	switch (object_stream_type) {
-		case object_stream_bin: {
-			s = new ObjectStreamBin(&f, false);
-			break;
-		}
-		case object_stream_txt: {
-			s = new ObjectStreamText(&f, false);
-			break;
-		}
-		case object_stream_bin_compressed: {
-			ht_compressed_stream *cs=new ht_compressed_stream(&f, false);
-			s = new ObjectStreamBin(cs, true);
-			break;
-		}
-		default: {
-			return NULL;
-		}
+	case object_stream_bin:
+		s = new ObjectStreamBin(&f, false);
+		break;
+	case object_stream_txt:
+		s = new ObjectStreamText(&f, false);
+		break;
+	case object_stream_bin_compressed: {
+		ht_compressed_stream *cs=new ht_compressed_stream(&f, false);
+		s = new ObjectStreamBin(cs, true);
+		break;
+	}
+	default:
+		return NULL;
 	}
 	return s;
 }
@@ -187,7 +184,7 @@ bool load_systemconfig(loadstore_result *result, int *error_info)
 loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context)
 {
 	try {
-		LocalFile f((String)systemconfig_file, IOAM_WRITE, FOM_CREATE);
+		LocalFile f((String)fileconfig_file, IOAM_WRITE, FOM_CREATE);
 	
 		/* write file config header */
 		config_header h;
@@ -224,10 +221,10 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 	return LS_OK;
 }
 
-loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, int *error_info)
+loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, String &error_info)
 {
 	uint8 object_stream_type = 128;
-	*error_info = 0;
+	error_info.clear();
 	std::auto_ptr<ObjectStream> d(NULL);
 	try {
 		LocalFile f((String)fileconfig_file, IOAM_READ, FOM_EXISTS);
@@ -241,11 +238,11 @@ loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic,
 	
 
 		uint16 readver;
-		if (!hexw_ex(readver, (char*)h.version) || (readver != version)) {
-			*error_info = readver;
+		if (!hexw_ex(readver, (char*)h.version) || readver != version) {
+			error_info.assignFormat("%d", readver);
 			return LS_ERROR_VERSION;
 		}
-	
+
 		if (!hexb_ex(object_stream_type, (char*)h.stream_type)) {
 			return LS_ERROR_FORMAT;
 		}
@@ -256,23 +253,27 @@ loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic,
 		if (!d.get()) {
 			return LS_ERROR_FORMAT;
 		}		
-	   
+
 		load_func(*d.get(), context);
 		
-	} catch (const ObjectNotRegisteredException &) {
+	} catch (const ObjectNotRegisteredException &e) {
+		e.reason(error_info);
 		if (object_stream_type==object_stream_txt && d.get()) {
-			*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
+			String blub;
+			blub.assignFormat(" (in line %d)", ((ObjectStreamText*)d.get())->getErrorLine());
+			error_info += blub;
 		}
 		return LS_ERROR_CORRUPTED;
 	} catch (const IOException &e) {
+		e.reason(error_info);
 		if (e.mPosixErrno == ENOENT) {
 			return LS_ERROR_NOT_FOUND;
 		} else {
-			if (object_stream_type==object_stream_txt && d.get()) {
-				*error_info = ((ObjectStreamText*)d.get())->getErrorLine();
-			}
         		return LS_ERROR_READ;
 		}
+	} catch (const Exception &e) {
+		e.reason(error_info);
+		return LS_ERROR_CORRUPTED;
 	}
 	return LS_OK;
 }
