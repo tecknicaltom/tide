@@ -56,7 +56,6 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 
 	uint32 *efunct=NULL, *enamet=NULL;
 	uint16 *eordt=NULL;
-	File *origfile = file;
 	String filename;
 	char *esectionbuf = NULL;
 	char eline[256];
@@ -73,32 +72,36 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	
 	file->getFilename(filename);
 
-/* get export directory offset */
+	/* get export directory offset */
 	/* 1. get export directory rva */
 	FileOfs eofs;
 	uint32 erva=pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_EXPORT].address;
 	uint32 esize=pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_EXPORT].size;
+	
 	/* 2. transform it into an offset */
 	if (!pe_rva_to_ofs(&pe_shared->sections, erva, &eofs)) goto pe_read_error;
 	LOG("%y: PE: reading export directory at offset 0x%08qx, rva %08x, size %08x...", &filename, eofs, erva, esize);
 
-/* make a memfile out of this section */
+	/* make a memfile out of this section */
 	esectionbuf = ht_malloc(esize);
 	file->seek(eofs);
 	file->readx(esectionbuf, esize);
 
 	efile = new ConstMemMapFile(esectionbuf, esize, eofs);
 	file = efile;
-/* read export directory header */
+	
+	/* read export directory header */
 	PE_EXPORT_DIRECTORY edir;
 	file->seek(eofs);
 	file->readx(&edir, sizeof edir);
 	createHostStruct(&edir, PE_EXPORT_DIRECTORY_struct, little_endian);
-/* get export filename */
+
+	/* get export filename */
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_address, &ename_ofs)) goto pe_read_error;
 	file->seek(ename_ofs);
 	ename=fgetstrz(efile);
-/* read in function entrypoint table */
+
+	/* read in function entrypoint table */
 	FileOfs efunct_ofs;
 	efunct = ht_malloc(edir.function_count*sizeof *efunct);
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.function_table_address, &efunct_ofs)) goto pe_read_error;
@@ -107,56 +110,68 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	for (uint i=0; i<edir.function_count;i++) {
 		efunct[i] = createHostInt(efunct+i, sizeof *efunct, little_endian);
 	}
-/* read in name address table */
-	FileOfs enamet_ofs;
-	enamet = ht_malloc(edir.name_count*sizeof *enamet);
-	if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_table_address, &enamet_ofs)) goto pe_read_error;
-	file->seek(enamet_ofs);
-	file->readx(enamet, edir.name_count*sizeof *enamet);
-	for (uint i=0; i<edir.name_count; i++) {
-		enamet[i] = createHostInt(enamet+i, sizeof *enamet, little_endian);
-	}
-/* read in ordinal table */
-	FileOfs eordt_ofs;
-	eordt = ht_malloc(edir.name_count*sizeof *eordt);
-	if (!pe_rva_to_ofs(&pe_shared->sections, edir.ordinal_table_address, &eordt_ofs)) goto pe_read_error;
-	file->seek(eordt_ofs);
-	file->readx(eordt, edir.name_count*sizeof *eordt);
-	for (uint i=0; i<edir.name_count; i++) {
-		eordt[i] = createHostInt(eordt+i, sizeof *eordt, little_endian);
-	}
 
-	lord = ht_malloc(sizeof *lord*edir.function_count);
-	memset(lord, 0, sizeof *lord*edir.function_count);
-	for (uint i=0; i < edir.name_count; i++) {
-		if (eordt[i] < edir.function_count) {
-			lord[eordt[i]]=true;
+	if (edir.name_count) {
+		/* read in name address table */
+		FileOfs enamet_ofs;
+		enamet = ht_malloc(edir.name_count*sizeof *enamet);
+		if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_table_address, &enamet_ofs)) goto pe_read_error;
+		file->seek(enamet_ofs);
+		file->readx(enamet, edir.name_count*sizeof *enamet);
+		for (uint i=0; i<edir.name_count; i++) {
+			enamet[i] = createHostInt(enamet+i, sizeof *enamet, little_endian);
 		}
-	}
 
-/* exports by ordinal */
-	for (uint i=0; i<edir.function_count; i++) {
-		if (lord[i]) continue;
+		/* read in ordinal table */
+		FileOfs eordt_ofs;
+		eordt = ht_malloc(edir.name_count*sizeof *eordt);
+		if (!pe_rva_to_ofs(&pe_shared->sections, edir.ordinal_table_address, &eordt_ofs)) goto pe_read_error;
+		file->seek(eordt_ofs);
+		file->readx(eordt, edir.name_count*sizeof *eordt);
+		for (uint i=0; i<edir.name_count; i++) {
+			eordt[i] = createHostInt(eordt+i, sizeof *eordt, little_endian);
+		}
 
-		RVA f = efunct[i];
+		lord = ht_malloc(sizeof *lord*edir.function_count);
+		memset(lord, 0, sizeof *lord*edir.function_count);
+		for (uint i=0; i < edir.name_count; i++) {
+			if (eordt[i] < edir.function_count) {
+				lord[eordt[i]]=true;
+			}
+		}
 
-		ht_pe_export_function *efd = new ht_pe_export_function(f, i+edir.ordinal_base);
-		pe_shared->exports.funcs->insert(efd);
-	}
-	free(lord);
-/* exports by name */
-	for (uint i=0; i < edir.name_count; i++) {
-		uint o = eordt[i];
-		RVA f = efunct[o];
-		FileOfs en;
-		if (!pe_rva_to_ofs(&pe_shared->sections, *(enamet+i), &en)) goto pe_read_error;
-		file->seek(en);
-		getStringz(efile, s);
+		/* exports by ordinal */
+		for (uint i=0; i<edir.function_count; i++) {
+			if (lord[i]) continue;
 
-		ht_pe_export_function *efd = new ht_pe_export_function(f, o+edir.ordinal_base, s.contentChar());
-		pe_shared->exports.funcs->insert(efd);
-	}
+			RVA f = efunct[i];
 
+			ht_pe_export_function *efd = new ht_pe_export_function(f, i+edir.ordinal_base);
+			pe_shared->exports.funcs->insert(efd);
+		}
+		free(lord);
+
+		/* exports by name */
+		for (uint i=0; i < edir.name_count; i++) {
+			uint o = eordt[i];
+			RVA f = efunct[o];
+			FileOfs en;
+			if (!pe_rva_to_ofs(&pe_shared->sections, *(enamet+i), &en)) goto pe_read_error;
+			file->seek(en);
+			getStringz(efile, s);
+
+			ht_pe_export_function *efd = new ht_pe_export_function(f, o+edir.ordinal_base, s.contentChar());
+			pe_shared->exports.funcs->insert(efd);
+		}
+	} else {
+		/* exports by ordinal */
+		for (uint i=0; i < edir.function_count; i++) {
+			RVA f = efunct[i];
+
+			ht_pe_export_function *efd = new ht_pe_export_function(f, i+edir.ordinal_base);
+			pe_shared->exports.funcs->insert(efd);
+		}
+	}	
 // sdgfdg
 	c = *b;
 	c.x = 0;
@@ -171,7 +186,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 
 	c.y = 0;
 	c.h = 1;
-	ht_snprintf(eline, sizeof eline, "* PE export directory at offset %08x (dllname = %s)", eofs, ename);
+	ht_snprintf(eline, sizeof eline, "* PE export directory at offset %08qx (dllname = %s)", eofs, ename);
 	head = new ht_statictext();
 	head->init(&c, eline, align_left);
 
