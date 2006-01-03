@@ -622,11 +622,11 @@ void ElfAnalyser::initUnasm()
 		break;
 	case ELF_EM_PPC: // PowerPC
 		if (elf_shared->ident.e_ident[ELF_EI_CLASS] != ELFCLASS32) {
-			errorbox("PowerPC cant be used in a 64-Bit ELF.");
+			errorbox("PowerPC32 cant be used in a 64-Bit ELF.");
 		} else {
 			DPRINTF("initing analy_ppc_disassembler\n");
 			analy_disasm = new AnalyPPCDisassembler();
-			((AnalyPPCDisassembler*)analy_disasm)->init(this);
+			((AnalyPPCDisassembler*)analy_disasm)->init(this, ANALY_PPC_32);
 		}
 		break;
 	case ELF_EM_PPC64: // PowerPC64
@@ -635,7 +635,7 @@ void ElfAnalyser::initUnasm()
 		} else {
 			DPRINTF("initing analy_ppc_disassembler\n");
 			analy_disasm = new AnalyPPCDisassembler();
-			((AnalyPPCDisassembler*)analy_disasm)->init(this);
+			((AnalyPPCDisassembler*)analy_disasm)->init(this, ANALY_PPC_64);
 		}
 		break;
 	default:
