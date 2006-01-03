@@ -1786,12 +1786,12 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, char *titl
 		strcpy(cfgfilename, title);
 		strcat(cfgfilename, HT_FILE_CONFIG_SUFFIX);
 
-		int einfo;
+		String einfo;
 		LOG("%s: loading config file...", cfgfilename);
-		loadstore_result lsr = load_fileconfig(cfgfilename, ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_load_fcfg_func, window, &einfo);
+		loadstore_result lsr = load_fileconfig(cfgfilename, ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_load_fcfg_func, window, einfo);
 		if (lsr == LS_ERROR_CORRUPTED) {
-			LOG_EX(LOG_ERROR, "%s: error in line %d", cfgfilename, einfo);
-			errorbox("%s: error in line %d",cfgfilename,  einfo);
+			LOG_EX(LOG_ERROR, "%s: error: ", cfgfilename, &einfo);
+			errorbox("%s: error: %y", cfgfilename, &einfo);
 		} else if (lsr == LS_ERROR_MAGIC || lsr == LS_ERROR_FORMAT) {
 			LOG_EX(LOG_ERROR, "%s: wrong magic/format", cfgfilename);
 			errorbox("%s: wrong magic/format", cfgfilename);
@@ -1801,8 +1801,8 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, char *titl
 		} else if (lsr == LS_ERROR_NOT_FOUND) {
 			LOG("%s: not found", cfgfilename);
 		} else if (lsr != LS_OK) {
-			LOG_EX(LOG_ERROR, "%s: some error", cfgfilename);
-			errorbox("%s: some error", cfgfilename);
+			LOG_EX(LOG_ERROR, "%s: error: %y", cfgfilename, &einfo);
+			errorbox("%s: error: %y", cfgfilename, &einfo);
 		} else {
 			LOG("%s: ok", cfgfilename);
 		}
@@ -2921,13 +2921,14 @@ void ht_app::project_opencreate(char *filename)
 
 	void *old_project = project;
 	project = NULL;
-	int einfo;
+
+	String einfo;
 	LOG("%s: loading project file...", fn);
 	bool error = true;
-	loadstore_result lsr = load_fileconfig(fn, ht_projectconfig_magic, ht_projectconfig_fileversion, file_project_load_fcfg_func, NULL, &einfo);
+	loadstore_result lsr = load_fileconfig(fn, ht_projectconfig_magic, ht_projectconfig_fileversion, file_project_load_fcfg_func, NULL, einfo);
 	if (lsr == LS_ERROR_CORRUPTED) {
-		LOG_EX(LOG_ERROR, "%s: error in line %d", fn, einfo);
-		errorbox("%s: error in line %d", fn,  einfo);
+		LOG_EX(LOG_ERROR, "%s: error: %y", fn, &einfo);
+		errorbox("%s: error: %y", fn, &einfo);
 	} else if (lsr == LS_ERROR_NOT_FOUND) {
 		if (confirmbox("%s: no such project.\nDo you want to create this project?", fn) == button_yes) {
 			project = new ht_project(fn);
@@ -2935,8 +2936,8 @@ void ht_app::project_opencreate(char *filename)
 			error = false;
 		}
 	} else if (lsr != LS_OK) {
-		LOG_EX(LOG_ERROR, "%s: some error", fn);
-		errorbox("%s: some error", fn);
+		LOG_EX(LOG_ERROR, "%s: error: %y", fn, &einfo);
+		errorbox("%s: error: %y", fn, &einfo);
 	} else {
 		LOG("%s: done", fn);
 		error = false;
