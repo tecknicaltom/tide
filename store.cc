@@ -225,6 +225,11 @@ void ObjectStreamBin::putLenString(const byte *string, int len, const char *desc
 	mStream->writex(string, len);
 }
 
+void	ObjectStreamBin::corrupt()
+{
+	throw MsgfException("corrupt file");
+}
+
 /*
  *	ObjectStreamText
  */
@@ -539,6 +544,12 @@ void ObjectStreamText::putS(const char *s)
 	if (mStream->write(s, len) != len) setSyntaxError();
 }
 
+void	ObjectStreamText::corrupt()
+{
+	errorline = line;
+	throw MsgfException("corrupt format near line %d", line);
+}
+
 /*
  *	ObjectStreamNative View:set/getData() methods
  *	(endian-dependend)
@@ -687,4 +698,8 @@ void	ObjectStreamNative::putLenString(const byte *string, int len, const char *d
 {
 	const char *pp = string ? (const char*)duppa(string, len+1) : NULL;
 	mStream->write(&pp, sizeof pp);
+}
+
+void	ObjectStreamNative::corrupt()
+{
 }
