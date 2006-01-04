@@ -28,6 +28,7 @@
 #include "io/sys.h"
 #include "io/file.h"
 #include "data.h"
+#include "strtools.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -164,9 +165,13 @@ static void stat_to_pstat_t(const struct stat &st, pstat_t &s)
 
 int sys_pstat(pstat_t &s, const char *filename)
 {
-	if (!sys_filename_is_absolute(filename)) return ENOENT;
+	char fn[HT_NAME_MAX];
+	ht_strlcpy(fn, filename, sizeof fn);
+	int flen = strlen(fn);
+	if (flen && sys_is_path_delim(fn[flen-1]) && (flen !=3) || (fn[1]!=':')) fn[flen-1] = 0;
+	if (!sys_filename_is_absolute(fn)) return ENOENT;
 	struct stat st;
-	int e = stat(filename, &st);
+	int e = stat(fn, &st);
 	if (e) return errno ? errno : ENOENT;
 	stat_to_pstat_t(st, s);
 	return 0;
