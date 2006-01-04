@@ -2176,7 +2176,9 @@ char *ht_text_editor::func(uint i, bool execute)
 					// FIXME: !! call undolist->mark_clean() !!
 					app->sendmsg(cmd_file_saveas);
 					bool dirty = true;
-					textfile->cntl(FCNTL_MODS_IS_DIRTY, 0ULL, 0x7fffffffULL, &dirty);
+					FileOfs start = 0;
+					FileOfs end = 0x7fffffff;
+					textfile->cntl(FCNTL_MODS_IS_DIRTY, start, end, &dirty);
 					if (undo_list && !dirty) {
 						undo_list->mark_clean();
 					}
