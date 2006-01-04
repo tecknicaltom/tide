@@ -92,7 +92,7 @@ void ht_history_entry::load(ObjectStream &s)
 
 	if (size) {
 		datafile = new MemoryFile();
-		data = new ObjectStreamBin(datafile, true);
+		data = new ObjectStreamBin(datafile, false);
 
 		byte d[size];
 		GETX_BINARY(s, d, size, "data");
