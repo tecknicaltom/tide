@@ -267,10 +267,10 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 		if (xbe_shared->sections.sections[i].section_name_address) {
 		
-		    name = (char *)xbe_shared->sections.sections[i].section_name_address;
+			name = (char *)xbe_shared->sections.sections[i].section_name_address;
 
 		} else {
-		    name = "<empty>";
+			name = "<empty>";
 		}
 
 		char t[256];
