@@ -249,7 +249,7 @@ static ht_view *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 		s->add_staticmask_ptable(coff_section, h+24+pe_shared->coffheader.optional_header_size+i*COFF_SIZEOF_SECTION_HEADER, pe_bigendian);
 
 		char nm[9];
-		memmove(nm, pe_shared->sections.sections[i].name, 8);
+		memcpy(nm, pe_shared->sections.sections[i].name, 8);
 		nm[8]=0;
 
 		char t[256];
