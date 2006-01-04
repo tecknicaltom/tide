@@ -2275,6 +2275,7 @@ ObjHandle ht_app::get_window_listindex(ht_window *window)
 	return oh;
 }
 
+#include "cstream.h"
 void ht_app::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
@@ -2425,33 +2426,25 @@ void ht_app::handlemsg(htmsg *msg)
 						return;
 					}
 					break;
-#if 0
-				/* FIXME: experimental */
-				case K_Control_F9:
-					((ht_app*)app)->create_window_term("main.exe");
-					clearmsg(msg);
-					return;
 				case K_Meta_R: {
-					char *n = "./ht.reg";
-					ht_file *f = new ht_file();
-					f->init(n, FAM_WRITE, FOM_CREATE);
+					const char *n = "ht.reg";
+					LocalFile f(n, IOAM_WRITE, FOM_CREATE);
+					ht_compressed_stream c(&f, false);
+					ObjectStreamBin b(&c, false);
 
-					ht_object_stream_bin *b = new ht_object_stream_bin();
-					b->init(f);
-
-					b->putObject(registry, NULL);
-
-					b->done();
-					delete b;
-					
-					f->done();
-					delete f;
+					b.putObject(registry, NULL);
 
 					infobox("registry dumped to '%s'", n);
 					
 					clearmsg(msg);
 					return;
 				}
+#if 0
+				/* FIXME: experimental */
+				case K_Control_F9:
+					((ht_app*)app)->create_window_term("main.exe");
+					clearmsg(msg);
+					return;
 				case K_Meta_T:
 					create_window_ofm("reg:/", "local:/");
 					clearmsg(msg);
@@ -2467,19 +2460,6 @@ void ht_app::handlemsg(htmsg *msg)
 					sendmsg(cmd_popup_dialog_view_list);
 					clearmsg(msg);
 					return;
-/*				case K_Space: {
-				msgbox(0, "title", 0, align_custom, "test, baby ! aaaaaaaaaaaarghssssssssssssssssssssssssssssssssssssssssssssssss,bf\n\n"
-"Was willst DU Ich komm   nicht dahinter Ich zaehm dir das  Feuer      Du schenkst mir "
-"nur Winter Wenn du nicht bald anf„ngst mir Antwort zu geben faengt es ohne "
-"dich an das richtige Leben Ich hab lange gewartet bin nicht durchgeknallt "
-"aber wenn du jetzt nicht \n\n\ecaufspringst wirst du ohne mich alt Erklaer mir ich "
-"warte Wohin geht die Reise \n\n\erich kenn doch die Karte Nimm mich nicht als "
-"Vorwand nimm mich nicht auf die Schippe sonst kuess ich dich luftleer und "
-"zerbeiss dir die Lippe ich kann ohne dich leben auch wenn du nicht glaubst     \n"
-"da ist mehr an mir dran als was du mir raubst ");
-					clearmsg(msg);
-					break;
-				}*/
 			}
 			break;
 		}
@@ -3055,8 +3035,9 @@ void ht_file_window::handlemsg(htmsg *msg)
 		String fn;
 		if (file->getFilename(fn).isEmpty()) {
 			modified = true;
-		} else {
-			file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->getSize(), &modified);
+		} else {			
+			FileOfs start = 0;
+			file->cntl(FCNTL_MODS_IS_DIRTY, start, file->getSize(), &modified);
 		}
 		if (modified) {
 			char q[1024];
