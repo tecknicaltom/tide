@@ -2006,9 +2006,10 @@ char *ht_uformat_viewer::func(uint i, bool execute)
 			if (caps & VC_EDIT) {
 				if (edit()) {
 					if (execute) {
+						FileOfs start = 0;
 						FileOfs size = file->getSize();
-						bool isdirty = false;
-						file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->getSize(), &isdirty);
+						bool isdirty = false;						
+						file->cntl(FCNTL_MODS_IS_DIRTY, start, size, &isdirty);
 						char q[1024];
 						String fn;
 						if (!file->getFilename(fn).isEmpty()) {
@@ -2886,7 +2887,8 @@ vcp ht_uformat_viewer::get_tag_color_edit(FileOfs tag_offset, uint size, bool at
 {
 	vcp tag_color = getcolor_tag(palidx_tags_edit_tag);
 	bool isdirty = false;
-	file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset, size, &isdirty);
+	FileOfs fsize = size;
+	file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset, fsize, &isdirty);
 	if (isdirty) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
 	if (tag_offset >= sel_start && tag_offset < sel_end) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
 	if (iscursor) {
@@ -3164,7 +3166,8 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					tag_offset=tag_get_offset(n);
 					tag_color=getcolor_tag(palidx_tags_edit_tag);
 					bool isdirty = false;
-					file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset+op, IS_DIRTY_SINGLEBIT | (shift & 7), &isdirty);
+					FileOfs o = IS_DIRTY_SINGLEBIT | (shift & 7);
+					file->cntl(FCNTL_MODS_IS_DIRTY, tag_offset+op, o, &isdirty);
 					if (isdirty) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_modified));
 					if (tag_offset >= sel_start && tag_offset < sel_end) tag_color = mixColors(tag_color, getcolor_tag(palidx_tags_edit_tag_selected));
 					if (is_cursor) tag_color = mixColors(tag_color, getcolor_tag(edit() ? palidx_tags_edit_tag_cursor_edit : palidx_tags_edit_tag_cursor_select));
