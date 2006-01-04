@@ -366,6 +366,7 @@ void ht_registry_node_type_desc::store(ObjectStream &f) const
 ht_registry_data *create_empty_palette_entry();
 void ht_registry::init()
 {
+#if 0
 	// build registry root
 	AVLTree *s = new AVLTree(true);
 	root = new ht_registry_node(RNT_SUBDIR, "/", new ht_registry_data_stree(s));
@@ -611,6 +612,7 @@ void ht_registry::init()
 		ht_registry_node_type_desc *d=new ht_registry_node_type_desc(
 			256, "palette", create_empty_palette_entry);
 		node_types->insert(d);
+#endif
 }
 
 void ht_registry::done()
@@ -1095,6 +1097,7 @@ BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc, Object);
  *	INIT
  */
 
+#include "cstream.h"
 bool init_registry()
 {
 	REGISTER(ATOM_HT_REGISTRY, ht_registry);
@@ -1114,11 +1117,12 @@ bool init_registry()
 	 *	load default registry
 	 */
 	ConstMemMapFile f(default_reg, sizeof default_reg);
-	ObjectStreamBin o(&f, false);
+	ht_compressed_stream c(&f, false);
+	ObjectStreamBin o(&c, false);
 
-//	GET_OBJECT(o, registry);
-	registry = new ht_registry;
-	registry->init();
+	GET_OBJECT(o, registry);
+//	registry = new ht_registry;
+//	registry->init();
 
 	return true;
 }
