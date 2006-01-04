@@ -58,10 +58,10 @@ void ht_compressed_stream::flush_compressed()
 		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
 
 		createForeignInt(n, bufferpos, 4, big_endian);
-		writex(n, 4);
+		mStream->writex(n, 4);
 		createForeignInt(n, cbuf_len, 4, big_endian);
-		writex(n, 4);
-		writex(cbuf, cbuf_len);
+		mStream->writex(n, 4);
+		mStream->writex(cbuf, cbuf_len);
 		
 		bufferpos = 0;
 	}
@@ -77,9 +77,9 @@ void ht_compressed_stream::flush_uncompressed()
 		uint uncompressed_len;
 		byte n[4];
 
-		readx(n, 4);
+		mStream->readx(n, 4);
 		uncompressed_len = createHostInt(n, 4, big_endian);
-		readx(n, 4);
+		mStream->readx(n, 4);
 		cbuf_len = createHostInt(n, 4, big_endian);
 		
 		if (uncompressed_len > COMPRESSED_STREAM_DEFAULT_GRANULARITY
@@ -88,7 +88,7 @@ void ht_compressed_stream::flush_uncompressed()
 		buffer = (byte *)smalloc(uncompressed_len);
 		byte cbuf[cbuf_len];
 
-		readx(cbuf, cbuf_len);
+		mStream->readx(cbuf, cbuf_len);
 		lzo_uint dummy;
 		lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
 		if (dummy != uncompressed_len) throw IOException(EIO);
