@@ -3021,7 +3021,7 @@ void ht_file_window::add_vstate_history(ht_vstate_history_entry *e)
 {
 	int c = vstate_history.count();
 	if (c > vstate_history_pos) {
-		vstate_history.delRange(vstate_history_pos, c-vstate_history_pos);
+		vstate_history.delRange(vstate_history_pos, c);
 	}
 	vstate_history += e;
 	vstate_history_pos++;
@@ -3030,95 +3030,92 @@ void ht_file_window::add_vstate_history(ht_vstate_history_entry *e)
 void ht_file_window::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case cmd_vstate_restore: {
-			if (vstate_history_pos) {
-				vstate_history_pos--;
-				ht_vstate_history_entry *e = (ht_vstate_history_entry*)
-					vstate_history[vstate_history_pos];
-				htmsg m;
-				m.msg = msg_vstate_restore;
-				m.type = mt_empty;
-				m.data1.ptr = e->data;
-				e->view->sendmsg(&m);
-				focus(e->view);
-			}
-			clearmsg(msg);
-			return;
-		}
-		case msg_vstate_save: {
-			Object *data = (Object*)msg->data1.ptr;
-			ht_view *view = (ht_view*)msg->data2.ptr;
-			add_vstate_history(new ht_vstate_history_entry(data, view));
-			break;
-		}
-		case msg_accept_close: if (file) {
-			bool modified=false;
-			String fn;
-			if (file->getFilename(fn).isEmpty()) {
-				modified = true;
-			} else {
-				file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->getSize(), &modified);
-			}
-			if (modified) {
-				char q[1024];
-				if (fn.isEmpty()) {
-					ht_snprintf(q, sizeof q, "untitled file has been modified, save?");
-				} else {
-					ht_snprintf(q, sizeof q, "file %y has been modified, save?", &fn);
-				}
-				switch (msgbox(btmask_yes+btmask_no+btmask_cancel, "confirmation", 0, align_center, q)) {
-					case button_yes: {
-						app->focus(this);
-						htmsg msg;
-						msg.msg = cmd_file_save;
-						msg.type = mt_empty;
-						app->sendmsg(&msg);
-						if ((uint)msg.msg != cmd_file_save) break;
-					}
-					case button_cancel:
-						clearmsg(msg);
-						return;
-				}
-			}
-
-			// flush so that cmd_analyser_save get correct mtime
-			file->cntl(FCNTL_FLUSH_STAT);
-
-			Analyser *a;
+	case cmd_vstate_restore:
+		if (vstate_history_pos) {
+			vstate_history_pos--;
+			ht_vstate_history_entry *e = (ht_vstate_history_entry*)
+				vstate_history[vstate_history_pos];
 			htmsg m;
-			m.msg = msg_get_analyser;
-			m.type = mt_broadcast;
-			m.data1.ptr = NULL;
-			sendmsg(&m);
-			a = (Analyser*)m.data1.ptr;
-			if (m.msg == msg_retval && a && a->isDirty()) {
-				sendmsg(cmd_analyser_save);
+			m.msg = msg_vstate_restore;
+			m.type = mt_empty;
+			m.data1.ptr = e->data;
+			e->view->sendmsg(&m);
+			focus(e->view);
+		}
+		clearmsg(msg);
+		return;
+	case msg_vstate_save: {
+		Object *data = (Object*)msg->data1.ptr;
+		ht_view *view = (ht_view*)msg->data2.ptr;
+		add_vstate_history(new ht_vstate_history_entry(data, view));
+		break;
+	}
+	case msg_accept_close: if (file) {
+		bool modified=false;
+		String fn;
+		if (file->getFilename(fn).isEmpty()) {
+			modified = true;
+		} else {
+			file->cntl(FCNTL_MODS_IS_DIRTY, 0, file->getSize(), &modified);
+		}
+		if (modified) {
+			char q[1024];
+			if (fn.isEmpty()) {
+				ht_snprintf(q, sizeof q, "untitled file has been modified, save?");
+			} else {
+				ht_snprintf(q, sizeof q, "file %y has been modified, save?", &fn);
 			}
+			switch (msgbox(btmask_yes+btmask_no+btmask_cancel, "confirmation", 0, align_center, q)) {
+				case button_yes: {
+					app->focus(this);
+					htmsg msg;
+					msg.msg = cmd_file_save;
+					msg.type = mt_empty;
+					app->sendmsg(&msg);
+					if ((uint)msg.msg != cmd_file_save) break;
+				}
+				case button_cancel:
+					clearmsg(msg);
+					return;
+			}
+		}
+		// flush so that cmd_analyser_save get correct mtime
+		file->cntl(FCNTL_FLUSH_STAT);
+
+		Analyser *a;
+		htmsg m;
+		m.msg = msg_get_analyser;
+		m.type = mt_broadcast;
+		m.data1.ptr = NULL;
+		sendmsg(&m);
+		a = (Analyser*)m.data1.ptr;
+		if (m.msg == msg_retval && a && a->isDirty()) {
+			sendmsg(cmd_analyser_save);
+		}
 		}
 		break;
-		case cmd_analyser_save: {
-			String filename;
-			file->getFilename(filename);
-			filename += HT_FILE_CONFIG_SUFFIX;
-			LOG("%y: saving config", &filename);
-			save_fileconfig(filename.contentChar(), ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this);
-			LOG("%y: done", &filename);
-			clearmsg(msg);
-			break;
-		}
+	case cmd_analyser_save: {
+		String filename;
+		file->getFilename(filename);
+		filename += HT_FILE_CONFIG_SUFFIX;
+		LOG("%y: saving config", &filename);
+		save_fileconfig(filename.contentChar(), ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this);
+		LOG("%y: done", &filename);
+		clearmsg(msg);
+		break;
+	}
 	}
 	ht_window::handlemsg(msg);
 	switch (msg->msg) {
-		case msg_keypressed:
-			switch (msg->data1.integer) {
-				case K_Meta_Backspace:
-				case K_Backspace: {
-					sendmsg(cmd_vstate_restore);
-					clearmsg(msg);
-					return;
-				}
-			}
-			break;
+	case msg_keypressed:
+		switch (msg->data1.integer) {
+		case K_Meta_Backspace:
+		case K_Backspace:
+			sendmsg(cmd_vstate_restore);
+			clearmsg(msg);
+			return;
+		}
+		break;
 	}
 }
 
