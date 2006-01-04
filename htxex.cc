@@ -68,8 +68,39 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	/* read header */
 	file->seek(0);
 	file->read(&xex_shared->header, sizeof xex_shared->header);
-	createHostStruct(&xex_shared->header, XEX_IMAGE_HEADER_struct, big_endian);	
+	createHostStruct(&xex_shared->header, XEX_IMAGE_HEADER_struct, big_endian);
+	xex_shared->info_table = ht_malloc(xex_shared->header.number_of_sections * sizeof *xex_shared->info_table);
+	xex_shared->info_table_cooked = ht_malloc(xex_shared->header.number_of_sections * sizeof *xex_shared->info_table_cooked);
+	for (int i=0; i < xex_shared->header.number_of_sections; i++) {
+		file->read(xex_shared->info_table+i, sizeof *xex_shared->info_table);
+		createHostStruct(xex_shared->info_table+i, XEX_IMAGE_HEADER_INFO_ENTRY_struct, big_endian);
+		xex_shared->info_table_cooked[i].start = 0;
+		xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].size;
+		if (xex_shared->info_table[i].size == 0xff) {
+			FileOfs ofs = file->tell();
+			file->seek(xex_shared->info_table[i].value);
+			uint32 s;
+			if (file->read(&s, 4) == 4) {
+				xex_shared->info_table_cooked[i].start = xex_shared->info_table[i].value + 4;
+				xex_shared->info_table_cooked[i].size = createHostInt(&s, 4, big_endian) - 4;
+			}
+			file->seek(ofs);
+		} else if (xex_shared->info_table[i].size > 1) {
+			xex_shared->info_table_cooked[i].start = xex_shared->info_table[i].value;
+			xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].size * 4;
+		}
+	}
 
+	file->seek(xex_shared->header.certificate_address);
+	uint32 s;
+	if (file->read(&s, 4) == 4) {
+		xex_shared->certificate_offset = createHostInt(&s, 4, big_endian);
+		xex_shared->certificate_size = createHostInt(&s, 4, big_endian);
+	} else {
+		xex_shared->certificate_offset = xex_shared->header.certificate_address;
+		xex_shared->certificate_size = 0;
+	}
+	
 	ht_format_group::init_ifs(ifs);
 }
 
