@@ -30,11 +30,21 @@
 
 extern format_viewer_if htxex_if;
 
-struct xex_section_headers {
+struct xex_info_entry {
+	FileOfs start;
+	FileOfs size;
 };
 
 struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER header;
+	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
+	xex_info_entry *info_table_cooked;
+
+	uint32 certificate_offset;
+	uint32 certificate_size;
+	uint32 original_base_address;
+	uint32 entry_point;
+	uint32 load_address;
 
 	ht_format_viewer *v_header;
 };
