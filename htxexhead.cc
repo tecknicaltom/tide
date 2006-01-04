@@ -37,11 +37,6 @@
 
 #include "xexstruct.h"
 
-static ht_mask_ptable xexmagic[] = {
-	{"magic",						STATICTAG_EDIT_CHAR("00000000")STATICTAG_EDIT_CHAR("00000001")STATICTAG_EDIT_CHAR("00000002")STATICTAG_EDIT_CHAR("00000003")},
-	{0, 0}
-};
-
 static ht_tag_flags_s xbe_init_flags[] =
 {
 	{-1, "XBE - initialisation flags"},
@@ -53,14 +48,17 @@ static ht_tag_flags_s xbe_init_flags[] =
 };
 
 static ht_mask_ptable xeximageheader[] = {
+	{"magic",			STATICTAG_EDIT_CHAR("00000000")STATICTAG_EDIT_CHAR("00000001")STATICTAG_EDIT_CHAR("00000002")STATICTAG_EDIT_CHAR("00000003")},
 	{"flags",			STATICTAG_EDIT_DWORD_BE("00000004")},
 	{"offset of loader",		STATICTAG_EDIT_DWORD_BE("00000008")},
 	{"res",				STATICTAG_EDIT_DWORD_BE("0000000c")},
-	{"offset of certificate",	STATICTAG_EDIT_DWORD_BE("00000010")},
+	{"offset of certificate",	STATICTAG_EDIT_DWORD_BE("00000010")"  "STATICTAG_REF("0000000100000000", "04", "view")},
 	{"number of sections",		STATICTAG_EDIT_DWORD_BE("00000014")},
 	{0, 0}
 };
 
+#define ATOM_XEX_INFO_CLASS_MAGICS 0x58455801
+#define ATOM_XEX_INFO_CLASS_MAGICS_STR "58455801"
 
 static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 {
@@ -83,7 +81,6 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 	
 	s=new ht_mask_sub();
 	s->init(file, 1);
-	s->add_staticmask_ptable(xexmagic, 0x0, xex_bigendian);
 	
 	/* image header */
 	s->add_staticmask_ptable(xeximageheader, 0x0, xex_bigendian);
@@ -91,10 +88,25 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 	cs->init(file, s, 1, "image header", 1);
 	v->insertsub(cs);
 
-#if 0
-	/* image header */
 	s=new ht_mask_sub();
 	s->init(file, 2);
+	FileOfs ofs = sizeof xex_shared->header;
+	for (uint i=0; i < xex_shared->header.number_of_sections; i++) {
+//STATICTAG_DESC_BYTE_LE("00000001", ATOM_XEX_INFO_CLASS_MAGICS_STR)
+		char b[200];
+		snprintf(b, sizeof b, 
+			"type "STATICTAG_EDIT_BYTE("00000000")STATICTAG_EDIT_BYTE("00000001")STATICTAG_EDIT_BYTE("00000002")STATICTAG_EDIT_BYTE("00000003")"   "
+			"value "STATICTAG_EDIT_DWORD_BE("00000004")"  "
+			STATICTAG_REF("00000000%08x", "03", "raw")
+			, i);
+		s->add_staticmask(b, ofs, true);
+
+		ofs += 8;
+	}
+	cs=new ht_collapsable_sub();
+	cs->init(file, s, 1, "general info table", 1);
+	v->insertsub(cs);
+#if 0
 	s->add_staticmask_ptable(xbecertificate, xbe_shared->header.certificate_address-xbe_shared->header.base_address, xbe_bigendian);
 	cs=new ht_collapsable_sub();
 	cs->init(file, s, 1, "certificate", 1);
@@ -164,7 +176,46 @@ void ht_xex_header_viewer::init(Bounds *b, char *desc, int caps, File *file, ht_
 	VIEW_DEBUG_NAME("ht_xex_header_viewer");
 }
 
+static ht_format_viewer *find_hex_viewer(ht_group *group)
+{
+	// FIXME: God forgive us...
+	ht_group *vr_group=group;
+	while (strcmp(vr_group->desc, VIEWERGROUP_NAME)) vr_group=vr_group->group;
+	ht_view *c=vr_group->getfirstchild();
+	while (c) {
+		if (c->desc && (strcmp(c->desc, DESC_HEX)==0)) {
+			return (ht_format_viewer*)c;
+		}
+		c=c->next;
+	}
+	return NULL;
+}
+
 int ht_xex_header_viewer::ref_sel(LINE_ID *id)
 {
+	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)format_group->get_shared_data();
+	ht_format_viewer *hexv = find_hex_viewer(group);
+	switch (id->id1) {
+	case 0:
+		if (hexv) {
+			uint32 ofs = xex_shared->info_table_cooked[id->id2].start;
+			uint32 size = xex_shared->info_table_cooked[id->id2].size;
+			vstate_save();
+			hexv->goto_offset(ofs, false);
+			hexv->pselect_set(ofs, ofs+size);
+			app->focus(hexv);
+//			} else errorbox("Can't follow: directory RVA %08x is not valid !", rva);
+		}
+		break;
+	case 1:
+		if (hexv) {
+			vstate_save();
+			uint32 ofs = xex_shared->header.certificate_address;
+			hexv->goto_offset(ofs, false);
+			hexv->pselect_set(ofs, ofs+xex_shared->certificate_size);
+			app->focus(hexv);
+		}
+		break;
+	}
 	return 1;
 }
