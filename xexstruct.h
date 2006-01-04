@@ -33,15 +33,23 @@ typedef unsigned int RVA;
 #define XEX_MAGIC3	'2'
 
 typedef struct XEX_IMAGE_HEADER {
-    byte	magic_id[XEX_MAGIC_LENGTH] PACKED;
-    uint32	flags PACKED;
-    uint32	offset_unpack PACKED;
-    uint32	res PACKED;
-    uint32	certificate_address PACKED;
-    uint32	number_of_sections PACKED;
+	byte	magic_id[XEX_MAGIC_LENGTH] PACKED;
+	uint32	flags PACKED;
+	uint32	offset_unpack PACKED;
+	uint32	res PACKED;
+	uint32	certificate_address PACKED;
+	uint32	number_of_sections PACKED;
+};
+
+typedef struct XEX_IMAGE_HEADER_INFO_ENTRY {
+	byte	res PACKED;
+	byte	classe PACKED;
+	byte	type PACKED;
+	byte	size PACKED;
+	uint32	value;
 };
 
 extern byte XEX_IMAGE_HEADER_struct[];
-
+extern byte XEX_IMAGE_HEADER_INFO_ENTRY_struct[];
 
 #endif
