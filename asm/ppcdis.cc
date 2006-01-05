@@ -234,16 +234,16 @@ char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 	if (!ppc_insn->valid) {
 		switch (ppc_insn->size) {
 			case 1:
-				strcpy(insnstr, "db         ?");
+				strcpy(insnstr, "db            ?");
 				break;
 			case 2:
-				strcpy(insnstr, "dw         ?");
+				strcpy(insnstr, "dw            ?");
 				break;
 			case 3:
-				strcpy(insnstr, "db         ? * 3");
+				strcpy(insnstr, "db            ? * 3");
 				break;
 			case 4:
-				sprintf(insnstr, "dd        %s0x%08x", cs_number, ppc_insn->data);
+				sprintf(insnstr, "dd           %s0x%08x", cs_number, ppc_insn->data);
 				break;
 			default: { /* braces for empty assert */
 				strcpy(insnstr, "?");
@@ -251,7 +251,7 @@ char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 			}
 		}
 	} else {
-		char *is = insnstr+sprintf(insnstr, "%-10s", ppc_insn->name);
+		char *is = insnstr+sprintf(insnstr, "%-13s", ppc_insn->name);
 		int dialect=-1;
 
 		bool need_comma = false;
