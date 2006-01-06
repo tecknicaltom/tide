@@ -932,6 +932,9 @@ const struct powerpc_operand powerpc_operands[] =
 #define VX128_4(op, xop) (OP (op) | (((unsigned long)(xop)) & 0x730))
 #define VX128_4_MASK	VX(0x3f, 0x730)
 
+#define VX128_5(op, xop) (OP (op) | (((unsigned long)(xop)) & 0x10))
+#define VX128_5_MASK	VX(0x3f, 0x10)
+
 /* An X form instruction.  */
 #define X(op, xop) (OP (op) | ((((unsigned long)(xop)) & 0x3ff) << 1))
 
@@ -1398,16 +1401,27 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vupklsh",   VX(4,  718), VX_MASK,	PPCVEC,		{ VD, VB } },
 { "vxor",      VX(4, 1220), VX_MASK,	PPCVEC,		{ VD, VA, VB } },
 
-{ "lvx128",	VX128_1(4, 195), VX128_1_MASK,PPCVEC,	{ VD128, RA, RB } },
-{ "stvx128",	VX128_1(4, 451), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
-{ "lvxl128",	VX128_1(4, 707), VX128_1_MASK,PPCVEC,	{ VD128, RA, RB } },
-{ "stvxl128",	VX128_1(4, 771), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
-//{ "lvlxl128",	VX128_1(4, 1731), VX128_1_MASK,PPCVEC,	{ VD128, RA, RB } },
-{ "stvlxl128",	VX128_1(4, 1795), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
+{ "vsldoi128", VX128_5(4,   16), VX128_5_MASK, PPCVEC, { VS128, VA128, VB128, SHB } },
+{ "lvsl128",   VX128_1(4,    3), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvsr128",   VX128_1(4,   67), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvewx128",  VX128_1(4,  131), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvx128",    VX128_1(4,  195), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvewx128", VX128_1(4,  387), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvx128",   VX128_1(4,  451), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvxl128",   VX128_1(4,  707), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvxl128",  VX128_1(4,  963), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvlx128",   VX128_1(4, 1027), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvrx128",   VX128_1(4, 1091), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvlx128",  VX128_1(4, 1283), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvrx128",  VX128_1(4, 1347), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvlxl128",  VX128_1(4, 1539), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "lvrxl128",  VX128_1(4, 1603), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvlxl128", VX128_1(4, 1795), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
+{ "stvrxl128", VX128_1(4, 1859), VX128_1_MASK, PPCVEC, { VS128, RA, RB } },
 
 { "vperm128",	VX128_2(5, 0), VX128_2_MASK, PPCVEC, { VD128, VA128, VB128, VC128 } },
-{ "vaddfp128",	VX128(5, 16),  VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
-{ "vsubfp128",	VX128(5, 80),  VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vaddfp128",	VX128(5,  16), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vsubfp128",	VX128(5,  80), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vmulfp128",	VX128(5, 144), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vmaddfp128",	VX128(5, 208), VX128_MASK, PPCVEC, { VD128, VA128, VB128, VS128 } },
 { "vmaddcfp128",VX128(5, 272), VX128_MASK, PPCVEC, { VD128, VA128, VB128, VS128 } },
@@ -1431,14 +1445,14 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vpkuwus128",	VX128(5, 960), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vsro128",	VX128(5, 976), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 
-{ "vpermwi128",	 VX128_P(6, 528), VX128_P_MASK, PPCVEC, { VD128, VB128, VPERM128 } },
-{ "vcfpsxws128", VX128_3(6, 560), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
-{ "vcfpuxws128", VX128_3(6, 624), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
-{ "vcsxwfp128",  VX128_3(6, 688), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
-{ "vcuxwfp128",  VX128_3(6, 752), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
-{ "vrfim128",	 VX128_3(6, 816), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
-{ "vrfin128",	 VX128_3(6, 880), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
-{ "vrfip128",	 VX128_3(6, 944), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vpermwi128",	 VX128_P(6,  528), VX128_P_MASK, PPCVEC, { VD128, VB128, VPERM128 } },
+{ "vcfpsxws128", VX128_3(6,  560), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
+{ "vcfpuxws128", VX128_3(6,  624), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vcsxwfp128",  VX128_3(6,  688), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
+{ "vcuxwfp128",  VX128_3(6,  752), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vrfim128",	 VX128_3(6,  816), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrfin128",	 VX128_3(6,  880), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrfip128",	 VX128_3(6,  944), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
 { "vrfiz128",	 VX128_3(6, 1008), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
 { "vpkd3d128",	 VX128_4(6, 1552), VX128_4_MASK, PPCVEC, { VD128, VB128, VD3D0, VD3D1, VD3D2} },
 { "vrefp128",	 VX128_3(6, 1584), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
@@ -1449,9 +1463,9 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vspltw128",	 VX128_3(6, 1840), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
 { "vspltisw128", VX128_3(6, 1904), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
 { "vupkd3d128",	 VX128_3(6, 2032), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
-{ "vcmpeqfp128", VX128(6, 0), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
-{ "vcmpeqfp128.",VX128(6, 64), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
-{ "vrlw128",     VX128(6, 80), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpeqfp128", VX128(6,   0), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpeqfp128.",VX128(6,  64), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vrlw128",     VX128(6,  80), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vcmpgefp128", VX128(6, 128), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vcmpgefp128.",VX128(6, 192), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vslw128",     VX128(6, 208), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
