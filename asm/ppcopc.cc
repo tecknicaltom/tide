@@ -332,6 +332,11 @@ static uint32 extract_vb128(uint32 insn, bool *invalid)
 	return ((insn<<5) & 0x60) | ((insn>>11) & 0x1f);
 }
 
+static uint32 extract_vperm(uint32 insn, bool *invalid)
+{
+	return ((insn>>1) & 0xe0) | ((insn>>16) & 0x1f);
+}
+
 /* The operands table.
 
    The fields are bits, shift, signed, extract, flags.  */
@@ -720,8 +725,21 @@ const struct powerpc_operand powerpc_operands[] =
 #define VC128_MASK (0x1f << 21)
   { 3, 6, 0, PPC_OPERAND_VR },
 
+#define VPERM128 VC128 + 1
+#define VPERM_MASK (0x1f << 21)
+  { 0, 0, extract_vperm, 0 },
+
+#define VD3D0 VPERM128 + 1
+  { 3, 18, 0, 0 },
+
+#define VD3D1 VD3D0 + 1
+  { 2, 16, 0, 0 },
+
+#define VD3D2 VD3D1 + 1
+  { 2, 6, 0, 0 },
+
   /* The SIMM field in a VX form instruction. */
-#define SIMM VC128 + 1
+#define SIMM VD3D2 + 1
   { 5, 16, 0, PPC_OPERAND_SIGNED},
 
   /* The UIMM field in a VX form instruction. */
@@ -902,6 +920,18 @@ const struct powerpc_operand powerpc_operands[] =
 /* The mask for an VX form instruction. */
 #define VX128_2_MASK	VX(0x3f, 0x210)
 
+/* An VX128 form instruction. */
+#define VX128_3(op, xop) (OP (op) | (((unsigned long)(xop)) & 0x7f0))
+
+/* The mask for an VX form instruction. */
+#define VX128_3_MASK	VX(0x3f, 0x7f0)
+
+#define VX128_P(op, xop) (OP (op) | (((unsigned long)(xop)) & 0x630))
+#define VX128_P_MASK	VX(0x3f, 0x630)
+
+#define VX128_4(op, xop) (OP (op) | (((unsigned long)(xop)) & 0x730))
+#define VX128_4_MASK	VX(0x3f, 0x730)
+
 /* An X form instruction.  */
 #define X(op, xop) (OP (op) | ((((unsigned long)(xop)) & 0x3ff) << 1))
 
@@ -1021,6 +1051,7 @@ const struct powerpc_operand powerpc_operands[] =
 
 /* A mask for the FXM version of an XFX form instruction.  */
 #define XFXFXM_MASK (X_MASK | (((unsigned long)1) << 20) | (((unsigned long)1) << 11))
+#define XFXFXM_MASK2 (X_MASK | (((unsigned long)1) << 20))
 
 /* An XFX form instruction with the FXM field filled in.  */
 #define XFXM(op, xop, fxm) \
@@ -1371,6 +1402,8 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "stvx128",	VX128_1(4, 451), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
 { "lvxl128",	VX128_1(4, 707), VX128_1_MASK,PPCVEC,	{ VD128, RA, RB } },
 { "stvxl128",	VX128_1(4, 771), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
+//{ "lvlxl128",	VX128_1(4, 1731), VX128_1_MASK,PPCVEC,	{ VD128, RA, RB } },
+{ "stvlxl128",	VX128_1(4, 1795), VX128_1_MASK,PPCVEC,	{ VS128, RA, RB } },
 
 { "vperm128",	VX128_2(5, 0), VX128_2_MASK, PPCVEC, { VD128, VA128, VB128, VC128 } },
 { "vaddfp128",	VX128(5, 16),  VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
@@ -1389,7 +1422,6 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vnor128",    VX128(5, 656), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vpkswus128", VX128(5, 704), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vor128",     VX128(5, 720), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
-
 { "vpkuhum128",	VX128(5, 768), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vxor128",	VX128(5, 784), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vpkuhus128",	VX128(5, 832), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
@@ -1399,19 +1431,92 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vpkuwus128",	VX128(5, 960), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vsro128",	VX128(5, 976), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 
+{ "vpermwi128",	 VX128_P(6, 528), VX128_P_MASK, PPCVEC, { VD128, VB128, VPERM128 } },
+{ "vcfpsxws128", VX128_3(6, 560), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
+{ "vcfpuxws128", VX128_3(6, 624), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vcsxwfp128",  VX128_3(6, 688), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
+{ "vcuxwfp128",  VX128_3(6, 752), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vrfim128",	 VX128_3(6, 816), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrfin128",	 VX128_3(6, 880), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrfip128",	 VX128_3(6, 944), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrfiz128",	 VX128_3(6, 1008), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vpkd3d128",	 VX128_4(6, 1552), VX128_4_MASK, PPCVEC, { VD128, VB128, VD3D0, VD3D1, VD3D2} },
+{ "vrefp128",	 VX128_3(6, 1584), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrsqrtefp128",VX128_3(6, 1648), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vexptefp128", VX128_3(6, 1712), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vlogefp128",	 VX128_3(6, 1776), VX128_3_MASK, PPCVEC, { VD128, VB128 } },
+{ "vrlimi128",	 VX128_4(6, 1808), VX128_4_MASK, PPCVEC, { VD128, VB128, UIMM, VD3D2} },
+{ "vspltw128",	 VX128_3(6, 1840), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vspltisw128", VX128_3(6, 1904), VX128_3_MASK, PPCVEC, { VD128, VB128, SIMM } },
+{ "vupkd3d128",	 VX128_3(6, 2032), VX128_3_MASK, PPCVEC, { VD128, VB128, UIMM } },
+{ "vcmpeqfp128", VX128(6, 0), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpeqfp128.",VX128(6, 64), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vrlw128",     VX128(6, 80), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpgefp128", VX128(6, 128), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpgefp128.",VX128(6, 192), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vslw128",     VX128(6, 208), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpgtfp128", VX128(6, 256), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpgtfp128.",VX128(6, 320), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vsraw128",    VX128(6, 336), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpbfp128",  VX128(6, 384), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpbfp128.", VX128(6, 448), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vsrw128",     VX128(6, 464), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpequw128", VX128(6, 512), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vcmpequw128.",VX128(6, 576), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vmaxfp128",   VX128(6, 640), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vminfp128",   VX128(6, 704), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vmrghw128",   VX128(6, 768), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vmrglw128",   VX128(6, 832), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
+{ "vupkhsb128",  VX128(6, 896), VX128_MASK, PPCVEC, { VD128, VB128 } },
+{ "vupklsb128",  VX128(6, 960), VX128_MASK, PPCVEC, { VD128, VB128 } },
 #if 0
 
-  800AD604: 17406ADC vor128       vr122,vr0,vr13     1011011100
-  800B68D4: 151F5EF0 vor128       vr8,vr127,vr11     1011110000
+  800B787C: 18036F90 vrlimi128    vr0,vr13,3,2
 
-  800B6490: 157B3E70 vandc128     vr11,vr123,vr7     1001110000
+op(6) | d(5) | a(5) | b(5) | va(1) | op(3) | X | va(1) | op(1) | vd(2) | vb(2)
 
-  800AD980: 17DF6DF0 vmsum4fp128  vr30,vr127,vr13    0111110000
+        o oo
+bbbb bVoo ooVo
+0110 1111 1001 0000
+      1X1 111X
+vperm
+0000 0010 0001 0000
+      XX    XX
+d3d
+0000 0110 0001 0000
+      XXX llXX
 
- | op(6) | vd(5) | va(5) | vb(5) | va1(1) | op(4) | va2(1) | op(1) | vdx(2) | vcx(2) |
-  800B8334: 141A4770 vsel128      vr0,vr122,vr8,vr0      110000
+  80060A68: 180007B0 ???
+  80060A70: 180007F0 vupkd3d128   vr0,vr0,0<D3DCOLOR>
+
+0x610: xtra: 000 vcfpsxws128
+0x610: va:   001 
+0x610: va:   010 
+0x610: va:   011
+0x610: va:   100
+0x610: va:   101
+0x610: xtra: 110 vrlimi128
+
+  80060A14: 18000230 vcfpsxws128  vr0,vr0,0
+  80060A24: 18000610 vpkd3d128    vr0,vr0,0<D3DCOLOR>,0,0
+
+  80060A48: 18000210 vpermwi128   vr0,vr0,0		; [0|0|0|0]
+  80060A3C: 18010210 vpermwi128   vr0,vr0,1		; [0|0|0|1]
+  80060A40: 18020210 vpermwi128   vr0,vr0,2		; [0|0|0|2]
+  80060A50: 18000250 vpermwi128   vr0,vr0,32		; [0|2|0|0]
+  80060A58: 18000290 vpermwi128   vr0,vr0,64		; [1|0|0|0]
+  80060A60: 180002D0 vpermwi128   vr0,vr0,96		; [1|2|0|0]
+  80060A68: 18000310 vpermwi128   vr0,vr0,128		; [2|0|0|0]
+  80060A70: 18000350 vpermwi128   vr0,vr0,160		; [2|2|0|0]
+  80060A78: 18000390 vpermwi128   vr0,vr0,192		; [3|0|0|0]
+  80060A80: 180003D0 vpermwi128   vr0,vr0,224		; [3|2|0|0]
+#endif
+
+#if 0
 
 OP(6):
+
+op(6) | d(5) | a(5) | b(5) | va(1) | op(3) | X | va(1) | op(1) | vd(2) | vb(2)
 
   800B6488: 199EECF3 vslw128      vr12,vr126,vr125   0011110011
   800B6470: 18FEF4F3 vslw128      vr7,vr126,vr126    0011110011
@@ -2206,6 +2311,7 @@ OP(6):
 { "mulhwu.", XO(31,11,0,1), XO_MASK,	PPC,		{ RT, RA, RB } },
 
 { "mfcr",    X(31,19),	XRARB_MASK,	COM,		{ RT } },
+{ "mfocrf",  X(31,19),	X_MASK,		PPCVEC,		{ RT, FXM } },
 
 { "lwarx",   X(31,20),	X_MASK,		PPC,		{ RT, RA, RB } },
 
@@ -2308,6 +2414,7 @@ OP(6):
 
 { "mtcr",    XFXM(31,144,0xff), XFXFXM_MASK|FXM_MASK, COM,	{ RS }},
 { "mtcrf",   X(31,144),	XFXFXM_MASK,	COM,		{ FXM, RS } },
+{ "mtocrf",  X(31,144)|(1<<20),XFXFXM_MASK2,	COM,	{ FXM, RS } },
 
 { "mtmsr",   X(31,146),	XRARB_MASK,	COM,		{ RS } },
 
@@ -2634,7 +2741,7 @@ OP(6):
 { "tlbli",   X(31,1010), XRTRA_MASK,	PPC,		{ RB } },
 
 { "dcbz",    X(31,1014), XRT_MASK,	PPC,		{ RA, RB } },
-{ "dclz",    X(31,1014), XRT_MASK,	PPC,		{ RA, RB } },
+{ "dcbz128", X(31,1014)|(1<<21), XRT_MASK,	PPC,		{ RA, RB } },
 
 { "lvebx",   X(31,   7), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "lvehx",   X(31,  39), X_MASK,	PPCVEC,		{ VD, RA, RB } },
@@ -2643,6 +2750,8 @@ OP(6):
 { "lvsr",    X(31,  38), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "lvx",     X(31, 103), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "lvxl",    X(31, 359), X_MASK,	PPCVEC,		{ VD, RA, RB } },
+{ "lvlx",    X(31, 519), X_MASK,	PPCVEC,		{ VD, RA, RB } },
+{ "lvrx",    X(31, 551), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "stvebx",  X(31, 135), X_MASK,	PPCVEC,		{ VS, RA, RB } },
 { "stvehx",  X(31, 167), X_MASK,	PPCVEC,		{ VS, RA, RB } },
 { "stvewx",  X(31, 199), X_MASK,	PPCVEC,		{ VS, RA, RB } },
