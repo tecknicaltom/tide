@@ -69,8 +69,6 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 		bool need_paren;
 
 		table_op = PPC_OP (opcode->opcode);
-		if (op < table_op) break;
-		if (op > table_op) continue;
 
 		if ((insn.data & opcode->mask) != opcode->opcode || (opcode->flags & dialect) == 0) {
 			continue;
