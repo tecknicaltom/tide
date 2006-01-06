@@ -1483,67 +1483,6 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "vmrglw128",   VX128(6, 832), VX128_MASK, PPCVEC, { VD128, VA128, VB128 } },
 { "vupkhsb128",  VX128(6, 896), VX128_MASK, PPCVEC, { VD128, VB128 } },
 { "vupklsb128",  VX128(6, 960), VX128_MASK, PPCVEC, { VD128, VB128 } },
-#if 0
-
-  800B787C: 18036F90 vrlimi128    vr0,vr13,3,2
-
-op(6) | d(5) | a(5) | b(5) | va(1) | op(3) | X | va(1) | op(1) | vd(2) | vb(2)
-
-        o oo
-bbbb bVoo ooVo
-0110 1111 1001 0000
-      1X1 111X
-vperm
-0000 0010 0001 0000
-      XX    XX
-d3d
-0000 0110 0001 0000
-      XXX llXX
-
-  80060A68: 180007B0 ???
-  80060A70: 180007F0 vupkd3d128   vr0,vr0,0<D3DCOLOR>
-
-0x610: xtra: 000 vcfpsxws128
-0x610: va:   001 
-0x610: va:   010 
-0x610: va:   011
-0x610: va:   100
-0x610: va:   101
-0x610: xtra: 110 vrlimi128
-
-  80060A14: 18000230 vcfpsxws128  vr0,vr0,0
-  80060A24: 18000610 vpkd3d128    vr0,vr0,0<D3DCOLOR>,0,0
-
-  80060A48: 18000210 vpermwi128   vr0,vr0,0		; [0|0|0|0]
-  80060A3C: 18010210 vpermwi128   vr0,vr0,1		; [0|0|0|1]
-  80060A40: 18020210 vpermwi128   vr0,vr0,2		; [0|0|0|2]
-  80060A50: 18000250 vpermwi128   vr0,vr0,32		; [0|2|0|0]
-  80060A58: 18000290 vpermwi128   vr0,vr0,64		; [1|0|0|0]
-  80060A60: 180002D0 vpermwi128   vr0,vr0,96		; [1|2|0|0]
-  80060A68: 18000310 vpermwi128   vr0,vr0,128		; [2|0|0|0]
-  80060A70: 18000350 vpermwi128   vr0,vr0,160		; [2|2|0|0]
-  80060A78: 18000390 vpermwi128   vr0,vr0,192		; [3|0|0|0]
-  80060A80: 180003D0 vpermwi128   vr0,vr0,224		; [3|2|0|0]
-#endif
-
-#if 0
-
-OP(6):
-
-op(6) | d(5) | a(5) | b(5) | va(1) | op(3) | X | va(1) | op(1) | vd(2) | vb(2)
-
-  800B6488: 199EECF3 vslw128      vr12,vr126,vr125   0011110011
-  800B6470: 18FEF4F3 vslw128      vr7,vr126,vr126    0011110011
-  800B65E0: 1984F0D3 vslw128      vr12,vr4,vr126     0011010011
-  800B68C0: 1968F0D3 vslw128      vr11,vr8,vr126     0011010011
-
-  800AD984: 19B7CF23 vmrghw128    vr13,vr119,vr121
-  800AD990: 1996C763 vmrglw128    vr12,vr118,vr120
-  800AD998: 1816C723 vmrghw128    vr0,vr118,vr120
-  800B6464: 1944FFF3 vupkd3d128   vr10,vr127,1
-  800B787C: 18036F90 vrlimi128    vr0,vr13,3,2
-  801029D0: 15AD6090 vmulfp128    vr13,vr13,vr12
-#endif
 
 { "mulli",   OP(7),	OP_MASK,	PPCCOM,		{ RT, RA, SI } },
 
