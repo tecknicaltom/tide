@@ -125,7 +125,7 @@ void ht_layer_textfile::set_lexer(ht_syntax_lexer *lexer)
 
 ht_ltextfile_line::~ht_ltextfile_line()
 {
-	free(in_memory.data);
+	if (is_in_memory) free(in_memory.data);
 }
 
 /*
