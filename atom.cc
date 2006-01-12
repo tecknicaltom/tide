@@ -22,8 +22,10 @@
 
 #include "atom.h"
 #include "data.h"
+#include "snprintf.h"
 
 static AVLTree atoms(true);
+static Array atoms2(false);
 
 class Atom: public Object {
 public:
@@ -31,9 +33,9 @@ public:
 	void *value;
 
 	Atom(uint i, void *v)
+	   :  id(i),
+	      value(v)
 	{
-		id = i;
-		value = v;
 	}
 
 	int compareTo(const Object *obj) const
@@ -41,6 +43,12 @@ public:
 		Atom *a = (Atom*)obj;
 		return id - a->id;
 	}
+	
+	int toString(char *buf, int buflen) const
+	{
+		return ht_snprintf(buf, buflen, "[%08x, %p]\n", id, value);
+	}
+	
 };
 
 void *getAtomValue(uint id)
@@ -64,8 +72,13 @@ uint getAtomId(void *value)
 }
 
 #include "htdebug.h"
+
 bool registerAtom(uint id, void *value)
 {
+	Atom a(id, NULL);
+	if (atoms.contains(&a)) {
+		return false;
+	}
 	assert(value);
 	atoms.insert(new Atom(id, value));
 	return true;
