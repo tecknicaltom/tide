@@ -68,7 +68,7 @@ class AnalyserInformation: public ht_statictext {
 	ht_aviewer	*analy;     
 	int		addrs, labels;
 	const char	*atype, *adis;
-	String		*aname;
+	String		aname;
 public:
 		void	init(Bounds *b, ht_aviewer *a);
 	virtual	void done();
