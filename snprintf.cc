@@ -941,7 +941,7 @@ int ht_vfprintf(FILE *file, const char *fmt, va_list args)
 	fputs(buf, file);
 	free(buf);
 #else
-	char buf[1024];
+	char buf[10024];
 	int ret = ht_vsnprintf(buf, sizeof buf, fmt, args);
 	fputs(buf, file);
 #endif
