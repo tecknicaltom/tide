@@ -316,14 +316,14 @@ int Array::delRange(int start, int end)
 	if (!ecount) return 0;
 	if (start < 0) start = 0;
 	if (start > end) return 0;
-	if ((uint)end > ecount-1) end = ecount - 1;
+	if ((uint)end >= ecount) end = ecount - 1;
 	if (own_objects) {
 		uint ende = end;
 		for (uint i = start; i <= ende; i++) {
 			freeObj(elems[i]);
 		}
 	}
-	memmove(elems+start, elems+end+1, sizeof (*elems) * (end-start+1));
+	memmove(elems+start, elems+end+1, sizeof (*elems) * (ecount-end-1));
 	ecount -= end-start+1;
 	checkShrink();
 	return end-start+1;
@@ -1739,7 +1739,7 @@ int AVLTree::loadR(ObjectStream &s, BinTreeNode *&n, int l, int r)
 void AVLTree::load(ObjectStream &s)
 {
 	const void *m = getAtomValue(GETX_INT32X(s, "comparator"));
-	if (!m) throw MsgException("AVLTree::load() : invalid 'comparator' !");
+	if (!m) throw MsgException("AVLTree::load(): invalid 'comparator'!");
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
