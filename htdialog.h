@@ -102,7 +102,7 @@ class ht_checkboxes: public ht_cluster {
 protected:
 			dword state;
 public:
-			void	init(bounds *b, ht_string_list *strings);
+		void	init(bounds *b, ht_string_list *strings);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -529,7 +529,7 @@ protected:
 	ht_list	*history;
 	virtual	void init_text_listbox(bounds *b);
 public:
-			void init(bounds *b, ht_list *hist);
+		void init(bounds *b, ht_list *hist);
 	virtual	void getdata(ht_object_stream *s);
 	virtual	void setdata(ht_object_stream *s);
 };
@@ -548,7 +548,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, const char *text, ht_view *connected);
+		void	init(bounds *b, const char *text, ht_view *connected);
 	virtual	void	done();
 /* overwritten */
 	virtual	void draw();
@@ -566,9 +566,9 @@ protected:
 public:
 	ht_statictext *text;
 	
-			void	init(bounds *b, char *hint);
+		void	init(bounds *b, char *hint);
 /* new */
-			void settext(const char *text);
+		void settext(const char *text);
 };
 
 /*
@@ -591,7 +591,7 @@ protected:
 /* overwritten */
 	virtual	char *defaultpalette();
 public:
-			void	init(bounds *b, int selected, int flags);
+		void	init(bounds *b, int selected, int flags);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
