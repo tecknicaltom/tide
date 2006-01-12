@@ -138,13 +138,13 @@ int hist_atoms[]={
 
 void create_hist_atom(uint atom)
 {
-	List *c=new Array(true);
+	List *c = new Array(true);
 	registerAtom(atom, c);
 }
 
 void destroy_hist_atom(uint atom)
 {
-	List *c=(List*)getAtomValue(atom);
+	List *c = (List*)getAtomValue(atom);
 	if (c) {
 		unregisterAtom(atom);
 		delete c;
@@ -185,12 +185,12 @@ BUILDER(ATOM_HT_HISTORY_ENTRY, ht_history_entry, Object);
 
 bool init_hist()
 {
-	for (uint i=0; i<sizeof hist_atoms / sizeof hist_atoms[0]; i++) {
+	for (uint i=0; i < sizeof hist_atoms / sizeof hist_atoms[0]; i++) {
 		create_hist_atom(hist_atoms[i]);
 	}
-	
+
 	REGISTER(ATOM_HT_HISTORY_ENTRY, ht_history_entry);
-	
+
 	return true;
 }
 
