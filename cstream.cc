@@ -47,6 +47,7 @@ ht_compressed_stream::~ht_compressed_stream()
 	free(buffer);
 }
 
+#include "snprintf.h"
 void ht_compressed_stream::flush_compressed()
 {
 	if (bufferpos) {
@@ -55,13 +56,20 @@ void ht_compressed_stream::flush_compressed()
 		lzo_uint cbuf_len;
 		byte n[4];
 		
-		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
+		for (int i=0; i < bufferpos; i++) {
+			if (buffer[i] == 1) ht_printf("a");
+		}
+		
+		if (bufferpos == 1) ht_printf("b");
+		
+//		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
 
 		createForeignInt(n, bufferpos, 4, big_endian);
 		mStream->writex(n, 4);
 		createForeignInt(n, cbuf_len, 4, big_endian);
 		mStream->writex(n, 4);
-		mStream->writex(cbuf, cbuf_len);
+//		mStream->writex(cbuf, cbuf_len);
+		mStream->writex(buffer, bufferpos);
 		
 		bufferpos = 0;
 	}
