@@ -279,6 +279,7 @@ static void params(int argc, char *argv[], bool started)
 #include <windows.h>
 #endif
 
+
 int main(int argc, char *argv[])
 {
 #if defined(WIN32) || defined(__WIN32__)
