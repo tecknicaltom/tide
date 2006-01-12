@@ -106,10 +106,10 @@ void VfsListbox::init(Bounds *b, Container *vl, ht_text *sp)
 {
 	cvfs = NULL;
 	show_pos = sp;
-	ht_itext_listbox::init(b);
-	vfs_list = vl;
 	cdir[0] = 0;
 	cproto[0] = 0;
+	vfs_list = vl;
+	ht_itext_listbox::init(b);
 	config_changed();
 }
 
