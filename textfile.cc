@@ -137,7 +137,6 @@ ht_ltextfile::ht_ltextfile(File *streamfile, bool own_streamfile, ht_syntax_lexe
 {
 	lexer = l;
 	lines = new Array(true);
-	lines->init();
 	orig_lines = new Array(true);
 	reread();
 	first_parse_dirty_line = linecount();
@@ -242,10 +241,10 @@ void ht_ltextfile::delete_chars(uint line, uint ofs, uint count)
 {
 	ht_ltextfile_line *e=fetch_line_into_memory(line);
 	if (e) {
-		char *ostr=e->in_memory.data;
-		uint olen=e->in_memory.len;
+		char *ostr = e->in_memory.data;
+		uint olen = e->in_memory.len;
 		
-		if (ofs<olen) {
+		if (ofs < olen) {
 			if (ofs+count>olen) count=olen-ofs;
 			char *nstr = ht_malloc(olen-count);
 			memcpy(nstr, ostr, ofs);
@@ -263,7 +262,7 @@ void ht_ltextfile::delete_chars(uint line, uint ofs, uint count)
 void ht_ltextfile::delete_lines(uint line, uint count)
 {
 	if (count) {
-		lines->delRange(line, line+count);
+		lines->delRange(line, line+count-1);
 		dirty_parse(line);
 		dirty_nofs(line);
 		dirty=true;
