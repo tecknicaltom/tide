@@ -85,7 +85,7 @@ int AnalyserInformation::gettext(char *buf, int maxlen)
 		"Using disassembler: %s\n\n"
 		"Known locations: %d\n"
 		"Known symbols: %d\n\n",
-		atype, aname,
+		atype, &aname,
 		adis,
 		addrs, labels);
 }
@@ -96,7 +96,7 @@ bool AnalyserInformation::idle()
 		addrs = analy->analy->getLocationCount();
 		labels = analy->analy->getSymbolCount();
 		atype = analy->analy->getType();
-		analy->analy->getName(*aname);
+		analy->analy->getName(aname);
 		if (analy->analy->disasm) {
 			adis = analy->analy->disasm->getName();
 		} else {
