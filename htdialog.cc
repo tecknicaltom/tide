@@ -904,22 +904,22 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				break;
 			case K_Shift_Home:
 			case K_Home:
-				is_virgin=false;
-				if ((k==K_Shift_Home) != selectmode) {
+				is_virgin = false;
+				if ((k == K_Shift_Home) != selectmode) {
 					select_add(*curchar, *text);
 				}					
-				*curchar=*text;
+				*curchar = *text;
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Shift_End:
 			case K_End:
-				is_virgin=false;
-				if ((k==K_Shift_End) != selectmode) {
+				is_virgin = false;
+				if ((k == K_Shift_End) != selectmode) {
 					select_add(*curchar, *text+*textlen);
 				}						
-				*curchar=*text+*textlen;
+				*curchar = *text + *textlen;
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
@@ -931,16 +931,16 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Meta_X:
 			case K_Shift_Delete:
-				if (*selend>*selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
+				if (*selend > *selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
 			case K_Meta_D:
 			case K_Control_Delete:
-				if (*selend>*selstart) {
+				if (*selend > *selstart) {
 					memmove(*selstart, *selend, *textlen-(*selend-*text));
-					*textlen-=*selend-*selstart;
-					*curchar=*selstart;
-					*selstart=0;
-					*selend=0;
-					is_virgin=false;
+					*textlen -= *selend - *selstart;
+					*curchar = *selstart;
+					*selstart = 0;
+					*selend = 0;
+					is_virgin = false;
 					correct_viewpoint();
 				}
 				dirtyview();
@@ -948,8 +948,8 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				return;
 			case K_Meta_C:
 			case K_Control_Insert:
-				if (*selend>*selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
-				is_virgin=false;
+				if (*selend > *selstart) clipboard_copy("inputfield", *selstart, *selend-*selstart);
+				is_virgin = false;
 				dirtyview();
 				clearmsg(msg);
 				return;
@@ -959,14 +959,14 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				byte *buf = ht_malloc(maxsize);
 				int r = clipboard_paste(buf, maxsize);
 				if (r) {
-					for (int i=0; i<r; i++) {
+					for (int i=0; i < r; i++) {
 						setbyte(buf[r-i-1]);
 					}
 					*selstart=*curchar;
 					*selend=*curchar+r;
 				}
 				delete buf;
-				is_virgin=false;
+				is_virgin = false;
 				dirtyview();
 				clearmsg(msg);
 				return;
@@ -974,12 +974,12 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 			default:
 				if (msg->data1.integer >= ' ' && msg->data1.integer < 256) {
 					if (is_virgin) {
-						is_virgin=false;
-						*selstart=0;
-						*selend=0;
-						*textlen=0;
-						*curchar=*text;
-						ofs=0;
+						is_virgin = false;
+						*selstart = 0;
+						*selend = 0;
+						*textlen = 0;
+						*curchar = *text;
+						ofs = 0;
 					}
 					inputbyte(msg->data1.integer);
 					dirtyview();
