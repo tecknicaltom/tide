@@ -113,7 +113,7 @@ uint ht_reloc_file::read(void *buf, uint size)
 			 * we'd have some undefined bytes in b. */
 			memset(b, 0, sizeof b);
 
-			/* never memmove beyond Bounds of b. (maybe you didn't call finalize() ?) */
+			/* never memmove beyond Bounds of b. (maybe you didn't call finalize()?) */
 			assert(mm+s <= sizeof b);
 
 			/* move read data to b as good as we can. */
