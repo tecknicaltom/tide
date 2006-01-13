@@ -47,7 +47,6 @@ ht_compressed_stream::~ht_compressed_stream()
 	free(buffer);
 }
 
-#include "snprintf.h"
 void ht_compressed_stream::flush_compressed()
 {
 	if (bufferpos) {
@@ -55,20 +54,15 @@ void ht_compressed_stream::flush_compressed()
 		byte workbuf[LZO1X_1_MEM_COMPRESS];
 		lzo_uint cbuf_len;
 		byte n[4];
-		
-		for (int i=0; i < bufferpos; i++) {
-			if (buffer[i] == 1) ht_printf("a");
-		}
-		
-		if (bufferpos == 1) ht_printf("b");
-		
-//		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
+
+		memset(workbuf, 0, sizeof workbuf);		
+		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
 
 		createForeignInt(n, bufferpos, 4, big_endian);
 		mStream->writex(n, 4);
 		createForeignInt(n, cbuf_len, 4, big_endian);
 		mStream->writex(n, 4);
-//		mStream->writex(cbuf, cbuf_len);
+		mStream->writex(cbuf, cbuf_len);
 		mStream->writex(buffer, bufferpos);
 		
 		bufferpos = 0;
@@ -93,11 +87,12 @@ void ht_compressed_stream::flush_uncompressed()
 		if (uncompressed_len > COMPRESSED_STREAM_DEFAULT_GRANULARITY
 		 || cbuf_len > 2*COMPRESSED_STREAM_DEFAULT_GRANULARITY) throw IOException(EIO);
 
-		buffer = (byte *)smalloc(uncompressed_len);
+		buffer = ht_malloc(uncompressed_len);
 		byte cbuf[cbuf_len];
 
 		mStream->readx(cbuf, cbuf_len);
 		lzo_uint dummy;
+		
 		lzo1x_decompress(cbuf, cbuf_len, buffer, &dummy, NULL);
 		if (dummy != uncompressed_len) throw IOException(EIO);
 
