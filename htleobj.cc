@@ -92,7 +92,7 @@ static ht_view *htleobjects_init(Bounds *b, File *file, ht_format_group *group)
 		char n[5];
 		m->add_staticmask_ptable(leobj, h+le_shared->hdr.objtab+i*24, le_bigendian);
 		
-		memmove(&n, le_shared->objmap.header[i].name, 4);
+		memcpy(&n, le_shared->objmap.header[i].name, 4);
 		n[4]=0;
 
 		bool use32=le_shared->objmap.header[i].flags & LE_OBJECT_FLAG_USE32;
