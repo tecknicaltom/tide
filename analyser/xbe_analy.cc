@@ -314,8 +314,7 @@ const char *XBEAnalyser::getSegmentNameByAddress(Address *Addr)
 	
 	if (!b) return NULL;
 
-	memmove(sectionname, "<notyet>", 8);
-	sectionname[8]=0;
+	strcpy(sectionname, "<notyet>");
 	return sectionname;
 }
 
