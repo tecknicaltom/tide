@@ -407,7 +407,7 @@ bool ht_ltextfile::getline(uint line, uint pofs, void *buf, uint buflen, uint *r
 			uint l=e->in_memory.len;
 			if (l>buflen-1) l=buflen-1;
 			if (pofs>l) l=0; else l-=pofs;
-			memmove(buf, e->in_memory.data+pofs, l);
+			memcpy(buf, e->in_memory.data+pofs, l);
 			ret=l;
 		} else {
 			uint l=e->on_disk.len;
