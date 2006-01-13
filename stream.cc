@@ -1059,23 +1059,22 @@ void LocalFile::truncate(FileOfs newsize)
 int LocalFile::vcntl(uint cmd, va_list vargs)
 {
 	switch (cmd) {
-		case FCNTL_FLUSH_STAT: {
-			IOAccessMode m = getAccessMode();
-			int e, f;
-			e = setAccessMode(IOAM_NULL);
-			f = setAccessMode(m);
-			return e ? e : f;
-		}
-		case FCNTL_GET_FD: {	// (int &fd)
-/*			if (file) {
-				int *pfd = va_arg(vargs, int*);
-				*pfd = fileno(file);
-				return 0;
-			}*/
-			// FIXME:
-			assert(0);
-			break;
-		}
+	case FCNTL_FLUSH_STAT: {
+		IOAccessMode m = getAccessMode();
+		int e, f;
+		e = setAccessMode(IOAM_NULL);
+		f = setAccessMode(m);
+		return e ? e : f;
+	}
+	case FCNTL_GET_FD: 	// (int &fd)
+/*		if (file) {
+			int *pfd = va_arg(vargs, int*);
+			*pfd = fileno(file);
+			return 0;
+		}*/
+		// FIXME:
+		assert(0);
+		break;
 	}
 	return File::vcntl(cmd, vargs);
 }
@@ -1367,9 +1366,9 @@ void MemoryFile::truncate(FileOfs newsize)
 uint MemoryFile::write(const void *b, uint size)
 {
 	while (pos+size >= bufsize) extendBuf();
-	memmove(((byte*)buf)+pos, b, size);
+	memcpy(((byte*)buf) + pos, b, size);
 	pos += size;
-	if (pos>dsize) dsize = pos;
+	if (pos > dsize) dsize = pos;
 	mcount++;
 	return size;
 }
