@@ -1153,21 +1153,21 @@ int ht_uformat_viewer::cursor_up(int n)
 				while (prev_line(&c, 1) && (c_ypos>=0)) {
 					c_ypos--;
 					c.sub->getline(c_line, c.line_id);
-					int g=tag_count_groups(c_line);
-					if (d_tag_group<g) c_tag_group=d_tag_group;
+					int g = tag_count_groups(c_line);
+					if (d_tag_group < g) c_tag_group = d_tag_group;
 					int s;
-					if (c_tag_group>=g) {
-						c_tag_group=g-1;
-						s=tag_count_selectable_tags_in_group(c_line, c_tag_group);
+					if (c_tag_group >= g) {
+						c_tag_group = g-1;
+						s = tag_count_selectable_tags_in_group(c_line, c_tag_group);
 						if (s) {
 							c_tag_idx=s-1;
 							r = 1;
 							break;
 						}
 					} else {
-						s=tag_count_selectable_tags_in_group(c_line, c_tag_group);
+						s = tag_count_selectable_tags_in_group(c_line, c_tag_group);
 						if (s) {
-							if (c_tag_idx>=s) c_tag_idx=s-1;
+							if (c_tag_idx >= s) c_tag_idx = s-1;
 							r = 1;
 							break;
 						}
@@ -1175,12 +1175,12 @@ int ht_uformat_viewer::cursor_up(int n)
 				}
 				if (r) {
 					cursor = c;
-					memmove(cursor_line, c_line, sizeof cursor_line);
+					memcpy(cursor_line, c_line, sizeof cursor_line);
 					cursorline_dirty();
-					cursor_ypos=c_ypos;
-					cursor.tag_idx=c_tag_idx;
-					cursor.tag_group=c_tag_group;
-					if (cursor_ypos<=-1) scroll_up(-cursor_ypos);
+					cursor_ypos = c_ypos;
+					cursor.tag_idx = c_tag_idx;
+					cursor.tag_group = c_tag_group;
+					if (cursor_ypos <= -1) scroll_up(-cursor_ypos);
 					update_misc_info();
 					update_visual_info();
 					if (edit()) update_micropos();
@@ -1189,38 +1189,38 @@ int ht_uformat_viewer::cursor_up(int n)
 			} else {
 				int r=0;
 				char c_line[1024];
-				int c_tag_idx=cursor.tag_idx;
-				int c_tag_group=cursor.tag_group;
-				int d_tag_group=cursor.tag_group;
+				int c_tag_idx = cursor.tag_idx;
+				int c_tag_group = cursor.tag_group;
+				int d_tag_group = cursor.tag_group;
 				uformat_viewer_pos c;
 				int c_ypos;
-				if (cursor_state==cursor_state_invisible) {
+				if (cursor_state == cursor_state_invisible) {
 					c = top;
-					c_ypos=0;
+					c_ypos = 0;
 				} else {
 					c = cursor;
-					c_ypos=cursor_ypos;
+					c_ypos = cursor_ypos;
 				}
-				int nc=prev_line(&c, n);
-				c_ypos-=nc;
+				int nc = prev_line(&c, n);
+				c_ypos -= nc;
 
 				while (nc--) {
 					c.sub->getline(c_line, c.line_id);
-					int g=tag_count_groups(c_line);
-					if (d_tag_group<g) c_tag_group=d_tag_group;
+					int g = tag_count_groups(c_line);
+					if (d_tag_group < g) c_tag_group=d_tag_group;
 					int s;
-					if (c_tag_group>=g) {
-						c_tag_group=g-1;
-						s=tag_count_selectable_tags_in_group(c_line, c_tag_group);
+					if (c_tag_group >= g) {
+						c_tag_group = g-1;
+						s = tag_count_selectable_tags_in_group(c_line, c_tag_group);
 						if (s) {
-							c_tag_idx=s-1;
-							r=1;
+							c_tag_idx = s-1;
+							r = 1;
 							break;
 						}
 					}
-					s=tag_count_selectable_tags_in_group(c_line, c_tag_group);
+					s = tag_count_selectable_tags_in_group(c_line, c_tag_group);
 					if (s) {
-						if (c_tag_idx>=s) c_tag_idx=s-1;
+						if (c_tag_idx >= s) c_tag_idx = s-1;
 						r=1;
 						break;
 					}
@@ -1229,12 +1229,12 @@ int ht_uformat_viewer::cursor_up(int n)
 				}
 				if (r) {
 					cursor = c;
-					memmove(cursor_line, c_line, sizeof cursor_line);
+					memcpy(cursor_line, c_line, sizeof cursor_line);
 					cursorline_dirty();
 					cursor_ypos=c_ypos;
 					cursor.tag_idx=c_tag_idx;
 					cursor.tag_group=c_tag_group;
-					if (-cursor_ypos+n-nc-1>0) scroll_up(-cursor_ypos+n-nc-1);
+					if (-cursor_ypos+n-nc-1 > 0) scroll_up(-cursor_ypos+n-nc-1);
 					update_misc_info();
 					update_visual_info();
 					if (edit()) update_micropos();
@@ -1294,7 +1294,7 @@ int ht_uformat_viewer::cursor_down(int n)
 				}
 				if (r) {
 					cursor = c;
-					memmove(cursor_line, c_line, sizeof cursor_line);
+					memcpy(cursor_line, c_line, sizeof cursor_line);
 					cursorline_dirty();
 					cursor_ypos=c_ypos;
 					cursor.tag_idx=c_tag_idx;
@@ -1351,7 +1351,7 @@ int ht_uformat_viewer::cursor_down(int n)
 				}
 				if (r) {
 					cursor = c;
-					memmove(cursor_line, c_line, sizeof cursor_line);
+					memcpy(cursor_line, c_line, sizeof cursor_line);
 					cursorline_dirty();
 					cursor_ypos=c_ypos;
 					cursor.tag_idx=c_tag_idx;
@@ -2718,6 +2718,8 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 				o += s;
 			}
 
+			if (!o) o = clipboard_getsize();
+
 			FileOfs s = file->getSize();
 
 			char buf[32];
@@ -3549,13 +3551,13 @@ int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 		fl=flags;
 		if (fl->bitidx==-1) fl++;
 		do {
-			t=x;
-			int l=strlen(fl->desc);
-			memmove(t, fl->desc, l);
-			t+=l;
-			while (t<x+width) *(t++)=' ';
-			t=tag_make_edit_bit(t, offset, fl->bitidx);
-			*t=0;
+			t = x;
+			int l = strlen(fl->desc);
+			memcpy(t, fl->desc, l);
+			t += l;
+			while (t < x+width) *(t++) = ' ';
+			t = tag_make_edit_bit(t, offset, fl->bitidx);
+			*t = 0;
 			m->add_mask(x);
 			fl++;
 		} while (fl->desc);
