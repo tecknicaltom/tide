@@ -2337,7 +2337,7 @@ void ht_app::handlemsg(htmsg *msg)
 
 						File *old = e->layer->getLayered();
 
-						if (f->setAccessMode(old->getAccessMode())) {
+						if (f->setAccessMode(old->getAccessMode()) == 0) {
 							e->layer->setLayered(f, true);
 							e->isfile = true;
 
@@ -3104,8 +3104,8 @@ void ht_file_window::handlemsg(htmsg *msg)
 
 List *build_vfs_list()
 {
-/* build vfs list */
-	List *vfslist=new Array(true);
+	/* build vfs list */
+	List *vfslist = new Array(true);
 
 #if 1
 	/* LocalFS */
@@ -3131,7 +3131,7 @@ List *build_vfs_list()
 	vfslist->insert(reg_vfs);
 #endif
 
-/**/
+	/**/
 	return vfslist;
 }
 
@@ -3186,7 +3186,7 @@ void done_app()
 	out_of_memory_func = &out_of_memory;
 	free(app_memory_reserve);
 
-	delete ((ht_project*)project);
+	delete (Object*)project;
 	delete virtual_fs_list;
 
 	delete loglines;
@@ -3196,6 +3196,6 @@ void done_app()
 		delete app;
 	}
 	
-	if (screen) delete screen;
+	delete screen;
 }
 
