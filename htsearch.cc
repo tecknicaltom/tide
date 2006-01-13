@@ -485,7 +485,7 @@ Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, 
 	ctx->flags = flags;
 	ctx->len = len;
 	ctx->pat = ht_malloc(patlen);
-	memmove(ctx->pat, pat, patlen);
+	memcpy(ctx->pat, pat, patlen);
 	ctx->patlen = patlen;
 
 	ctx->o = ofs;
