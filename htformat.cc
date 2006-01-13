@@ -2692,7 +2692,9 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 				o+=s;
 			}
 			
-			UINT s=file->get_size();
+			UINT s = file->get_size();
+
+			if (!o) o = clipboard_getsize();
 
 			char buf[32];
 			sprintf(buf, "%d", o);
