@@ -242,7 +242,7 @@ static ht_view *htcoffheader_init(Bounds *b, File *file, ht_format_group *group)
 			default: {
 				m->add_staticmask("optional magic                                   "STATICTAG_EDIT_WORD_VE("00000018")" "STATICTAG_DESC_WORD_VE("00000018", ATOM_COFF_OPTIONAL_MAGICS_STR), h+20, coff_bigendian);
 				m->add_mask("-------------------------------------------------------------------------");
-				m->add_mask("Unsupported optional magic ! If you get this message in an original");
+				m->add_mask("Unsupported optional magic! If you get this message in an original");
 				m->add_mask("(unmodified) file, please contact us (see help).");
 			}
 		}
@@ -262,7 +262,7 @@ static ht_view *htcoffheader_init(Bounds *b, File *file, ht_format_group *group)
 		n->add_staticmask_ptable(coff_section, h+20+os+i*40, coff_bigendian);
 
 		char nm[9];
-		memmove(nm, coff_shared->sections.sections[i].name, 8);
+		memcpy(nm, coff_shared->sections.sections[i].name, 8);
 		nm[8] = 0;
 
 		char t[32];
