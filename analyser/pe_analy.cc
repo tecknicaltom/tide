@@ -415,8 +415,8 @@ const char *PEAnalyser::getSegmentNameByAddress(Address *Addr)
 	pe_rva_to_section(sections, r, &i);
 	COFF_SECTION_HEADER *s=sections->sections+i;
 	if (!pe_rva_is_valid(sections, r)) return NULL;
-	memmove(sectionname, s->name, 8);
-	sectionname[8]=0;
+	memcpy(sectionname, s->name, 8);
+	sectionname[8] = 0;
 	return sectionname;
 }
 
