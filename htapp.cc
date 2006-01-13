@@ -2373,7 +2373,7 @@ void ht_app::handlemsg(htmsg *msg)
 
 						ht_streamfile *old = e->layer->get_layered();
 
-						if (f->set_access_mode(old->get_access_mode())) {
+						if (f->set_access_mode(old->get_access_mode()) == 0) {
 							e->layer->set_layered(f);
 							e->isfile = true;
 
