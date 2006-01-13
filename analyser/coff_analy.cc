@@ -325,8 +325,8 @@ const char *CoffAnalyser::getSegmentNameByAddress(Address *Addr)
 	coff_rva_to_section(sections, rva, &i);
 	COFF_SECTION_HEADER *s=sections->sections+i;
 	if (!coff_rva_is_valid(sections, rva)) return NULL;
-	memmove(sectionname, s->name, 8);
-	sectionname[8]=0;
+	memcpy(sectionname, s->name, 8);
+	sectionname[8] = 0;
 	return sectionname;
 }
 
