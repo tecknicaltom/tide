@@ -167,9 +167,9 @@ TAGSTRING *tag_make_edit_dword(TAGSTRING *buf, FileOfs ofs, tag_endian e)
 
 TAGSTRING *tag_make_edit_qword(TAGSTRING *buf, FileOfs ofs, tag_endian e)
 {
-	ht_tag_edit_qword_generic *tag=(ht_tag_edit_qword_generic*)buf;
-	tag->escape='\e';
-	byte m=0xff;
+	ht_tag_edit_qword_generic *tag = (ht_tag_edit_qword_generic*)buf;
+	tag->escape = '\e';
+	byte m = 0xff;
 	switch (e) {
 	case tag_endian_big:
 		m = HT_TAG_EDIT_QWORD_BE;
@@ -181,27 +181,27 @@ TAGSTRING *tag_make_edit_qword(TAGSTRING *buf, FileOfs ofs, tag_endian e)
 		m = HT_TAG_EDIT_QWORD_VE;
 		break;
 	}
-	tag->magic=m;
+	tag->magic = m;
 	UNALIGNED_MOVE(tag->offset, ofs);
-	return buf+sizeof (ht_tag_edit_qword_generic);
+	return buf + sizeof (ht_tag_edit_qword_generic);
 }
 
 TAGSTRING *tag_make_edit_time(TAGSTRING *buf, FileOfs ofs)
 {
-	ht_tag_edit_time *tag=(ht_tag_edit_time*)buf;
-	tag->escape='\e';
-	tag->magic=HT_TAG_EDIT_TIME;
+	ht_tag_edit_time *tag = (ht_tag_edit_time*)buf;
+	tag->escape = '\e';
+	tag->magic = HT_TAG_EDIT_TIME;
 	UNALIGNED_MOVE(tag->offset, ofs);
-	return buf+sizeof (ht_tag_edit_time);
+	return buf + sizeof (ht_tag_edit_time);
 }
 
 TAGSTRING *tag_make_edit_char(TAGSTRING *buf, FileOfs ofs)
 {
-	ht_tag_edit_char *tag=(ht_tag_edit_char*)buf;
-	tag->escape='\e';
-	tag->magic=HT_TAG_EDIT_CHAR;
+	ht_tag_edit_char *tag = (ht_tag_edit_char*)buf;
+	tag->escape = '\e';
+	tag->magic = HT_TAG_EDIT_CHAR;
 	UNALIGNED_MOVE(tag->offset, ofs);
-	return buf+sizeof (ht_tag_edit_char);
+	return buf + sizeof (ht_tag_edit_char);
 }
 
 TAGSTRING *tag_make_edit_bit(TAGSTRING *buf, FileOfs ofs, int bitidx)
