@@ -1663,7 +1663,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 			return true;
 		}
 		case HT_TAG_EDIT_CHAR: {
-			if ((char)b>=32) {
+			if ((char)b >= 32) {
 				pwrite(cursor_tag_offset, &b, 1);
 				cursormicroedit_forward();
 				return true;
@@ -1671,24 +1671,24 @@ bool ht_uformat_viewer::edit_input(byte b)
 			break;
 		}
 		case HT_TAG_EDIT_BIT: {
-			if ((b=='1') || (b=='0') || b==' ') {
+			if (b == '1' || b == '0' || b == ' ') {
 				byte d;
 				cursorline_get();
-				char *t=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
-				int shift=((ht_tag_edit_bit*)t)->bitidx;
-				uint32 mask=1 << (shift%8);
-				int op=shift/8;
+				char *t = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+				int shift = ((ht_tag_edit_bit*)t)->bitidx;
+				uint32 mask = 1 << (shift%8);
+				int op = shift/8;
 				pread(cursor_tag_offset+op, &d, 1);
 				switch (b) {
-					case '0':
-						d&=~mask;
-						break;
-					case '1':
-						d|=mask;
-						break;
-					case K_Space:
-						d^=mask;
-						break;
+				case '0':
+					d &= ~mask;
+					break;
+				case '1':
+					d |= mask;
+					break;
+				case K_Space:
+					d ^= mask;
+					break;
 				}
 				pwrite(cursor_tag_offset+op, &d, 1);
 				cursormicroedit_forward();
@@ -1707,106 +1707,106 @@ bool ht_uformat_viewer::edit_input(byte b)
 				tm q = *t;
 				int k;
 				bool worked = false;
-#define DEC_MASK(value, mask) ((value) - (value) / (mask) % 10 * (mask))
+				#define DEC_MASK(value, mask) ((value) - (value) / (mask) % 10 * (mask))
 				switch (cursor_tag_micropos) {
-					case 0:
-						k = q.tm_hour % 10 + h * 10;
-						if (k < 24) {
-							q.tm_hour = k;
-							worked = true;
-						}
-						break;
-					case 1:
-						k = q.tm_hour - q.tm_hour % 10 + h;
-						if (k < 24) {
-							q.tm_hour = k;
-							worked = true;
-						}
-						break;
-					case 2:
-						k = q.tm_min % 10 + h * 10;
-						if (k < 60) {
-							q.tm_min = k;
-							worked = true;
-						}
-						break;
-					case 3:
-						k = q.tm_min - q.tm_min % 10 + h;
-						if (k < 60) {
-							q.tm_min = k;
-							worked = true;
-						}
-						break;
-					case 4:
-						k = q.tm_sec % 10 + h * 10;
-						if (k < 60) {
-							q.tm_sec = k;
-							worked = true;
-						}
-						break;
-					case 5:
-						k = q.tm_sec - q.tm_sec % 10 + h;
-						if (k < 60) {
-							q.tm_sec = k;
-							worked = true;
-						}
-						break;
-					case 6:
-						k = (q.tm_mday % 10) + h * 10;
-						if (k <= 31) {
-							q.tm_mday = k;
-							worked = true;
-						}
-						break;
-					case 7:
-						k = q.tm_mday - q.tm_mday % 10 + h;
-						if (k <= 31) {
-							q.tm_mday = k;
-							worked = true;
-						}
-						break;
-					case 8:
-						k = (q.tm_mon+1) % 10 + h * 10;
-						if (k <= 12) {
-							q.tm_mon = k-1;
-							worked = true;
-						}
-						break;
-					case 9:
-						k = q.tm_mon - q.tm_mon % 10 + h;
-						if (k <= 12) {
-							q.tm_mon = k-1;
-							worked = true;
-						}
-						break;
-					case 10:
-						k = DEC_MASK(q.tm_year, 1000) + h * 1000;
-						if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
-							q.tm_year = k;
-							worked = true;
-						}
-						break;
-					case 11:
-						k = DEC_MASK(q.tm_year, 100) + h * 100;
-						if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
-							q.tm_year = k;
-							worked = true;
-						}
-						break;
-					case 12:
-						k = DEC_MASK(q.tm_year, 10) + h * 10;
-						if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
-							q.tm_year = k;
-							worked = true;
-						}
-						break;
-					case 13:
-						k = DEC_MASK(q.tm_year, 1) + h * 1;
-						if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
-							q.tm_year = k;
-							worked = true;
-						}
-						break;
+				case 0:
+					k = q.tm_hour % 10 + h * 10;
+					if (k < 24) {
+						q.tm_hour = k;
+						worked = true;
+					}
+					break;
+				case 1:
+					k = q.tm_hour - q.tm_hour % 10 + h;
+					if (k < 24) {
+						q.tm_hour = k;
+						worked = true;
+					}
+					break;
+				case 2:
+					k = q.tm_min % 10 + h * 10;
+					if (k < 60) {
+						q.tm_min = k;
+						worked = true;
+					}
+					break;
+				case 3:
+					k = q.tm_min - q.tm_min % 10 + h;
+					if (k < 60) {
+						q.tm_min = k;
+						worked = true;
+					}
+					break;
+				case 4:
+					k = q.tm_sec % 10 + h * 10;
+					if (k < 60) {
+						q.tm_sec = k;
+						worked = true;
+					}
+					break;
+				case 5:
+					k = q.tm_sec - q.tm_sec % 10 + h;
+					if (k < 60) {
+						q.tm_sec = k;
+						worked = true;
+					}
+					break;
+				case 6:
+					k = (q.tm_mday % 10) + h * 10;
+					if (k <= 31) {
+						q.tm_mday = k;
+						worked = true;
+					}
+					break;
+				case 7:
+					k = q.tm_mday - q.tm_mday % 10 + h;
+					if (k <= 31) {
+						q.tm_mday = k;
+						worked = true;
+					}
+					break;
+				case 8:
+					k = (q.tm_mon+1) % 10 + h * 10;
+					if (k <= 12) {
+						q.tm_mon = k-1;
+						worked = true;
+					}
+					break;
+				case 9:
+					k = q.tm_mon - q.tm_mon % 10 + h;
+					if (k <= 12) {
+						q.tm_mon = k-1;
+						worked = true;
+					}
+					break;
+				case 10:
+					k = DEC_MASK(q.tm_year, 1000) + h * 1000;
+					if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
+						q.tm_year = k;
+						worked = true;
+					}
+					break;
+				case 11:
+					k = DEC_MASK(q.tm_year, 100) + h * 100;
+					if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
+						q.tm_year = k;
+						worked = true;
+					}
+					break;
+				case 12:
+					k = DEC_MASK(q.tm_year, 10) + h * 10;
+					if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
+						q.tm_year = k;
+						worked = true;
+					}
+					break;
+				case 13:
+					k = DEC_MASK(q.tm_year, 1) + h * 1;
+					if ((k+1900 >= 1970 ) && (k+1900 < 2106)) {
+						q.tm_year = k;
+						worked = true;
+					}
+					break;
 				}
 				/* FIXME: big bad hack... */
 				if (sizeof(uint32) == sizeof(time_t))
@@ -1836,22 +1836,22 @@ bool ht_uformat_viewer::edit_input(byte b)
 
 int ht_uformat_viewer::edit_input_c2h(byte b)
 {
-	int h=-1;
-	if ((b>='0') && (b<='9')) {
-		h=b-'0';
-	} else if ((b>='a') && (b<='f')) {
-		h=b-'a'+10;
-	} else if ((b>='A') && (b<='F')) {
-		h=b-'A'+10;
+	int h = -1;
+	if (b >= '0' && b <= '9') {
+		h = b-'0';
+	} else if (b >= 'a' && b <= 'f') {
+		h = b-'a'+10;
+	} else if (b >= 'A' && b <= 'F') {
+		h = b-'A'+10;
 	}
 	return h;
 }
 
 int ht_uformat_viewer::edit_input_c2d(byte b)
 {
-	int h=-1;
-	if ((b>='0') && (b<='9')) {
-		h=b-'0';
+	int h = -1;
+	if (b >= '0' && b <= '9') {
+		h = b-'0';
 	}
 	return h;
 }
@@ -1860,19 +1860,19 @@ void ht_uformat_viewer::edit_input_correctpos()
 {
 	uformat_viewer_pos p = top;
 
-/* try finding edited tag by its offset */
+	/* try finding edited tag by its offset */
 	char c_line[1024];  /* FIXME: possible buffer overflow ! */
 	int g=cursor.tag_group;
-	for (int y=0; y<size.h+10; y++) {
+	for (int y=0; y < size.h+10; y++) {
 		if (!p.sub->getline(c_line, p.line_id)) break;
-		int c=tag_count_selectable_tags_in_group(c_line, cursor.tag_group);
-		for (int i=0; i<c; i++) {
-			char *t=tag_get_selectable_tag(c_line, i, cursor.tag_group);
-			if ((tag_get_class(t)==tag_class_edit) && (tag_get_offset(t)==cursor_tag_offset)) {
+		int c = tag_count_selectable_tags_in_group(c_line, cursor.tag_group);
+		for (int i=0; i < c; i++) {
+			char *t = tag_get_selectable_tag(c_line, i, cursor.tag_group);
+			if (tag_get_class(t) == tag_class_edit && tag_get_offset(t) == cursor_tag_offset) {
 				set_cursor(p);
 				cursorline_dirty();
-				cursor.tag_idx=i;
-				cursor.tag_group=g;
+				cursor.tag_idx = i;
+				cursor.tag_group = g;
 				update_misc_info();
 				update_visual_info();
 				return;
@@ -1881,7 +1881,7 @@ void ht_uformat_viewer::edit_input_correctpos()
 		if (!next_line(&p, 1)) break;
 	}
 
-/* try finding edited tag by cursor_ypos */
+	/* try finding edited tag by cursor_ypos */
 	p = top;
 	next_line(&p, cursor_ypos);
 	int ci = cursor.tag_idx;
@@ -1945,20 +1945,20 @@ bool ht_uformat_viewer::find_first_edit_tag_with_offset(uformat_viewer_pos *p, i
 	if (!q.sub) return false;
 	do {
 		q.sub->getline(line, q.line_id);
-		int c=tag_count_selectable_tags(line);
-		char *t=line;
+		int c = tag_count_selectable_tags(line);
+		char *t = line;
 		for (int j=0; j<c; j++) {
-			t=tag_get_selectable_tag(t, 0, -1);
-			if ((tag_get_class(t)==tag_class_edit) && (tag_get_offset(t)==offset)) {
+			t = tag_get_selectable_tag(t, 0, -1);
+			if (tag_get_class(t) == tag_class_edit && tag_get_offset(t) == offset) {
 				*p = q;
 				p->tag_idx = j;
 				p->tag_group = 0;
 				/* FIXME: what about groups ??? */
 				return true;
 			}
-			t+=tag_get_len(t);
+			t += tag_get_len(t);
 		}
-	} while ((next_line(&q, 1)) && (i++<limit));
+	} while (next_line(&q, 1) && i++ < limit);
 	return false;
 }
 
@@ -2987,11 +2987,11 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 	do {
 		int l=0;
 		while (n[l] && n[l]!='\e') { l++; }
-		c+=render_tagstring_single(chars, colors, maxlen, c, n, l, color_normal);
+		c += render_tagstring_single(chars, colors, maxlen, c, n, l, color_normal);
 		
-		n+=l;
-		is_cursor=cursor_in_line && (i==cursor.tag_idx);
-		if (*n=='\e') {
+		n += l;
+		is_cursor = cursor_in_line && i == cursor.tag_idx;
+		if (*n == '\e') {
 			FileOfs tag_offset;
 			vcp tag_color;
 			char str[64];
@@ -3135,29 +3135,29 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 
 					byte buf[4];
 					if (pread(tag_offset, &buf, 4)==4) {
-						d=(buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
+						d = (buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
 						tm *t=gmtime((time_t*)&d);
 						sprintf(str, "%02d:%02d:%02d %02d.%02d.%04d +1900", t->tm_hour, t->tm_min, t->tm_sec, t->tm_mday, t->tm_mon+1, t->tm_year);
 					} else {
 						strcpy(str, "?");
 					}
 					
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, strlen(str), tag_color);
-					n+=HT_TAG_EDIT_TIME_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, str, strlen(str), tag_color);
+					n += HT_TAG_EDIT_TIME_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_CHAR: {
 					char d;
 					
-					tag_offset=tag_get_offset(n);
-					tag_color=get_tag_color_edit(tag_offset, 1, (g==cursor.tag_group), is_cursor);
+					tag_offset = tag_get_offset(n);
+					tag_color = get_tag_color_edit(tag_offset, 1, (g==cursor.tag_group), is_cursor);
 					
-					if (pread(tag_offset, &d, 1)!=1) {
-						d='?';
+					if (pread(tag_offset, &d, 1) != 1) {
+						d = '?';
 					}
 					
-					c+=render_tagstring_single(chars, colors, maxlen, c, &d, 1, tag_color);
-					n+=HT_TAG_EDIT_CHAR_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, &d, 1, tag_color);
+					n += HT_TAG_EDIT_CHAR_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_BIT: {
@@ -3283,7 +3283,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					if (color_normal == (int)0xffffffff) {
 						color_normal = getcolor(palidx_generic_body);
 					}
-					n+=HT_TAG_COLOR_LEN;
+					n += HT_TAG_COLOR_LEN;
 					continue;
 				default: {
 					assert(0);
@@ -3297,13 +3297,13 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 
 uint ht_uformat_viewer::render_tagstring_single(char *chars, vcp *colors, uint maxlen, uint offset, char *text, uint len, vcp color)
 {
-	if (chars) chars+=offset;
-	if (colors) colors+=offset;
-	maxlen-=offset;
-	uint l=(len<maxlen) ? len : maxlen, r=0;
+	if (chars) chars += offset;
+	if (colors) colors += offset;
+	maxlen -= offset;
+	uint l = (len < maxlen) ? len : maxlen, r=0;
 	while (l--) {
-		if (chars) *(chars++)=*(text++);
-		if (colors) *(colors++)=color;
+		if (chars) *chars++ = *text++;
+		if (colors) *colors++ = color;
 		r++;
 	}
 	return r;
@@ -3315,14 +3315,14 @@ void ht_uformat_viewer::print_tagstring(int x, int y, int maxlen, int xscroll, c
 {
 	char text[MAX_PRINT_TAGSTRING_LINELENGTH], *t=text+xscroll;
 	vcp color[MAX_PRINT_TAGSTRING_LINELENGTH], *c=color+xscroll;
-	int l=render_tagstring(text, color,
-		(maxlen+xscroll+1>MAX_PRINT_TAGSTRING_LINELENGTH) ? MAX_PRINT_TAGSTRING_LINELENGTH
+	int l = render_tagstring(text, color,
+		(maxlen+xscroll+1 > MAX_PRINT_TAGSTRING_LINELENGTH) ? MAX_PRINT_TAGSTRING_LINELENGTH
 		: maxlen+xscroll+1, tagstring, cursor_in_line);
 
-	if (l>xscroll) {
-		l-=xscroll;
+	if (l > xscroll) {
+		l -= xscroll;
 		while (l--) {
-			if (x>=size.w) {
+			if (x >= size.w) {
 				buf->printChar(x-1, y, VCP(VC_GREEN, VC_TRANSPARENT), '>');
 				break;
 			}
@@ -3337,14 +3337,14 @@ void ht_uformat_viewer::print_tagstring(int x, int y, int maxlen, int xscroll, c
 void ht_uformat_viewer::select_mode_off()
 {
 	if (cursor_select) {
-		cursor_select=0;
+		cursor_select = 0;
 	}
 }
 
 void ht_uformat_viewer::select_mode_on()
 {
 	if (!cursor_select) {
-		cursor_select=1;
+		cursor_select = 1;
 	}
 }
 
@@ -3394,24 +3394,24 @@ int ht_uformat_viewer::ref()
 	if (tag_get_class(e)==tag_class_sel) {
 		if (!cursor.sub->ref(&cursor_tag_id.id)) {
 			switch (e[1]) {
-				case HT_TAG_SEL:
-					return ref_sel(&cursor_tag_id.id);
-				case HT_TAG_FLAGS:
-					return ref_flags(((ht_tag_flags*)e)->offset, ((ht_tag_flags*)e)->id);
-				case HT_TAG_DESC_BYTE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 1, true);
-				case HT_TAG_DESC_WORD_LE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 2, false);
-				case HT_TAG_DESC_DWORD_LE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 4, false);
-				case HT_TAG_DESC_QWORD_LE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 8, false);
-				case HT_TAG_DESC_WORD_BE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 2, true);
-				case HT_TAG_DESC_DWORD_BE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 4, true);
-				case HT_TAG_DESC_QWORD_BE:
-					return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 8, true);
+			case HT_TAG_SEL:
+				return ref_sel(&cursor_tag_id.id);
+			case HT_TAG_FLAGS:
+				return ref_flags(((ht_tag_flags*)e)->offset, ((ht_tag_flags*)e)->id);
+			case HT_TAG_DESC_BYTE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 1, true);
+			case HT_TAG_DESC_WORD_LE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 2, false);
+			case HT_TAG_DESC_DWORD_LE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 4, false);
+			case HT_TAG_DESC_QWORD_LE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 8, false);
+			case HT_TAG_DESC_WORD_BE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 2, true);
+			case HT_TAG_DESC_DWORD_BE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 4, true);
+			case HT_TAG_DESC_QWORD_BE:
+				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 8, true);
 			}
 		}
 	}
@@ -4253,14 +4253,14 @@ void ht_hex_sub::done()
 	ht_linear_sub::done();
 }
 
-int	ht_hex_sub::get_line_length()
+int ht_hex_sub::get_line_length()
 {
 	return line_length;
 }
 
-void	ht_hex_sub::set_line_length(int Line_length)
+void ht_hex_sub::set_line_length(int Line_length)
 {
-	if (Line_length>0) {
+	if (Line_length > 0) {
 		line_length = Line_length;
 //		dirty_view();
 //		redraw();
