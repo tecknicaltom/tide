@@ -385,14 +385,15 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	String err;
 	if (save_config) {
 		LOG("saving config...");
-		save = save_systemconfig();
+		save = save_systemconfig(err);
 	}
 	LOG("exit.");
 	done();
 	if (save != LS_OK) {
-		printf("save_systemconfig(): error\n");
+		ht_printf("save_systemconfig(): error: %y\n", &err);
 		return 1;
 	}
 	return 0;
