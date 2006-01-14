@@ -80,35 +80,14 @@ char xref_type_short(int xt)
 	return xref_types_short[xt];
 }
 
-char *label_prefixes[] = {
-	"unknown",
-	"loc",
-	"sub",
-	"stub",
-	"wrapper",
-	"offset",
-	"data",
-	"?data",
-	"str"
-};
-
-char *label_prefix(const char *p)
-{
-	if (p <= LPRFX_MAX) {
-		return label_prefixes[(int)p];
-	} else {
-		return (char*)p;
-	}
-}
-
 bool valid_name(const char *str)
 {
 	if (!str || !*str) return false;
-	char mc = mapchar[*str];
+	char mc = mapchar[(unsigned)*str];
 	if (mc == '_' || mc == '?' || mc == 'A' || mc == '@') {
 		str++;
 		while (*str) {
-			mc = mapchar[*str];
+			mc = mapchar[(unsigned)*str];
 			if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 				str++;
 			} else return false;
@@ -126,13 +105,13 @@ void make_valid_name(char *result, const char *str)
 		*result = '\0';
 		return;
 	}
-	char mc = mapchar[*str];
+	char mc = mapchar[(unsigned)*str];
 	if (!(mc == '_' || mc == '?' || mc == 'A' || mc == '@')) {
 		*result++ = '_';
 		str++;
 	}
 	while (*str) {
-		mc = mapchar[*str];
+		mc = mapchar[(unsigned)*str];
 		if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 			*result++ = *str;
 		} else {
