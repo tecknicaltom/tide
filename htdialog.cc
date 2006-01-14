@@ -127,7 +127,7 @@ int ht_dialog::run(bool modal)
 	baseview=this;
 	drawer->sendmsg(msg_draw, 0);
 	screen->show();
-	while (getstate(0)==ds_normal) {
+	while (getstate(0) == ds_normal) {
 		if (keyb_keypressed()) {
 			ht_key k = keyb_getkey();
 			sendmsg(msg_keypressed, k);
@@ -144,12 +144,12 @@ int ht_dialog::run(bool modal)
 		if (!modal) do_idle();
 	}
 	int return_val;
-	int state=getstate(&return_val);
+	int state = getstate(&return_val);
 	screen->setCursor(oldx, oldy);
 	((ht_group*)app)->remove(this);
 	app->focus(orig_focused);
-	baseview=orig_baseview;
-	if (state!=ds_term_cancel) {
+	baseview = orig_baseview;
+	if (state != ds_term_cancel) {
 		return return_val;
 	} else {
 		return 0;
