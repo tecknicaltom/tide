@@ -79,13 +79,13 @@ enum loadstore_result {
 /**/
 
 extern char *systemconfig_file;
-loadstore_result save_systemconfig();
+loadstore_result save_systemconfig(String &error_info);
 bool load_systemconfig(loadstore_result *result, int *error_info);
 
 typedef void (*load_fcfg_func)(ObjectStream &f, void *context);
 typedef void (*store_fcfg_func)(ObjectStream &f, void *context);
 
-loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context);
+loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context, String &error_info);
 loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic, uint version, load_fcfg_func load_func, void *context, String &error_info);
 
 /*
