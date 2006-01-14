@@ -38,12 +38,15 @@ static vc gInverseColors[8] = {
 inline vc mixSingleColor(vc base, vc layer)
 {
 	if (VC_GET_BASECOLOR(base) > 7) return layer;
+	
 	switch (VC_GET_BASECOLOR(layer)) {
 	case VC_TRANSPARENT_EXCLUSIVE_DOM:
 	case VC_TRANSPARENT_EXCLUSIVE:
 	case VC_TRANSPARENT:	return base;
+
 	case VC_DARKEN:		return VC_GET_BASECOLOR(base);
 	case VC_LIGHTEN:	return VC_LIGHT(base);
+
 	case VC_MONOCHROME: {
 		switch (base) {
 		case VC_CYAN:
@@ -61,6 +64,7 @@ inline vc mixSingleColor(vc base, vc layer)
 	}
 	case VC_INVERSE:	return VC_GET_INVERSE(VC_GET_BASECOLOR(base));
 	}
+	
 	return layer;
 }
 
@@ -70,13 +74,13 @@ vcp mixColors(vcp base, vcp layer)
 	vc bg = mixSingleColor(VCP_BACKGROUND(base), VCP_BACKGROUND(layer));
 
 	if (fg == bg) {
-		if ((VC_GET_BASECOLOR(VCP_FOREGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE)
-		|| (VC_GET_BASECOLOR(VCP_BACKGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE_DOM)) {
+		if (VC_GET_BASECOLOR(VCP_FOREGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE
+		 || VC_GET_BASECOLOR(VCP_BACKGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE_DOM) {
 			int fglight = VC_GET_LIGHT(fg);
 			fg = VC_GET_INVERSE(VC_GET_BASECOLOR(bg)) | fglight;
 			fg = VC_BLACK;
-		} else if ((VC_GET_BASECOLOR(VCP_BACKGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE)
-		|| (VC_GET_BASECOLOR(VCP_FOREGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE_DOM)) {
+		} else if (VC_GET_BASECOLOR(VCP_BACKGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE
+		 || VC_GET_BASECOLOR(VCP_FOREGROUND(layer)) == VC_TRANSPARENT_EXCLUSIVE_DOM) {
 			int bglight = VC_GET_LIGHT(bg);
 			bg = VC_GET_INVERSE(VC_GET_BASECOLOR(fg)) | bglight;
 		}
