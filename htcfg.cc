@@ -79,7 +79,7 @@ char *systemconfig_file;
 
 /**/
 
-loadstore_result save_systemconfig()
+loadstore_result save_systemconfig(String &error_info)
 {
 	try {
 		LocalFile f((String)systemconfig_file, IOAM_WRITE, FOM_CREATE);
@@ -113,7 +113,8 @@ loadstore_result save_systemconfig()
 		}
 		/* write config */
 		app->store(*d.get());
-	} catch (const IOException &) {
+	} catch (const Exception &e) {
+		e.reason(error_info);
 		return LS_ERROR_WRITE;
 	}
 	return LS_OK;
@@ -180,7 +181,7 @@ bool load_systemconfig(loadstore_result *result, int *error_info)
 
 /**/
 
-loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context)
+loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic, uint version, store_fcfg_func store_func, void *context, String &error_info)
 {
 	try {
 		LocalFile f((String)fileconfig_file, IOAM_WRITE, FOM_CREATE);
@@ -214,7 +215,8 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 		}
 		/* write config */
 		store_func(*d.get(), context);
-	} catch (const IOException &) {
+	} catch (const Exception &e) {
+		e.reason(error_info);
 		return LS_ERROR_WRITE;
 	}
 	return LS_OK;
