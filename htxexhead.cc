@@ -94,12 +94,14 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 	for (uint i=0; i < xex_shared->header.number_of_sections; i++) {
 //STATICTAG_DESC_BYTE_LE("00000001", ATOM_XEX_INFO_CLASS_MAGICS_STR)
 		char b[200];
-		snprintf(b, sizeof b, 
+		char b2[200];
+		char b3[200];
+		ht_snprintf(b, sizeof b, 
 			"type "STATICTAG_EDIT_BYTE("00000000")STATICTAG_EDIT_BYTE("00000001")STATICTAG_EDIT_BYTE("00000002")STATICTAG_EDIT_BYTE("00000003")"   "
-			"value "STATICTAG_EDIT_DWORD_BE("00000004")"  "
-			STATICTAG_REF("00000000%08x", "03", "raw")
-			, i);
-		s->add_staticmask(b, ofs, true);
+			"value "STATICTAG_EDIT_DWORD_BE("00000004"));
+		ht_snprintf(b2, sizeof b2, STATICTAG_REF("00000000%08x", "03", "raw"), i);
+		ht_snprintf(b3, sizeof b3, "%s %s", b, xex_shared->info_table_cooked[i].start ? b2 : "");
+		s->add_staticmask(b3, ofs, true);
 
 		ofs += 8;
 	}
