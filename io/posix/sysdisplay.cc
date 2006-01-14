@@ -36,61 +36,73 @@ extern struct sigaction old_SIGTRAP;
 uint mapToGraphical(char chr)
 {
 	switch (chr) {
-		case GC_1VLINE:
-				return ACS_VLINE;
-		case GC_1HLINE:
-				return ACS_HLINE;
-		case GC_1CORNER0:
-				return ACS_URCORNER;
-		case GC_1CORNER1:
-				return ACS_LRCORNER;
-		case GC_1CORNER2:
-				return ACS_LLCORNER;
-		case GC_1CORNER3:
-				return ACS_ULCORNER;
-		/* for all 'T's: ACS nomenclature differs from ours */
-		case GC_1UTEE:
-				return ACS_BTEE;
-		case GC_1LTEE:
-				return ACS_RTEE;
-		case GC_1DTEE:
-				return ACS_TTEE;
-		case GC_1RTEE:
-				return ACS_LTEE;
-
-		case GC_1CROSS:
-				return ACS_PLUS;
-
-		case GC_2VLINE:
-				return ACS_VLINE;
-		case GC_2HLINE:
-				return ACS_HLINE;
-		case GC_2CORNER0:
-				return ACS_URCORNER;
-		case GC_2CORNER1:
-				return ACS_LRCORNER;
-		case GC_2CORNER2:
-				return ACS_LLCORNER;
-		case GC_2CORNER3:
-				return ACS_ULCORNER;
-		case GC_LOW:
-				return ACS_CKBOARD;
-		case GC_MEDIUM:
-				return ACS_CKBOARD;
-		case GC_HIGH:
-				return ACS_CKBOARD;
-		case GC_ARROW_UP:
-				return ACS_UARROW;
-		case GC_ARROW_DOWN:
-				return ACS_DARROW;
-		case GC_ARROW_LEFT:
-				return (byte)'<';
-		case GC_ARROW_RIGHT:
-				return (byte)'>';
-		case GC_TRANSPARENT:
-				return 0;
+	case GC_1VLINE:
+		return ACS_VLINE;
+	case GC_1HLINE:
+		return ACS_HLINE;
+	case GC_1CORNER0:
+		return ACS_URCORNER;
+	case GC_1CORNER1:
+		return ACS_LRCORNER;
+	case GC_1CORNER2:
+		return ACS_LLCORNER;
+	case GC_1CORNER3:
+		return ACS_ULCORNER;
+	/* for all 'T's: ACS nomenclature differs from ours */
+	case GC_1UTEE:
+		return ACS_BTEE;
+	case GC_1LTEE:
+		return ACS_RTEE;
+	case GC_1DTEE:
+		return ACS_TTEE;
+	case GC_1RTEE:
+		return ACS_LTEE;
+	case GC_1CROSS:
+		return ACS_PLUS;
+	case GC_2VLINE:
+		return ACS_VLINE;
+	case GC_2HLINE:
+		return ACS_HLINE;
+	case GC_2CORNER0:
+		return ACS_URCORNER;
+	case GC_2CORNER1:
+		return ACS_LRCORNER;
+	case GC_2CORNER2:
+		return ACS_LLCORNER;
+	case GC_2CORNER3:
+		return ACS_ULCORNER;
+	case GC_LOW:
+		return ACS_CKBOARD;
+	case GC_MEDIUM:
+		return ACS_CKBOARD;
+	case GC_HIGH:
+		return ACS_CKBOARD;
+	case GC_FULL:
+		return ACS_BLOCK;
+	case GC_ARROW_UP:
+		return ACS_UARROW;
+	case GC_ARROW_DOWN:
+		return ACS_DARROW;
+	case GC_ARROW_LEFT:
+		return (byte)'<';
+	case GC_ARROW_RIGHT:
+		return (byte)'>';
+	case GC_SMALL_ARROW_UP:
+		return ACS_UARROW;
+	case GC_SMALL_ARROW_DOWN:
+		return ACS_DARROW;
+	case GC_FILLED_CIRCLE:
+		return ACS_BULLET;
+	case GC_FILLED_QUAD:
+		return 'x';
+	case GC_TRANSPARENT:
+		return 0;
+	case GC_FILLED_UPPER:
+		return '^';
+	case GC_FILLED_LOWER:
+		return '_';
 	}
-	return ' ';
+	return '?';
 }
 
 #if 0
@@ -133,10 +145,10 @@ uint mapToGraphical(char chr)
 uint mapCharToSystemCP(char chr, Codepage cp)
 {
 	switch (cp) {
-		case CP_DEVICE: return (byte)chr;
-//		case CP_WINDOWS: return (byte)chr;
-		case CP_GRAPHICAL: return mapToGraphical(chr);
-		default: break;
+	case CP_DEVICE: return (byte)chr;
+//	case CP_WINDOWS: return (byte)chr;
+	case CP_GRAPHICAL: return mapToGraphical(chr);
+	default: break;
 	}
 	return (byte)chr;
 }
@@ -203,7 +215,7 @@ bool gWinChFlag = false;
 
 void SIGWINCH_sigaction(int i, siginfo_t *info, void *v)
 {
-	// FIXME: really, really, really possible ??? (or just Valgrind's fault)
+	// FIXME: really, really, really possible??? (or just Valgrind's fault)
 //	if (!info) return;
 	gWinChFlag = true;
 	if (old_SIGWINCH.sa_sigaction) old_SIGWINCH.sa_sigaction(i, info, v);
@@ -295,37 +307,37 @@ void CursesSystemDisplay::term_on()
 	use_colors = false;
 	use_high_colors = false;
 	if (has_colors()) {
-	    use_colors = true;
-	    char *term = getenv("TERM");
-	    bool bold_support = false;
-	    attr_t attrs;
-	    short cur_color = 1;
-	    start_color();
-/* FIXME: Does this work ???: test if the WA_BOLD attr can be set */
-	    attr_on(WA_BOLD, 0);
-	    attrs = WA_NORMAL;
-	    attr_get(&attrs, &cur_color, 0);
-	    bold_support = (attrs==WA_BOLD);
-	    attr_off(WA_BOLD, 0);
+		use_colors = true;
+		char *term = getenv("TERM");
+		bool bold_support = false;
+		attr_t attrs;
+		short cur_color = 1;
+		start_color();
+		/* FIXME: Does this work ???: test if the WA_BOLD attr can be set */
+		attr_on(WA_BOLD, 0);
+		attrs = WA_NORMAL;
+		attr_get(&attrs, &cur_color, 0);
+		bold_support = (attrs==WA_BOLD);
+		attr_off(WA_BOLD, 0);
 
-	    is_xterm = (term && strcmp(term, "linux") && strcmp(term, "console"));
-	    if (!is_xterm && !bold_support) {
-		    fprintf(stderr, "warning: terminal is of type '%s' (non-x-terminal) but bold_test fails !", term);
-	    }
-	    if (bold_support) {
-		    use_high_colors = true;
-	    } else {
-		    fprintf(stderr, "warning: terminal only supports 8 foreground colors !");
-	    }
-	    for (int fg=0; fg<8; fg++) {
-		    for (int bg=0; bg<8; bg++) {
-			colormap[fg+bg*8]=fg+bg*8;
-			init_pair(fg+bg*8, colors[fg], colors[bg]);
-		    }
-	    }
-	    colormap[7] = 0;
-	    colormap[0] = 7;
-	    init_pair(7, COLOR_BLACK, COLOR_BLACK);
+		is_xterm = (term && strcmp(term, "linux") && strcmp(term, "console"));
+		if (!is_xterm && !bold_support) {
+			fprintf(stderr, "warning: terminal is of type '%s' (non-x-terminal) but bold_test fails!", term);
+		}
+		if (bold_support) {
+			use_high_colors = true;
+		} else {
+			fprintf(stderr, "warning: terminal only supports 8 foreground colors!");
+		}
+		for (int fg=0; fg < 8; fg++) {
+			for (int bg=0; bg < 8; bg++) {
+				colormap[fg+bg*8] = fg+bg*8;
+				init_pair(fg+bg*8, colors[fg], colors[bg]);
+			}
+		}
+		colormap[7] = 0;
+		colormap[0] = 7;
+		init_pair(7, COLOR_BLACK, COLOR_BLACK);
 	} else {
 		fprintf(stderr, "warning: terminal lacks color support !");
 	}
@@ -393,7 +405,7 @@ int CursesSystemDisplay::nprint(int x, int y, vcp color, const char *str, int ma
 {
 	int n = 0;
 	CursesChar *b=buf+x+y*w;
-	while ((n<maxstrlen) && *str && (x+n<w)) {
+	while (n < maxstrlen && *str && x+n < w) {
 		uint rawchar = mapCharToSystemCP(*str, cp);
 		if (x+n>=0) putChar(b, rawchar, color);
 		b++;
@@ -436,14 +448,14 @@ void CursesSystemDisplay::show()
 {
 	CursesChar *ch = buf;
 	vcp c = -1;
-	for (int iy=0; iy<h; iy++) {
+	for (int iy=0; iy < h; iy++) {
 		::move(iy+y, x);
-		for (int ix=0; ix<w; ix++) {
-			if ((use_colors) && (ch->color != c)) {
+		for (int ix=0; ix < w; ix++) {
+			if (use_colors && ch->color != c) {
 				vc fg = VCP_FOREGROUND(ch->color);
 				vc bg = VCP_BACKGROUND(ch->color);
 				if (use_high_colors) {
-					if (is_xterm && (fg == VC_LIGHT(VC_BLACK))) {
+					if (0 && is_xterm && fg == VC_LIGHT(VC_BLACK)) {
 						/* some terminals can't display dark grey (=light black), so we take light grey instead... */
 						attrset(A_NORMAL);
 						fg = VC_WHITE;
@@ -458,7 +470,7 @@ void CursesSystemDisplay::show()
 				color_set(colormap[bg*8+fg], 0);
 			}
 			uint chr = (uint)ch->rawchar;
-			if (((chr >= 0x20) && (chr < 0x7f)) || (chr > 0xff)) {
+			if ((chr >= 0x20 && chr < 0x7f) || chr > 0xff) {
 				addch(chr);
 			} else {
 				attrset(A_BOLD);
@@ -469,27 +481,18 @@ void CursesSystemDisplay::show()
 		}
 	}
 
-/*	::move(cursory, cursorx);
-	switch (cursor_mode) {
-		case CURSOR_OFF:
-			curs_set(0); break;
-		case CURSOR_NORMAL:
-			curs_set(1); break;
-		case CURSOR_BOLD:
-			curs_set(2); break;
-	}*/
 	curs_set(0);
 
 	refresh();
 
 	::move(cursory, cursorx);
 	switch (cursor_mode) {
-		case CURSOR_OFF:
-			curs_set(0); break;
-		case CURSOR_NORMAL:
-			curs_set(1); break;
-		case CURSOR_BOLD:
-			curs_set(2); break;
+	case CURSOR_OFF:
+		curs_set(0); break;
+	case CURSOR_NORMAL:
+		curs_set(1); break;
+	case CURSOR_BOLD:
+		curs_set(2); break;
 	}
 	refresh();
 }
@@ -503,7 +506,7 @@ void CursesSystemDisplay::doShowCursor()
 
 void CursesSystemDisplay::putChar(CursesChar *dest, uint rawchar, vcp vc)
 {
-	if ((dest>=buf+w*h) || (dest<buf)) return;
+	if (dest >= buf+w*h || dest < buf) return;
 	if (rawchar) dest->rawchar = rawchar;
 	dest->color = mixColors(dest->color, vc);
 }
