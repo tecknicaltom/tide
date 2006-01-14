@@ -489,12 +489,12 @@ void file_window_load_fcfg_func(ObjectStream &f, void *context)
 		char s_oldtime[64], s_newtime[64];
 		struct tm *t;
 
-		t = gmtime((time_t*)&newtime);
+		t = localtime((time_t*)&newtime);
 		strftime(s_newtime, sizeof s_newtime, "%X %d %b %Y", t);
 
-		t = gmtime((time_t*)&oldtime);
+		t = localtime((time_t*)&oldtime);
 		strftime(s_oldtime, sizeof s_oldtime, "%X %d %b %Y", t);
-		
+
 		String fn;
 		if (confirmbox_c("\ecconfig file applies to different version of file '%y'.\n\n"
 		    "\elcurrent: %10qd %s\n\elold:     %10qd %s\n\n"
@@ -524,11 +524,11 @@ void file_window_store_fcfg_func(ObjectStream &f, void *context)
 	if (m.msg == msg_retval && m.data1.ptr) {
 		pstat_t s;
 		w->file->pstat(s);
-		uint32 t = (s.caps & pstat_mtime) ? s.mtime : 0;;
+		uint32 t = (s.caps & pstat_mtime) ? s.mtime : 0;
 		PUTX_INT64D(f, w->file->getSize(), "filesize");
 		PUTX_INT32X(f, t, "filetime");
 		
-		Analyser *a=(Analyser*)m.data1.ptr;
+		Analyser *a = (Analyser*)m.data1.ptr;
 		f.putObject(a, "analyser");
 	}
 }
@@ -1023,37 +1023,37 @@ void ht_status::render()
 	char *buf = workbuf;
 	if (f)
 	while (*f) {
-		if (*f==STATUS_ESCAPE) {
+		if (*f == STATUS_ESCAPE) {
 			switch (*(++f)) {
-				case STATUS_ESCAPE:
-					*(buf++) = STATUS_ESCAPE;
-					break;
-				case STATUS_ANALY_ACTIVE:
-					if (some_analyser_active) {
-						char *analysers[] = {"Analy", "aNaly", "anAly", "anaLy", "analY", "anaLy", "anAly", "aNaly"};
-						strcpy(buf, analysers[analy_ani]);
-						buf += 5;
-					}
-					break;
-				case STATUS_ANALY_LINES:
-					if (some_analyser_active) {
-						buf += sprintf(buf, "(%d)", num_ops_parsed);
-					}
-					break;
-				case STATUS_TIME: {
-					time_t Time;
-					time(&Time);
-					tm *t=localtime(&Time);
-					buf += sprintf(buf, "%02d:%02d", t->tm_hour, t->tm_min);
-					break;
+			case STATUS_ESCAPE:
+				*(buf++) = STATUS_ESCAPE;
+				break;
+			case STATUS_ANALY_ACTIVE:
+				if (some_analyser_active) {
+					char *analysers[] = {"Analy", "aNaly", "anAly", "anaLy", "analY", "anaLy", "anAly", "aNaly"};
+					strcpy(buf, analysers[analy_ani]);
+					buf += 5;
 				}
-				case STATUS_DATE: {
-					time_t Time;
-					time(&Time);
-					tm *t=localtime(&Time);
-					buf += sprintf(buf, "%02d.%02d.%04d", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
-					break;
+				break;
+			case STATUS_ANALY_LINES:
+				if (some_analyser_active) {
+					buf += sprintf(buf, "(%d)", num_ops_parsed);
 				}
+				break;
+			case STATUS_TIME: {
+				time_t Time;
+				time(&Time);
+				tm *t = localtime(&Time);
+				buf += sprintf(buf, "%02d:%02d", t->tm_hour, t->tm_min);
+				break;
+			}
+			case STATUS_DATE: {
+				time_t Time;
+				time(&Time);
+				tm *t = localtime(&Time);
+				buf += sprintf(buf, "%02d.%02d.%04d", t->tm_mday, t->tm_mon+1, t->tm_year+1900);
+				break;
+			}
 			}
 		} else {
 			*(buf++) = *f;
@@ -1490,29 +1490,29 @@ void ht_app::init(Bounds *pq)
 	
 	/* create desktop */
 	getbounds(&b);
-	b.x=0;
-	b.y=1;
-	b.h-=2;
-	desktop=new ht_desktop();
+	b.x = 0;
+	b.y = 1;
+	b.h -= 2;
+	desktop = new ht_desktop();
 	desktop->init(&b);
 	insert(desktop);
 	
 	/* create keyline */
 	getbounds(&b);
-	b.x=0;
-	b.y=b.h-1;
-	b.h=1;
+	b.x = 0;
+	b.y = b.h-1;
+	b.h = 1;
 	keyline=new ht_keyline();
 	keyline->init(&b);
 	insert(keyline);
 
 	/* create battlefield */
 	getbounds(&b);
-	b.x=0;
-	b.y=1;
-	b.h-=2;
+	b.x = 0;
+	b.y = 1;
+	b.h -= 2;
 
-	battlefield=new ht_group();
+	battlefield = new ht_group();
 	battlefield->init(&b, VO_TRANSPARENT_CHARS, "battlefield");
 	insert(battlefield);
 
@@ -2309,7 +2309,7 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case cmd_file_saveas: {
 			ObjHandle oh = get_window_listindex((ht_window*)battlefield->current);
-			ht_app_window_entry *e=(ht_app_window_entry*)windows->get(oh);
+			ht_app_window_entry *e = (ht_app_window_entry*)windows->get(oh);
 			if (e && e->layer) {
 				char fn[HT_NAME_MAX];
 				fn[0] = 0;
@@ -2358,24 +2358,24 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case msg_kill: {
 			htmsg m;
-			ht_window *w=(ht_window*)msg->data1.ptr;
-			m.msg=msg_accept_close;
-			m.type=mt_broadcast;
-			m.data1.ptr=NULL;
-			m.data2.ptr=NULL;
+			ht_window *w = (ht_window*)msg->data1.ptr;
+			m.msg = msg_accept_close;
+			m.type = mt_broadcast;
+			m.data1.ptr = NULL;
+			m.data2.ptr = NULL;
 			w->sendmsg(&m);
-			if (m.msg==msg_accept_close) delete_window(w);
+			if (m.msg == msg_accept_close) delete_window(w);
 			clearmsg(msg);
 			return;
 		}
 	}
-	if (msg->msg==msg_draw) {
+	if (msg->msg == msg_draw) {
 		start_timer(h0);
-		if (msg->type==mt_broadcast) {
-			ht_view *v=first;
+		if (msg->type == mt_broadcast) {
+			ht_view *v = first;
 			while (v) {
 				v->handlemsg(msg);
-				v=v->next;
+				v = v->next;
 			}
 		} else {
 			current->handlemsg(msg);
@@ -2487,9 +2487,9 @@ void ht_app::handlemsg(htmsg *msg)
 			char cmd[HT_NAME_MAX];
 			cmd[0] = 0;
 			if (inputbox("execute shell command (experimental!)",
-			(sys_get_caps() & SYSCAP_NBIPC) ? "command"
-			: "non-interactive (!) command",
-			cmd, sizeof cmd, HISTATOM_FILE) == button_ok) {
+			    (sys_get_caps() & SYSCAP_NBIPC) ? "command"
+			    : "non-interactive (!) command",
+			    cmd, sizeof cmd, HISTATOM_FILE) == button_ok) {
 				if (cmd[0]) create_window_term(cmd);
 			}
 			clearmsg(msg);
@@ -2642,8 +2642,21 @@ void ht_app::handlemsg(htmsg *msg)
 			if (project) {
 				const char *fn = ((ht_project*)project)->get_filename();
 				LOG("%s: saving project", fn);
-				save_fileconfig(fn, ht_projectconfig_magic, ht_projectconfig_fileversion, file_project_store_fcfg_func, NULL);
-				LOG("%s: done", fn);
+				do {
+					String err;
+					if (save_fileconfig(fn, ht_projectconfig_magic, ht_projectconfig_fileversion, file_project_store_fcfg_func, NULL, err) != LS_OK) {
+						String e;
+						e.assignFormat("Couldn't save '%y': %y\n\nRetry?", &fn, &err);
+						switch (msgbox(btmask_yes+btmask_no+btmask_cancel, "confirmation", 0, align_center, e.contentChar())) {
+						case button_ok: continue;
+						case button_cancel: return;
+						}
+						LOG("%s: failed", fn);
+					} else {
+						LOG("%s: done", fn);
+					}
+					break;
+				} while (1);
 				delete ((ht_project*)project);
 				project = NULL;
 				htmsg m;
@@ -3031,7 +3044,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 		break;
 	}
 	case msg_accept_close: if (file) {
-		bool modified=false;
+		bool modified = false;
 		String fn;
 		if (file->getFilename(fn).isEmpty()) {
 			modified = true;
@@ -3047,17 +3060,17 @@ void ht_file_window::handlemsg(htmsg *msg)
 				ht_snprintf(q, sizeof q, "file %y has been modified, save?", &fn);
 			}
 			switch (msgbox(btmask_yes+btmask_no+btmask_cancel, "confirmation", 0, align_center, q)) {
-				case button_yes: {
-					app->focus(this);
-					htmsg msg;
-					msg.msg = cmd_file_save;
-					msg.type = mt_empty;
-					app->sendmsg(&msg);
-					if ((uint)msg.msg != cmd_file_save) break;
-				}
-				case button_cancel:
-					clearmsg(msg);
-					return;
+			case button_yes: {
+				app->focus(this);
+				htmsg msg;
+				msg.msg = cmd_file_save;
+				msg.type = mt_empty;
+				app->sendmsg(&msg);
+				if ((uint)msg.msg != cmd_file_save) break;
+			}
+			case button_cancel:
+				clearmsg(msg);
+				return;
 			}
 		}
 		// flush so that cmd_analyser_save get correct mtime
@@ -3080,8 +3093,21 @@ void ht_file_window::handlemsg(htmsg *msg)
 		file->getFilename(filename);
 		filename += HT_FILE_CONFIG_SUFFIX;
 		LOG("%y: saving config", &filename);
-		save_fileconfig(filename.contentChar(), ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this);
-		LOG("%y: done", &filename);
+		do {
+			String err;
+			if (save_fileconfig(filename.contentChar(), ht_fileconfig_magic, ht_fileconfig_fileversion, file_window_store_fcfg_func, this, err) != LS_OK) {
+				String e;
+				e.assignFormat("Couldn't save '%y': %y\n\nRetry?", &filename, &err);
+				switch (msgbox(btmask_yes+btmask_no+btmask_cancel, "confirmation", 0, align_center, e.contentChar())) {
+				case button_ok: continue;
+				case button_cancel: return;
+				}
+				LOG("%y: failed", &filename);
+			} else {
+				LOG("%y: done", &filename);
+			}
+			break;
+		} while (1);
 		clearmsg(msg);
 		break;
 	}
