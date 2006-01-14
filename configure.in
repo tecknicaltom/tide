@@ -45,12 +45,14 @@ linux*)
 	echo "*** LINUX, building POSIX version. we need (n)curses." 1>&2
 	NEED_CURSES=1
 	HAVE_PIPE=1
+	FLAGS_ALL="$FLAGS_ALL -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 ;;
 *freebsd*) 
 	IO_DIR=posix
 	echo "*** FREEBSD, building native FreeBSD version. we need (n)curses." 1>&2
 	NEED_CURSES=1
 	HAVE_PIPE=1
+	FLAGS_ALL="$FLAGS_ALL -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 ;;
 cygwin*)
 	IO_DIR=win32
@@ -71,6 +73,7 @@ mingw32*)
 	echo "*** POSIX-generic, we need (n)curses, '-pipe' disabled for safety" 1>&2
 	NEED_CURSES=1
 	HAVE_PIPE=0
+	FLAGS_ALL="$FLAGS_ALL -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"
 ;;	
 esac
 
