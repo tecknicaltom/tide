@@ -194,7 +194,7 @@ protected:
 	FileBrowserVfsListbox *listbox;
 public:
 	virtual	void init(Bounds *b, Bounds *clientarea, const char *title, const char *starturl);
-/* new */
+	virtual void setstate(int state, int return_val);
 	virtual	bool extract_url(char *buf);
 	virtual	void listbox_changed();
 };
@@ -296,6 +296,22 @@ void FileBrowser::listbox_changed()
 		name_input->databuf_set(&i, sizeof i);
 	}
 }
+
+void FileBrowser::setstate(int state, int return_val)
+{
+	if (state == ds_term_ok) {
+		ht_strinputfield_data i;
+		pstat_t s;
+		name_input->databuf_get(&i, sizeof i);
+		String fn(i.text, i.textlen);
+		sys_pstat_filename(s, fn.contentChar());
+		fn.prepend("local:");
+		listbox->changeURL(fn.contentChar());
+		return;
+	} 
+	ht_dialog::setstate(state, return_val);
+}
+
 /**/
 
 bool file_chooser(const char *title, char *buf, int bufsize)
