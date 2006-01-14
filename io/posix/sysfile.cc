@@ -145,13 +145,33 @@ int sys_pstat_file(pstat_t &s, SYS_FILE *file)
 	return sys_pstat_fd(s, fileno((FILE*)file));
 }
 
+int sys_pstat_filename(pstat_t &s, const char *filename)
+{
+	int fd = open(filename, O_RDONLY);
+	if (fd < 0) {
+		return errno;
+	} else {
+		int e = sys_pstat_fd(s, fd);
+		if (e) {
+			close(fd);
+			return e;
+		}
+		if (close(fd)) return errno;
+		return 0;
+	}
+}
+
 int sys_truncate(const char *filename, FileOfs ofs)
 {
 	if (!sys_filename_is_absolute(filename)) return ENOENT;
 	int fd = open(filename, O_RDWR, 0);
 	if (fd < 0) return errno;
-	if (ftruncate(fd, ofs) != 0) return errno;
-	return close(fd);
+	if (ftruncate(fd, ofs) != 0) {
+		close(fd);
+		return errno;
+	}
+	if (close(fd)) return errno;
+	return 0;
 }
 
 int sys_truncate_fd(int fd, FileOfs ofs)
