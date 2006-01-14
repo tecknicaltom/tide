@@ -74,13 +74,13 @@
 #define CHAR_CORNERUL_DBL	0x2554
 #define CHAR_CORNERLL_DBL	0x255a
 #define CHAR_CORNERUR_DBL	0x2557
-#define CHAR_CORNERLR_DBL	0x255c
+#define CHAR_CORNERLR_DBL	0x255d
 #define CHAR_FILLED_L		0x2591	/* FILLED, low density */
 #define CHAR_FILLED_M		0x2592	/* FILLED, medium density */
 #define CHAR_FILLED_H		0x2593  /* FILLED, high density */
 #define CHAR_FILLED_F		0x2588  /* FILLED, filled entirely */
-#define CHAR_FILLED_HU		0x2580 /* FILLED, upper half - filled entirely */
-#define CHAR_FILLED_HL		0x2584 /* FILLED, lower half - filled entirely */
+#define CHAR_FILLED_HU		0x2580  /* FILLED, upper half - filled entirely */
+#define CHAR_FILLED_HL		0x2584  /* FILLED, lower half - filled entirely */
 #define CHAR_QUAD_SMALL		0x25a0
 #define CHAR_ARROW_UP		0x2191
 #define CHAR_ARROW_DOWN		0x2193
