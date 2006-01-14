@@ -259,17 +259,16 @@ Vfs *VfsListbox::getCurVfs()
 void VfsListbox::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case msg_keypressed:
-			switch (msg->data1.integer) {
-				case K_Return: {
-					if (count && selectEntry(e_cursor)) {
-						clearmsg(msg);
-						return;
-					}
-					break;
-				}
+	case msg_keypressed:
+		switch (msg->data1.integer) {
+		case K_Return:
+			if (count && selectEntry(e_cursor)) {
+				clearmsg(msg);
+				return;
 			}
 			break;
+		}
+		break;
 	}
 	return ht_text_listbox::handlemsg(msg);
 }
@@ -452,7 +451,7 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 		}
 		case VFSV_FORMAT_SIZE:
 			if (stat.caps & pstat_size) {
-				ht_snprintf(buf, bufsize, "%d", stat.size);
+				ht_snprintf(buf, bufsize, "%qu", stat.size);
 			}
 			break;
 		case VFSV_FORMAT_BSIZE:
@@ -463,11 +462,11 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 					ht_snprintf(buf, bufsize,"<SUB-DIR>", stat.size);
 				}
 			} else if (stat.caps & pstat_size) {
-				ht_snprintf(buf, bufsize, "%u", stat.size);
+				ht_snprintf(buf, bufsize, "%qu", stat.size);
 			}
 			break;
 		case VFSV_FORMAT_TYPE:
-			if (bufsize>1) {
+			if (bufsize > 1) {
 				if (stat.caps & pstat_mode_type) {
 					if (HT_S_ISDIR(stat.mode)) {
 						buf[0] = '/';
@@ -490,11 +489,11 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 				}
 			}
 			break;
-		case VFSV_FORMAT_MTIME:timei++;
-		case VFSV_FORMAT_ATIME:timei++;
-		case VFSV_FORMAT_CTIME:timei++;
-		case VFSV_FORMAT_RMTIME:timei++;
-		case VFSV_FORMAT_RATIME:timei++;
+		case VFSV_FORMAT_MTIME: timei++;
+		case VFSV_FORMAT_ATIME: timei++;
+		case VFSV_FORMAT_CTIME: timei++;
+		case VFSV_FORMAT_RMTIME: timei++;
+		case VFSV_FORMAT_RATIME: timei++;
 		case VFSV_FORMAT_RCTIME: {
 			time_t q;
 			bool avail = false;
