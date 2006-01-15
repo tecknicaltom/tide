@@ -305,9 +305,11 @@ void FileBrowser::setstate(int state, int return_val)
 		name_input->databuf_get(&i, sizeof i);
 		String fn(i.text, i.textlen);
 		sys_pstat_filename(s, fn.contentChar());
-		fn.prepend("local:");
-		listbox->changeURL(fn.contentChar());
-		return;
+		if ((s.caps & pstat_mode_type) && (s.mode & HT_S_IFDIR)) {
+			fn.prepend("local:");
+			listbox->changeURL(fn.contentChar());
+			return;
+		}
 	} 
 	ht_dialog::setstate(state, return_val);
 }
@@ -2187,7 +2189,7 @@ void ht_app::delete_window(ht_window *window)
 
 uint ht_app::find_free_window_number()
 {
-	ht_app_window_entry e(NULL, 0, 0, false, false, NULL);
+	ht_app_window_entry e(NULL, 1, 0, false, false, NULL);
 	ObjHandle oh;
 	while ((oh = windows->find(&e)) != invObjHandle) {
 		e.number++;
