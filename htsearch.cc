@@ -1369,6 +1369,7 @@ void ht_search_dialog::select_search_mode_bymodeidx()
 {
 	ht_listpopup_data d;
 	d.cursor_pos = smodeidx;
+	d.cursor_string = NULL;
 	search_mode_popup->databuf_set(&d, sizeof d);
 	focus(smodes[smodeidx].view);
 	sendmsg(msg_dirtyview, 0);
@@ -1481,6 +1482,7 @@ void ht_replace_dialog::select_replace_mode_bymodeidx()
 {
 	ht_listpopup_data d;
 	d.cursor_pos = rmodeidx;
+	d.cursor_string = NULL;
 	replace_mode_popup->databuf_set(&d, sizeof d);
 //	focus(rmodes[rmodeidx].view);
 	sendmsg(msg_dirtyview, 0);
