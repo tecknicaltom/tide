@@ -49,28 +49,129 @@ static ht_tag_flags_s xbe_init_flags[] =
 
 static ht_mask_ptable xeximageheader[] = {
 	{"magic",			STATICTAG_EDIT_CHAR("00000000")STATICTAG_EDIT_CHAR("00000001")STATICTAG_EDIT_CHAR("00000002")STATICTAG_EDIT_CHAR("00000003")},
-	{"flags",			STATICTAG_EDIT_DWORD_BE("00000004")},
-	{"offset of loader",		STATICTAG_EDIT_DWORD_BE("00000008")},
+	{"version?",			STATICTAG_EDIT_DWORD_BE("00000004")},
+	{"size of header",		STATICTAG_EDIT_DWORD_BE("00000008")},
 	{"res",				STATICTAG_EDIT_DWORD_BE("0000000c")},
-	{"offset of certificate",	STATICTAG_EDIT_DWORD_BE("00000010")"  "STATICTAG_REF("0000000100000000", "04", "view")},
-	{"number of sections",		STATICTAG_EDIT_DWORD_BE("00000014")},
+	{"offset of file header",	STATICTAG_EDIT_DWORD_BE("00000010")" "STATICTAG_REF("0000000100000000", "03", "raw")},
+	{"info table entries",		STATICTAG_EDIT_DWORD_BE("00000014")},
 	{0, 0}
 };
 
 #define ATOM_XEX_INFO_CLASS_MAGICS 0x58455801
 #define ATOM_XEX_INFO_CLASS_MAGICS_STR "58455801"
 
+static ht_mask_sub *prep_sub(File *file, const char *desc, uint32 type, int i, ht_collapsable_sub **cs)
+{
+	char title[100];
+	ht_snprintf(title, sizeof title, "%-20s  [0x%08x]", desc, type);
+	ht_mask_sub *s = new ht_mask_sub();
+	s->init(file, i+3);
+	*cs = new ht_collapsable_sub();
+	(*cs)->init(file, s, true, title, true);
+	return s;
+	
+}
+
+static ht_sub *add_resmap(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	ht_collapsable_sub *cs;
+	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
+
+	char b[200];
+	char b2[200];
+	ht_snprintf(b2, sizeof b2, STATICTAG_REF("00000000%08x", "08", "show raw"), i);
+	ht_snprintf(b, sizeof b, 
+                "type               "STATICTAG_EDIT_BYTE("00000000")STATICTAG_EDIT_BYTE("00000001")STATICTAG_EDIT_BYTE("00000002")STATICTAG_EDIT_BYTE("00000003")
+		"                             %s", xex_shared.info_table_cooked[i].start ? b2 : "");
+	
+	s->add_staticmask(b, ofs, true);
+	s->add_staticmask("value              "STATICTAG_EDIT_DWORD_BE("00000004")" ", ofs, true);
+	
+	return cs;
+}
+
+
+static ht_sub *add_fileinfo(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	ht_collapsable_sub *cs;
+	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
+	
+	ofs = xex_shared.info_table_cooked[i].start;
+
+	if (xex_shared.info_table_cooked[i].size >= 12) {
+		s->add_staticmask("cryped?            "STATICTAG_EDIT_WORD_BE("00000000"), ofs, true);
+		s->add_staticmask("type of loader     "STATICTAG_EDIT_WORD_BE("00000002"), ofs, true);
+		// FIXME: compressed vs. raw
+		s->add_staticmask(" ---", ofs, true);
+		s->add_staticmask("compression window "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+		s->add_staticmask("size of loader     "STATICTAG_EDIT_DWORD_BE("00000008"), ofs, true);
+		if (xex_shared.info_table_cooked[i].size >= 32) {
+			String str("SHA1 hash loader   ");
+			for (int j=0; j<20; j++) {
+				String str2;
+				str2.assignFormat(STATICTAG_EDIT_BYTE("%08x"), 12+j);
+				str.append(str2);
+    			}
+			s->add_staticmask(str.contentChar(), ofs, true);
+		}
+	}
+	return cs;
+}
+
+static ht_sub *add_filename(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	return add_resmap(file, desc, xex_shared, i, ofs);
+}
+
+static ht_sub *add_single(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	return add_resmap(file, desc, xex_shared, i, ofs);
+}
+
+static ht_sub *add_import(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	return add_resmap(file, desc, xex_shared, i, ofs);
+}
+
+static ht_sub *add_ids(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	ht_collapsable_sub *cs;
+	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
+	
+	ofs = xex_shared.info_table_cooked[i].start;
+	s->add_staticmask("id 1               "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
+	s->add_staticmask("id 2               "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+	return cs;
+}
+
+static ht_sub *add_mediainfo(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
+{
+	ht_collapsable_sub *cs;
+	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
+	
+	ofs = xex_shared.info_table_cooked[i].start;
+	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
+	s->add_staticmask("xbox min version   "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+	s->add_staticmask("xbox max? version  "STATICTAG_EDIT_DWORD_BE("00000008"), ofs, true);
+	s->add_staticmask("media mask         "STATICTAG_EDIT_DWORD_BE("0000000c"), ofs, true);
+	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000010"), ofs, true);
+	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000014"), ofs, true);
+	return cs;
+}
+
+
 static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 {
-	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)group->get_shared_data();
+	ht_xex_shared_data &xex_shared = *(ht_xex_shared_data *)group->get_shared_data();
 
-	ht_xex_header_viewer *v=new ht_xex_header_viewer();
+	ht_xex_header_viewer *v = new ht_xex_header_viewer();
 	v->init(b, DESC_XEX_HEADER, VC_EDIT | VC_SEARCH, file, group);
 
 	ht_mask_sub *s;
+	ht_group_sub *gs;
 	ht_collapsable_sub *cs;
 	
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
 	ht_snprintf(info, sizeof info, "* XEX header");
@@ -79,34 +180,79 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	const bool xex_bigendian = true;
 	
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 1);
 	
 	/* image header */
 	s->add_staticmask_ptable(xeximageheader, 0x0, xex_bigendian);
-	cs=new ht_collapsable_sub();
-	cs->init(file, s, 1, "image header", 1);
+	cs = new ht_collapsable_sub();
+	cs->init(file, s, true, "image header", true);
 	v->insertsub(cs);
 
-	s=new ht_mask_sub();
-	s->init(file, 2);
-	FileOfs ofs = sizeof xex_shared->header;
-	for (uint i=0; i < xex_shared->header.number_of_sections; i++) {
-//STATICTAG_DESC_BYTE_LE("00000001", ATOM_XEX_INFO_CLASS_MAGICS_STR)
-		char b[200];
-		char b2[200];
-		char b3[200];
-		ht_snprintf(b, sizeof b, 
-			"type "STATICTAG_EDIT_BYTE("00000000")STATICTAG_EDIT_BYTE("00000001")STATICTAG_EDIT_BYTE("00000002")STATICTAG_EDIT_BYTE("00000003")"   "
-			"value "STATICTAG_EDIT_DWORD_BE("00000004"));
-		ht_snprintf(b2, sizeof b2, STATICTAG_REF("00000000%08x", "03", "raw"), i);
-		ht_snprintf(b3, sizeof b3, "%s %s", b, xex_shared->info_table_cooked[i].start ? b2 : "");
-		s->add_staticmask(b3, ofs, true);
-
+	gs = new ht_group_sub();
+	gs->init(file);
+	FileOfs ofs = sizeof xex_shared.header;
+	for (uint i=0; i < xex_shared.header.number_of_sections; i++) {
+		//STATICTAG_DESC_BYTE_LE("00000001", ATOM_XEX_INFO_CLASS_MAGICS_STR)
+		switch (xex_shared.info_table_cooked[i].type) {
+		case XEX_HEADER_FIELD_MODULES:
+			gs->insertsub(add_resmap(file, "modules", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_FILEINFO:
+			gs->insertsub(add_fileinfo(file, "loader information", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_FILENAME:
+			gs->insertsub(add_filename(file, "file name", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_LOADBASE:
+			gs->insertsub(add_single(file, "load base?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_ENTRY:
+			gs->insertsub(add_single(file, "entry point?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_BASE:
+			gs->insertsub(add_single(file, "base address?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_IMPORT:
+			gs->insertsub(add_import(file, "imports", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_IDS:
+			gs->insertsub(add_ids(file, "IDs", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_UPDATE:
+			gs->insertsub(add_filename(file, "update file name?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_RESMAP2:
+			gs->insertsub(add_resmap(file, "resource map2?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_CACHE_INFO:
+			gs->insertsub(add_single(file, "cache info", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_MEDIAINFO:
+			gs->insertsub(add_mediainfo(file, "media information", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_IMPORT_UNK:
+		case XEX_HEADER_FIELD_UNK0:
+		case XEX_HEADER_FIELD_UNK1:
+		case XEX_HEADER_FIELD_UNK2:
+		default: 
+			gs->insertsub(add_resmap(file, "UNKNOWN", xex_shared, i, ofs));
+/*			
+			char b[200];
+			char b2[200];
+			char b3[200];
+			ht_snprintf(b, sizeof b, 
+				"type "STATICTAG_EDIT_BYTE("00000000")STATICTAG_EDIT_BYTE("00000001")STATICTAG_EDIT_BYTE("00000002")STATICTAG_EDIT_BYTE("00000003")"   "
+				"value "STATICTAG_EDIT_DWORD_BE("00000004"));
+			ht_snprintf(b2, sizeof b2, STATICTAG_REF("00000000%08x", "03", "raw"), i);
+			ht_snprintf(b3, sizeof b3, "%s %s", b, xex_shared->info_table_cooked[i].start ? b2 : "");
+			s->add_staticmask(b3, ofs, true);
+		}*/
+		}
 		ofs += 8;
 	}
 	cs=new ht_collapsable_sub();
-	cs->init(file, s, 1, "general info table", 1);
+	cs->init(file, gs, 1, "general info table", 1);
 	v->insertsub(cs);
 #if 0
 	s->add_staticmask_ptable(xbecertificate, xbe_shared->header.certificate_address-xbe_shared->header.base_address, xbe_bigendian);
