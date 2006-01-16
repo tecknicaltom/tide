@@ -243,13 +243,13 @@ protected:
 	ht_xgroup *xgroup;
 
 /* new */
-			void init_ifs(format_viewer_if **ifs);
-			void done_ifs();
+		void init_ifs(format_viewer_if **ifs);
+		void done_ifs();
 			
-			bool init_if(format_viewer_if *i);
-			bool done_if(format_viewer_if *i, ht_view *v);
+		bool init_if(format_viewer_if *i);
+		bool done_if(format_viewer_if *i, ht_view *v);
 			
-			bool edit();
+		bool edit();
 public:
 		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, ht_format_group *format_group);
 	virtual	void done();
@@ -257,8 +257,8 @@ public:
 	virtual	int childcount() const;
 	virtual	int focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
-			void getbounds(Bounds *b);
-	virtual 	ht_view *getfirstchild();
+		void getbounds(Bounds *b);
+	virtual ht_view *getfirstchild();
 	virtual	ht_view *getselected();
 	virtual	int get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
@@ -272,8 +272,8 @@ public:
 	virtual	void setgroup(ht_group *group);
 /* new */
 	virtual	void insert(ht_view *view);
-			void remove(ht_view *view);
-			void *get_shared_data();
+		void remove(ht_view *view);
+		void *get_shared_data();
 };
 
 /*
@@ -388,7 +388,7 @@ protected:
 public:
 	uint search_caps;
 	
-			void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	void clear_viewer_pos(viewer_pos *p);
@@ -407,10 +407,10 @@ public:
 	virtual	ht_search_result *vsearch(ht_search_request *search, viewer_pos start, viewer_pos end);
 /* new */
 	virtual	bool compeq_viewer_pos(viewer_pos *a, viewer_pos *b);
-			void complete_init();
+		void complete_init();
 	virtual	void insertsub(ht_sub *sub);
-			void sendsubmsg(int msg);
-			void sendsubmsg(htmsg *msg);
+		void sendsubmsg(int msg);
+		void sendsubmsg(htmsg *msg);
 };
 
 /*
@@ -429,7 +429,7 @@ public:
 	ht_uformat_viewer *uformat_viewer;
 	ht_sub *prev, *next;
 
-			void init(File *file);
+		void init(File *file);
 	virtual	void done();
 /* new */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
@@ -454,7 +454,7 @@ protected:
 	FileOfs fofs;
 	FileOfs fsize;
 public:
-			void init(File *file, FileOfs offset, FileOfs size);
+		void init(File *file, FileOfs offset, FileOfs size);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -472,10 +472,10 @@ protected:
 	uint32 line_length;
 	uint uid;
 public:
-			void init(File *file, FileOfs ofs, uint32 size, uint line_length, uint uid, uint32 vaddrinc=0);
-	virtual 	void done();
-			int	get_line_length();
-			void	set_line_length(int line_length);
+		void init(File *file, FileOfs ofs, uint32 size, uint line_length, uint uid, uint32 vaddrinc=0);
+	virtual	void done();
+		int  get_line_length();
+		void set_line_length(int line_length);
 /* overwritten */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
 	virtual	bool convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset);
@@ -511,11 +511,11 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 /* new */
-	virtual 	void add_mask(char *tagstr);
-	virtual 	void add_mask_table(char **tagstr);
-	virtual 	void add_staticmask(char *statictag_str, FileOfs reloc, bool std_bigendian);
-	virtual 	void add_staticmask_table(char **statictag_table, FileOfs reloc, bool std_bigendian);
-	virtual 	void add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOfs reloc, bool std_bigendian);
+	virtual	void add_mask(char *tagstr);
+	virtual	void add_mask_table(char **tagstr);
+	virtual	void add_staticmask(const char *statictag_str, FileOfs reloc, bool std_bigendian);
+	virtual	void add_staticmask_table(char **statictag_table, FileOfs reloc, bool std_bigendian);
+	virtual	void add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOfs reloc, bool std_bigendian);
 };
 
 /*
@@ -554,7 +554,7 @@ protected:
 	LINE_ID fid;
 	LINE_ID myfid;
 public:
-			void init(File *file, ht_sub *sub, bool own_sub, char *nodename, bool collapsed);
+		void init(File *file, ht_sub *sub, bool own_sub, char *nodename, bool collapsed);
 	virtual	void done();
 /* new */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
@@ -576,7 +576,7 @@ class ht_group_sub: public ht_sub {
 protected:
 	Container *subs;
 public:
-			void init(File *file);
+		void init(File *file);
 	virtual	void done();
 /* overwritten */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
@@ -590,7 +590,7 @@ public:
 	virtual	bool ref(LINE_ID *id);
 	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
 /* new */
-			void insertsub(ht_sub *sub);
+		void insertsub(ht_sub *sub);
 };
 
 ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize);
