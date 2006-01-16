@@ -74,9 +74,10 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	for (int i=0; i < xex_shared->header.number_of_sections; i++) {
 		file->read(xex_shared->info_table+i, sizeof *xex_shared->info_table);
 		createHostStruct(xex_shared->info_table+i, XEX_IMAGE_HEADER_INFO_ENTRY_struct, big_endian);
+		xex_shared->info_table_cooked[i].type = createHostInt(&xex_shared->info_table[i].type, 4, big_endian);
 		xex_shared->info_table_cooked[i].start = 0;
-		xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].size;
-		if (xex_shared->info_table[i].size == 0xff) {
+		xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].b.size;
+		if (xex_shared->info_table[i].b.size == 0xff) {
 			FileOfs ofs = file->tell();
 			file->seek(xex_shared->info_table[i].value);
 			uint32 s;
@@ -85,9 +86,9 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 				xex_shared->info_table_cooked[i].size = createHostInt(&s, 4, big_endian) - 4;
 			}
 			file->seek(ofs);
-		} else if (xex_shared->info_table[i].size > 1) {
+		} else if (xex_shared->info_table[i].b.size > 1) {
 			xex_shared->info_table_cooked[i].start = xex_shared->info_table[i].value;
-			xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].size * 4;
+			xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].b.size * 4;
 		}
 	}
 
