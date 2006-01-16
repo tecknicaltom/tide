@@ -24,8 +24,8 @@
 #include "formats.h"
 #include "xexstruct.h"
 
-#define DESC_XEX "xex - XBOX360 executable"
-#define DESC_XEX_HEADER "xbe/header"
+#define DESC_XEX "xex - xenon executable"
+#define DESC_XEX_HEADER "xex/header"
 
 
 extern format_viewer_if htxex_if;
@@ -33,6 +33,7 @@ extern format_viewer_if htxex_if;
 struct xex_info_entry {
 	FileOfs start;
 	FileOfs size;
+	uint32 type;
 };
 
 struct ht_xex_shared_data {
