@@ -4474,7 +4474,7 @@ void ht_mask_sub::add_mask_table(char **tagstr)
 	while (*tagstr) add_mask(*(tagstr++));
 }
 
-void ht_mask_sub::add_staticmask(char *statictag_str, FileOfs reloc, bool std_bigendian)
+void ht_mask_sub::add_staticmask(const char *statictag_str, FileOfs reloc, bool std_bigendian)
 {
 	char tag_str[1024];	/* FIXME: possible buffer overflow */
 	statictag_to_tag(statictag_str, tag_str, reloc, std_bigendian);
