@@ -184,7 +184,7 @@ void ht_pef_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format
 	pef_shared = PEF_shared;
 }
 
-int ht_pef_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool ht_pef_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 /*	eval_func myfuncs[] = {
 		{"rva", (void*)&pe_viewer_func_rva, {SCALAR_INT},
