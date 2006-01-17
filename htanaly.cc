@@ -301,13 +301,15 @@ void CallChain::examineNode(CallChainNode *n)
 	if (has_children(n)) {
 		Container *x_tree = n->faddr->xrefs;
 		assert(x_tree);
-		AddrXRef *x = (AddrXRef *)x_tree->get(x_tree->findFirst());
+		ObjHandle oh = x_tree->findFirst();
+		AddrXRef *x = (AddrXRef *)x_tree->get(oh);
 		assert(x);
 		CallChainNode *nn = n->child = createNode(x->addr);
-		foreach(AddrXRef, x, *x_tree, {
+		while ((oh = x_tree->findNext(oh)) != invObjHandle) {
+			x = (AddrXRef *)x_tree->get(oh);
 			nn->next = createNode(x->addr);
 			nn = nn->next;
-		});
+		}
 	}
 }
 
@@ -1552,7 +1554,7 @@ bool ht_aviewer::offset_to_pos(FileOfs ofs, viewer_pos *p)
 	return res;
 }
 
-int ht_aviewer::ref_sel(LINE_ID *id)
+bool ht_aviewer::ref_sel(LINE_ID *id)
 {
 	if (!id->id1 && !id->id2 && !id->id3 && !id->id4) return 0;
 	switch (id->id4) {
@@ -1564,7 +1566,7 @@ int ht_aviewer::ref_sel(LINE_ID *id)
 			delete a;
 			return res;
 		} else {
-			return 0;
+			return false;
 		}
 	case 1:
 		if (analy) {
@@ -1573,9 +1575,9 @@ int ht_aviewer::ref_sel(LINE_ID *id)
 			showXRefs(a);
 			delete a;
 		}
-		return 0;
+		return false;
 	}
-	return 0;
+	return false;
 }
 
 void ht_aviewer::reloadpalette()
@@ -1811,15 +1813,20 @@ void ht_aviewer::showSymbols(Address *addr)
 
 void ht_aviewer::showXRefs(Address *Addr)
 {
-	Container *x_tree = analy->getXRefs(Addr);
-	if (x_tree) {
-restart2:
-		Bounds c, b;
-		app->getbounds(&c);
-		b.w = c.w*5/6;
-		b.h = c.h*5/6;
-		center_bounds(&b);
-restart:
+	if (!analy->getXRefs(Addr)) {
+		if (confirmbox("No xrefs for address %y!\nSearch for xrefs?", Addr) == button_yes) {
+			searchForXRefs(Addr);
+		}
+	}
+
+	Bounds c, b;
+	app->getbounds(&c);
+	b.w = c.w*5/6;
+	b.h = c.h*5/6;
+	center_bounds(&b);
+	int result;
+	do {
+		Container *x_tree = analy->getXRefs(Addr);
 		uint bw = b.w;
 		uint bh = b.h;
 		char str[256];
@@ -1850,7 +1857,7 @@ restart:
 		new_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		char str2[1024];
 		int xcount=0;
-		foreach(AddrXRef, x, *x_tree, {
+		if (x_tree) foreach(AddrXRef, x, *x_tree, {
 			xcount++;
 			ht_snprintf(str, sizeof str, "%y", x->addr);
 			Location *a = analy->getFunctionByAddress(x->addr);
@@ -1876,76 +1883,69 @@ restart:
 		dialog->insert(search_for_xrefs);
 		dialog->insert(delete_xref);
 		dialog->insert(new_xref);
-		int r = dialog->run(false);
+		result = dialog->run(false);
 		ht_listbox_data data;
 		ViewDataBuf vdb(list, &data, sizeof data);
-		switch (r) {
-			case 666:
-				searchForXRefs(Addr);
-				break;
-			case 667:
-				if (xcount) {
-					analy->deleteXRef(Addr, (Address*)list->getID(data.data->cursor_ptr));
-					analy->makeDirty();
-					analy_sub->output->invalidateCache();
+		switch (result) {
+		case 666:
+			searchForXRefs(Addr);
+			break;
+		case 667:
+			if (xcount) {
+				analy->deleteXRef(Addr, (Address*)list->getID(data.data->cursor_ptr));
+				analy->makeDirty();
+				analy_sub->output->invalidateCache();
+			}
+			break;
+		case 668: {
+			char result[256];
+			ht_snprintf(str, sizeof str, "add xref from %y", Addr);
+			result[0] = 0;
+			while (inputbox(str, "to ~address: ", result, 255, HISTATOM_GOTO)) {
+				viewer_pos res_pos;
+				if (!string_to_pos(result, &res_pos)) {
+					errorbox(globalerror);
+					continue;
 				}
-				break;
-			case 668: {
-				char result[256];
-				ht_snprintf(str, sizeof str, "add xref from %y", Addr);
-				result[0] = 0;
-				while (inputbox(str, "to ~address: ", result, 255, HISTATOM_GOTO)) {
-					viewer_pos res_pos;
-					if (!string_to_pos(result, &res_pos)) {
-						errorbox(globalerror);
-						continue;
-					}
-					Address *a;
-					if (!convertViewerPosToAddress(res_pos, &a)) {
-						errorbox("invalid address");
-						delete a;
-						continue;
-					}
-					if (!analy->addXRef(Addr, a, xrefoffset)) {
-						// FIXME: some error msg
-					}
+				Address *a;
+				if (!convertViewerPosToAddress(res_pos, &a)) {
+					errorbox("invalid address");
 					delete a;
-					analy->makeDirty();
-					analy_sub->output->invalidateCache();
-					break;
+					continue;
 				}
+				if (!analy->addXRef(Addr, a, xrefoffset)) {
+					// FIXME: some error msg
+				}
+				delete a;
+				analy->makeDirty();
+				analy_sub->output->invalidateCache();
 				break;
 			}
-			case button_ok:
-				if (xcount) gotoAddress((Address*)list->getID(data.data->cursor_ptr), this);
-				break;
+			break;
+		}
+		case button_ok:
+			if (xcount) gotoAddress((Address*)list->getID(data.data->cursor_ptr), this);
+			break;
 		}
 		dialog->getbounds(&b);
 		dialog->done();
 		delete dialog;
-		if ((r >= 666) && (r <= 668)) goto restart;
-	} else {
-		if (confirmbox("No xrefs for address %y!\nSearch for xrefs?", Addr)==button_yes) {
-			searchForXRefs(Addr);
-			x_tree = analy->getXRefs(Addr);
-			if (x_tree) goto restart2;
-		}
-	}
+	} while (result >= 666 && result <= 668);
 }
 
-int ht_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool ht_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	eval_func myfuncs[] = {
-		{"addressOf", (void*)&aviewer_func_address_of, {SCALAR_STR}},
-		{"fileofs", (void*)&aviewer_func_fileofs, {SCALAR_INT}},
-		{"addr", (void*)&aviewer_func_addr, {SCALAR_STR}},
+		{"addressOf", (void*)&aviewer_func_address_of, {SCALAR_STR}, "return address of symbol"},
+		{"fileofs", (void*)&aviewer_func_fileofs, {SCALAR_INT}, "convert file offset to address"},
+//		{"addr", (void*)&aviewer_func_addr, {SCALAR_STR}}, "",
 		{NULL}
 	};
-	if (std_eval_func_handler(result, name, params, myfuncs)) return 1;
+	if (std_eval_func_handler(result, name, params, myfuncs)) return true;
 	return ht_uformat_viewer::func_handler(result, name, params);
 }
 
-int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
+bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 {
 	uint64 v;
 	viewer_pos vp;
@@ -1953,17 +1953,17 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 	if (*name == '@') {
 		name++;
 		if (parseIntStr(name, v, 10)) {
-			if (*name) return 0;
+			if (*name) return false;
 			if (!offset_to_pos(v, &vp)) {
 				set_eval_error("invalid offset: %08x", v);
-				return 0;
+				return false;
 			}
 			convertViewerPosToAddress(vp, &w);
 			uint64 b = 0;
 			w->putIntoArray((byte*)&b);
 			delete w;
 			scalar_create_int_q(result, b);
-			return 1;
+			return true;
 		}
 		// invalid number after @
 	} else {
@@ -1973,10 +1973,10 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 				w->putIntoArray((byte*)&b);
 				scalar_create_int_q(result, b);
 				delete w;
-				return 1;
+				return true;
 			} else {
 				delete w;
-				return 0;
+				return false;
 			}
 		}
 		Symbol *l = analy->getSymbolByName(name);
@@ -1985,7 +1985,7 @@ int ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 			uint64 b;
 			w->putIntoArray((byte*)&b);
 			scalar_create_int_q(result, b);
-			return 1;
+			return true;
 		}
 	}
 	return ht_uformat_viewer::symbol_handler(result, name);
