@@ -36,11 +36,20 @@ struct xex_info_entry {
 	uint32 type;
 };
 
+struct xex_file_header {
+	FileOfs offset;
+	FileOfs size;
+	uint32 hash_table_count;
+	FileOfs key_ofs;
+};
+
 struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER header;
 	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
 	xex_info_entry *info_table_cooked;
 
+	xex_file_header file_header;
+	
 	uint32 certificate_offset;
 	uint32 certificate_size;
 	uint32 original_base_address;
