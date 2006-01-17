@@ -178,7 +178,7 @@ public:
 	virtual	ht_view 	*enum_next(int *handle);
 		bool		exposed();
 		void		fill(int x, int y, int w, int h, int c, char chr, Codepage cp = CP_DEVICE);
-	virtual	int		focus(ht_view *view);
+	virtual	bool		focus(ht_view *view);
 		void		getbounds(Bounds *b);
 	virtual	void		getminbounds(int *width, int *height);
 		vcp		getcolor(uint index);
@@ -194,7 +194,7 @@ public:
 	virtual	void		load(ObjectStream &s);
 	virtual	void		move(int rx, int ry);
 	virtual	ObjectID	getObjectID() const;
-		int		pointvisible(int x, int y);
+		bool		pointvisible(int x, int y);
 	virtual	void		receivefocus();
 	virtual	void		redraw();
 		void		relocate_to(ht_view *view);
@@ -261,7 +261,7 @@ public:
 	virtual	int datasize();
 	virtual	int enum_start();
 	virtual	ht_view *enum_next(int *handle);
-	virtual	int focus(ht_view *view);
+	virtual	bool focus(ht_view *view);
 	virtual	void getdata(ObjectStream &s);
 	virtual	ht_view *getselected();
 	virtual ht_view *getfirstchild();
@@ -285,8 +285,8 @@ public:
 	virtual	void reorder_view(ht_view *v, int rx, int ry);
 		void remove(ht_view *view);
 	virtual	void insert(ht_view *view);
-		int focusnext();
-		int focusprev();
+		bool focusnext();
+		bool focusprev();
 		ht_view *get_by_browse_idx(int i);
 };
 
