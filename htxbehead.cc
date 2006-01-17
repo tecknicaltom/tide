@@ -316,7 +316,7 @@ static ht_format_viewer *find_hex_viewer(ht_group *group)
 }
 */
 
-int ht_xbe_header_viewer::ref_sel(LINE_ID *id)
+bool ht_xbe_header_viewer::ref_sel(LINE_ID *id)
 {
-	return 1;
+	return true;
 }
