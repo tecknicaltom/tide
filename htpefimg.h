@@ -35,7 +35,7 @@ class ht_pef_aviewer: public ht_aviewer {
 public:
 	ht_pef_shared_data *pef_shared;
 		   void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_pef_shared_data *pef_shared);
-	virtual int  func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
+	virtual bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual void setAnalyser(Analyser *a);
 };
 
