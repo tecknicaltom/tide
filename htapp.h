@@ -331,7 +331,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
-	virtual	int focus(ht_view *view);
+	virtual	bool focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void load(ObjectStream &f);
