@@ -181,7 +181,7 @@ void ht_xbe_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format
 	xbe_shared = XBE_shared;
 }
 
-int ht_xbe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool ht_xbe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	eval_func myfuncs[] = {
 		{"rva", (void*)&xbe_viewer_func_rva, {SCALAR_INT},
@@ -191,7 +191,7 @@ int ht_xbe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlis
 			"returns address of section with index param1 otherwise"},
 		{NULL}
 	};
-	if (std_eval_func_handler(result, name, params, myfuncs)) return 1;
+	if (std_eval_func_handler(result, name, params, myfuncs)) return true;
 	return ht_aviewer::func_handler(result, name, params);
 }
 
