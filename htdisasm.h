@@ -56,8 +56,8 @@ public:
 	virtual	bool offset_to_pos(FileOfs ofs, viewer_pos *addr);
 	virtual	bool pos_to_offset(viewer_pos addr, FileOfs *ofs);
 	virtual	bool qword_to_pos(uint64 q, viewer_pos *pos);
-	virtual	int ref_sel(LINE_ID *id);
-	virtual	int symbol_handler(eval_scalar *result, char *name);
+	virtual	bool ref_sel(LINE_ID *id);
+	virtual	bool symbol_handler(eval_scalar *result, char *name);
 };
 
 /*
