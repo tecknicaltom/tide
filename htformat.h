@@ -511,7 +511,7 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 /* new */
-	virtual	void add_mask(char *tagstr);
+	virtual	void add_mask(const char *tagstr);
 	virtual	void add_mask_table(char **tagstr);
 	virtual	void add_staticmask(const char *statictag_str, FileOfs reloc, bool std_bigendian);
 	virtual	void add_staticmask_table(char **statictag_table, FileOfs reloc, bool std_bigendian);
@@ -554,7 +554,7 @@ protected:
 	LINE_ID fid;
 	LINE_ID myfid;
 public:
-		void init(File *file, ht_sub *sub, bool own_sub, char *nodename, bool collapsed);
+		void init(File *file, ht_sub *sub, bool own_sub, const char *nodename, bool collapsed);
 	virtual	void done();
 /* new */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
