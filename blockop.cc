@@ -199,22 +199,22 @@ static uint32 blockop_i;
 static uint32 blockop_o;
 static bool blockop_expr_is_const;
 
-static int blockop_symbol_eval(eval_scalar *r, char *symbol)
+static bool blockop_symbol_eval(eval_scalar *r, char *symbol)
 {
-	if (strcmp(symbol, "i")==0) {
-		r->type=SCALAR_INT;
+	if (strcmp(symbol, "i") == 0) {
+		r->type = SCALAR_INT;
 		r->scalar.integer.value = blockop_i;
 		r->scalar.integer.type = TYPE_UNKNOWN;
 		blockop_expr_is_const = false;
-		return 1;
-	} else if (strcmp(symbol, "o")==0) {
+		return true;
+	} else if (strcmp(symbol, "o") == 0) {
 		r->type=SCALAR_INT;
 		r->scalar.integer.value = blockop_o;
 		r->scalar.integer.type = TYPE_UNKNOWN;
 		blockop_expr_is_const = false;
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 static int func_readint(eval_scalar *result, eval_int *offset, int size, Endianess e)
@@ -295,10 +295,10 @@ static int func_readstring(eval_scalar *result, eval_int *offset, eval_int *len)
 	return 0;
 }
 
-static int blockop_func_eval(eval_scalar *result, char *name, eval_scalarlist *params)
+static bool blockop_func_eval(eval_scalar *result, char *name, eval_scalarlist *params)
 {
-/* FIXME: non-constant funcs (e.g. rand()) should
-   set blockop_expr_is_const to false */
+	/* FIXME: non-constant funcs (e.g. rand()) should
+	   set blockop_expr_is_const to false */
 	eval_func myfuncs[] = {
 		{"readbyte", (void*)&func_readbyte, {SCALAR_INT}},
 		{"read16le", (void*)&func_read16le, {SCALAR_INT}},
@@ -309,7 +309,7 @@ static int blockop_func_eval(eval_scalar *result, char *name, eval_scalarlist *p
 		{NULL}
 	};
 	
-	blockop_expr_is_const=false;
+	blockop_expr_is_const = false;
 		
 	return std_eval_func_handler(result, name, params, myfuncs);
 }
