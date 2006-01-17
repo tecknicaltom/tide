@@ -194,10 +194,10 @@ bool ht_format_group::edit()
 	return (file->getAccessMode() & IOAM_WRITE);
 }
 
-int ht_format_group::focus(ht_view *view)
+bool ht_format_group::focus(ht_view *view)
 {
-	int r=ht_format_viewer::focus(view);
-	if (!r) r=xgroup->focus(view);
+	bool r = ht_format_viewer::focus(view);
+	if (!r) r = xgroup->focus(view);
 	return r;
 }
 
@@ -543,14 +543,14 @@ bool ht_format_viewer::continue_search()
 	return false;
 }
 
-int ht_format_viewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool ht_format_viewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
-	return 0;
+	return false;
 }
 
-int ht_format_viewer::symbol_handler(eval_scalar *result, char *name)
+bool ht_format_viewer::symbol_handler(eval_scalar *result, char *name)
 {
-	return 0;
+	return false;
 }
 
 bool ht_format_viewer::get_current_offset(FileOfs *ofs)
@@ -771,13 +771,13 @@ bool ht_format_viewer::show_search_result(ht_search_result *r)
 	return false;
 }
 
-static int format_viewer_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+static bool format_viewer_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	ht_format_viewer *viewer = (ht_format_viewer*)eval_get_context();
 	return viewer->func_handler(result, name, params);
 }
 
-static int format_viewer_symbol_handler(eval_scalar *result, char *name)
+static bool format_viewer_symbol_handler(eval_scalar *result, char *name)
 {
 	ht_format_viewer *viewer = (ht_format_viewer*)eval_get_context();
 	return viewer->symbol_handler(result, name);
@@ -2111,28 +2111,28 @@ bool ht_uformat_viewer::get_current_pos(viewer_pos *pos)
 	return true;
 }
 
-int ht_uformat_viewer::get_current_tag(char **tag)
+bool ht_uformat_viewer::get_current_tag(char **tag)
 {
 	cursorline_get();
-	char *e=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+	char *e = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
 	if (e) {
-		*tag=e;
-		return 1;
+		*tag = e;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-int ht_uformat_viewer::get_current_tag_size(uint32 *size)
+bool ht_uformat_viewer::get_current_tag_size(uint32 *size)
 {
-	if (cursor_tag_class==tag_class_edit) {
+	if (cursor_tag_class == tag_class_edit) {
 		cursorline_get();
-		char *e=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+		char *e = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
 		if (e) {
-			*size=tag_get_size(e);
-			return 1;
+			*size = tag_get_size(e);
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 void ht_uformat_viewer::handlemsg(htmsg *msg)
@@ -3386,11 +3386,11 @@ uint ht_uformat_viewer::pwrite(FileOfs ofs, void *buf, uint size)
 	return ht_format_viewer::pwrite(ofs, buf, size);
 }
 
-int ht_uformat_viewer::ref()
+bool ht_uformat_viewer::ref()
 {
 	cursorline_get();
 	char *e=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
-	if (!e) return 0;
+	if (!e) return false;
 	if (tag_get_class(e)==tag_class_sel) {
 		if (!cursor.sub->ref(&cursor_tag_id.id)) {
 			switch (e[1]) {
@@ -3415,10 +3415,10 @@ int ht_uformat_viewer::ref()
 			}
 		}
 	}
-	return 0;
+	return false;
 }
 
-int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian)
+bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian)
 {
 	Endianess end = bigendian ? big_endian : little_endian;
 	int_hash *desc=(int_hash*)getAtomValue(id);
@@ -3442,7 +3442,7 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 		int curpos=0, i=0;
 		int d=0;
 
-		if (pread(offset, buf, size)!=size) return 0;
+		if (pread(offset, buf, size)!=size) return false;
 		
 		switch (size) {
 			case 1: d=buf[0]; break;
@@ -3508,12 +3508,12 @@ int ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendian
 
 		g->done();
 		delete g;
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
+bool ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 {
 	ht_tag_flags_s *flags=(ht_tag_flags_s*)getAtomValue(id), *fl;
 	if (flags) {
@@ -3583,14 +3583,14 @@ int ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 
 		d->done();
 		delete d;
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-int ht_uformat_viewer::ref_sel(LINE_ID *id)
+bool ht_uformat_viewer::ref_sel(LINE_ID *id)
 {
-	return 0;
+	return false;
 }
 
 ht_search_result *ht_uformat_viewer::psearch(ht_search_request *request, FileOfs start, FileOfs end)
@@ -4117,7 +4117,7 @@ struct search_expr_eval_context_t {
 	int i, o;
 };
 
-int ht_linear_sub_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+static bool ht_linear_sub_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	eval_func myfuncs[] = {
 		{"entropy", (void*)&ht_linear_func_entropy, {SCALAR_STR}},
@@ -4129,17 +4129,17 @@ int ht_linear_sub_func_handler(eval_scalar *result, char *name, eval_scalarlist 
 	return std_eval_func_handler(result, name, params, myfuncs);
 }
 
-int ht_linear_sub_symbol_handler(eval_scalar *result, char *name)
+static bool ht_linear_sub_symbol_handler(eval_scalar *result, char *name)
 {
 	search_expr_eval_context_t *context =
 		(search_expr_eval_context_t*)eval_get_context();
 	if (strcmp(name, "i")==0) {
 		scalar_create_int_c(result, context->i);
-		return 1;
+		return true;
 	} else if (strcmp(name, "o")==0) {
 		scalar_create_int_c(result, context->o);
-		return 1;
-	} else return 0;
+		return true;
+	} else return false;
 }
 
 class ht_expr_search_pcontext: public Object {
