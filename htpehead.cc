@@ -293,7 +293,7 @@ static ht_format_viewer *find_hex_viewer(ht_group *group)
 	return NULL;
 }
 
-int ht_pe_header_viewer::ref_sel(LINE_ID *id)
+bool ht_pe_header_viewer::ref_sel(LINE_ID *id)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)format_group->get_shared_data();
 	switch (id->id1) {
@@ -366,5 +366,5 @@ int ht_pe_header_viewer::ref_sel(LINE_ID *id)
 			break;
 		}
 	}
-	return 1;
+	return true;
 }
