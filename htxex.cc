@@ -93,13 +93,22 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	}
 
 	file->seek(xex_shared->header.certificate_address);
+	xex_shared->certificate_offset = xex_shared->header.certificate_address;
 	uint32 s;
 	if (file->read(&s, 4) == 4) {
-		xex_shared->certificate_offset = createHostInt(&s, 4, big_endian);
 		xex_shared->certificate_size = createHostInt(&s, 4, big_endian);
+		xex_shared->file_header.offset = xex_shared->header.certificate_address;
+		xex_shared->certificate_size = xex_shared->certificate_size;
+		xex_shared->file_header.key_ofs = xex_shared->file_header.offset+8;
+		file->seek(xex_shared->file_header.offset+0x180);
+		if (file->read(&s, 4) == 4) {
+			xex_shared->file_header.hash_table_count = createHostInt(&s, 4, big_endian);
+		} else {
+			xex_shared->file_header.hash_table_count = 0;
+		}
 	} else {
-		xex_shared->certificate_offset = xex_shared->header.certificate_address;
 		xex_shared->certificate_size = 0;
+		xex_shared->file_header.offset = xex_shared->file_header.size = 0;
 	}
 	
 	ht_format_group::init_ifs(ifs);
