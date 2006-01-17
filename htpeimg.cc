@@ -196,7 +196,7 @@ void ht_pe_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_
 	pe_shared = PE_shared;
 }
 
-int ht_pe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool ht_pe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	eval_func myfuncs[] = {
 		{"rva", (void*)&pe_viewer_func_rva, {SCALAR_INT},
@@ -206,7 +206,7 @@ int ht_pe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist
 			"returns address of section with index param1 otherwise"},
 		{NULL}
 	};
-	if (std_eval_func_handler(result, name, params, myfuncs)) return 1;
+	if (std_eval_func_handler(result, name, params, myfuncs)) return true;
 	return ht_aviewer::func_handler(result, name, params);
 }
 
