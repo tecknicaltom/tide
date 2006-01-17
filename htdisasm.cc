@@ -324,7 +324,7 @@ bool ht_disasm_viewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
 	return true;
 }
 
-int ht_disasm_viewer::ref_sel(LINE_ID *id)
+bool ht_disasm_viewer::ref_sel(LINE_ID *id)
 {
 	return goto_offset(id->id1, true);
 }
@@ -339,13 +339,13 @@ bool ht_disasm_viewer::qword_to_pos(uint64 q, viewer_pos *p)
 	return s->convert_ofs_to_id(ofs, &p->u.line_id);
 }
 
-int ht_disasm_viewer::symbol_handler(eval_scalar *result, char *name)
+bool ht_disasm_viewer::symbol_handler(eval_scalar *result, char *name)
 {
 	if (strcmp(name, "$") == 0) {
 		FileOfs ofs;
 		if (!pos_to_offset(*(viewer_pos*)&cursor, &ofs)) return 0;
 		scalar_create_int_c(result, ofs);
-		return 1;
+		return true;
 	}
 	return ht_uformat_viewer::symbol_handler(result, name);
 }
