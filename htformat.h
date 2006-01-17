@@ -207,8 +207,8 @@ public:
 	virtual	bool qword_to_pos(uint64 q, viewer_pos *pos);
 
 	/* string evaluation */
-	virtual	int func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
-	virtual	int symbol_handler(eval_scalar *result, char *name);
+	virtual	bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
+	virtual	bool symbol_handler(eval_scalar *result, char *name);
 
 	/* search related */
 		bool continue_search();
@@ -255,7 +255,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	int childcount() const;
-	virtual	int focus(ht_view *view);
+	virtual	bool focus(ht_view *view);
 	virtual	char *func(uint i, bool execute);
 		void getbounds(Bounds *b);
 	virtual ht_view *getfirstchild();
@@ -360,16 +360,16 @@ protected:
 	bool find_first_edit_tag_with_offset(uformat_viewer_pos *p, int limit, FileOfs offset);
 	void focus_cursor();
 	vcp getcolor_tag(uint pal_index);
-	int get_current_tag(char **tag);
-	int get_current_tag_size(uint32 *size);
+	bool get_current_tag(char **tag);
+	bool get_current_tag_size(uint32 *size);
 	vcp get_tag_color_edit(FileOfs tag_offset, uint size, bool atcursoroffset, bool iscursor);
 	int next_line(uformat_viewer_pos *p, int n);
 	int prev_line(uformat_viewer_pos *p, int n);
 	void print_tagstring(int x, int y, int maxlen, int xscroll, char *tagstring, bool cursor_in_line);
-	virtual int ref();
-	int ref_desc(ID id, FileOfs offset, uint size, bool bigendian);
-	int ref_flags(ID id, FileOfs offset);
-	virtual int ref_sel(LINE_ID *id);
+	virtual bool ref();
+	bool ref_desc(ID id, FileOfs offset, uint size, bool bigendian);
+	bool ref_flags(ID id, FileOfs offset);
+	virtual bool ref_sel(LINE_ID *id);
 	virtual void reloadpalette();
 	uint render_tagstring(char *chars, vcp *colors, uint maxlen, char *tagstring, bool cursor_in_line);
 	void render_tagstring_desc(char **string, int *length, vcp *tag_color, char *tag, uint size, bool bigendian, bool is_cursor);
