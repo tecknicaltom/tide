@@ -175,8 +175,8 @@ int  ht_treeview::get_graph(AbstractChar *s, void *node, int level, int lines)
 	static const AbstractChar graph[10] = {
 		{CP_DEVICE, ' '},
 		{CP_GRAPHICAL, GC_1VLINE},
-		{CP_GRAPHICAL, GC_1DTEE},
-		{CP_GRAPHICAL, GC_1CORNER1},
+		{CP_GRAPHICAL, GC_1RTEE},
+		{CP_GRAPHICAL, GC_1CORNER2},
 		{CP_GRAPHICAL, GC_1HLINE},
 		{CP_DEVICE, '+'},
 		{CP_DEVICE, '-'},
@@ -204,7 +204,7 @@ void *ht_treeview::get_node_r(void *node, int *i)
  */
 void *ht_treeview::get_node(int i)
 {
-	if (i<=0) return 0;
+	if (i <= 0) return 0;
 	void *Node = get_root();
 	return get_node_r(Node, &i);
 }
@@ -215,71 +215,71 @@ void	ht_treeview::handlemsg(htmsg *msg)
 	if (msg->msg==msg_keypressed) {
 		int Foc = foc;
 		switch (msg->data1.integer) {
-			case K_Up:
-				Foc--;
-				break;
-			case K_Down:
-				Foc++;
-				break;
-			case K_Control_Right:
-				if (delta_x < maxsize_x-1) delta_x++;
-				break;
-			case K_Control_Left:
-				if (delta_x > 0) delta_x--;
-				break;
-			case K_PageUp:
-				Foc -= size.h-1;
-				break;
-			case K_PageDown:
-				Foc += size.h-1;
-				break;
-			case K_Control_PageUp:
-				Foc = 0;
-				break;
-			case K_Control_PageDown:
-				Foc = maxsize_y - 1;
-				break;
-			case '+':
-			case K_Right: {
-				void *p = get_node(Foc+1);
-				if (has_children(p)) adjust(p, true);
-				break;
-			}
-			case '-':
-				adjust(get_node(Foc+1), false);
-				break;
-			case K_Left: {
-				void *n = get_node(Foc+1);
-				if (is_expanded(n)) {
-					adjust(n, false);
-				} else {
-					if (Foc) {
-						do {
-							Foc-=count_children(n)+1;
-							n = get_prev_node(n);
-						} while (n);
-						adjust(get_node(Foc+1), false);
-					}
+		case K_Up:
+			Foc--;
+			break;
+		case K_Down:
+			Foc++;
+			break;
+		case K_Control_Right:
+			if (delta_x < maxsize_x-1) delta_x++;
+			break;
+		case K_Control_Left:
+			if (delta_x > 0) delta_x--;
+			break;
+		case K_PageUp:
+			Foc -= size.h-1;
+			break;
+		case K_PageDown:
+			Foc += size.h-1;
+			break;
+		case K_Control_PageUp:
+			Foc = 0;
+			break;
+		case K_Control_PageDown:
+			Foc = maxsize_y - 1;
+			break;
+		case '+':
+		case K_Right: {
+			void *p = get_node(Foc+1);
+			if (has_children(p)) adjust(p, true);
+			break;
+		}
+		case '-':
+			adjust(get_node(Foc+1), false);
+			break;
+		case K_Left: {
+			void *n = get_node(Foc+1);
+			if (is_expanded(n)) {
+				adjust(n, false);
+			} else {
+				if (Foc) {
+					do {
+						Foc-=count_children(n)+1;
+						n = get_prev_node(n);
+					} while (n);
+					adjust(get_node(Foc+1), false);
 				}
-				break;
 			}
-			case '*':
-				expand_all(get_node(Foc+1));
-				break;
-			case '/':
-				collapse_all(get_node(Foc+1));
-				break;
-			case K_Return: {
-				void *n = get_node(Foc+1);
-				if (has_children(n)) {
-					adjust(n, !is_expanded(n));
-				} else {
-					select_node(n);
-				}
-				break;
+			break;
+		}
+		case '*':
+			expand_all(get_node(Foc+1));
+			break;
+		case '/':
+			collapse_all(get_node(Foc+1));
+			break;
+		case K_Return: {
+			void *n = get_node(Foc+1);
+			if (has_children(n)) {
+				adjust(n, !is_expanded(n));
+			} else {
+				select_node(n);
 			}
-			default:
-				return;
+			break;
+		}
+		default:
+			return;
 		}
 		update();
 		adjust_focus(Foc);
