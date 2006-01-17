@@ -337,7 +337,7 @@ static ht_format_viewer *find_hex_viewer(ht_group *group)
 	return NULL;
 }
 
-int ht_xex_header_viewer::ref_sel(LINE_ID *id)
+bool ht_xex_header_viewer::ref_sel(LINE_ID *id)
 {
 	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)format_group->get_shared_data();
 	ht_format_viewer *hexv = find_hex_viewer(group);
@@ -368,7 +368,7 @@ int ht_xex_header_viewer::ref_sel(LINE_ID *id)
 			hexv->goto_offset(ofs, false);
 			hexv->pselect_set(ofs, ofs+256);
 			app->focus(hexv);
-			return false;
+			return true;
 		}
 		}
 	}
