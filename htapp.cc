@@ -2197,7 +2197,7 @@ uint ht_app::find_free_window_number()
 	return e.number;
 }
 
-int ht_app::focus(ht_view *view)
+bool ht_app::focus(ht_view *view)
 {
 	return ht_dialog::focus(view);
 }
