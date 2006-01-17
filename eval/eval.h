@@ -39,8 +39,12 @@ extern "C" {
 
 #include "evaltype.h"
 
-typedef int (*eval_func_handler)(eval_scalar *result, char *name, eval_scalarlist *params);
-typedef int (*eval_symbol_handler)(eval_scalar *result, char *name);
+#ifndef __cplusplus
+#define bool int
+#endif
+
+typedef bool (*eval_func_handler)(eval_scalar *result, char *name, eval_scalarlist *params);
+typedef bool (*eval_symbol_handler)(eval_scalar *result, char *name);
 
 #include "lex.h"
 #include "evalx.h"
