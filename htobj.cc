@@ -388,13 +388,13 @@ void ht_view::fill(int x, int y, int w, int h, int c, char chr, Codepage cp)
 	buf->fill(b.x-size.x, b.y-size.y, b.w, b.h, c, chr, cp);
 }
 
-int ht_view::focus(ht_view *view)
+bool ht_view::focus(ht_view *view)
 {
 	if (view == this) {
 		if (!focused) receivefocus();
-		return 1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
 void ht_view::getbounds(Bounds *b)
@@ -531,7 +531,7 @@ ObjectID ht_view::getObjectID() const
 	return ATOM_HT_VIEW;
 }
 
-int ht_view::pointvisible(int x, int y)
+bool ht_view::pointvisible(int x, int y)
 {
 	x += size.x;
 	y += size.y;
@@ -788,71 +788,71 @@ int ht_group::enum_start()
 
 ht_view *ht_group::enum_next(int *handle)
 {
-	int lowest=0x7fffffff;
-	ht_view *view=0;
+	int lowest = 0x7fffffff;
+	ht_view *view = 0;
 
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
-		if ((v->browse_idx > *handle) && (v->browse_idx < lowest)) {
-			lowest=v->browse_idx;
-			view=v;
+		if (v->browse_idx > *handle && v->browse_idx < lowest) {
+			lowest = v->browse_idx;
+			view = v;
 		}
-		v=v->next;
+		v = v->next;
 	}
-	*handle=lowest;
+	*handle = lowest;
 	return view;
 }
 
-int ht_group::focus(ht_view *view)
+bool ht_group::focus(ht_view *view)
 {
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
 		if (v->focus(view)) {
 			releasefocus();
-			current=v;
+			current = v;
 			putontop(v);
 			receivefocus();
-			return 1;
+			return true;
 		}
-		v=v->next;
+		v = v->next;
 	}
 	return ht_view::focus(view);
 }
 
-int ht_group::focusnext()
+bool ht_group::focusnext()
 {
-	int i=current->browse_idx;
-	int r=(options & VO_SELBOUND);
-	ht_view *x=NULL;
-	while (1) {
+	int i = current->browse_idx;
+	bool r = (options & VO_SELBOUND);
+	ht_view *x = NULL;
+	while (true) {
 		i++;
-		if (i>view_count-1) i=0;
-		if (i==current->browse_idx) break;
-		ht_view *v=get_by_browse_idx(i);
-		if (v && (v->options & VO_SELECTABLE)) {
-			x=v;
+		if (i > view_count-1) i=0;
+		if (i == current->browse_idx) break;
+		ht_view *y = get_by_browse_idx(i);
+		if (y && (y->options & VO_SELECTABLE)) {
+			x = y;
 			break;
 		}
 	}
-	if ((i < current->browse_idx) && !aclone() && !r) {
-		return 0;
+	if (i < current->browse_idx && !aclone() && !r) {
+		return false;
 	}
 	if (x) {
 		x->selectfirst();
 		focus(x);
-		return 1;
+		return true;
 	}
 	return r;
 }
 
-int ht_group::focusprev()
+bool ht_group::focusprev()
 {
-	int i=current->browse_idx;
-	int r=(options & VO_SELBOUND);
+	int i = current->browse_idx;
+	bool r = (options & VO_SELBOUND);
 	if (!i && !aclone() && !r) {
-		return 0;
+		return false;
 	}
-	while (1) {
+	while (true) {
 		i--;
 		if (i<0) i=view_count-1;
 		if (i==current->browse_idx) break;
@@ -860,7 +860,7 @@ int ht_group::focusprev()
 		if (v && (v->options & VO_SELECTABLE)) {
 			v->selectlast();
 			focus(v);
-			return 1;
+			return true;
 		}
 	}
 	return r;
