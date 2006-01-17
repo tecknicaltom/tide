@@ -213,7 +213,7 @@ public:
 	virtual	bool offset_to_pos(FileOfs ofs, viewer_pos *p);
 	virtual	bool pos_to_offset(viewer_pos p, FileOfs *ofs);
 		bool pos_to_string(viewer_pos p, char *result, int maxlen);
-	virtual	int  ref_sel(LINE_ID *id);
+	virtual	bool ref_sel(LINE_ID *id);
 	virtual	void reloadpalette();
 	virtual	void setAnalyser(Analyser *a) = 0;
 		void showCallChain(Address *addr);
@@ -223,8 +223,8 @@ public:
 		void showXRefs(Address *addr);
 		void searchForXRefs(Address *addr);
 	virtual	bool qword_to_pos(uint64 q, viewer_pos *p);
-	virtual	int func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
-	virtual	int symbol_handler(eval_scalar *result, char *name);
+	virtual	bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
+	virtual	bool symbol_handler(eval_scalar *result, char *name);
 };
 
 #endif
