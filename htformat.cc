@@ -4464,7 +4464,7 @@ int ht_mask_sub::prev_line_id(LINE_ID *line_id, int n)
 	return r;
 }
 
-void ht_mask_sub::add_mask(char *tagstr)
+void ht_mask_sub::add_mask(const char *tagstr)
 {
 	masks += new ht_data_tagstring(tagstr);
 }
@@ -4589,7 +4589,7 @@ ht_search_result *ht_layer_sub::search(ht_search_request *search, FileOfs start,
 
 ID ht_collapsable_sub_globalfaddr=0xffffffff;
 
-void ht_collapsable_sub::init(File *file, ht_sub *sub, bool own_sub, char *ns, bool c)
+void ht_collapsable_sub::init(File *file, ht_sub *sub, bool own_sub, const char *ns, bool c)
 {
 	ht_layer_sub::init(file, sub, own_sub);
 	nodestring = ht_strdup(ns);
