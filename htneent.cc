@@ -123,7 +123,7 @@ format_viewer_if htneentrypoints_if = {
  *	CLASS ht_ne_entrypoint_viewer
  */
 
-int ht_ne_entrypoint_viewer::ref_sel(LINE_ID *id)
+bool ht_ne_entrypoint_viewer::ref_sel(LINE_ID *id)
 {
 /*   FIXNEW
 	uint seg = id_high;
@@ -149,5 +149,5 @@ int ht_ne_entrypoint_viewer::ref_sel(LINE_ID *id)
 		app->focus(ne_shared->v_image);
 	} else errorbox("can't follow: address %y is not valid !", a);
 	return 1;*/
-	return 0;
+	return false;
 }
