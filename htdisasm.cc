@@ -254,7 +254,7 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			m.type=mt_broadcast;
 			sendsubmsg(&m);
 			
-// FIXME: hack
+			// FIXME: hack
 			uf_initialized=false;
 			complete_init();
 			
@@ -283,7 +283,7 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 		case cmd_disasm_toggle1632: {
-// FIXME: very beautiful...
+			// FIXME: very beautiful...
 			op1632 ^= 1;
 			if (op1632) {
 				((x86asm *)assem)->opsize = X86_OPSIZE16;
