@@ -49,7 +49,7 @@ static ht_tag_flags_s xbe_init_flags[] =
 
 static ht_mask_ptable xeximageheader[] = {
 	{"magic",			STATICTAG_EDIT_CHAR("00000000")STATICTAG_EDIT_CHAR("00000001")STATICTAG_EDIT_CHAR("00000002")STATICTAG_EDIT_CHAR("00000003")},
-	{"version?",			STATICTAG_EDIT_DWORD_BE("00000004")},
+	{"version",			STATICTAG_EDIT_DWORD_BE("00000004")},
 	{"size of header",		STATICTAG_EDIT_DWORD_BE("00000008")},
 	{"res",				STATICTAG_EDIT_DWORD_BE("0000000c")},
 	{"offset of file header",	STATICTAG_EDIT_DWORD_BE("00000010")" "STATICTAG_REF("0000000100000000", "03", "raw")},
@@ -97,7 +97,7 @@ M    { 0x00000001, "hard disk"              },
 static ht_mask_sub *prep_sub(File *file, const char *desc, uint32 type, int i, ht_collapsable_sub **cs)
 {
 	char title[100];
-	ht_snprintf(title, sizeof title, "%-20s  [0x%08x]", desc, type);
+	ht_snprintf(title, sizeof title, "%-22s  [0x%08x]", desc, type);
 	ht_mask_sub *s = new ht_mask_sub();
 	s->init(file, i+4);
 	*cs = new ht_collapsable_sub();
@@ -173,8 +173,8 @@ static ht_sub *add_ids(File *file, const char *desc, ht_xex_shared_data &xex_sha
 	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
 	
 	ofs = xex_shared.info_table_cooked[i].start;
-	s->add_staticmask("id 1               "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
-	s->add_staticmask("id 2               "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+	s->add_staticmask("image checksum     "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
+	s->add_staticmask("timestamp          "STATICTAG_EDIT_TIME_BE("00000004"), ofs, true);
 	return cs;
 }
 
@@ -184,12 +184,15 @@ static ht_sub *add_fileinfo(File *file, const char *desc, ht_xex_shared_data &xe
 	ht_mask_sub *s = prep_sub(file, desc, xex_shared.info_table_cooked[i].type, i, &cs);
 	
 	ofs = xex_shared.info_table_cooked[i].start;
-	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
+	s->add_staticmask("media ID           "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
 	s->add_staticmask("xbox min version   "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
 	s->add_staticmask("xbox max? version  "STATICTAG_EDIT_DWORD_BE("00000008"), ofs, true);
-	s->add_staticmask("media mask         "STATICTAG_EDIT_DWORD_BE("0000000c"), ofs, true);
-	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000010"), ofs, true);
-	s->add_staticmask("res?               "STATICTAG_EDIT_DWORD_BE("00000014"), ofs, true);
+	s->add_staticmask("title ID           "STATICTAG_EDIT_DWORD_BE("0000000c"), ofs, true);
+	s->add_staticmask("platform           "STATICTAG_EDIT_BYTE("00000010"), ofs, true);
+	s->add_staticmask("executable type    "STATICTAG_EDIT_BYTE("00000011"), ofs, true);
+	s->add_staticmask("disk number        "STATICTAG_EDIT_BYTE("00000012"), ofs, true);
+	s->add_staticmask("disks total        "STATICTAG_EDIT_BYTE("00000013"), ofs, true);
+	s->add_staticmask("save game ID       "STATICTAG_EDIT_DWORD_BE("00000014"), ofs, true);
 	return cs;
 }
 
@@ -219,11 +222,11 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 
 	String str;
 	s->add_staticmask("file header size     "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
-	s->add_staticmask("mask?                "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);	
+	s->add_staticmask("image size           "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);	
 	s->add_staticmask("key                  "STATICTAG_REF("0000000100000001", "08", "show raw"), ofs, true);
 	s->add_staticmask("length?              "STATICTAG_EDIT_DWORD_BE("00000108"), ofs, true);
-	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("0000010c"), ofs, true);
-	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("00000110"), ofs, true);
+	s->add_staticmask("image flags          "STATICTAG_EDIT_DWORD_BE("0000010c"), ofs, true);
+	s->add_staticmask("load address         "STATICTAG_EDIT_DWORD_BE("00000110"), ofs, true);
 	s->add_staticmask(mkkey(str, "hash?                ", 0x114, 20) , ofs, true);
 	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("00000128"), ofs, true);
 	s->add_staticmask(mkkey(str, "hash?                ", 0x12c, 20), ofs, true);
@@ -231,7 +234,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	s->add_staticmask(mkkey(str, "crypted loader key   ", 0x150, 16), ofs, true);
 	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("00000160"), ofs, true);
 	s->add_staticmask(mkkey(str, "hash?                ", 0x164, 20) , ofs, true);
-	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("00000178"), ofs, true);
+	s->add_staticmask("game region          "STATICTAG_EDIT_DWORD_BE("00000178"), ofs, true);
 	s->add_staticmask("media type mask?     "STATICTAG_EDIT_DWORD_BE("0000017c"), ofs, true);
 	s->add_staticmask("", ofs, true);
 	s->add_staticmask("hash table entries   "STATICTAG_EDIT_DWORD_BE("00000180"), ofs, true);
@@ -292,20 +295,20 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 		case XEX_HEADER_FIELD_MODULES:
 			gs->insertsub(add_resmap(file, "modules", xex_shared, i, ofs));
 			break;
-		case XEX_HEADER_FIELD_FILEINFO:
+		case XEX_HEADER_FIELD_LOADERINFO:
 			gs->insertsub(add_loaderinfo(file, "loader information", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_FILENAME:
 			gs->insertsub(add_filename(file, "file name", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_LOADBASE:
-			gs->insertsub(add_single(file, "load base?", xex_shared, i, ofs));
+			gs->insertsub(add_single(file, "original base address", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_ENTRY:
-			gs->insertsub(add_single(file, "entry point?", xex_shared, i, ofs));
+			gs->insertsub(add_single(file, "entry point", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_BASE:
-			gs->insertsub(add_single(file, "base address?", xex_shared, i, ofs));
+			gs->insertsub(add_single(file, "image base address", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_IMPORT:
 			gs->insertsub(add_import(file, "imports", xex_shared, i, ofs));
@@ -313,11 +316,14 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 		case XEX_HEADER_FIELD_IDS:
 			gs->insertsub(add_ids(file, "IDs", xex_shared, i, ofs));
 			break;
-		case XEX_HEADER_FIELD_UPDATE:
-			gs->insertsub(add_filename(file, "update file name?", xex_shared, i, ofs));
+		case XEX_HEADER_FIELD_ORIG_FILENAME:
+			gs->insertsub(add_filename(file, "original file name", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_RESMAP2:
 			gs->insertsub(add_resmap(file, "resource map2?", xex_shared, i, ofs));
+			break;
+		case XEX_HEADER_FIELD_STACK_SIZE:
+			gs->insertsub(add_single(file, "default stack size", xex_shared, i, ofs));
 			break;
 		case XEX_HEADER_FIELD_CACHE_INFO:
 			gs->insertsub(add_single(file, "cache info", xex_shared, i, ofs));
@@ -325,10 +331,11 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 		case XEX_HEADER_FIELD_MEDIAINFO:
 			gs->insertsub(add_fileinfo(file, "file information", xex_shared, i, ofs));
 			break;
+		case XEX_HEADER_FIELD_LAN_KEY:
+			gs->insertsub(add_single(file, "lan key", xex_shared, i, ofs));
+			break;
 		case XEX_HEADER_FIELD_IMPORT_UNK:
 		case XEX_HEADER_FIELD_UNK0:
-		case XEX_HEADER_FIELD_UNK1:
-		case XEX_HEADER_FIELD_UNK2:
 		default: 
 			gs->insertsub(add_resmap(file, "UNKNOWN", xex_shared, i, ofs));
 		}
