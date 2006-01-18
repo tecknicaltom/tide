@@ -61,20 +61,20 @@ static int_hash pe_subsystems[] =
 };
 
 static ht_mask_ptable pemagic[] = {
-	{"magic",						STATICTAG_EDIT_DWORD_LE("00000000")},
+	{"magic",				STATICTAG_EDIT_DWORD_LE("00000000")},
 	{0, 0}
 };
 
 static ht_mask_ptable pe32header[] = {
-	{"optional magic",				STATICTAG_EDIT_WORD_LE("00000014")" "STATICTAG_DESC_WORD_LE("00000014", ATOM_PE_OPTIONAL_MAGICS_STR)},
-	{"major linker version",			STATICTAG_EDIT_BYTE("00000016")},
-	{"minor linker version",			STATICTAG_EDIT_BYTE("00000017")},
-	{"size of code",				STATICTAG_EDIT_DWORD_LE("00000018")},
-	{"size of data",				STATICTAG_EDIT_DWORD_LE("0000001c")},
+	{"optional magic",			STATICTAG_EDIT_WORD_LE("00000014")" "STATICTAG_DESC_WORD_LE("00000014", ATOM_PE_OPTIONAL_MAGICS_STR)},
+	{"major linker version",		STATICTAG_EDIT_BYTE("00000016")},
+	{"minor linker version",		STATICTAG_EDIT_BYTE("00000017")},
+	{"size of code",			STATICTAG_EDIT_DWORD_LE("00000018")},
+	{"size of data",			STATICTAG_EDIT_DWORD_LE("0000001c")},
 	{"size of bss",				STATICTAG_EDIT_DWORD_LE("00000020")},
 	{"entry point",				STATICTAG_EDIT_DWORD_LE("00000024")},
-	{"code base",					STATICTAG_EDIT_DWORD_LE("00000028")},
-	{"data base",					STATICTAG_EDIT_DWORD_LE("0000002c")},
+	{"code base",				STATICTAG_EDIT_DWORD_LE("00000028")},
+	{"data base",				STATICTAG_EDIT_DWORD_LE("0000002c")},
 	{0, 0}
 };
 
@@ -92,27 +92,27 @@ static ht_tag_flags_s pe_dll_characteristics[] =
 };
 
 static ht_mask_ptable pe32header_nt[] = {
-	{"image base",					STATICTAG_EDIT_DWORD_LE("00000030")},
+	{"image base",				STATICTAG_EDIT_DWORD_LE("00000030")},
 	{"section alignment",			STATICTAG_EDIT_DWORD_LE("00000034")},
-	{"file alignment",				STATICTAG_EDIT_DWORD_LE("00000038")},
+	{"file alignment",			STATICTAG_EDIT_DWORD_LE("00000038")},
 	{"major OS version",			STATICTAG_EDIT_WORD_LE("0000003c")},
 	{"minor OS version",			STATICTAG_EDIT_WORD_LE("0000003e")},
 	{"major image version",			STATICTAG_EDIT_WORD_LE("00000040")},
 	{"minor image version",			STATICTAG_EDIT_WORD_LE("00000042")},
 	{"major subsystem version",		STATICTAG_EDIT_WORD_LE("00000044")},
 	{"minor subsystem version",		STATICTAG_EDIT_WORD_LE("00000046")},
-	{"Win32 version",				STATICTAG_EDIT_DWORD_LE("00000048")},
-	{"size of image",				STATICTAG_EDIT_DWORD_LE("0000004c")},
-	{"size of headers",				STATICTAG_EDIT_DWORD_LE("00000050")},
-	{"checksum",					STATICTAG_EDIT_DWORD_LE("00000054")},
-	{"subsystem",					STATICTAG_EDIT_WORD_LE("00000058")" "STATICTAG_DESC_WORD_LE("00000058", ATOM_PE_SUBSYSTEMS_STR)},
+	{"Win32 version",			STATICTAG_EDIT_DWORD_LE("00000048")},
+	{"size of image",			STATICTAG_EDIT_DWORD_LE("0000004c")},
+	{"size of headers",			STATICTAG_EDIT_DWORD_LE("00000050")},
+	{"checksum",				STATICTAG_EDIT_DWORD_LE("00000054")},
+	{"subsystem",				STATICTAG_EDIT_WORD_LE("00000058")" "STATICTAG_DESC_WORD_LE("00000058", ATOM_PE_SUBSYSTEMS_STR)},
 	{"dll characteristics",			STATICTAG_EDIT_WORD_LE("0000005a")" "STATICTAG_FLAGS("0000005a", ATOM_PE_DLL_CHARACTERISTICS_STR)},
-	{"stack reserve",				STATICTAG_EDIT_DWORD_LE("0000005c")},
-	{"stack commit",				STATICTAG_EDIT_DWORD_LE("00000060")},
-	{"heap reserve",				STATICTAG_EDIT_DWORD_LE("00000064")},
+	{"stack reserve",			STATICTAG_EDIT_DWORD_LE("0000005c")},
+	{"stack commit",			STATICTAG_EDIT_DWORD_LE("00000060")},
+	{"heap reserve",			STATICTAG_EDIT_DWORD_LE("00000064")},
 	{"heap commit",				STATICTAG_EDIT_DWORD_LE("00000068")},
-	{"loader flags",				STATICTAG_EDIT_DWORD_LE("0000006c")},
-	{"number of directory entries",	STATICTAG_EDIT_DWORD_LE("00000070")},
+	{"loader flags",			STATICTAG_EDIT_DWORD_LE("0000006c")},
+	{"number of directory entries",		STATICTAG_EDIT_DWORD_LE("00000070")},
 	{0, 0}
 };
 
