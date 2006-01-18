@@ -209,13 +209,30 @@ struct ht_tag_edit_qword_generic {
 #define HT_STATICTAG_EDIT_QWORD_VE_CH		"\e\x99"
 
 /* EDIT-TIME-TAG */
-#define HT_TAG_EDIT_TIME			0x1a
-#define HT_TAG_EDIT_TIME_LEN			sizeof(ht_tag_edit_time)
-#define HT_TAG_EDIT_TIME_VLEN			(19)
-#define HT_TAG_EDIT_TIME_SIZE			(4)
+#define HT_TAG_EDIT_TIME_BE			0x1a
+#define HT_TAG_EDIT_TIME_BE_LEN			sizeof(ht_tag_edit_time)
+#define HT_TAG_EDIT_TIME_BE_VLEN		(19)
+#define HT_TAG_EDIT_TIME_BE_SIZE		(4)
 
-#define HT_STATICTAG_EDIT_TIME			0x9a
-#define HT_STATICTAG_EDIT_TIME_CH		"\e\x9a"
+#define HT_STATICTAG_EDIT_TIME_BE		0x9a
+#define HT_STATICTAG_EDIT_TIME_BE_CH		"\e\x9a"
+
+#define HT_TAG_EDIT_TIME_LE			0x1b
+#define HT_TAG_EDIT_TIME_LE_LEN			sizeof(ht_tag_edit_time)
+#define HT_TAG_EDIT_TIME_LE_VLEN		(19)
+#define HT_TAG_EDIT_TIME_LE_SIZE		(4)
+
+#define HT_STATICTAG_EDIT_TIME_LE		0x9b
+#define HT_STATICTAG_EDIT_TIME_LE_CH		"\e\x9b"
+
+#define HT_TAG_EDIT_TIME_VE			0x1c
+#define HT_TAG_EDIT_TIME_VE_LEN			sizeof(ht_tag_edit_time)
+#define HT_TAG_EDIT_TIME_VE_VLEN		(19)
+#define HT_TAG_EDIT_TIME_VE_SIZE		(4)
+
+#define HT_STATICTAG_EDIT_TIME_VE		0x9c
+#define HT_STATICTAG_EDIT_TIME_VE_CH		"\e\x9c"
+
 
 struct ht_tag_edit_time {
 	byte escape PACKED;
@@ -224,13 +241,13 @@ struct ht_tag_edit_time {
 };
 
 /* EDIT-CHAR-TAG */
-#define HT_TAG_EDIT_CHAR			0x1b
+#define HT_TAG_EDIT_CHAR			0x1d
 #define HT_TAG_EDIT_CHAR_LEN			sizeof(ht_tag_edit_char)
 #define HT_TAG_EDIT_CHAR_VLEN			(1)
 #define HT_TAG_EDIT_CHAR_SIZE			(1)
 
-#define HT_STATICTAG_EDIT_CHAR 			0x9b
-#define HT_STATICTAG_EDIT_CHAR_CH		"\e\x9b"
+#define HT_STATICTAG_EDIT_CHAR 			0x9d
+#define HT_STATICTAG_EDIT_CHAR_CH		"\e\x9d"
 
 struct ht_tag_edit_char {
 	byte escape PACKED;
@@ -239,13 +256,13 @@ struct ht_tag_edit_char {
 };
 
 /* EDIT-BIT-TAG */
-#define HT_TAG_EDIT_BIT				0x1c
+#define HT_TAG_EDIT_BIT				0x1e
 #define HT_TAG_EDIT_BIT_LEN			sizeof(ht_tag_edit_bit)
 #define HT_TAG_EDIT_BIT_VLEN			(1)
 #define HT_TAG_EDIT_BIT_SIZE			(1)
 
-#define HT_STATICTAG_EDIT_BIT 			0x9c
-#define HT_STATICTAG_EDIT_BIT_CH		"\e\x9c"
+#define HT_STATICTAG_EDIT_BIT 			0x9e
+#define HT_STATICTAG_EDIT_BIT_CH		"\e\x9e"
 
 struct ht_tag_edit_bit {
 	byte escape PACKED;
@@ -255,12 +272,12 @@ struct ht_tag_edit_bit {
 };
 
 /* EDIT-SELVIS-TAG */
-#define HT_TAG_EDIT_SELVIS			0x1d
+#define HT_TAG_EDIT_SELVIS			0x1f
 #define HT_TAG_EDIT_SELVIS_LEN			sizeof(ht_tag_edit_selvis)
 #define HT_TAG_EDIT_SELVIS_VLEN			(1)
 
-#define HT_STATICTAG_EDIT_SELVIS		0x9d
-#define HT_STATICTAG_EDIT_SELVIS_CH		"\e\x9d"
+#define HT_STATICTAG_EDIT_SELVIS		0x9f
+#define HT_STATICTAG_EDIT_SELVIS_CH		"\e\x9f"
 
 struct ht_tag_edit_selvis {
 	byte escape PACKED;
@@ -404,7 +421,9 @@ enum tag_endian { tag_endian_big, tag_endian_little, tag_endian_var };
 #define STATICTAG_EDIT_WORD_VE(ofs) HT_STATICTAG_EDIT_WORD_VE_CH ofs
 #define STATICTAG_EDIT_DWORD_VE(ofs) HT_STATICTAG_EDIT_DWORD_VE_CH ofs
 #define STATICTAG_EDIT_QWORD_VE(ofs) HT_STATICTAG_EDIT_QWORD_VE_CH ofs
-#define STATICTAG_EDIT_TIME(ofs) HT_STATICTAG_EDIT_TIME_CH ofs
+#define STATICTAG_EDIT_TIME_BE(ofs) HT_STATICTAG_EDIT_TIME_BE_CH ofs
+#define STATICTAG_EDIT_TIME_LE(ofs) HT_STATICTAG_EDIT_TIME_LE_CH ofs
+#define STATICTAG_EDIT_TIME_VE(ofs) HT_STATICTAG_EDIT_TIME_VE_CH ofs
 #define STATICTAG_EDIT_CHAR(ofs) HT_STATICTAG_EDIT_CHAR_CH ofs
 #define STATICTAG_EDIT_BIT(ofs, bitidx8) HT_STATICTAG_EDIT_BIT_CH ofs bitidx8
 #define STATICTAG_EDIT_SELVIS(ofs, char8) HT_STATICTAG_EDIT_SELVIS_CH ofs char8
@@ -471,7 +490,7 @@ TAGSTRING *tag_make_edit_byte(TAGSTRING *buf, FileOfs ofs);
 TAGSTRING *tag_make_edit_word(TAGSTRING *buf, FileOfs ofs, tag_endian e);
 TAGSTRING *tag_make_edit_dword(TAGSTRING *buf, FileOfs ofs, tag_endian e);
 TAGSTRING *tag_make_edit_qword(TAGSTRING *buf, FileOfs ofs, tag_endian e);
-TAGSTRING *tag_make_edit_time(TAGSTRING *buf, FileOfs ofs);
+TAGSTRING *tag_make_edit_time(TAGSTRING *buf, FileOfs ofs, tag_endian e);
 TAGSTRING *tag_make_edit_char(TAGSTRING *buf, FileOfs ofs);
 TAGSTRING *tag_make_edit_bit(TAGSTRING *buf, FileOfs ofs, int bitidx);
 TAGSTRING *tag_make_edit_selvis(TAGSTRING *buf, FileOfs offset, char ch);
