@@ -57,6 +57,40 @@ static ht_mask_ptable xeximageheader[] = {
 	{0, 0}
 };
 
+/*
+#define XEX_MEDIA_HD		0x00000001
+#define XEX_MEDIA_DVD_X2	0x00000002
+#define XEX_MEDIA_DVD_CD	0x00000004
+#define XEX_MEDIA_DVD_5		0x00000008
+#define XEX_MEDIA_DVD_9		0x00000010
+#define XEX_MEDIA_FLASH		0x00000020
+#define XEX_MEDIA_MEMORY_UNIT	0x00000080
+#define XEX_MEDIA_MASS_STORAGE	0x00000100
+#define XEX_MEDIA_SMB		0x00000200
+#define XEX_MEDIA_RAM		0x00000400
+#define XEX_MEDIA_INSECURE	0x01000000
+#define XEX_MEDIA_SAVE_GAME	0x02000000
+#define XEX_MEDIA_LOCAL		0x04000000
+#define XEX_MEDIA_LIVE		0x08000000
+#define XEX_MEDIA_XBOX		0x10000000
+M    { 0x00000001, "hard disk"              },
+    { 0x00000002, "DVD-X2"                 },
+    { 0x00000004, "DVD/CD"                 },
+    { 0x00000008, "DVD-5"                  },
+    { 0x00000010, "DVD-9"                  },
+    { 0x00000020, "system flash"           },
+    { 0x00000080, "memory unit"            },
+    { 0x00000100, "mass storage device"    },
+    { 0x00000200, "SMB filesystem"         },
+    { 0x00000400, "direct-from-RAM"        },
+    { 0x01000000, "insecure package"       },
+    { 0x02000000, "save game package"      },
+    { 0x04000000, "locally signed package" },
+    { 0x08000000, "Live-signed package"    },
+    { 0x10000000, "Xbox platform package"  }
+
+*/
+
 #define ATOM_XEX_INFO_CLASS_MAGICS 0x58455801
 #define ATOM_XEX_INFO_CLASS_MAGICS_STR "58455801"
 
