@@ -272,8 +272,21 @@ void BufferedRDisplay::fill(int x, int y, int w, int h, vcp color, char chr, Cod
 {
 	uint rawchar = mapCharToSystemCP(chr, cp);
 	bool transparent = (cp == CP_GRAPHICAL && chr == GC_TRANSPARENT);
+	if (y < 0) {
+		h += y;
+		y = 0;
+	}
+	if (x < 0) {
+		w += x;
+		x = 0;
+	}
+	if (x+w > this->w) {
+		w = this->w - x;
+	}
+	if (y+h > this->h) {
+		h = this->h - y;
+	}
 	for (int iy = y; iy < y+h; iy++) {
-		if (iy >= this->h) break;
 		ColoredChar *b = buf+x+ iy * this->w;
 		for (int ix = x; ix < x+w; ix++) {
 			if (!transparent) b->rawchar = rawchar;
