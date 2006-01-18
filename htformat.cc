@@ -1696,15 +1696,20 @@ bool ht_uformat_viewer::edit_input(byte b)
 			}
 			break;
 		}
-		case HT_TAG_EDIT_TIME: {
+		case HT_TAG_EDIT_TIME_BE:
+		case HT_TAG_EDIT_TIME_LE: {
 			uint32 d;
 			int h = edit_input_c2d(b);
 					
 			byte buf[4];
 			if ((pread(cursor_tag_offset, &buf, 4)==4) && (h!=-1)) {
-				d=(buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
-				tm *t = gmtime((time_t*)&d);
-				tm q = *t;
+				if (t[1] == HT_TAG_EDIT_TIME_LE) {
+					d=(buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
+				} else {
+					d=(buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
+				}
+				tm *ti = gmtime((time_t*)&d);
+				tm q = *ti;
 				int k;
 				bool worked = false;
 				#define DEC_MASK(value, mask) ((value) - (value) / (mask) % 10 * (mask))
@@ -1811,7 +1816,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 				/* FIXME: big bad hack... */
 				if (sizeof(uint32) == sizeof(time_t))
 				if (worked) {
-				/* FIXME: !!! */
+					/* FIXME: !!! */
 					uint32 tz;
 					time_t l = time(NULL);
 					time_t g = l;
@@ -1820,10 +1825,17 @@ bool ht_uformat_viewer::edit_input(byte b)
 					tz = (uint32)difftime(g, l);
 					*(time_t*)&d = mktime(&q);
 					d -= tz;
-					buf[0] = d>>0;
-					buf[1] = d>>8;
-					buf[2] = d>>16;
-					buf[3] = d>>24;
+					if (t[1] == HT_TAG_EDIT_TIME_LE) {
+						buf[0] = d>>0;
+						buf[1] = d>>8;
+						buf[2] = d>>16;
+						buf[3] = d>>24;
+					} else {
+						buf[3] = d>>0;
+						buf[2] = d>>8;
+						buf[1] = d>>16;
+						buf[0] = d>>24;
+					}
 					pwrite(cursor_tag_offset, &buf, 4);
 					cursormicroedit_forward();
 					return true;
@@ -3127,7 +3139,8 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					n+=HT_TAG_EDIT_QWORD_BE_LEN;
 					break;
 				}
-				case HT_TAG_EDIT_TIME: {
+				case HT_TAG_EDIT_TIME_LE:
+				case HT_TAG_EDIT_TIME_BE: {
 					uint32 d;
 					
 					tag_offset=tag_get_offset(n);
@@ -3135,7 +3148,11 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 
 					byte buf[4];
 					if (pread(tag_offset, &buf, 4)==4) {
-						d = (buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
+						if (n[1] == HT_TAG_EDIT_TIME_LE) {
+							d = (buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
+						} else {
+							d = (buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
+						}
 						tm *t=gmtime((time_t*)&d);
 						sprintf(str, "%02d:%02d:%02d %02d.%02d.%04d +1900", t->tm_hour, t->tm_min, t->tm_sec, t->tm_mday, t->tm_mon+1, t->tm_year);
 					} else {
@@ -3143,7 +3160,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					}
 					
 					c += render_tagstring_single(chars, colors, maxlen, c, str, strlen(str), tag_color);
-					n += HT_TAG_EDIT_TIME_LEN;
+					n += HT_TAG_EDIT_TIME_LE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_CHAR: {
@@ -4709,7 +4726,7 @@ ht_search_result *ht_collapsable_sub::search(ht_search_request *search, FileOfs 
 void ht_group_sub::init(File *file)
 {
 	ht_sub::init(file);
-	subs=new Array(false);
+	subs = new Array(true);
 }
 
 void ht_group_sub::done()
@@ -4804,12 +4821,9 @@ int ht_group_sub::prev_line_id(LINE_ID *line_id, int n)
 
 bool ht_group_sub::ref(LINE_ID *id)
 {
-	ht_sub *s;
-	uint c=subs->count();
-	for (uint i=0; i<c; i++) {
-		s=(ht_sub*)(*subs)[i];
+	foreach(ht_sub, s, *subs, 
 		if (s->ref(id)) return true;
-	}
+	);
 	return false;
 }
 
