@@ -113,7 +113,7 @@ branch_enum_t AnalyPPCDisassembler::isBranch(OPCODE *opcode)
 		if (ppc_insn->name[strlen(ppc_insn->name)] == 'l') {
 				return br_call;
 		}
-		if (ppc_insn->name[1]==0) {
+		if (ppc_insn->name[1] == 0 || strcmp(ppc_insn->name, "bctr") == 0) {
 				return br_jump;
 		}
 		return br_jXX;
