@@ -134,7 +134,7 @@ ht_mask_ptable coffheader[]=
 {
 	{"machine",			STATICTAG_EDIT_WORD_VE("00000000")" "STATICTAG_DESC_WORD_VE("00000000", ATOM_COFF_MACHINES_STR)},
 	{"number of sections",		STATICTAG_EDIT_WORD_VE("00000002")},
-	{"time-date stamp",		STATICTAG_EDIT_TIME("00000004")},
+	{"time-date stamp",		STATICTAG_EDIT_TIME_VE("00000004")},
 	{"pointer to symbol table",	STATICTAG_EDIT_DWORD_VE("00000008")},
 	{"number of symbols",		STATICTAG_EDIT_DWORD_VE("0000000c")},
 	{"size of optional header",	STATICTAG_EDIT_WORD_VE("00000010")" "STATICTAG_DESC_WORD_VE("00000010", ATOM_COFF_OPTIONAL_SIZES_STR)},
