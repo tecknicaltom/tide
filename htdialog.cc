@@ -1598,7 +1598,7 @@ void ht_listbox::draw()
 		resizing_cols = false;
 		clear(fc);
 		void *entry = e_top;
-		int i=0;
+		int i = 0;
 		while (entry && i < visible_height) {
 			int c = (i==cursor) ? (focused ? getcolor(palidx_generic_list_focused_selected) :
 				getcolor(palidx_generic_list_unfocused_selected)) : fc;
@@ -1637,7 +1637,7 @@ void ht_listbox::draw()
 				}
 			}
 			if (x > 0) {
-				// more text left
+				// more text on the left
 				buf->printChar(0, i, c, '<');
 			}
 			// position of '>' char is scrollbar dependent
