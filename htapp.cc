@@ -301,8 +301,8 @@ void FileBrowser::setstate(int state, int return_val)
 {
 	if (state == ds_term_ok) {
 		ht_strinputfield_data i;
+		ViewDataBuf vdb(name_input, &i, sizeof i);
 		pstat_t s;
-		name_input->databuf_get(&i, sizeof i);
 		String fn(i.text, i.textlen);
 		sys_pstat_filename(s, fn.contentChar());
 		if ((s.caps & pstat_mode_type) && (s.mode & HT_S_IFDIR)) {
