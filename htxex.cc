@@ -118,10 +118,10 @@ void ht_xex::done()
 {
 	ht_format_group::done();
 
-/*	ht_xbe_shared_data *xbe_shared = (ht_xbe_shared_data*)shared_data;
+	ht_xex_shared_data *xex_shared = (ht_xex_shared_data*)shared_data;
 
-	free(xbe_shared->sections.sections);
-
-	free(shared_data);*/
+	free(xex_shared->info_table);
+	free(xex_shared->info_table_cooked);
+	free(xex_shared);
 }
 
