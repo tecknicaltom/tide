@@ -186,11 +186,23 @@ TAGSTRING *tag_make_edit_qword(TAGSTRING *buf, FileOfs ofs, tag_endian e)
 	return buf + sizeof (ht_tag_edit_qword_generic);
 }
 
-TAGSTRING *tag_make_edit_time(TAGSTRING *buf, FileOfs ofs)
+TAGSTRING *tag_make_edit_time(TAGSTRING *buf, FileOfs ofs, tag_endian e)
 {
 	ht_tag_edit_time *tag = (ht_tag_edit_time*)buf;
 	tag->escape = '\e';
-	tag->magic = HT_TAG_EDIT_TIME;
+	byte m = 0xff;	
+	switch (e) {
+	case tag_endian_big:
+		m = HT_TAG_EDIT_TIME_BE;
+		break;
+	case tag_endian_little:
+		m = HT_TAG_EDIT_TIME_LE;
+		break;
+	case tag_endian_var:
+		m = HT_TAG_EDIT_TIME_VE;
+		break;
+	}
+	tag->magic = m;
 	UNALIGNED_MOVE(tag->offset, ofs);
 	return buf + sizeof (ht_tag_edit_time);
 }
@@ -359,9 +371,19 @@ void statictag_to_tag(const char *statictag_str, TAGSTRING *tag_str, uint64 relo
 				tag_str=tag_make_edit_qword(tag_str, ofs+relocation, std_bigendian ? tag_endian_big : tag_endian_little);
 				statictag_str+=2+8;
 				break;
-			case HT_STATICTAG_EDIT_TIME:
+			case HT_STATICTAG_EDIT_TIME_LE:
 				ofs=hexd(statictag_str+2);
-				tag_str=tag_make_edit_time(tag_str, ofs+relocation);
+				tag_str=tag_make_edit_time(tag_str, ofs+relocation, tag_endian_little);
+				statictag_str+=2+8;
+				break;
+			case HT_STATICTAG_EDIT_TIME_BE:
+				ofs=hexd(statictag_str+2);
+				tag_str=tag_make_edit_time(tag_str, ofs+relocation, tag_endian_big);
+				statictag_str+=2+8;
+				break;
+			case HT_STATICTAG_EDIT_TIME_VE:
+				ofs=hexd(statictag_str+2);
+				tag_str=tag_make_edit_time(tag_str, ofs+relocation, std_bigendian ? tag_endian_big : tag_endian_little);
 				statictag_str+=2+8;
 				break;
 			case HT_STATICTAG_EDIT_CHAR:
@@ -509,8 +531,12 @@ int tag_get_len(const TAGSTRING *tagstring)
 		return HT_TAG_EDIT_DWORD_VE_LEN;
 	case HT_TAG_EDIT_QWORD_VE:
 		return HT_TAG_EDIT_QWORD_VE_LEN;
-	case HT_TAG_EDIT_TIME:
-		return HT_TAG_EDIT_TIME_LEN;
+	case HT_TAG_EDIT_TIME_LE:
+		return HT_TAG_EDIT_TIME_LE_LEN;
+	case HT_TAG_EDIT_TIME_BE:
+		return HT_TAG_EDIT_TIME_BE_LEN;
+	case HT_TAG_EDIT_TIME_VE:
+		return HT_TAG_EDIT_TIME_VE_LEN;
 	case HT_TAG_EDIT_CHAR:
 		return HT_TAG_EDIT_CHAR_LEN;
 	case HT_TAG_EDIT_BIT:
@@ -574,8 +600,12 @@ int tag_get_vlen(const TAGSTRING *tagstring)
 		return HT_TAG_EDIT_DWORD_VE_VLEN;
 	case HT_TAG_EDIT_QWORD_VE:
 		return HT_TAG_EDIT_QWORD_VE_VLEN;
-	case HT_TAG_EDIT_TIME:
-		return HT_TAG_EDIT_TIME_VLEN;
+	case HT_TAG_EDIT_TIME_LE:
+		return HT_TAG_EDIT_TIME_LE_VLEN;
+	case HT_TAG_EDIT_TIME_BE:
+		return HT_TAG_EDIT_TIME_BE_VLEN;
+	case HT_TAG_EDIT_TIME_VE:
+		return HT_TAG_EDIT_TIME_VE_VLEN;
 	case HT_TAG_EDIT_CHAR:
 		return HT_TAG_EDIT_CHAR_VLEN;
 	case HT_TAG_EDIT_BIT:
@@ -607,7 +637,9 @@ int tag_get_micropos(const TAGSTRING *tagstring, int i)
 	case HT_TAG_EDIT_CHAR:
 	case HT_TAG_EDIT_BIT:
 		return i;
-	case HT_TAG_EDIT_TIME:
+	case HT_TAG_EDIT_TIME_LE:
+	case HT_TAG_EDIT_TIME_BE:
+	case HT_TAG_EDIT_TIME_VE:
 		return time_mp[i];
 	}
 //	assert(0);
@@ -637,7 +669,9 @@ int tag_get_microsize(const TAGSTRING *tagstring)
 		return HT_TAG_EDIT_DWORD_VE_VLEN;
 	case HT_TAG_EDIT_QWORD_VE:
 		return HT_TAG_EDIT_QWORD_VE_VLEN;
-	case HT_TAG_EDIT_TIME:
+	case HT_TAG_EDIT_TIME_LE:
+	case HT_TAG_EDIT_TIME_BE:
+	case HT_TAG_EDIT_TIME_VE:
 		return 14;
 	case HT_TAG_EDIT_CHAR:
 		return HT_TAG_EDIT_CHAR_VLEN;
@@ -671,8 +705,12 @@ int tag_get_size(const TAGSTRING *tagstring)
 		return HT_TAG_EDIT_DWORD_VE_SIZE;
 	case HT_TAG_EDIT_QWORD_VE:
 		return HT_TAG_EDIT_QWORD_VE_SIZE;
-	case HT_TAG_EDIT_TIME:
-		return HT_TAG_EDIT_TIME_SIZE;
+	case HT_TAG_EDIT_TIME_LE:
+		return HT_TAG_EDIT_TIME_LE_SIZE;
+	case HT_TAG_EDIT_TIME_BE:
+		return HT_TAG_EDIT_TIME_BE_SIZE;
+	case HT_TAG_EDIT_TIME_VE:
+		return HT_TAG_EDIT_TIME_VE_SIZE;
 	case HT_TAG_EDIT_CHAR:
 		return HT_TAG_EDIT_CHAR_SIZE;
 	case HT_TAG_EDIT_BIT:
@@ -708,7 +746,9 @@ FileOfs tag_get_offset(const TAGSTRING *tagstring)
 		UNALIGNED_MOVE(f, ((ht_tag_edit_qword_generic*)tagstring)->offset);
 		return f;
 	}
-	case HT_TAG_EDIT_TIME: {
+	case HT_TAG_EDIT_TIME_LE:
+	case HT_TAG_EDIT_TIME_BE:
+	case HT_TAG_EDIT_TIME_VE: {
 		UNALIGNED_MOVE(f, ((ht_tag_edit_time*)tagstring)->offset);
 		return f;
 	}
@@ -830,7 +870,9 @@ void tag_set_offset(const TAGSTRING *tagstring, FileOfs offset)
 	case HT_TAG_EDIT_QWORD_VE:
 		UNALIGNED_MOVE(((ht_tag_edit_qword_generic*)tagstring)->offset, offset);
 		break;
-	case HT_TAG_EDIT_TIME:
+	case HT_TAG_EDIT_TIME_LE:
+	case HT_TAG_EDIT_TIME_BE:
+	case HT_TAG_EDIT_TIME_VE:
 		UNALIGNED_MOVE(((ht_tag_edit_time*)tagstring)->offset, offset);
 		break;
 	case HT_TAG_EDIT_CHAR:
@@ -856,7 +898,9 @@ bool tag_is_editable(const TAGSTRING *tagstring)
 	case HT_TAG_EDIT_WORD_VE:
 	case HT_TAG_EDIT_DWORD_VE:
 	case HT_TAG_EDIT_QWORD_VE:
-	case HT_TAG_EDIT_TIME:
+	case HT_TAG_EDIT_TIME_LE:
+	case HT_TAG_EDIT_TIME_BE:
+	case HT_TAG_EDIT_TIME_VE:
 	case HT_TAG_EDIT_CHAR:
 	case HT_TAG_EDIT_BIT:
 		return true;
@@ -968,9 +1012,17 @@ int tag_count_selectable_tags_in_group(const TAGSTRING *tagstring, int group)
 			c++;
 			tagstring+=HT_TAG_EDIT_QWORD_VE_LEN;
 			break;
-		case HT_TAG_EDIT_TIME:
+		case HT_TAG_EDIT_TIME_LE:
 			c++;
-			tagstring+=HT_TAG_EDIT_TIME_LEN;
+			tagstring+=HT_TAG_EDIT_TIME_LE_LEN;
+			break;
+		case HT_TAG_EDIT_TIME_BE:
+			c++;
+			tagstring+=HT_TAG_EDIT_TIME_BE_LEN;
+			break;
+		case HT_TAG_EDIT_TIME_VE:
+			c++;
+			tagstring+=HT_TAG_EDIT_TIME_VE_LEN;
 			break;
 		case HT_TAG_EDIT_CHAR:
 			c++;
@@ -1083,9 +1135,17 @@ int tag_count_selectable_tags(const TAGSTRING *tagstring)
 			c++;
 			tagstring+=HT_TAG_EDIT_QWORD_VE_LEN;
 			break;
-		case HT_TAG_EDIT_TIME:
+		case HT_TAG_EDIT_TIME_LE:
 			c++;
-			tagstring+=HT_TAG_EDIT_TIME_LEN;
+			tagstring+=HT_TAG_EDIT_TIME_LE_LEN;
+			break;
+		case HT_TAG_EDIT_TIME_BE:
+			c++;
+			tagstring+=HT_TAG_EDIT_TIME_BE_LEN;
+			break;
+		case HT_TAG_EDIT_TIME_VE:
+			c++;
+			tagstring+=HT_TAG_EDIT_TIME_VE_LEN;
 			break;
 		case HT_TAG_EDIT_CHAR:
 			c++;
@@ -1222,10 +1282,20 @@ TAGSTRING *tag_get_selectable_tag(const TAGSTRING *tagstring, int n, int group)
 				r=tagstring;
 				tagstring+=HT_TAG_EDIT_QWORD_VE_LEN;
 				break;
-			case HT_TAG_EDIT_TIME:
+			case HT_TAG_EDIT_TIME_LE:
 				n--;
 				r=tagstring;
-				tagstring+=HT_TAG_EDIT_TIME_LEN;
+				tagstring+=HT_TAG_EDIT_TIME_LE_LEN;
+				break;
+			case HT_TAG_EDIT_TIME_BE:
+				n--;
+				r=tagstring;
+				tagstring+=HT_TAG_EDIT_TIME_BE_LEN;
+				break;
+			case HT_TAG_EDIT_TIME_VE:
+				n--;
+				r=tagstring;
+				tagstring+=HT_TAG_EDIT_TIME_VE_LEN;
 				break;
 			case HT_TAG_EDIT_CHAR:
 				n--;
@@ -1340,7 +1410,9 @@ int tag_get_class(const TAGSTRING *tagstring)
 		case HT_TAG_EDIT_WORD_VE:
 		case HT_TAG_EDIT_DWORD_VE:
 		case HT_TAG_EDIT_QWORD_VE:
-		case HT_TAG_EDIT_TIME:
+		case HT_TAG_EDIT_TIME_LE:
+		case HT_TAG_EDIT_TIME_BE:
+		case HT_TAG_EDIT_TIME_VE:
 		case HT_TAG_EDIT_CHAR:
 		case HT_TAG_EDIT_BIT:
 			return tag_class_edit;
