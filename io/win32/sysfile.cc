@@ -186,6 +186,10 @@ int sys_pstat_fd(pstat_t &s, int fd)
 	return 0;
 }
 
+int sys_pstat_filename(pstat_t &s, const char *filename)
+{
+}
+
 int sys_pstat_file(pstat_t &s, SYS_FILE *file)
 {
 	return sys_pstat_fd(s, fileno((FILE*)file));
