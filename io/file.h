@@ -162,7 +162,6 @@ int		sys_findnext(pfind_t &pfind);
 int		sys_pstat(pstat_t &s, const char *filename);
 int		sys_pstat_fd(pstat_t &s, int fd);
 int		sys_pstat_file(pstat_t &s, SYS_FILE *file);
-int		sys_pstat_filename(pstat_t &s, const char *filename);
 int		sys_truncate(const char *filename, FileOfs ofs);
 int		sys_truncate_fd(int fd, FileOfs ofs);
 int		sys_deletefile(const char *filename);
