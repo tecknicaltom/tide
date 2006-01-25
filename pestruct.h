@@ -35,7 +35,7 @@
 // Directory format.
 //
 
-typedef struct	PE_DATA_DIRECTORY {
+struct	PE_DATA_DIRECTORY {
     uint32	  address PACKED;
     uint32	  size PACKED;
 };
@@ -46,7 +46,7 @@ typedef struct	PE_DATA_DIRECTORY {
 // Optional header format.
 //
 
-typedef struct	PE_OPTIONAL_HEADER32_NT {
+struct	PE_OPTIONAL_HEADER32_NT {
 // NT additional fields.
 	uint32 image_base PACKED;
 	uint32 section_alignment PACKED;
@@ -61,7 +61,7 @@ typedef struct	PE_OPTIONAL_HEADER32_NT {
 	uint32 image_size PACKED;
 	uint32 header_size PACKED;
 	uint32 checksum PACKED;
-	uint16	subsystem PACKED;
+	uint16 subsystem PACKED;
 	uint16 dll_characteristics PACKED;
 	uint32 stack_reserve_size PACKED;
 	uint32 stack_commit_size PACKED;
@@ -72,7 +72,7 @@ typedef struct	PE_OPTIONAL_HEADER32_NT {
 	PE_DATA_DIRECTORY directory[PE_NUMBEROF_DIRECTORY_ENTRIES] PACKED;
 };
 
-typedef struct	PE_OPTIONAL_HEADER64_NT {
+struct	PE_OPTIONAL_HEADER64_NT {
 // NT additional fields.
 	uint64 image_base PACKED;
 	uint32 section_alignment PACKED;
@@ -221,13 +221,13 @@ struct PE_RESOURCE_DIRECTORY_ENTRY {
 	uint32   offset_to_directory PACKED;	// or data
 };
 
-/*typedef struct PE_RESOURCE_DIRECTORY_STRING {
+/* struct PE_RESOURCE_DIRECTORY_STRING {
     uint16    Length;
     CHAR    NameString[ 1 ];
 };
 
 
-typedef struct PE_RESOURCE_DIR_STRING_U {
+struct PE_RESOURCE_DIR_STRING_U {
     uint16    Length;
     WCHAR   NameString[ 1 ];
 };*/
