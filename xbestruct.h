@@ -34,7 +34,7 @@ typedef unsigned int RVA;
 
 #define XBE_SIZE_OF_SIGNATURE	256
 
-typedef struct XBE_IMAGE_HEADER {
+struct XBE_IMAGE_HEADER {
     byte	magic_id[XBE_MAGIC_LENGTH] PACKED;
     byte	signature[XBE_SIZE_OF_SIGNATURE] PACKED;
     uint32	base_address PACKED;
@@ -93,7 +93,7 @@ typedef struct XBE_IMAGE_HEADER {
 #define XBE_GAME_REGION_RESTOFWORLD		0x00000004
 #define XBE_GAME_REGION_MANUFACTURING		0x80000000
 
-typedef struct XBE_CERTIFICATE {
+struct XBE_CERTIFICATE {
     uint32	size_of_certificate PACKED;
     uint32	timedate PACKED;
     uint32	title_id PACKED;
@@ -119,7 +119,7 @@ typedef struct XBE_CERTIFICATE {
 
 #define XBE_SECTION_DIGEST_LENGTH	20
 
-typedef struct XBE_SECTION_HEADER {
+struct XBE_SECTION_HEADER {
     uint32	section_flags PACKED;
     uint32	virtual_address PACKED;
     uint32	virtual_size PACKED;
@@ -134,7 +134,7 @@ typedef struct XBE_SECTION_HEADER {
 
 #define XBE_LIBRARY_NAME_LENGTH		8
 
-typedef struct XBE_LIBRARY_VERSION {
+struct XBE_LIBRARY_VERSION {
     byte	library_name[XBE_LIBRARY_NAME_LENGTH] PACKED;
     uint16	major_version PACKED;
     uint16	minor_version PACKED;
@@ -143,7 +143,7 @@ typedef struct XBE_LIBRARY_VERSION {
 };
 
 
-typedef struct XBE_TLS_DIRECTORY {
+struct XBE_TLS_DIRECTORY {
     uint32	data_start_address PACKED;
     uint32	data_end_address PACKED;
     uint32	tls_index_address PACKED;
