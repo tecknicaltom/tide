@@ -56,14 +56,6 @@
 #include SYSTEM_OSAPI_SPECIFIC_TYPES_HDR
 
 /*
- *	NULL
- */
-
-#ifndef NULL
-#	define NULL 0
-#endif
-
-/*
  *	C++ specific
  */
 
