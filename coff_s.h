@@ -26,7 +26,7 @@
 
 typedef unsigned int RVA;
 
-typedef struct COFF_HEADER {
+struct COFF_HEADER {
 	uint16 machine PACKED;
 	uint16 section_count PACKED;
 	uint32 timestamp PACKED;
@@ -97,7 +97,7 @@ typedef struct COFF_HEADER {
 
 #define COFF_OPTMAGIC_PE64			0x20b
 
-typedef struct	COFF_OPTIONAL_HEADER32 {
+struct	COFF_OPTIONAL_HEADER32 {
 	uint16 magic PACKED;
 	byte major_linker_version PACKED;
 	byte minor_linker_version PACKED;
@@ -112,7 +112,7 @@ typedef struct	COFF_OPTIONAL_HEADER32 {
 /*
  *	same as COFF_OPTIONAL_HEADER32 but no data_base
  */
-typedef struct	COFF_OPTIONAL_HEADER64 {
+struct	COFF_OPTIONAL_HEADER64 {
 	uint16 magic PACKED;
 	byte major_linker_version PACKED;
 	byte minor_linker_version PACKED;
