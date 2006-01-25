@@ -25,42 +25,43 @@
 #include "analy.h"
 
 
-typedef enum {op_read, op_write, op_offset} OP;
+enum OP {op_read, op_write, op_offset};
 
 /*
  * general type of an address
  */
-typedef enum {
+enum taddr_typetype {
 	dt_unknown = 0,
 	dt_code,
 	dt_unknown_data,
 	dt_int,
 	dt_float,
 	dt_array
-} taddr_typetype;
+};
 
-typedef enum {
+enum taddr_code_subtype {
 	dst_cunknown = 0,
 	dst_location,
 	dst_function
-} taddr_code_subtype;
+};
 
-typedef enum {
+enum  taddr_int_subtype{
 	dst_iunknown = 0,
 	dst_ibyte,
 	dst_iword,
 	dst_idword,
 	dst_ipword,
 	dst_iqword
-} taddr_int_subtype;
+};
 
-typedef enum {
+enum taddr_float_subtype {
 	dst_funknown = 0,
+	dst_fsingle,
 	dst_fdouble,
 	dst_fextended
-} taddr_float_subtype;
+};
 
-typedef enum {
+enum taddr_array_subtype {
 	dst_aunknown = 0,
 	dst_abyte,
 	dst_aword,
@@ -69,7 +70,7 @@ typedef enum {
 	dst_aqword,
 	dst_string,
 	dst_unistring
-} taddr_array_subtype;
+};
 
 struct taddr_type {
 	taddr_typetype type;
