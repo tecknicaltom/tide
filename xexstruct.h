@@ -32,7 +32,7 @@ typedef unsigned int RVA;
 #define XEX_MAGIC2	'X'
 #define XEX_MAGIC3	'2'
 
-typedef struct XEX_IMAGE_HEADER {
+struct XEX_IMAGE_HEADER {
 	byte	magic_id[XEX_MAGIC_LENGTH] PACKED;
 	uint32	flags PACKED;
 	uint32	offset_unpack PACKED;
@@ -74,7 +74,7 @@ typedef struct XEX_IMAGE_HEADER {
 #define XEX_MEDIA_LIVE		0x08000000
 #define XEX_MEDIA_XBOX		0x10000000
 
-typedef struct XEX_IMAGE_HEADER_INFO_ENTRY {
+struct XEX_IMAGE_HEADER_INFO_ENTRY {
 	union {
 		struct {
 			byte	res PACKED;
