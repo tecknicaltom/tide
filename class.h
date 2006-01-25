@@ -57,18 +57,18 @@ static const u1 CONSTANT_Methodref          = 10;
 static const u1 CONSTANT_InterfaceMethodref = 11;
 static const u1 CONSTANT_NameAndType        = 12;
 
-typedef struct _cp_info {
-  u4 offset;
-  u1 tag;
-  union {
-    char   *string;
-    double dval;
-    float  fval;
-    long   lval;
-    int    ival;
-    long   llval[2];
-  } value;
-} cp_info;
+struct cp_info {
+	u4 offset;
+	u1 tag;
+	union {
+		char   *string;
+		double dval;
+		float  fval;
+		long   lval;
+		int    ival;
+		long   llval[2];
+	} value;
+};
 
 static const u2 ATTRIB_ConstantValue      =  1;
 static const u2 ATTRIB_Code               =  2;
@@ -80,7 +80,7 @@ static const u2 ATTRIB_LineNumberTable    =  7;
 static const u2 ATTRIB_LocalVariableTable =  8;
 static const u2 ATTRIB_Deprecated         =  9;
 
-typedef struct _attrib_info {
+struct attrib_info {
 	u4 offset;
 	u2 tag;
 	u2 name;
@@ -93,42 +93,42 @@ typedef struct _attrib_info {
 			u4 start;
 		} code;
 	};
-} attrib_info;
+};
 
 /* mf_info */
-typedef struct _mf_info {
-  u4 offset;
-  u2 flags;
-  char *name;
-  char *desc;
-  u2 attribs_count;
-  attrib_info **attribs;
-} mf_info;
+struct mf_info {
+	u4 offset;
+	u2 flags;
+	char *name;
+	char *desc;
+	u2 attribs_count;
+	attrib_info **attribs;
+};
 
 /* classfile */
-typedef struct _classfile {
-  u4 offset;
-  u4 magic;
-  u2 minor_version;
-  u2 major_version;
-  u2 cpool_count;
-  cp_info **cpool;
-  u4 coffset;
-  u2 access_flags;
-  u2 this_class;
-  u2 super_class;
-  u2 interfaces_count;
-  u2 *interfaces;
-  u4 foffset;
-  u2 fields_count;
-  mf_info **fields;
-  u4 moffset;
-  u2 methods_count;
-  mf_info **methods;
-  u4 aoffset;
-  u2 attribs_count;
-  attrib_info **attribs;
-} classfile;
+struct classfile {
+	u4 offset;
+	u4 magic;
+	u2 minor_version;
+	u2 major_version;
+	u2 cpool_count;
+	cp_info **cpool;
+	u4 coffset;
+	u2 access_flags;
+	u2 this_class;
+	u2 super_class;
+	u2 interfaces_count;
+	u2 *interfaces;
+	u4 foffset;
+	u2 fields_count;
+	mf_info **fields;
+	u4 moffset;
+	u2 methods_count;
+	mf_info **methods;
+	u4 aoffset;
+	u2 attribs_count;
+	attrib_info **attribs;
+};
 
 struct ht_class_shared_data {
 	Container	*methods;
