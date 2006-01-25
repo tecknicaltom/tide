@@ -40,7 +40,6 @@ class Analyser;
 #define ADDRESS_STRING_FORMAT_ADD_0X		    8
 #define ADDRESS_STRING_FORMAT_ADD_H		   16
 
-//#define DUP_ADDR(a) ((Address*)(a)->clone())
 class Address: public Object {
 public:
 				Address() {};
@@ -158,13 +157,13 @@ class Segment: public Object {
  *	these are the different possibilities of a branch
  *	to support further processors other types can be added
  */
-typedef enum {
+enum branch_enum_t {
 			br_nobranch,					// straight exec. flow
 			br_jump,
 			br_return,
 			br_call,
 			br_jXX
-} branch_enum_t;
+};
 
 /*
  *   internal opcodes are interchanged in this format
@@ -192,7 +191,7 @@ public:
 
 /***************************************************************************/
 
-typedef enum {
+enum xref_enum_t {
 	xrefread,
 	xrefwrite,
 	xrefoffset,
@@ -200,7 +199,7 @@ typedef enum {
 	xrefcall,
 	xrefijump,
 	xreficall
-} xref_enum_t;
+};
 
 class AddrXRef: public Object {
 public:
@@ -253,20 +252,20 @@ struct Location {
 #define AF_FUNCTION_SET 2
 #define AF_FUNCTION_END 4
 
-typedef enum {
+enum tsectype {
 	scvalid,
 	scread,
 	scwrite,
 	screadwrite,
 	sccode,
 	scinitialized
-} tsectype;
+};
 
-typedef enum {
+enum taccesstype {
 	acread,
 	acwrite,
 	acoffset
-} taccesstype;
+};
 
 struct taccess	{
 	bool		indexed;
@@ -274,12 +273,12 @@ struct taccess	{
 	taccesstype 	type;
 };
 
-typedef enum {
+enum labeltype {
 	label_unknown = 0,
 	label_func,
 	label_loc,
 	label_data
-} labeltype;
+};
 
 struct Symbol {
 	labeltype	type;
@@ -447,9 +446,4 @@ public:
 
 extern int global_analyser_address_string_format;
  
-/*
- * test;
- */
-extern Analyser *testanaly;
-
 #endif
