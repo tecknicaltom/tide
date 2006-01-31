@@ -485,7 +485,7 @@ ObjectID AnalyX86Disassembler::getObjectID() const
 
 Address *AnalyX86Disassembler::createAddress(uint16 segment, uint32 offset)
 {
-	if (flags & ANALYX86DISASSEMBLER_FLAGS_FLAT64) {
+	if (flags & (ANALYX86DISASSEMBLER_FLAGS_FLAT64 | ANALYX86DISASSEMBLER_FLAGS_AMD64)) {
 		return new AddressFlat64(offset);
 	} else if (flags & ANALYX86DISASSEMBLER_FLAGS_SEGMENTED) {
 		if (offset <= 0xffff) {
