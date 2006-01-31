@@ -73,7 +73,7 @@ struct COFF_HEADER {
 #define COFF_MACHINE_ALPHA_AXP_64		0x284   // Alpha AXP 64
 #define COFF_MACHINE_MIPSf			0x366   // MIPSf
 #define COFF_MACHINE_MIPS16f			0x466   // MIPS16f
-#define COFF_MACHINE_AMD_HAMMER			0x8664  // AMD Hammer
+#define COFF_MACHINE_AMD64			0x8664  // AMD 64
 
 // FIXME: not yet implemented: XCOFF64, no sample file available
 //#define COFF_MACHINE_POWERPC64_BE	   	0x1ef   // XCOFF 64Bit Big-Endian (PowerPC only ?)
