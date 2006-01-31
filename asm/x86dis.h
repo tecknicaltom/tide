@@ -64,8 +64,7 @@ protected:
 	x86dis_insn insn;
 	char insnstr[256];
 	unsigned char *codep, *ocodep;
-	int seg;
-	int addr; // FIXME: int??
+	CPU_ADDR addr;
 	byte c;
 	int modrm;
 	int sib;
@@ -95,6 +94,8 @@ protected:
 			uint	mkreg(uint modrm);
 			uint	mkindex(uint modrm);
 			uint	mkrm(uint modrm);
+	virtual		uint64	getoffset();
+	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
 public:
 				x86dis(X86OpSize opsize, X86AddrSize addrsize);
 				x86dis(BuildCtorArg&);
@@ -119,6 +120,8 @@ public:
 				x86_64dis(BuildCtorArg&);
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 	virtual		void	prefixes();
+	virtual		uint64	getoffset();
+	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
 };
 
 class x86dis_vxd: public x86dis {
