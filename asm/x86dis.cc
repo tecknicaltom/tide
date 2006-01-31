@@ -3,7 +3,7 @@
  *	x86dis.cc
  *
  *	Copyright (C) 1999-2002 Stefan Weyergraf
- *	Copyright (C) 2005 Sebastian Biallas (sb@biallas.net)
+ *	Copyright (C) 2005-2006 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -19,33 +19,28 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cstdio>
+#include <cstring>
+
+#include "htdebug.h"
 #include "stream.h"
 #include "snprintf.h"
 #include "tools.h"
 #include "vxd.h"
 #include "x86dis.h"
 
-#include <stdio.h>
-#include <string.h>
+#define mkscale mkmod
+#define mkbase mkrm
 
-#define mkmod(modrm) (((modrm)>>6)&3)
-#define mkreg(modrm) (((modrm)>>3)&7)
-#define mkrm(modrm) ((modrm)&7)
-
-#define mkscale(modrm) (((modrm)>>6)&3)
-#define mkindex(modrm) (((modrm)>>3)&7)
-#define mkbase(modrm) ((modrm)&7)
+#define rexw(rex) ((rex)&0x08)
+#define rexr(rex) ((rex)&0x04)
+#define rexx(rex) ((rex)&0x02)
+#define rexb(rex) ((rex)&0x01)
 
 int modrm16_1[8] = { X86_REG_BX, X86_REG_BX, X86_REG_BP, X86_REG_BP,
                      X86_REG_SI, X86_REG_DI, X86_REG_BP, X86_REG_BX};
 int modrm16_2[8] = { X86_REG_SI, X86_REG_DI, X86_REG_SI, X86_REG_DI,
                      X86_REG_NO, X86_REG_NO, X86_REG_NO, X86_REG_NO};
-
-int sibbase[8] = { X86_REG_AX, X86_REG_CX, X86_REG_DX, X86_REG_BX,
-                   X86_REG_SP, X86_REG_BP, X86_REG_SI, X86_REG_DI };
-
-int sibindex[8] = { X86_REG_AX, X86_REG_CX, X86_REG_DX, X86_REG_BX,
-                    X86_REG_NO, X86_REG_BP, X86_REG_SI, X86_REG_DI };
 
 int sibscale[4] = {1, 2, 4, 8};
 
@@ -53,7 +48,7 @@ int sibscale[4] = {1, 2, 4, 8};
  *	CLASS x86dis
  */
 
-x86dis::x86dis(int aOpsize, int aAddrsize)
+x86dis::x86dis(X86OpSize aOpsize, X86AddrSize aAddrsize)
 {
 	opsize = aOpsize;
 	addrsize = aAddrsize;
@@ -73,7 +68,7 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 	memset(&insn, 0, sizeof(insn));
 	insn.invalid = false;
 	insn.eopsize = opsize;
-	insn.eaddrsize = opsize;
+	insn.eaddrsize = addrsize;
 
 	prefixes();
 
@@ -90,6 +85,7 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 		insn.lockprefix = X86_PREFIX_NO;
 		insn.repprefix = X86_PREFIX_NO;
 		insn.segprefix = X86_PREFIX_NO;
+		insn.rexprefix = 0;
 		for (int i = 1; i < 3; i++) insn.op[i].type = X86_OPTYPE_EMPTY;
 	} else {
 		insn.size = codep - ocodep;
@@ -97,10 +93,30 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 	return &insn;
 }
 
+uint x86dis::mkmod(uint modrm)
+{
+	return modrm>>6 & 0x03;
+}
+
+uint x86dis::mkreg(uint modrm)
+{
+	return (modrm>>3 & 0x07) | !!rexr(insn.rexprefix) << 3;
+}
+
+uint x86dis::mkindex(uint sib)
+{
+	return (modrm>>3 & 0x07) | !!rexx(insn.rexprefix) << 3;	
+}
+
+uint x86dis::mkrm(uint modrm)
+{
+	return (modrm & 0x07) | !!rexb(insn.rexprefix) << 3;	
+}
+
 static bool is_xmm_op(x86dis_insn *insn, char size)
 {
 	if (insn->opsizeprefix == X86_PREFIX_OPSIZE
-	&& (size == SIZE_U || size == SIZE_Z)) {
+	 && (size == SIZE_U || size == SIZE_Z)) {
 		return true;
 	} else {
 		return false;
@@ -136,11 +152,12 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 			return;
 		}
 		op->mem.addrsize = insn.eaddrsize;
+		op->type = X86_OPTYPE_MEM;
+		op->size = esizeop(size);
+		op->mem.floatptr = isfloat(size);
+		op->mem.addrptr = isaddr(size);
+
 		if (insn.eaddrsize == X86_ADDRSIZE16) {
-			op->type = X86_OPTYPE_MEM;
-			op->size = esizeop(size);
-			op->mem.floatptr = isfloat(size);
-			op->mem.addrptr = isaddr(size);
 			if (mod == 0 && rm == 6) {
 				op->mem.hasdisp = 1;
 				op->mem.disp = getword();
@@ -167,10 +184,6 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 				}
 			}
 		} else {
-			op->type = X86_OPTYPE_MEM;
-			op->size = esizeop(size);
-			op->mem.floatptr = isfloat(size);
-			op->mem.addrptr = isaddr(size);
 			if (mod == 0 && rm == 5) {
 				op->mem.hasdisp = 1;
 				op->mem.disp = getdword();
@@ -190,7 +203,7 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 					break;
 				case 1:
 					op->mem.hasdisp = 1;
-					op->mem.disp = (char)getbyte();
+					op->mem.disp = (sint8)getbyte();
 					break;
 				case 2:
 					op->mem.hasdisp = 1;
@@ -350,7 +363,10 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			op->imm = (short)getword();
 			break;
 		case 4:
-			op->imm = getdword();
+			op->imm = (uint32)getdword();
+			break;
+		case 8:
+			op->imm = (sint32)getdword();
 			break;
 		}
 		switch (op->size) {
@@ -359,6 +375,9 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			break;
 		case 2:
 			op->imm &= 0xffff;
+			break;
+		case 4:
+			op->imm &= 0xffffffff;
 			break;
 		}
 		break;
@@ -376,6 +395,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			op->imm = getword();
 			break;
 		case 4:
+		case 8:
 			op->imm = getdword();
 			break;
 		}
@@ -419,14 +439,19 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		op->mem.addrptr = isaddr(xop->size);
 		op->mem.addrsize = insn.eaddrsize;
 		switch (insn.eaddrsize) {
-			case X86_ADDRSIZE16:
-				op->mem.hasdisp = 1;
-				op->mem.disp = getword();
-				break;
-			case X86_ADDRSIZE32:
-				op->mem.hasdisp = 1;
-				op->mem.disp = getdword();
-				break;
+		case X86_ADDRSIZE16:
+			op->mem.hasdisp = 1;
+			op->mem.disp = getword();
+			break;
+		case X86_ADDRSIZE32:
+			op->mem.hasdisp = 1;
+			op->mem.disp = getdword();
+			break;
+		case X86_ADDRSIZE64:
+			op->mem.hasdisp = 1;
+			op->mem.disp = getqword();
+			break;
+		default: {assert(0);}
 		}
 		op->mem.base = X86_REG_NO;
 		op->mem.index = X86_REG_NO;
@@ -512,7 +537,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		/* reg of ModR/M picks segment register */
 		op->type = X86_OPTYPE_SEG;
 		op->size = esizeop(xop->size);
-		op->seg = mkreg(getmodrm());
+		op->seg = mkreg(getmodrm()) & 0x7;
 		if (op->seg > 5) invalidate();
 		break;
 	}
@@ -541,20 +566,14 @@ void x86dis::decode_sib(x86_insn_op *op, int mod)
 	int index = mkindex(sib);
 	int base = mkbase(sib);
 	int disp = mod;
-	if (base == 5) {
-		if (mod == 0) {
-			op->mem.base = X86_REG_NO;
-			disp = 2;
-		} else {
-			op->mem.base = X86_REG_BP;
-		}
-		op->mem.index = sibindex[index];
-		op->mem.scale = sibscale[scale];
+	if ((base & 0x7) == 5 && mod == 0) {
+		op->mem.base = X86_REG_NO;
+		disp = 2;
 	} else {
-		op->mem.base = sibbase[base];
-		op->mem.index = sibindex[index];
-		op->mem.scale = sibscale[scale];
+		op->mem.base = base;
 	}
+	op->mem.index = index;
+	op->mem.scale = sibscale[scale];
 	switch (disp) {
 	case 0:
 		op->mem.hasdisp = 0;
@@ -562,11 +581,11 @@ void x86dis::decode_sib(x86_insn_op *op, int mod)
 		break;
 	case 1:
 		op->mem.hasdisp = 1;
-		op->mem.disp = (char)getbyte();
+		op->mem.disp = (sint8)getbyte();
 		break;
 	case 2:
 		op->mem.hasdisp = 1;
-		op->mem.disp = getdword();
+		op->mem.disp = (sint32)getdword();
 		break;
 	}
 }
@@ -675,6 +694,21 @@ uint32 x86dis::getdword()
 	}
 }
 
+uint64 x86dis::getqword()
+{
+	if (codep-ocodep+8 <= maxlen) {
+		uint64 w;
+		addr += 8;
+		w = codep[0]<< 0 | codep[1]<< 8 | codep[2]<<16 | codep[3]<<24
+		  | uint64(codep[4])<<32 | uint64(codep[5])<<40 | uint64(codep[6])<<48 | uint64(codep[7])<<56;
+		codep += 8;
+		return w;
+	} else {
+		invalidate();
+		return 0;
+	}
+}
+
 void x86dis::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align)
 {
 	min_length = 1;
@@ -733,8 +767,8 @@ bool x86dis::isaddr(char c)
 
 void x86dis::load(ObjectStream &f)
 {
-	GET_INT32X(f, opsize);
-	GET_INT32X(f, addrsize);
+	opsize = (X86OpSize)GETX_INT32(f, "opsize");
+	addrsize = (X86AddrSize)GETX_INT32(f, "addrsize");
 }
 
 ObjectID x86dis::getObjectID() const
@@ -748,6 +782,7 @@ void x86dis::prefixes()
 	insn.lockprefix = X86_PREFIX_NO;
 	insn.repprefix = X86_PREFIX_NO;
 	insn.segprefix = X86_PREFIX_NO;
+	insn.rexprefix = 0;
 	while (codep - ocodep < 15) {
 		c = getbyte();
 		switch (c) {
@@ -831,242 +866,265 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 	
 	*opstrlen=0;
 	switch (op->type) {
-		case X86_OPTYPE_IMM: {
-			CPU_ADDR a;
-			// FIXME: hack
-			if ((insn->name[0]=='j') || strcmp(insn->name, "call")==0) {
-				a.addr32.seg = seg;
-			} else {
-				a.addr32.seg = 0;
-			}
-			a.addr32.offset = op->imm;
-			int slen;
-			char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
-			if (s) {
-				memmove(opstr, s, slen);
-				opstr[slen]=0;
-				*opstrlen=slen;
-			} else {
-				char *g=opstr;
-				strcpy(g, cs_number); g += strlen(cs_number);
-				switch (op->size) {
-					case 1:
-						hexd(&g, 2, options, op->imm);
-						break;
-					case 2:
-						hexd(&g, 4, options, op->imm);
-						break;
-					case 4:
-						hexd(&g, 8, options, op->imm);
-						break;
-				}
-				strcpy(g, cs_default); g += strlen(cs_default);
-			}
-			break;
+	case X86_OPTYPE_IMM: {
+		CPU_ADDR a;
+		// FIXME: hack
+		if ((insn->name[0]=='j') || strcmp(insn->name, "call")==0) {
+			a.addr32.seg = seg;
+		} else {
+			a.addr32.seg = 0;
 		}
-		case X86_OPTYPE_REG: {
-			int j = -1;
+		a.addr32.offset = op->imm;
+		int slen;
+		char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
+		if (s) {
+			memcpy(opstr, s, slen);
+			opstr[slen]=0;
+			*opstrlen=slen;
+		} else {
+			char *g=opstr;
+			strcpy(g, cs_number); g += strlen(cs_number);
 			switch (op->size) {
-				case 1: j = 0; break;
-				case 2: j = 1; break;
-				case 4: j = 2; break;
+			case 1:
+				hexd(&g, 2, options, op->imm);
+				break;
+			case 2:
+				hexd(&g, 4, options, op->imm);
+				break;
+			case 4:
+				hexd(&g, 8, options, op->imm);
+				break;
+			}
+			strcpy(g, cs_default); g += strlen(cs_default);
+		}
+		break;
+	}
+	case X86_OPTYPE_REG: {
+		int j = -1;
+		if (!insn->rexprefix) {
+			switch (op->size) {
+			case 1: j = 0; break;
+			case 2: j = 1; break;
+			case 4: j = 2; break;
+			case 8: j = 3; break;
 			}
 			if (j != -1) sprintf(opstr, x86_regs[j][op->reg]);
-			break;
+		} else {
+			switch (op->size) {
+			case 1: j = 0; break;
+			case 2: j = 1; break;
+			case 4: j = 2; break;
+			case 8: j = 3; break;
+			}
+			if (j != -1) sprintf(opstr, x86_64regs[j][op->reg]);
 		}
-		case X86_OPTYPE_SEG:
-			if (x86_segs[op->seg]) {
-			    sprintf(opstr, x86_segs[op->seg]);
-			}
-			break;
-		case X86_OPTYPE_CRX:
-			sprintf(opstr, "cr%d", op->crx);
-			break;
-		case X86_OPTYPE_DRX:
-			sprintf(opstr, "dr%d", op->drx);
-			break;
-		case X86_OPTYPE_TRX:
-			sprintf(opstr, "tr%d", op->trx);
-			break;
-		case X86_OPTYPE_STX:
-			if (op->stx) {
-				sprintf(opstr, "st%s(%s%d%s)%s", 
-					cs_symbol, cs_number, op->stx, 
-					cs_symbol, cs_default);
+		break;
+	}
+	case X86_OPTYPE_SEG:
+		if (x86_segs[op->seg]) {
+		    sprintf(opstr, x86_segs[op->seg]);
+		}
+		break;
+	case X86_OPTYPE_CRX:
+		sprintf(opstr, "cr%d", op->crx);
+		break;
+	case X86_OPTYPE_DRX:
+		sprintf(opstr, "dr%d", op->drx);
+		break;
+	case X86_OPTYPE_TRX:
+		sprintf(opstr, "tr%d", op->trx);
+		break;
+	case X86_OPTYPE_STX:
+		if (op->stx) {
+			sprintf(opstr, "st%s(%s%d%s)%s", 
+				cs_symbol, cs_number, op->stx, 
+				cs_symbol, cs_default);
+		} else {
+			strcpy(opstr, "st");
+		}
+		break;
+	case X86_OPTYPE_MMX:
+		sprintf(opstr, "mm%d", op->mmx);
+		break;
+	case X86_OPTYPE_XMM:
+		sprintf(opstr, "xmm%d", op->xmm);
+		break;
+	case X86_OPTYPE_MEM: {
+		char *d=opstr;
+		if (explicit_params) {
+			if (op->mem.floatptr) {
+				switch (op->size) {
+				case 4:
+					d += sprintf(d, "single ptr ");
+					break;
+				case 8:
+					d += sprintf(d, "double ptr ");
+					break;
+				case 10:
+					d += sprintf(d, "extended ptr ");
+					break;
+				}
+			} else if (op->mem.addrptr) {
+				switch (op->size) {
+				case 4:
+				case 6:
+					d += sprintf(d, "far ptr ");
+					break;
+				}
 			} else {
-				strcpy(opstr, "st");
-			}
-			break;
-		case X86_OPTYPE_MMX:
-			sprintf(opstr, "mm%d", op->mmx);
-			break;
-		case X86_OPTYPE_XMM:
-			sprintf(opstr, "xmm%d", op->mmx);
-			break;
-		case X86_OPTYPE_MEM: {
-			char *d=opstr;
-			int reg;
-			if (explicit_params) {
-				if (op->mem.floatptr) {
-					switch (op->size) {
-						case 4:
-							d += sprintf(d, "single ptr ");
-							break;
-						case 8:
-							d += sprintf(d, "double ptr ");
-							break;
-						case 10:
-							d += sprintf(d, "extended ptr ");
-							break;
-					}
-				} else if (op->mem.addrptr) {
-					switch (op->size) {
-						case 4:
-						case 6:
-							d += sprintf(d, "far ptr ");
-							break;
-					}
-				} else {
-					switch (op->size) {
-						case 1:
-							d += sprintf(d, "byte ptr ");
-							break;
-						case 2:
-							d += sprintf(d, "word ptr ");
-							break;
-						case 4:
-							d += sprintf(d, "dword ptr ");
-							break;
-						case 6:
-							d += sprintf(d, "pword ptr ");
-							break;
-						case 8:
-							d += sprintf(d, "qword ptr ");
-							break;
-						case 16:
-							d += sprintf(d, "oword ptr ");
-							break;
-					}
+				switch (op->size) {
+				case 1:
+					d += sprintf(d, "byte ptr ");
+					break;
+				case 2:
+					d += sprintf(d, "word ptr ");
+					break;
+				case 4:
+					d += sprintf(d, "dword ptr ");
+					break;
+				case 6:
+					d += sprintf(d, "pword ptr ");
+					break;
+				case 8:
+					d += sprintf(d, "qword ptr ");
+					break;
+				case 16:
+					d += sprintf(d, "oword ptr ");
+					break;
 				}
 			}
-			if (insn->eaddrsize == X86_ADDRSIZE16) {
-				reg = 1; 
-			} else {
-				reg = 2;
-			}
-			if (insn->segprefix != X86_PREFIX_NO) {
-				d += sprintf(d, "%s%s:%s", x86_segs[insn->segprefix], cs_symbol, cs_default);
-			}
-			strcpy(d, cs_symbol); d += strlen(cs_symbol);
-			*(d++)='[';
-			strcpy(d, cs_default); d += strlen(cs_default);
-
-			int optimize_addr = options & X86DIS_STYLE_OPTIMIZE_ADDR;
-			bool first = true;
-			if (optimize_addr && (op->mem.base!=X86_REG_NO) && (op->mem.base==op->mem.index)) {
-				d += sprintf(d, "%s%s*%s%d%s", x86_regs[reg][op->mem.index], cs_symbol, cs_number, op->mem.scale+1, cs_default);
+		}
+		if (insn->segprefix != X86_PREFIX_NO) {
+			d += sprintf(d, "%s%s:%s", x86_segs[insn->segprefix], cs_symbol, cs_default);
+		}
+		strcpy(d, cs_symbol); d += strlen(cs_symbol);
+		*(d++)='[';
+		strcpy(d, cs_default); d += strlen(cs_default);
+		bool first = true;
+		int reg;
+		switch (insn->eaddrsize) {
+		case X86_ADDRSIZE16:
+			reg = 1;
+			break;
+		case X86_ADDRSIZE32:
+			reg = 2;
+			break;
+		case X86_ADDRSIZE64:
+			reg = 3;
+			break;
+		default: {assert(0);}
+		}
+		char ***regs = insn->rexprefix ? (char***)&x86_64regs : (char***)&x86_regs;
+		bool optimize_addr = options & X86DIS_STYLE_OPTIMIZE_ADDR;
+		if (optimize_addr && op->mem.base != X86_REG_NO && op->mem.base == op->mem.index) {
+			d += sprintf(d, "%s%s*%s%d%s", regs[reg][op->mem.index], cs_symbol, cs_number, op->mem.scale+1, cs_default);
+			first = false;
+		} else {
+			if (op->mem.base != X86_REG_NO) {
+				if (op->mem.base == X86_REG_IP) {
+					d += sprintf(d, "%s", x86_ipregs[reg]);
+				} else {
+					d += sprintf(d, "%s", regs[reg][op->mem.base]);
+				}
 				first = false;
-			} else {
-				if (op->mem.base != X86_REG_NO) {
-					d += sprintf(d, "%s", x86_regs[reg][op->mem.base]);
-					first = false;
-				}
-				if (op->mem.index != X86_REG_NO) {
-					if (!first) *(d++) = '+';
-					if (op->mem.scale == 1) {
-						d += sprintf(d, "%s", x86_regs[reg][op->mem.index]);
-					} else {
-						d += sprintf(d, "%s%s*%s%d%s", x86_regs[reg][op->mem.index], cs_symbol, cs_number, op->mem.scale, cs_default);
-					}
-					first = false;
-				}
 			}
-			if ((!optimize_addr && op->mem.hasdisp) || (optimize_addr && op->mem.disp) || first) {
-				CPU_ADDR a;
-				a.addr32.seg = 0; // FIXME: not ok
-				a.addr32.offset = op->mem.disp;
-				int slen;
-				char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : 0;
-				if (s) {
-					if (!first) {
-						strcpy(d, cs_symbol); d += strlen(cs_symbol);
-						*(d++)='+';
-						strcpy(d, cs_default); d += strlen(cs_default);
-					}
-					memmove(d, s, slen);
-					d+=slen;
-					*opstrlen=d-opstr;
+			if (op->mem.index != X86_REG_NO) {
+				if (!first) *(d++) = '+';
+				if (op->mem.scale == 1) {
+					d += sprintf(d, "%s", regs[reg][op->mem.index]);
 				} else {
-					uint32 q;
-					switch (op->mem.addrsize) {
-						case X86_ADDRSIZE16:
-							q=op->mem.disp;
-							if (!first) {
-								strcpy(d, cs_symbol); d += strlen(cs_symbol);
-								if (op->mem.disp&0x80000000) {
-									*(d++)='-';
-									q=-q;
-								} else *(d++)='+';
-							}
-							strcpy(d, cs_number); d += strlen(cs_number);
-							hexd(&d, 4, options, q);
-							strcpy(d, cs_default); d += strlen(cs_default);
-							break;
-						case X86_ADDRSIZE32:
-							q=op->mem.disp;
-							if (!first) {
-								strcpy(d, cs_symbol); d += strlen(cs_symbol);
-								if (op->mem.disp&0x80000000) {
-									*(d++)='-';
-									q=-q;
-								} else *(d++)='+';
-							}
-							strcpy(d, cs_number); d += strlen(cs_number);
-							hexd(&d, 8, options, q);
-							strcpy(d, cs_default); d += strlen(cs_default);
-							break;
-					}
+					d += sprintf(d, "%s%s*%s%d%s", regs[reg][op->mem.index], cs_symbol, cs_number, op->mem.scale, cs_default);
 				}
+				first = false;
 			}
-			strcpy(d, cs_symbol); d += strlen(cs_symbol);
-			*(d++)=']';
-			strcpy(d, cs_default); d += strlen(cs_default);
-			if (*opstrlen)
-				*opstrlen += strlen(cs_symbol) + 1 + strlen(cs_default);
-			*d=0;
-			break;
 		}
-		case X86_OPTYPE_FARPTR: {
+		if ((!optimize_addr && op->mem.hasdisp) || (optimize_addr && op->mem.disp) || first) {
 			CPU_ADDR a;
-			a.addr32.seg = op->farptr.seg;
-			a.addr32.offset = op->farptr.offset;
+			a.addr32.seg = 0; // FIXME: not ok
+			a.addr32.offset = op->mem.disp;
 			int slen;
 			char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : 0;
 			if (s) {
-				memmove(opstr, s, slen);
-				opstr[slen]=0;
-				*opstrlen=slen;
+				if (!first) {
+					strcpy(d, cs_symbol); d += strlen(cs_symbol);
+					*(d++)='+';
+					strcpy(d, cs_default); d += strlen(cs_default);
+				}
+				memmove(d, s, slen);
+				d+=slen;
+				*opstrlen=d-opstr;
 			} else {
-				char *g=opstr;
-				hexd(&g, 4, options, op->farptr.seg);
-				strcpy(g, cs_symbol); g += strlen(cs_symbol);
-				*(g++)=':';
-				strcpy(g, cs_default); g += strlen(cs_default);
-				switch (op->size) {
-					case 4:
-						hexd(&g, 4, options, op->farptr.offset);
-						break;
-					case 6:
-						hexd(&g, 8, options, op->farptr.offset);
-						break;
+				uint32 q;
+				switch (op->mem.addrsize) {
+				case X86_ADDRSIZE16:
+					q=op->mem.disp;
+					if (!first) {
+						strcpy(d, cs_symbol); d += strlen(cs_symbol);
+						if (op->mem.disp&0x80000000) {
+							*(d++)='-';
+							q=-q;
+						} else *(d++)='+';
+					}
+					strcpy(d, cs_number); d += strlen(cs_number);
+					hexd(&d, 4, options, q);
+					strcpy(d, cs_default); d += strlen(cs_default);
+					break;
+				case X86_ADDRSIZE32:
+					q=op->mem.disp;
+					if (!first) {
+						strcpy(d, cs_symbol); d += strlen(cs_symbol);
+						if (op->mem.disp&0x80000000) {
+							*(d++)='-';
+							q=-q;
+						} else *(d++)='+';
+					}
+					strcpy(d, cs_number); d += strlen(cs_number);
+					hexd(&d, 8, options, q);
+					strcpy(d, cs_default); d += strlen(cs_default);
+					break;
 				}
 			}
-			break;
 		}
-		default:
-			opstr[0]=0;
+		strcpy(d, cs_symbol); d += strlen(cs_symbol);
+		*(d++)=']';
+		strcpy(d, cs_default); d += strlen(cs_default);
+		if (*opstrlen)
+			*opstrlen += strlen(cs_symbol) + 1 + strlen(cs_default);
+		*d=0;
+		break;
+	}
+	case X86_OPTYPE_FARPTR: {
+		CPU_ADDR a;
+		a.addr32.seg = op->farptr.seg;
+		a.addr32.offset = op->farptr.offset;
+		int slen;
+		char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : 0;
+		if (s) {
+			memmove(opstr, s, slen);
+			opstr[slen]=0;
+			*opstrlen=slen;
+		} else {
+			char *g=opstr;
+			hexd(&g, 4, options, op->farptr.seg);
+			strcpy(g, cs_symbol); g += strlen(cs_symbol);
+			*(g++)=':';
+			strcpy(g, cs_default); g += strlen(cs_default);
+			switch (op->size) {
+				case 4:
+					hexd(&g, 4, options, op->farptr.offset);
+					break;
+				case 6:
+					hexd(&g, 8, options, op->farptr.offset);
+					break;
+			}
+		}
+		break;
+	}
+	default:
+		opstr[0]=0;
 	}
 }
+
 
 void x86dis::str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print)
 {
@@ -1166,16 +1224,16 @@ char *x86dis::str(dis_insn *disasm_insn, int options)
 
 static void pickname(char *result, const char *name, int n)
 {
-	char *s = strchr(name+1, '|');
-	if (!s) {
-		strcpy(result, name);
-		return;
-	}
-	if (n == 0) {
-		ht_snprintf(result, s - name, "%s", name + 1);
-	} else {
-		strcpy(result, s+1);
-	}
+	char *s;
+	do {
+		s = strchr(name+1, '|');
+		if (!s) {
+			strcpy(result, name);
+			return;
+		}
+		name = s;
+	} while (n--);
+	ht_snprintf(result, s - name, "%s", name + 1);
 }
 
 char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
@@ -1212,7 +1270,32 @@ char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
 	char n[32];
 	switch (insn->name[0]) {
 	case '?':
-		pickname(n, insn->name, (insn->eopsize == X86_OPSIZE32) ? 1 : 0);
+		switch (insn->eopsize) {
+		case X86_OPSIZE16: 
+			pickname(n, insn->name, 0);
+			break;
+		case X86_OPSIZE32:
+			pickname(n, insn->name, 1);
+			break;
+		case X86_OPSIZE64:
+			pickname(n, insn->name, 2);
+			break;
+		default: {assert(0);}
+		}
+		break;
+	case '*':
+		switch (insn->eaddrsize) {
+		case X86_ADDRSIZE16: 
+			pickname(n, insn->name, 0);
+			break;
+		case X86_ADDRSIZE32:
+			pickname(n, insn->name, 1);
+			break;
+		case X86_ADDRSIZE64:
+			pickname(n, insn->name, 2);
+			break;
+		default: {assert(0);}
+		}
 		break;
 	case '&':
 		pickname(n, insn->name, (insn->opsizeprefix == X86_PREFIX_OPSIZE) ? 1 : 0);
@@ -1241,15 +1324,129 @@ bool x86dis::validInsn(dis_insn *disasm_insn)
  */
 
 x86_64dis::x86_64dis()
-	: x86dis(X86_OPSIZE32, X86_ADDRSIZE32)
+	: x86dis(X86_OPSIZE32, X86_ADDRSIZE64)
 {
+}
+
+void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm)
+{
+	int modrm = getmodrm();
+	int mod = mkmod(modrm);
+	int rm = mkrm(modrm);
+	if (mod == 3) {
+		/* reg */
+		if (!allow_reg) {
+			invalidate();
+			return;
+		}
+		if (xmm || (mmx && is_xmm_op(&insn, size))) {
+			op->type = X86_OPTYPE_XMM;
+			op->xmm = rm;
+		} else if (mmx) {
+			op->type = X86_OPTYPE_MMX;
+			op->mmx = rm & 0x7; // no rex-extension
+		} else {
+			op->type = X86_OPTYPE_REG;
+			op->reg = rm;
+		}
+		op->size = esizeop(size);
+	} else {
+		/* mem */
+		if (!allow_mem) {
+			invalidate();
+			return;
+		}
+		op->mem.addrsize = insn.eaddrsize;
+		op->type = X86_OPTYPE_MEM;
+		op->size = esizeop(size);
+		op->mem.floatptr = isfloat(size);
+		op->mem.addrptr = isaddr(size);
+
+		if (mod == 0 && (rm & 0x7) == 5) {
+			op->mem.hasdisp = 1;
+			op->mem.disp = (sint32)getdword();
+			op->mem.base = X86_REG_IP;
+			op->mem.index = X86_REG_NO;
+			op->mem.scale = 0;
+		} else if ((rm & 0x7) == 4) {
+			decode_sib(op, mod);
+		} else {
+			op->mem.base = rm;
+			op->mem.index = X86_REG_NO;
+			op->mem.scale = 1;
+			switch (mod) {
+			case 0:
+				op->mem.hasdisp = 0;
+				op->mem.disp = 0;
+				break;
+			case 1:
+				op->mem.hasdisp = 1;
+				op->mem.disp = (sint8)getbyte();
+				break;
+			case 2:
+				op->mem.hasdisp = 1;
+				op->mem.disp = (sint32)getdword();
+				break;
+			}
+		}
+	}
+}
+
+void x86_64dis::prefixes()
+{
+	insn.opsizeprefix = X86_PREFIX_NO;
+	insn.lockprefix = X86_PREFIX_NO;
+	insn.repprefix = X86_PREFIX_NO;
+	insn.segprefix = X86_PREFIX_NO;
+	insn.rexprefix = 0;
+	while (codep - ocodep < 15) {
+		c = getbyte();
+
+		switch (c) {
+		case 0x26:
+		case 0x2e:
+		case 0x36:
+		case 0x3e:
+			continue; // cs, ds, es, ss prefix ignored
+		case 0x64:
+			insn.segprefix = X86_PREFIX_FS;
+			continue;
+		case 0x65:
+			insn.segprefix = X86_PREFIX_GS;
+			continue;
+		case 0x66:
+			insn.opsizeprefix = X86_PREFIX_OPSIZE;
+			insn.eopsize = X86_OPSIZE16;
+			continue;
+		case 0x67:
+			insn.eaddrsize = X86_ADDRSIZE16;
+			continue;
+		case 0xf0:
+			insn.lockprefix = X86_PREFIX_LOCK;
+			continue;
+		case 0xf2:
+			insn.repprefix = X86_PREFIX_REPNZ;
+			continue;
+		case 0xf3:
+			insn.repprefix = X86_PREFIX_REPZ;
+			continue;
+		}
+
+		if ((c & 0x40) == 0x40) {
+			insn.rexprefix = c;
+			if (rexw(c)) {
+				insn.eopsize = X86_OPSIZE64;
+			}
+		}
+		break;
+	}
 }
 
 /*
  *	CLASS x86dis_vxd
  */
 
-x86dis_vxd::x86dis_vxd(int opsize, int addrsize)
+x86dis_vxd::x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize)
 	: x86dis(opsize, addrsize)
 {
 }
@@ -1308,5 +1505,3 @@ void x86dis_vxd::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_
 		x86dis::str_op(opstr, opstrlen, insn, op, explicit_params);
 	}
 }
-
-
