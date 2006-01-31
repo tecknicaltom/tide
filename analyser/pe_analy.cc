@@ -518,6 +518,14 @@ void PEAnalyser::initUnasm()
 				((AnalyX86Disassembler *)analy_disasm)->init(this, 0);
 			}
 			break;
+		case COFF_MACHINE_AMD64:
+			if (!pe64) {
+				errorbox("x86_64 cant be used in PE32 format.");
+			} else {
+				analy_disasm = new AnalyX86Disassembler();
+				((AnalyX86Disassembler *)analy_disasm)->init(this, ANALYX86DISASSEMBLER_FLAGS_AMD64);
+			}
+			break;
 		case COFF_MACHINE_R3000:	// MIPS little-endian, 0x160 big-endian
 			DPRINTF("no apropriate disassembler for MIPS\n");
 			warnbox("No disassembler for MIPS!");
