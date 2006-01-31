@@ -3,7 +3,7 @@
  *	x86opc.cc
  *
  *	Copyright (C) 1999-2002 Stefan Weyergraf
- *	Copyright (C) 2005 Sebastian Biallas (sb@biallas.net)
+ *	Copyright (C) 2005-2006 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -56,14 +56,14 @@
 	Second char after '%':
 		a - two words in memory (BOUND)
 		b - byte
-		c - byte or uint16
-		d - uint32
+		c - byte or word
+		d - dword
 		p - 32 or 48 bit pointer
 		q - quadword
 		o - doublequadword (128 bits)
 		s - six unsigned char pseudo-descriptor
-		v - uint16 or uint32
-		w - uint16
+		v - word or dword (PM64: or qword)
+		w - word
 		F - use floating regs in mod/rm
 		+ - always sign
 		- - sign if negative
@@ -190,10 +190,26 @@
 #define __st6	TYPE_F, 6, SIZE_T, SIZE_T
 #define __st7	TYPE_F, 7, SIZE_T, SIZE_T
 
-char *x86_regs[3][8] = {
+char *x86_regs[4][8] = {
 {"al",  "cl",  "dl",  "bl",  "ah",  "ch",  "dh",  "bh"},
 {"ax",  "cx",  "dx",  "bx",  "sp",  "bp",  "si",  "di"},
-{"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"}
+{"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"},
+{"rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi"},
+};
+
+char *x86_64regs[4][16] = {
+{"al",  "cl",  "dl",   "bl",   "spl",  "bpl",  "sil",  "dil",
+ "r8b", "r9b", "r10b", "r11b", "r12b", "r13b", "r14b", "r15b"},
+{"ax",  "cx",  "dx",   "bx",   "sp",   "bp",   "si",   "di",
+ "r8w", "r9w", "r10w", "r11w", "r12w", "r13w", "r14w", "r15w"},
+{"eax", "ecx", "edx",  "ebx",  "esp",  "ebp",  "esi",  "edi",
+ "r8d", "r9d", "r10d", "r11d", "r12d", "r13d", "r14d", "r15d"},
+{"rax", "rcx", "rdx",  "rbx",  "rsp",  "rbp",  "rsi",  "rdi",
+ "r8",  "r9",  "r10",  "r11",  "r12",  "r13",  "r14",  "r15"},
+};
+
+char *x86_ipregs[4] = {
+ "", "ip", "eip", "rip",
 };
 
 char *x86_segs[8] = {
@@ -336,7 +352,7 @@ x86opc_insn x86_insns[256] = {
 {"?pusha|pushad"},
 {"?popa|popad"},
 {"bound", {{Gv}, {Mq}}},
-{"arpl", {{Ew}, {Rw}}},
+{"arpl", {{Ew}, {Rw}}},          //{"movsxd", {{Gv}, {Ed}}}, PM64
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* fs-prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* gs-prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* op-size prefix */
@@ -396,12 +412,12 @@ x86opc_insn x86_insns[256] = {
 {"xchg", {{__ax}, {__si}}},
 {"xchg", {{__ax}, {__di}}},
 /* 98 */
-{"?cbw|cwde"},
-{"?cwd|cdq"},
+{"?cbw|cwde|cdqe"},
+{"?cwd|cdq|cqo"},
 {"call", {{Ap}}},
 {"fwait"},
-{"?pushf|pushfd"},
-{"?popf|popfd"},
+{"?pushf|pushfd|pushfq"},
+{"?popf|popfd|popfq"},
 {"sahf"},
 {"lahf"},
 /* A0 */
@@ -410,18 +426,18 @@ x86opc_insn x86_insns[256] = {
 {"mov", {{Ob}, {__al}}},
 {"mov", {{Ov}, {__ax}}},
 {"movsb"},
-{"?movsw|movsd"},
+{"?movsw|movsd|movsq"},
 {"cmpsb"},
-{"?cmpsw|cmpsd"},
+{"?cmpsw|cmpsd|cmpsq"},
 /* A8 */
 {"test", {{__al}, {Ib}}},
 {"test", {{__ax}, {Iv}}},
 {"stosb"},
-{"?stosw|stosd"},
+{"?stosw|stosd|stosq"},
 {"lodsb"},
-{"?lodsw|lodsd"},
+{"?lodsw|lodsd|lodsq"},
 {"scasb"},
-{"?scasw|scasd"},
+{"?scasw|scasd|scasq"},
 /* B0 */
 {"mov", {{__al}, {Ib}}},
 {"mov", {{__cl}, {Ib}}},
@@ -480,7 +496,7 @@ x86opc_insn x86_insns[256] = {
 {"loopnz", {{Jb}}},
 {"loopz", {{Jb}}},
 {"loop", {{Jb}}},
-{"?jcxz|jecxz", {{Jb}}},
+{"*jcxz|jecxz|jrcxz", {{Jb}}},
 {"in", {{__al}, {Ib}}},
 {"in", {{__ax}, {Ib}}},
 {"out", {{Ib}, {__al}}},
@@ -1625,7 +1641,7 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 /* 21 - GROUP_EXT_C7 */
 {
 {0},
-{"cmpxchg8b", {{Mq}}},
+{"?cmpxchg8b|cmpxchg8b|cmpxchg16b", {{Mq}}}, //FIXME
 {0},
 {0},
 {0},
