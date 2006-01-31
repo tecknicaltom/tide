@@ -287,14 +287,14 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			op1632 ^= 1;
 			if (op1632) {
 				((x86asm *)assem)->opsize = X86_OPSIZE16;
-				((x86asm *)assem)->addrsize = X86_OPSIZE16;
+				((x86asm *)assem)->addrsize = X86_ADDRSIZE16;
 				((x86dis *)disasm)->opsize = X86_OPSIZE16;
-				((x86dis *)disasm)->addrsize = X86_OPSIZE16;
+				((x86dis *)disasm)->addrsize = X86_ADDRSIZE16;
 			} else {
 				((x86asm *)assem)->opsize = X86_OPSIZE32;
-				((x86asm *)assem)->addrsize = X86_OPSIZE32;
+				((x86asm *)assem)->addrsize = X86_ADDRSIZE32;
 				((x86dis *)disasm)->opsize = X86_OPSIZE32;
-				((x86dis *)disasm)->addrsize = X86_OPSIZE32;
+				((x86dis *)disasm)->addrsize = X86_ADDRSIZE32;
 			}
 			dirtyview();
 			clearmsg(msg);
