@@ -3,7 +3,7 @@
  *	x86opc.h
  *
  *	Copyright (C) 1999-2002 Stefan Weyergraf
- *	Copyright (C) 2005 Sebastian Biallas (sb@biallas.net)
+ *	Copyright (C) 2005-2006 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -40,13 +40,19 @@
 
 #define X86_PREFIX_OPSIZE	0	/* 66 */
 
-#define X86_OPSIZEUNKNOWN	-1
-#define X86_OPSIZE16		0
-#define X86_OPSIZE32		1
+enum X86OpSize {
+	X86_OPSIZEUNKNOWN = -1,
+	X86_OPSIZE16 = 0,
+	X86_OPSIZE32 = 1,
+	X86_OPSIZE64 = 2,
+};
 
-#define X86_ADDRSIZEUNKNOWN	-1
-#define X86_ADDRSIZE16		0
-#define X86_ADDRSIZE32		1
+enum X86AddrSize {
+	X86_ADDRSIZEUNKNOWN = -1,
+	X86_ADDRSIZE16 = 0,
+	X86_ADDRSIZE32 = 1,
+	X86_ADDRSIZE64 = 2,
+};
 
 #define X86_OPTYPE_EMPTY	0
 #define X86_OPTYPE_IMM		1
@@ -63,11 +69,6 @@
 
 // user defined types start here
 #define X86_OPTYPE_USER		32
-
-union int_or_ptr {
-	int i;
-	void *p;
-};
 
 struct x86_insn_op {
 	int type;
@@ -96,7 +97,10 @@ struct x86_insn_op {
 		int stx;
 		int mmx;
 		int xmm;
-		int_or_ptr user[4];
+		union {
+			int i;
+			void *p;
+		} user[4];
 	};
 };
 
@@ -135,14 +139,14 @@ struct x86_insn_op {
 
 #define SIZE_0			'0'		/* size unimportant */
 #define SIZE_B			'b'		/* byte */
-#define SIZE_W			'w'		/* uint16 */
-#define SIZE_D			'd'		/* uint32 */
-#define SIZE_Q			'q'		/* uint64 */
-#define SIZE_U			'u'		/* uint64 OR oword */
-#define SIZE_Z			'z'		/* uint32 OR uint64 */
+#define SIZE_W			'w'		/* word */
+#define SIZE_D			'd'		/* dword */
+#define SIZE_Q			'q'		/* qword */
+#define SIZE_U			'u'		/* qword OR oword */
+#define SIZE_Z			'z'		/* dword OR qword */
 #define SIZE_O			'o'		/* oword */
-#define SIZE_V			'v'		/* uint16 OR uint32 */
-#define SIZE_P			'p'		/* word:word OR word:dword, memory only ! */
+#define SIZE_V			'v'		/* word OR dword */
+#define SIZE_P			'p'		/* word:word OR word:dword, memory only! */
 #define SIZE_S			's'		/* short/single real (32-bit) */
 #define SIZE_L			'l'		/* long/double real (64-bit) */
 #define SIZE_T			't'		/* temp/extended real (80-bit) */
@@ -184,10 +188,21 @@ struct x86opc_finsn {
 #define X86_REG_BP		5
 #define X86_REG_SI		6
 #define X86_REG_DI		7
+#define X86_REG_R8		8
+#define X86_REG_R9		9
+#define X86_REG_R10		10
+#define X86_REG_R11		11
+#define X86_REG_R12		12
+#define X86_REG_R13		13
+#define X86_REG_R14		14
+#define X86_REG_R15		15
+#define X86_REG_IP		66
 
 #define X86_GROUPS		22
 
-extern char *x86_regs[3][8];
+extern char *x86_regs[4][8];
+extern char *x86_64regs[4][16];
+extern char *x86_ipregs[4];
 extern char *x86_segs[8];
 extern x86opc_insn x86_insns[256];
 extern x86opc_insn x86_insns_ext[256];
