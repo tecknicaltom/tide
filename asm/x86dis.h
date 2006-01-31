@@ -32,22 +32,21 @@
 #define X86DIS_OPCODE_CLASS_EXTEXT	4		/* 0F 0F */
 
 /* x86-specific styles */
-#define X86DIS_STYLE_EXPLICIT_MEMSIZE	0x00000001	/* IF SET: mov uint16 ptr [0000], ax 	ELSE: mov [0000], ax */
+#define X86DIS_STYLE_EXPLICIT_MEMSIZE	0x00000001	/* IF SET: mov word ptr [0000], ax 	ELSE: mov [0000], ax */
 #define X86DIS_STYLE_OPTIMIZE_ADDR	0x00000002	/* IF SET: mov [eax*3], ax 		ELSE: mov [eax+eax*2+00000000], ax */
-/*#define X86DIS_STYLE_USE16		0x00000004
-#define X86DIS_STYLE_USE32		0x00000008*/
 
 struct x86dis_insn {
 	bool invalid;
-	char opsizeprefix;
-	char lockprefix;
-	char repprefix;
-	char segprefix;
-	byte size;
+	sint8 opsizeprefix;
+	sint8 lockprefix;
+	sint8 repprefix;
+	sint8 segprefix;
+	uint8 rexprefix;
+	int size;
 	int opcode;
 	int opcodeclass;
-	int eopsize;
-	int eaddrsize;
+	X86OpSize eopsize;
+	X86AddrSize eaddrsize;
 	char *name;
 	x86_insn_op op[3];
 };
@@ -58,11 +57,12 @@ struct x86dis_insn {
 
 class x86dis: public Disassembler {
 public:
-	int opsize, addrsize;
+	X86OpSize opsize;
+	X86AddrSize addrsize;
+
 protected:
 	x86dis_insn insn;
 	char insnstr[256];
-/* initme! */
 	unsigned char *codep, *ocodep;
 	int seg;
 	int addr; // FIXME: int??
@@ -73,7 +73,7 @@ protected:
 
 /* new */
 			void	decode_insn(x86opc_insn *insn);
-			void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
+	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 			void	decode_op(x86_insn_op *op, x86opc_insn_op *xop);
 			void	decode_sib(x86_insn_op *op, int mod);
 			int	esizeaddr(char c);
@@ -81,17 +81,22 @@ protected:
 			byte	getbyte();
 			uint16	getword();
 			uint32	getdword();
+			uint64	getqword();
 			int	getmodrm();
 			int	getsib();
 			void	invalidate();
 			bool	isfloat(char c);
 			bool	isaddr(char c);
-			void	prefixes();
+	virtual		void	prefixes();
 			int	special_param_ambiguity(x86dis_insn *disasm_insn);
 			void	str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual		void	str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
+			uint	mkmod(uint modrm);
+			uint	mkreg(uint modrm);
+			uint	mkindex(uint modrm);
+			uint	mkrm(uint modrm);
 public:
-				x86dis(int opsize, int addrsize);
+				x86dis(X86OpSize opsize, X86AddrSize addrsize);
 				x86dis(BuildCtorArg&);
 
 /* overwritten */
@@ -112,6 +117,8 @@ class x86_64dis: public x86dis {
 public:	
 				x86_64dis();
 				x86_64dis(BuildCtorArg&);
+	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
+	virtual		void	prefixes();
 };
 
 class x86dis_vxd: public x86dis {
@@ -119,7 +126,7 @@ protected:
 	virtual void str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
 public:
 				x86dis_vxd(BuildCtorArg&);
-				x86dis_vxd(int opsize, int addrsize);
+				x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize);
 
 	virtual dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual ObjectID	getObjectID() const;
