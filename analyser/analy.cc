@@ -2208,13 +2208,6 @@ void AnalyDisassembler::init(Analyser *A)
 /*
  *
  */
-void AnalyDisassembler::done()
-{
-}
-
-/*
- *
- */
 void AnalyDisassembler::initDisasm()
 {
 	if (analy) {
