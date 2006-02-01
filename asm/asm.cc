@@ -18,14 +18,15 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <cstring>
+#include <cstdio>
+#include <stdarg.h>
+
 #include "asm.h"
 #include "data.h"
 #include "atom.h"
 #include "htdebug.h"
-
-#include <string.h>
-#include <stdio.h>
-#include <stdarg.h>
+#include "snprintf.h"
 
 #include "alphadis.h"
 #include "ia64dis.h"
@@ -202,7 +203,7 @@ dis_insn *Disassembler::createInvalidInsn()
 	return NULL;
 }
 
-void Disassembler::hexd(char **s, int size, int options, int imm)
+void Disassembler::hexd(char **s, int size, int options, uint32 imm)
 {
 	char ff[16];
 	char *f = (char*)&ff;
@@ -223,6 +224,37 @@ void Disassembler::hexd(char **s, int size, int options, int imm)
 		if (options & DIS_STYLE_HEX_ASMSTYLE) *f++ = 'h';
 		*f = 0;
 		*s += sprintf(*s, ff, imm);
+		if ((options & DIS_STYLE_HEX_NOZEROPAD) && (*t-'0'>9)) {
+			memmove(t+1, t, strlen(t)+1);
+			*t = '0';
+			(*s)++;
+		}
+	}
+}
+
+void Disassembler::hexq(char **s, int size, int options, uint64 imm)
+{
+	char ff[32];
+	char *f = (char*)&ff;
+	char *t = *s;
+	*f++ = '%';
+	if (imm >= 0 && imm <= 9) {
+		*s += sprintf(*s, "%d", imm);
+	} else if (options & DIS_STYLE_SIGNED) {
+		if (!(options & DIS_STYLE_HEX_NOZEROPAD)) f += sprintf(f, "0%d", size);
+		*f++ = 'q';
+		*f++ = 'd';
+		*f = 0;
+		*s += ht_snprintf(*s, 32, ff, imm);
+	} else {
+		if (options & DIS_STYLE_HEX_CSTYLE) *f++ = '#';
+		if (!(options & DIS_STYLE_HEX_NOZEROPAD)) f += sprintf(f, "0%d", size);
+		if (options & DIS_STYLE_HEX_UPPERCASE) *f++ = 'X'; else
+		*f++ = 'q';
+		*f++ = 'x';
+		if (options & DIS_STYLE_HEX_ASMSTYLE) *f++ = 'h';
+		*f = 0;
+		*s += ht_snprintf(*s, 32, ff, imm);
 		if ((options & DIS_STYLE_HEX_NOZEROPAD) && (*t-'0'>9)) {
 			memmove(t+1, t, strlen(t)+1);
 			*t = '0';
@@ -264,6 +296,7 @@ void Disassembler::disable_highlighting()
 }
 
 BUILDER(ATOM_DISASM_X86, x86dis, Disassembler)
+BUILDER(ATOM_DISASM_X86_64, x86_64dis, x86dis)
 BUILDER(ATOM_DISASM_X86_VXD, x86dis_vxd, x86dis)
 BUILDER(ATOM_DISASM_ALPHA, Alphadis, Disassembler)
 BUILDER(ATOM_DISASM_JAVA, javadis, Disassembler)
@@ -280,11 +313,13 @@ bool init_asm()
 	REGISTER(ATOM_DISASM_IA64, IA64Disassembler)
 	REGISTER(ATOM_DISASM_PPC, PPCDisassembler)
 	REGISTER(ATOM_DISASM_IL, ILDisassembler)
+	REGISTER(ATOM_DISASM_X86_64, x86_64dis)
 	return true;
 }
 
 void done_asm()
 {
+	UNREGISTER(ATOM_DISASM_X86_64, x86dis)
 	UNREGISTER(ATOM_DISASM_IL, ILDisassembler)
 	UNREGISTER(ATOM_DISASM_PPC, PPCDisassembler)
 	UNREGISTER(ATOM_DISASM_IA64, IA64Disassembler)
