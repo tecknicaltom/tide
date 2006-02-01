@@ -444,13 +444,6 @@ int AddressX86_1616::stringSize() const
 	return 9;
 }
 
-/*
- *
- */
-AnalyX86Disassembler::AnalyX86Disassembler()
-{
-}
-
 void AnalyX86Disassembler::init(Analyser *A, int f)
 {
 	flags = f;
@@ -465,14 +458,6 @@ void AnalyX86Disassembler::load(ObjectStream &f)
 {
 	GET_INT32X(f, flags);
 	AnalyDisassembler::load(f);
-}
-
-/*
- *
- */
-void AnalyX86Disassembler::done()
-{
-	AnalyDisassembler::done();
 }
 
 /*
@@ -672,5 +657,3 @@ void AnalyX86Disassembler::store(ObjectStream &f) const
 	PUT_INT32X(f, flags);
 	AnalyDisassembler::store(f);
 }
-
-
