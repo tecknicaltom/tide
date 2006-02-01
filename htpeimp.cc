@@ -199,7 +199,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 			ht_pe_import_function *func;
 			/* follow (original) first thunk */
 			if (pe32) {
-				thunk = *(thunk_table+i);
+				thunk = thunk_table[i];
 
 				if (thunk.ordinal & 0x80000000) {
 					/* by ordinal */
@@ -221,10 +221,10 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					func = new ht_pe_import_function(dll_index, fthunk_rva, s.contentChar(), hint);
 				}
 			} else {
-				thunk64 = *(thunk_table64+i);
+				thunk64 = thunk_table64[i];
 
 				// FIXME: is this correct ?
-				if (thunk64.ordinal & 0x80000000) {
+				if (thunk64.ordinal & 0x8000000000000000ULL) {
 					/* by ordinal */
 					func = new ht_pe_import_function(dll_index, fthunk_rva, thunk64.ordinal & 0xffff);
 				} else {
