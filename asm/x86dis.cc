@@ -365,7 +365,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			op->imm = (uint32)getdword();
 			break;
 		case 8:
-			op->imm = (sint32)getdword();
+			op->imm = sint64(sint32(getdword()));
 			break;
 		}
 		switch (op->size) {
@@ -394,8 +394,10 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			op->imm = getword();
 			break;
 		case 4:
-		case 8:
 			op->imm = getdword();
+			break;
+		case 8:
+			op->imm = sint64(sint32(getdword()));
 			break;
 		}
 		break;
@@ -426,14 +428,14 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		sint64 addr = getoffset() + (codep - ocodep);
 		switch (s) {
 		case 1:
-			op->imm = (char)getbyte() + addr + 1;
+			op->imm = sint8(getbyte()) + addr + 1;
 			break;
 		case 2:
-			op->imm = (short)getword() + addr + 2;
+			op->imm = sint16(getword()) + addr + 2;
 			break;
 		case 4:
 		case 8:
-			op->imm = (sint64)getdword() + addr + 4;
+			op->imm = sint32(getdword()) + addr + 4;
 			break;
 		}
 		break;
@@ -542,7 +544,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		/* extra picks register */
 		op->type = X86_OPTYPE_REG;
 		op->size = esizeop(xop->size);
-		op->reg = xop->extra;
+		op->reg = xop->extra | !!rexb(insn.rexprefix) << 3;
 		break;
 	}
 	case TYPE_S: {
@@ -910,10 +912,10 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 		char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
 		if (s) {
 			memcpy(opstr, s, slen);
-			opstr[slen]=0;
-			*opstrlen=slen;
+			opstr[slen] = 0;
+			*opstrlen = slen;
 		} else {
-			char *g=opstr;
+			char *g = opstr;
 			strcpy(g, cs_number); g += strlen(cs_number);
 			switch (op->size) {
 			case 1:
@@ -925,6 +927,9 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 			case 4:
 				hexd(&g, 8, options, op->imm);
 				break;
+			case 8:
+				hexq(&g, 16, options, op->imm);
+				break;
 			}
 			strcpy(g, cs_default); g += strlen(cs_default);
 		}
@@ -932,28 +937,23 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 	}
 	case X86_OPTYPE_REG: {
 		int j = -1;
+		switch (op->size) {
+		case 1: j = 0; break;
+		case 2: j = 1; break;
+		case 4: j = 2; break;
+		case 8: j = 3; break;
+		default: {assert(0);}
+		}
 		if (!insn->rexprefix) {
-			switch (op->size) {
-			case 1: j = 0; break;
-			case 2: j = 1; break;
-			case 4: j = 2; break;
-			case 8: j = 3; break;
-			}
-			if (j != -1) sprintf(opstr, x86_regs[j][op->reg]);
+			sprintf(opstr, x86_regs[j][op->reg]);
 		} else {
-			switch (op->size) {
-			case 1: j = 0; break;
-			case 2: j = 1; break;
-			case 4: j = 2; break;
-			case 8: j = 3; break;
-			}
-			if (j != -1) sprintf(opstr, x86_64regs[j][op->reg]);
+			sprintf(opstr, x86_64regs[j][op->reg]);
 		}
 		break;
 	}
 	case X86_OPTYPE_SEG:
 		if (x86_segs[op->seg]) {
-		    sprintf(opstr, x86_segs[op->seg]);
+			sprintf(opstr, x86_segs[op->seg]);
 		}
 		break;
 	case X86_OPTYPE_CRX:
@@ -1090,7 +1090,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 				uint32 q;
 				switch (op->mem.addrsize) {
 				case X86_ADDRSIZE16:
-					q=op->mem.disp;
+					q = op->mem.disp;
 					if (!first) {
 						strcpy(d, cs_symbol); d += strlen(cs_symbol);
 						if (op->mem.disp&0x80000000) {
@@ -1104,7 +1104,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 					break;
 				case X86_ADDRSIZE32:
 				case X86_ADDRSIZE64:
-					q=op->mem.disp;
+					q = op->mem.disp;
 					if (!first) {
 						strcpy(d, cs_symbol); d += strlen(cs_symbol);
 						if (op->mem.disp&0x80000000) {
@@ -1258,16 +1258,16 @@ char *x86dis::str(dis_insn *disasm_insn, int options)
 
 static void pickname(char *result, const char *name, int n)
 {
-	char *s;
+	const char *s = name;
 	do {
-		s = strchr(name+1, '|');
+		name = s+1;
+		s = strchr(name, '|');
 		if (!s) {
 			strcpy(result, name);
 			return;
 		}
-		name = s;
 	} while (n--);
-	ht_snprintf(result, s - name, "%s", name + 1);
+	ht_snprintf(result, s-name+1, "%s", name);
 }
 
 char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
@@ -1489,6 +1489,15 @@ void x86_64dis::filloffset(CPU_ADDR &addr, uint64 offset)
 	addr.flat64.addr = offset;
 }
 
+void x86_64dis::load(ObjectStream &f)
+{
+	x86dis::load(f);
+}
+
+ObjectID x86_64dis::getObjectID() const
+{
+	return ATOM_DISASM_X86_64;
+}
 
 /*
  *	CLASS x86dis_vxd
