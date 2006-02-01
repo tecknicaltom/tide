@@ -118,10 +118,11 @@ protected:
 	int options;
 	bool highlight;
 	
-			const char *get_cs(AsmSyntaxHighlightEnum style);
-			void hexd(char **s, int size, int options, int imm);
-			void enable_highlighting();
-			void disable_highlighting();
+		const char *get_cs(AsmSyntaxHighlightEnum style);
+		void hexd(char **s, int size, int options, uint32 imm);
+		void hexq(char **s, int size, int options, uint64 imm);
+		void enable_highlighting();
+		void disable_highlighting();
 public:
 		Disassembler();
 		Disassembler(BuildCtorArg&) {};
@@ -175,6 +176,7 @@ public:
 #define ATOM_DISASM_IL		MAGIC32("DIS\x05")
 #define ATOM_DISASM_X86_VXD	MAGIC32("DIS\x06")
 #define ATOM_DISASM_PPC		MAGIC32("DIS\x07")
+#define ATOM_DISASM_X86_64	MAGIC32("DIS\x08")
 
 #define ASM_SYNTAX_DEFAULT "\\@d"
 #define ASM_SYNTAX_COMMENT "\\@#"
