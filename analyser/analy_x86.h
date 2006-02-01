@@ -114,11 +114,10 @@ protected:
 public:
 	int flags;
 
-				AnalyX86Disassembler();
+				AnalyX86Disassembler() {};
 				AnalyX86Disassembler(BuildCtorArg&);
 		void		init(Analyser *A, int flags);
 		void 		load(ObjectStream &f);
-	virtual	void    	done();
 	virtual	ObjectID	getObjectID() const;
 
 	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
