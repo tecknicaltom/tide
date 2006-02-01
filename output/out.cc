@@ -401,7 +401,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 								case dst_iqword: {
 									uint64 c;
 									analy->bufPtr(addr, (byte *)&c, 8);
-									ht_snprintf(buf, sizeof buf, "dq          \\@n%016qxh", &c);
+									ht_snprintf(buf, sizeof buf, "dq          \\@n%016qxh", c);
 									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
 									break;
 								}
@@ -427,6 +427,9 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 								case dst_idword:
 									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "dd          ????????");
 									break;
+								case dst_iqword:
+									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "dq          ????????????????");
+									break;
 								case dst_ibyte:
 								default:
 									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "db          ??");
@@ -437,19 +440,19 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 					case dt_array: {
 						if (analy->validAddress(addr, scinitialized)) {
 							switch (cur_addr->type.array_subtype) {
-								case dst_string: {
-									char buf[1024];
-									byte bufread[1024];
-									char *b;
-									int r = analy->bufPtr(addr, bufread, MIN(cur_addr->type.length, 1024));
-									strcpy(buf, "db          \\@s\"");
-									b = buf + 12 + escape_special(buf+12, 100, bufread, r, "\"", false);
-									*b = '\"'; b++; *b = 0;
-									putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
-									bytes_line += cur_addr->type.length;
-									break;                                             
-								}
-								default: {assert(0);}
+							case dst_string: {
+								char buf[1024];
+								byte bufread[1024];
+								char *b;
+								int r = analy->bufPtr(addr, bufread, MIN(cur_addr->type.length, 1024));
+								strcpy(buf, "db          \\@s\"");
+								b = buf + 16 + escape_special(buf+16, 100, bufread, r, "\"", false);
+								*b = '\"'; b++; *b = 0;
+								putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
+								bytes_line += cur_addr->type.length;
+								break;
+							}
+							default: {assert(0);}
 							}
 						} else {
 							putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "db          ?");
