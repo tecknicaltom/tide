@@ -181,7 +181,6 @@ public:
 					AnalyDisassembler(BuildCtorArg &) {};
 
 		void			init(Analyser *A);
-	virtual	void			done();
 
 	virtual	Address *		branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine) = 0;
 	virtual	void			examineOpcode(OPCODE *opcode) = 0;
