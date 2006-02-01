@@ -78,11 +78,11 @@ struct x86_insn_op {
 			uint32 seg;
 			uint32 offset;
 		} farptr;			
-		uint32 imm;
+		uint64 imm;
 		int reg;
 		int seg;
 		struct {
-			uint32 disp;
+			uint64 disp;
 			int base;
 			int index;
 			int scale;
@@ -145,7 +145,7 @@ struct x86_insn_op {
 #define SIZE_U			'u'		/* qword OR oword */
 #define SIZE_Z			'z'		/* dword OR qword */
 #define SIZE_O			'o'		/* oword */
-#define SIZE_V			'v'		/* word OR dword */
+#define SIZE_V			'v'		/* word OR dword OR qword */
 #define SIZE_P			'p'		/* word:word OR word:dword, memory only! */
 #define SIZE_S			's'		/* short/single real (32-bit) */
 #define SIZE_L			'l'		/* long/double real (64-bit) */
