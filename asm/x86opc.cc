@@ -119,7 +119,6 @@
 #define Rb	TYPE_R, 0, SIZE_B, SIZE_B
 #define Rw	TYPE_R, 0, SIZE_W, SIZE_W
 #define Rd	TYPE_R, 0, SIZE_D, SIZE_D
-#define Rv	TYPE_R, 0, SIZE_V, SIZE_V
 #define Sw	TYPE_S, 0, SIZE_W, SIZE_W
 #define Td	TYPE_T, 0, SIZE_D, SIZE_D
 #define Vd	TYPE_V, 0, SIZE_D, SIZE_D
