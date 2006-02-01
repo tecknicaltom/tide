@@ -122,6 +122,8 @@ public:
 	virtual		void	prefixes();
 	virtual		uint64	getoffset();
 	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
+		void		load(ObjectStream &f);
+	virtual ObjectID	getObjectID() const;
 };
 
 class x86dis_vxd: public x86dis {
