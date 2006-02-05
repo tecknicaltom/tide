@@ -18,8 +18,8 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef HTIDLE_H
-#define HTIDLE_H
+#ifndef __HTIDLE_H__
+#define __HTIDLE_H__
 
 #include "data.h"
 void register_idle_object(Object *o);
