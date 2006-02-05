@@ -174,18 +174,18 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 					break;
 				case 1:
 					op->mem.hasdisp = 1;
-					op->mem.disp = (char)getbyte();
+					op->mem.disp = sint64(sint8(getbyte()));
 					break;
 				case 2:
 					op->mem.hasdisp = 1;
-					op->mem.disp = (short)getword();
+					op->mem.disp = sint64(sint16(getword());
 					break;
 				}
 			}
 		} else {
 			if (mod == 0 && rm == 5) {
 				op->mem.hasdisp = 1;
-				op->mem.disp = getdword();
+				op->mem.disp = getdword());
 				op->mem.base = X86_REG_NO;
 				op->mem.index = X86_REG_NO;
 				op->mem.scale = 0;
@@ -202,11 +202,11 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 					break;
 				case 1:
 					op->mem.hasdisp = 1;
-					op->mem.disp = (sint8)getbyte();
+					op->mem.disp = sint64(sint8(getbyte()));
 					break;
 				case 2:
 					op->mem.hasdisp = 1;
-					op->mem.disp = getdword();
+					op->mem.disp = sint64(sint32(getdword()));
 					break;
 				}
 			}
@@ -356,14 +356,12 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		int s = esizeop(xop->size);
 		switch (s) {
 		case 1:
-			op->imm = (char)getbyte();
+			op->imm = sint64(sint8(getbyte());
 			break;
 		case 2:
-			op->imm = (short)getword();
+			op->imm = sint64(sint16(getword());
 			break;
 		case 4:
-			op->imm = (uint32)getdword();
-			break;
 		case 8:
 			op->imm = sint64(sint32(getdword()));
 			break;
@@ -1090,10 +1088,10 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 				uint32 q;
 				switch (op->mem.addrsize) {
 				case X86_ADDRSIZE16:
-					q = op->mem.disp;
+					q = sint32(sint16(op->mem.disp));
 					if (!first) {
 						strcpy(d, cs_symbol); d += strlen(cs_symbol);
-						if (op->mem.disp&0x80000000) {
+						if (op->mem.disp&0x8000) {
 							*(d++)='-';
 							q=-q;
 						} else *(d++)='+';
