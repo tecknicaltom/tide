@@ -204,11 +204,11 @@ extern char *x86_regs[4][8];
 extern char *x86_64regs[4][16];
 extern char *x86_ipregs[4];
 extern char *x86_segs[8];
-extern x86opc_insn x86_insns[256];
-extern x86opc_insn x86_insns_ext[256];
+extern x86opc_insn x86_32_insns[256];
+extern x86opc_insn x86_32_insns_ext[256];
 extern x86opc_insn x86_insns_ext_f2[256];
 extern x86opc_insn x86_insns_ext_f3[256];
-extern x86opc_insn x86_group_insns[X86_GROUPS][8];
+extern x86opc_insn x86_32_group_insns[X86_GROUPS][8];
 
 extern x86opc_insn x86_modfloat_group_insns[8][8];
 extern x86opc_finsn x86_float_group_insns[8][8];
