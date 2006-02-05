@@ -60,6 +60,9 @@ public:
 	X86OpSize opsize;
 	X86AddrSize addrsize;
 
+	x86opc_insn *x86_insns;
+	x86opc_insn *x86_insns_ext;
+
 protected:
 	x86dis_insn insn;
 	char insnstr[256];
