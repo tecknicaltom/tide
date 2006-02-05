@@ -24,10 +24,7 @@
 #include "keyb.h"
 #include "sys.h"
 
-List *idle_objs;
-
-int cur_idle=0;
-bool any_idles=0;
+static List *idle_objs;
 
 void register_idle_object(Object *o)
 {
@@ -36,22 +33,24 @@ void register_idle_object(Object *o)
 
 void unregister_idle_object(Object *o)
 {
-	int c=idle_objs->count();
-	for (int i=0; i<c; i++) if ((*idle_objs)[i]==o) {
+	int c = idle_objs->count();
+	for (int i=0; i < c; i++) if ((*idle_objs)[i] == o) {
 		idle_objs->remove(idle_objs->findByIdx(i));
 	}
 }
 
 void do_idle()
 {
+	static int cur_idle = 0;
+	static bool any_idles = 0;
 	int c = idle_objs->count();
 	if (c) {
-		if (cur_idle>=c) {
-			cur_idle=0;
+		if (cur_idle >= c) {
+			cur_idle = 0;
 			if (!any_idles) sys_suspend();
-			any_idles=0;
+			any_idles = 0;
 		}
-		Object *i=(*idle_objs)[cur_idle];
+		Object *i = (*idle_objs)[cur_idle];
 		assert(i);
 		any_idles |= i->idle();
 		cur_idle++;
@@ -66,7 +65,7 @@ void do_idle()
 
 bool init_idle()
 {
-	idle_objs=new Array(false);
+	idle_objs = new Array(false);
 	return true;
 }
 
