@@ -548,7 +548,7 @@ x86_64_insn_patch x86_64_insn_patches[] = {
 {0x60, {0}}, // pusha
 {0x61, {0}}, // popa
 {0x62, {0}}, // bound
-{0x63, {"movsx", {{Gv}, {Eb}}}},
+{0x63, {"movsxd", {{Gv}, {Ed}}}}, // was arpl
 //{0x82, {0}}, // push es
 {0x9a, {0}}, // call Ap
 {0xa0, {"mov", {{__al}, {Ob}}}},
