@@ -37,7 +37,7 @@ struct XEX_IMAGE_HEADER {
 	uint32	flags PACKED;
 	uint32	offset_unpack PACKED;
 	uint32	res PACKED;
-	uint32	certificate_address PACKED;
+	uint32	file_header_offset PACKED;
 	uint32	number_of_sections PACKED;
 };
 
@@ -86,6 +86,9 @@ struct XEX_IMAGE_HEADER_INFO_ENTRY {
 	};
 	uint32	value PACKED;
 };
+
+#define XEX_LOADER_RAW 1
+#define XEX_LOADER_COMPRESSED 2
 
 extern byte XEX_IMAGE_HEADER_struct[];
 extern byte XEX_IMAGE_HEADER_INFO_ENTRY_struct[];
