@@ -218,7 +218,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	cs->init(file, gs, true, desc, true);
 	gs->insertsub(s);
 
-	FileOfs ofs = xex_shared.certificate_offset;
+	FileOfs ofs = xex_shared.file_header.offset;
 
 	String str;
 	s->add_staticmask("file header size     "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
@@ -397,9 +397,9 @@ bool ht_xex_header_viewer::ref_sel(LINE_ID *id)
 		switch (id->id2) {
 		case 0: {
 			vstate_save();
-			uint32 ofs = xex_shared->header.certificate_address;
+			uint32 ofs = xex_shared->file_header.offset;
 			hexv->goto_offset(ofs, false);
-			hexv->pselect_set(ofs, ofs+xex_shared->certificate_size);
+			hexv->pselect_set(ofs, ofs+xex_shared->file_header.size);
 			app->focus(hexv);
 			return true;
 		}
