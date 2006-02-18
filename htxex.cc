@@ -90,15 +90,26 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 			xex_shared->info_table_cooked[i].start = xex_shared->info_table[i].value;
 			xex_shared->info_table_cooked[i].size = xex_shared->info_table[i].b.size * 4;
 		}
+		
+		switch (xex_shared->info_table_cooked[i].type) {
+		case XEX_HEADER_FIELD_LOADERINFO:
+			break;
+		case XEX_HEADER_FIELD_IMPORT:
+			break;
+		case XEX_HEADER_FIELD_ENTRY:
+			xex_shared->entry_point = xex_shared->info_table[i].value;
+			break;
+		case XEX_HEADER_FIELD_BASE:
+			xex_shared->image_base = xex_shared->info_table[i].value;
+			break;
+		}
 	}
 
-	file->seek(xex_shared->header.certificate_address);
-	xex_shared->certificate_offset = xex_shared->header.certificate_address;
+	file->seek(xex_shared->header.file_header_offset);
 	uint32 s;
 	if (file->read(&s, 4) == 4) {
-		xex_shared->certificate_size = createHostInt(&s, 4, big_endian);
-		xex_shared->file_header.offset = xex_shared->header.certificate_address;
-		xex_shared->certificate_size = xex_shared->certificate_size;
+		xex_shared->file_header.offset = xex_shared->header.file_header_offset;
+		xex_shared->file_header.size = createHostInt(&s, 4, big_endian);
 		xex_shared->file_header.key_ofs = xex_shared->file_header.offset+8;
 		file->seek(xex_shared->file_header.offset+0x180);
 		if (file->read(&s, 4) == 4) {
@@ -107,7 +118,6 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 			xex_shared->file_header.hash_table_count = 0;
 		}
 	} else {
-		xex_shared->certificate_size = 0;
 		xex_shared->file_header.offset = xex_shared->file_header.size = 0;
 	}
 	
