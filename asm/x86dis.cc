@@ -53,6 +53,9 @@ x86dis::x86dis(X86OpSize aOpsize, X86AddrSize aAddrsize)
 	opsize = aOpsize;
 	addrsize = aAddrsize;
 	insn.invalid = true;
+	x86_insns = &x86_32_insns;
+	x86_insns_ext = &x86_32_insns_ext;
+	x86_group_insns = &x86_32_group_insns;
 }
 
 dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
@@ -64,7 +67,7 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 	addr = Addr;
 	modrm = -1;
 	sib = -1;
-	memset(&insn, 0, sizeof(insn));
+	memset(&insn, 0, sizeof insn);
 	insn.invalid = false;
 	insn.eopsize = opsize;
 	insn.eaddrsize = addrsize;
@@ -72,7 +75,7 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 	prefixes();
 
 	insn.opcode = c;
-	decode_insn(&x86_insns[insn.opcode]);
+	decode_insn(&(*x86_insns)[insn.opcode]);
 
 	if (insn.invalid) {
 		insn.name = "db";
@@ -104,7 +107,7 @@ uint x86dis::mkreg(uint modrm)
 
 uint x86dis::mkindex(uint sib)
 {
-	return (modrm>>3 & 0x07) | !!rexx(insn.rexprefix) << 3;	
+	return (sib>>3 & 0x07) | !!rexx(insn.rexprefix) << 3;	
 }
 
 uint x86dis::mkrm(uint modrm)
@@ -158,7 +161,7 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 
 		if (insn.eaddrsize == X86_ADDRSIZE16) {
 			if (mod == 0 && rm == 6) {
-				op->mem.hasdisp = 1;
+				op->mem.hasdisp = true;
 				op->mem.disp = getword();
 				op->mem.base = X86_REG_NO;
 				op->mem.index = X86_REG_NO;
@@ -169,23 +172,23 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 				op->mem.scale = 1;
 				switch (mod) {
 				case 0:
-					op->mem.hasdisp = 0;
+					op->mem.hasdisp = false;
 					op->mem.disp = 0;
 					break;
 				case 1:
-					op->mem.hasdisp = 1;
+					op->mem.hasdisp = true;
 					op->mem.disp = sint64(sint8(getbyte()));
 					break;
 				case 2:
-					op->mem.hasdisp = 1;
-					op->mem.disp = sint64(sint16(getword());
+					op->mem.hasdisp = true;
+					op->mem.disp = sint64(sint16(getword()));
 					break;
 				}
 			}
 		} else {
 			if (mod == 0 && rm == 5) {
-				op->mem.hasdisp = 1;
-				op->mem.disp = getdword());
+				op->mem.hasdisp = true;
+				op->mem.disp = getdword();
 				op->mem.base = X86_REG_NO;
 				op->mem.index = X86_REG_NO;
 				op->mem.scale = 0;
@@ -197,15 +200,15 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 				op->mem.scale = 1;
 				switch (mod) {
 				case 0:
-					op->mem.hasdisp = 0;
+					op->mem.hasdisp = false;
 					op->mem.disp = 0;
 					break;
 				case 1:
-					op->mem.hasdisp = 1;
+					op->mem.hasdisp = true;
 					op->mem.disp = sint64(sint8(getbyte()));
 					break;
 				case 2:
-					op->mem.hasdisp = 1;
+					op->mem.hasdisp = true;
 					op->mem.disp = sint64(sint32(getdword()));
 					break;
 				}
@@ -248,7 +251,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 						break;
 					default:
 						insn.opcodeclass = X86DIS_OPCODE_CLASS_EXT;
-						decode_insn(&x86_insns_ext[insn.opcode]);
+						decode_insn(&(*x86_insns_ext)[insn.opcode]);
 					}
 					break;
 				}
@@ -261,7 +264,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		case SPECIAL_TYPE_GROUP: {
 			int m = mkreg(getmodrm());
 			insn.opcode |= m<<8;
-			decode_insn(&x86_group_insns[(int)special.data][m]);
+			decode_insn(&(*x86_group_insns)[(int)special.data][m]);
 			break;
 		}
 		case SPECIAL_TYPE_FGROUP: {
@@ -356,14 +359,15 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		int s = esizeop(xop->size);
 		switch (s) {
 		case 1:
-			op->imm = sint64(sint8(getbyte());
+			op->imm = sint64(sint8(getbyte()));
 			break;
 		case 2:
-			op->imm = sint64(sint16(getword());
+			op->imm = sint64(sint16(getword()));
 			break;
 		case 4:
-		case 8:
 			op->imm = sint64(sint32(getdword()));
+		case 8:
+			op->imm = getqword();
 			break;
 		}
 		switch (op->size) {
@@ -392,10 +396,21 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			op->imm = getword();
 			break;
 		case 4:
-			op->imm = getdword();
+			op->imm = sint64(sint32(getdword()));
 			break;
 		case 8:
-			op->imm = sint64(sint32(getdword()));
+			op->imm = getqword();
+			break;
+		}
+		switch (op->size) {
+		case 1:
+			op->imm &= 0xff;
+			break;
+		case 2:
+			op->imm &= 0xffff;
+			break;
+		case 4:
+			op->imm &= 0xffffffff;
 			break;
 		}
 		break;
@@ -450,17 +465,15 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		op->mem.floatptr = isfloat(xop->size);
 		op->mem.addrptr = isaddr(xop->size);
 		op->mem.addrsize = insn.eaddrsize;
+		op->mem.hasdisp = true;
 		switch (insn.eaddrsize) {
 		case X86_ADDRSIZE16:
-			op->mem.hasdisp = 1;
 			op->mem.disp = getword();
 			break;
 		case X86_ADDRSIZE32:
-			op->mem.hasdisp = 1;
 			op->mem.disp = getdword();
 			break;
 		case X86_ADDRSIZE64:
-			op->mem.hasdisp = 1;
 			op->mem.disp = getqword();
 			break;
 		default: {assert(0);}
@@ -579,24 +592,26 @@ void x86dis::decode_sib(x86_insn_op *op, int mod)
 	int base = mkbase(sib);
 	int disp = mod;
 	if ((base & 0x7) == 5 && mod == 0) {
-		op->mem.base = X86_REG_NO;
+		base = X86_REG_NO;
 		disp = 2;
-	} else {
-		op->mem.base = base;
 	}
+	if (index == 4) {
+		index = X86_REG_NO;
+	}
+	op->mem.base = base;
 	op->mem.index = index;
 	op->mem.scale = sibscale[scale];
 	switch (disp) {
 	case 0:
-		op->mem.hasdisp = 0;
+		op->mem.hasdisp = false;
 		op->mem.disp = 0;
 		break;
 	case 1:
-		op->mem.hasdisp = 1;
+		op->mem.hasdisp = true;
 		op->mem.disp = (sint8)getbyte();
 		break;
 	case 2:
-		op->mem.hasdisp = 1;
+		op->mem.hasdisp = true;
 		op->mem.disp = (sint32)getdword();
 		break;
 	}
@@ -665,6 +680,13 @@ int x86dis::esizeop(char c)
 		case X86_OPSIZE16: return 2;
 		case X86_OPSIZE32: return 4;
 		case X86_OPSIZE64: return 8;
+		default: {assert(0);}
+		}
+	case SIZE_VV:
+		switch (insn.eopsize) {
+		case X86_OPSIZE16: return 2;
+		case X86_OPSIZE32:
+		case X86_OPSIZE64: return 4;
 		default: {assert(0);}
 		}
 	case SIZE_P:
@@ -797,6 +819,9 @@ void x86dis::load(ObjectStream &f)
 {
 	opsize = (X86OpSize)GETX_INT32(f, "opsize");
 	addrsize = (X86AddrSize)GETX_INT32(f, "addrsize");
+	x86_insns = &x86_32_insns;
+	x86_insns_ext = &x86_32_insns_ext;
+	x86_group_insns = &x86_32_group_insns;
 }
 
 ObjectID x86dis::getObjectID() const
@@ -1355,9 +1380,36 @@ bool x86dis::validInsn(dis_insn *disasm_insn)
  *	CLASS x86_64dis
  */
 
+x86opc_insn (*x86_64dis::x86_64_insns)[256];
+x86opc_insn (*x86_64dis::x86_64_insns_ext)[256];
+x86opc_insn (*x86_64dis::x86_64_group_insns)[X86_GROUPS][8];
+
 x86_64dis::x86_64dis()
 	: x86dis(X86_OPSIZE32, X86_ADDRSIZE64)
 {
+	prepInsns();
+}
+
+
+void x86_64dis::prepInsns()
+{
+	if (!x86_64_insns) {
+		x86_64_insns = ht_malloc(sizeof *x86_64_insns);
+		x86_64_insns_ext = ht_malloc(sizeof *x86_64_insns_ext);
+		x86_64_group_insns = ht_malloc(sizeof *x86_64_group_insns);
+		memcpy(x86_64_insns, x86_32_insns, sizeof x86_32_insns);
+		memcpy(x86_64_insns_ext, x86_32_insns_ext, sizeof x86_32_insns_ext);
+		memcpy(x86_64_group_insns, x86_32_group_insns, sizeof x86_32_group_insns);
+	
+		int i = 0;
+		while (x86_64_insn_patches[i].opc != -1) {
+			(*x86_64_insns)[x86_64_insn_patches[i].opc] = x86_64_insn_patches[i].insn;
+			i++;
+		}
+	}
+	x86_insns = x86_64_insns;
+	x86_insns_ext = x86_64_insns_ext;
+	x86_group_insns = x86_64_group_insns;
 }
 
 void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm)
@@ -1395,7 +1447,7 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 		op->mem.addrptr = isaddr(size);
 
 		if (mod == 0 && (rm & 0x7) == 5) {
-			op->mem.hasdisp = 1;
+			op->mem.hasdisp = true;
 			uint64 ip = getoffset() + (codep - ocodep) + 4;
 			op->mem.disp = (sint32)getdword() + ip;
 //			op->mem.base = X86_REG_IP;
@@ -1410,15 +1462,15 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 			op->mem.scale = 1;
 			switch (mod) {
 			case 0:
-				op->mem.hasdisp = 0;
+				op->mem.hasdisp = false;
 				op->mem.disp = 0;
 				break;
 			case 1:
-				op->mem.hasdisp = 1;
+				op->mem.hasdisp = true;
 				op->mem.disp = (sint8)getbyte();
 				break;
 			case 2:
-				op->mem.hasdisp = 1;
+				op->mem.hasdisp = true;
 				op->mem.disp = (sint32)getdword();
 				break;
 			}
@@ -1490,6 +1542,7 @@ void x86_64dis::filloffset(CPU_ADDR &addr, uint64 offset)
 void x86_64dis::load(ObjectStream &f)
 {
 	x86dis::load(f);
+	prepInsns();
 }
 
 ObjectID x86_64dis::getObjectID() const
