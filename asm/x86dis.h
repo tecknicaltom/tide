@@ -67,7 +67,7 @@ public:
 protected:
 	x86dis_insn insn;
 	char insnstr[256];
-	unsigned char *codep, *ocodep;
+	byte *codep, *ocodep;
 	CPU_ADDR addr;
 	byte c;
 	int modrm;
