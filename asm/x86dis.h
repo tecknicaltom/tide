@@ -60,8 +60,9 @@ public:
 	X86OpSize opsize;
 	X86AddrSize addrsize;
 
-	x86opc_insn *x86_insns;
-	x86opc_insn *x86_insns_ext;
+	x86opc_insn (*x86_insns)[256];
+	x86opc_insn (*x86_insns_ext)[256];
+	x86opc_insn (*x86_group_insns)[X86_GROUPS][8];
 
 protected:
 	x86dis_insn insn;
@@ -118,6 +119,9 @@ public:
 };
 
 class x86_64dis: public x86dis {
+	static x86opc_insn (*x86_64_insns)[256];
+	static x86opc_insn (*x86_64_insns_ext)[256];
+	static x86opc_insn (*x86_64_group_insns)[X86_GROUPS][8];
 public:	
 				x86_64dis();
 				x86_64dis(BuildCtorArg&);
@@ -127,6 +131,8 @@ public:
 	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
 		void		load(ObjectStream &f);
 	virtual ObjectID	getObjectID() const;
+	
+			void	prepInsns();
 };
 
 class x86dis_vxd: public x86dis {
