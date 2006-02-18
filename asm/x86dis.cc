@@ -366,6 +366,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 			break;
 		case 4:
 			op->imm = sint64(sint32(getdword()));
+			break;
 		case 8:
 			op->imm = getqword();
 			break;
@@ -644,6 +645,7 @@ int x86dis::esizeaddr(char c)
 	case SIZE_T:
 		return 10;
 	case SIZE_V:
+	case SIZE_VV:
 		switch (insn.eaddrsize) {
 		case X86_ADDRSIZE16: return 2;
 		case X86_ADDRSIZE32: return 4;
@@ -726,7 +728,7 @@ uint32 x86dis::getdword()
 {
 	if (codep-ocodep+4 <= maxlen) {
 		uint32 w;
-		w = codep[0] | (codep[1]<<8) | (codep[2]<<16) | (codep[3]<<24);
+		w = codep[0] | codep[1]<<8 | codep[2]<<16 | codep[3]<<24;
 		codep += 4;
 		return w;
 	} else {
@@ -739,7 +741,7 @@ uint64 x86dis::getqword()
 {
 	if (codep-ocodep+8 <= maxlen) {
 		uint64 w;
-		w = codep[0]<< 0 | codep[1]<< 8 | codep[2]<<16 | codep[3]<<24
+		w = uint64(codep[0])<< 0 | uint64(codep[1])<< 8 | uint64(codep[2])<<16 | uint64(codep[3])<<24
 		  | uint64(codep[4])<<32 | uint64(codep[5])<<40 | uint64(codep[6])<<48 | uint64(codep[7])<<56;
 		codep += 8;
 		return w;
