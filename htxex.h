@@ -43,18 +43,42 @@ struct xex_file_header {
 	FileOfs key_ofs;
 };
 
+struct xex_loader_info_raw {
+	Array *sections;
+};
+
+struct xex_loader_info_compressed {
+	uint32 window;
+};
+
+class XEXLoaderRawSection: public Object {
+public:
+	uint32 raw;
+	uint32 pad;
+	
+	XEXLoaderRawSection(uint32 aRaw, uint32 aPad)
+	    : raw(aRaw), pad(aPad) {}
+};
+
+struct xex_loader_info {
+	int type;
+	union {
+		xex_loader_info_raw raw;
+		xex_loader_info_compressed compressed;
+	};
+};
+
 struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER header;
 	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
 	xex_info_entry *info_table_cooked;
 
 	xex_file_header file_header;
+	xex_loader_info loader_info;
 	
-	uint32 certificate_offset;
-	uint32 certificate_size;
 	uint32 original_base_address;
+	uint32 image_base;
 	uint32 entry_point;
-	uint32 load_address;
 
 	ht_format_viewer *v_header;
 };
