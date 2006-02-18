@@ -86,14 +86,15 @@
 #define Gb	TYPE_G, 0, SIZE_B, SIZE_B
 #define Gw	TYPE_G, 0, SIZE_W, SIZE_W
 #define Gv	TYPE_G, 0, SIZE_V, SIZE_V
-#define Gd	TYPE_G, 0, SIZE_D, SIZE_D	// <--
+#define Gd	TYPE_G, 0, SIZE_D, SIZE_D
 #define Ib	TYPE_I, 0, SIZE_B, SIZE_B
 #define Iw	TYPE_I, 0, SIZE_W, SIZE_W
-#define Iv	TYPE_I, 0, SIZE_V, SIZE_V
+#define Iv	TYPE_I, 0, SIZE_VV, SIZE_V
+#define Ivq	TYPE_I, 0, SIZE_V, SIZE_V
 #define Ibv	TYPE_I, 0, SIZE_B, SIZE_V
 #define sIbv	TYPE_Is,0, SIZE_B, SIZE_V
 #define Jb	TYPE_J, 0, SIZE_B, SIZE_B
-#define Jv	TYPE_J, 0, SIZE_V, SIZE_V
+#define Jv	TYPE_J, 0, SIZE_VV, SIZE_V
 #define M	TYPE_M, 0, 0, 0
 #define Mw	TYPE_M, 0, SIZE_W, SIZE_W
 #define Md	TYPE_M, 0, SIZE_D, SIZE_D
@@ -238,7 +239,7 @@ char *x86_segs[8] = {
 #define GROUP_EXT_BA		20
 #define GROUP_EXT_C7		21
 
-x86opc_insn x86_insns[256] = {
+x86opc_insn x86_32_insns[256] = {
 /* 00 */
 {"add", {{Eb}, {Gb}}},
 {"add", {{Ev}, {Gv}}},
@@ -447,14 +448,14 @@ x86opc_insn x86_insns[256] = {
 {"mov", {{__dh}, {Ib}}},
 {"mov", {{__bh}, {Ib}}},
 /* B8 */
-{"mov", {{__ax}, {Iv}}},
-{"mov", {{__cx}, {Iv}}},
-{"mov", {{__dx}, {Iv}}},
-{"mov", {{__bx}, {Iv}}},
-{"mov", {{__sp}, {Iv}}},
-{"mov", {{__bp}, {Iv}}},
-{"mov", {{__si}, {Iv}}},
-{"mov", {{__di}, {Iv}}},
+{"mov", {{__ax}, {Ivq}}},
+{"mov", {{__cx}, {Ivq}}},
+{"mov", {{__dx}, {Ivq}}},
+{"mov", {{__bx}, {Ivq}}},
+{"mov", {{__sp}, {Ivq}}},
+{"mov", {{__bp}, {Ivq}}},
+{"mov", {{__si}, {Ivq}}},
+{"mov", {{__di}, {Ivq}}},
 /* C0 */
 {0, {{SPECIAL_TYPE_GROUP, GROUP_C0}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_C1}}},
@@ -531,7 +532,41 @@ x86opc_insn x86_insns[256] = {
 {0, {{SPECIAL_TYPE_GROUP, GROUP_FF}}},
 };
 
-x86opc_insn x86_insns_ext[256] = {
+x86_64_insn_patch x86_64_insn_patches[] = {
+{0x06, {0}}, // push es
+{0x07, {0}}, // pop es
+{0x0e, {0}}, // push cs
+{0x16, {0}}, // push ss
+{0x17, {0}}, // pop ss
+{0x1e, {0}}, // push ds
+{0x1f, {0}}, // pop ds
+{0x27, {0}}, // daa
+{0x2f, {0}}, // das
+{0x37, {0}}, // aaa
+{0x3f, {0}}, // aas
+// 0x40 .. 0x4f  REX prefixes
+{0x60, {0}}, // pusha
+{0x61, {0}}, // popa
+{0x62, {0}}, // bound
+{0x63, {"movsx", {{Gv}, {Eb}}}},
+//{0x82, {0}}, // push es
+{0x9a, {0}}, // call Ap
+{0xa0, {"mov", {{__al}, {Ob}}}},
+{0xa1, {"mov", {{__ax}, {Ov}}}},
+{0xa2, {"mov", {{Ob}, {__al}}}},
+{0xa3, {"mov", {{Ov}, {__ax}}}},
+
+{0xc4, {0}}, // les
+{0xc5, {0}}, // lds
+{0xce, {0}}, // into
+{0xd4, {0}}, // aam
+{0xd5, {0}}, // aad
+{0xd6, {0}}, // setalc
+{0xea, {0}}, // jmp Ap
+{-1, {0}},
+};
+
+x86opc_insn x86_32_insns_ext[256] = {
 /* 00 */
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_00}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_01}}},
@@ -1404,7 +1439,7 @@ x86opc_insn x86_insns_ext_f3[256] = {
 {0},
 };
 
-x86opc_insn x86_group_insns[X86_GROUPS][8] = {
+x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 /* 0 - GROUP_80 */
 {
 {"add", {{Eb}, {Ib}}},
