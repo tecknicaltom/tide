@@ -910,7 +910,7 @@ int x86dis::special_param_ambiguity(x86dis_insn *disasm_insn)
 	return (memc && !regc)
 		|| (memc && segc)
 		|| (strcmp(disasm_insn->name, "movzx") == 0)
-		|| (strcmp(disasm_insn->name, "movsx") == 0);
+		|| (strncmp(disasm_insn->name, "movsx", 5) == 0);
 }
 
 static const char *regs(x86dis_insn *insn, int mode, int nr)
@@ -1204,24 +1204,24 @@ void x86dis::str_format(char **str, char **format, char *p, char *n, char *op[3]
 					char *t=0;
 					int tl=0;
 					switch (*f) {
-						case DISASM_STRF_PREFIX:
-							t=p;
-							break;
-						case DISASM_STRF_NAME:
-							t=n;
-							break;
-						case DISASM_STRF_FIRST:
-							t=op[0];
-							tl=oplen[0];
-							break;
-						case DISASM_STRF_SECOND:
-							t=op[1];
-							tl=oplen[1];
-							break;
-						case DISASM_STRF_THIRD:
-							t=op[2];
-							tl=oplen[2];
-							break;
+					case DISASM_STRF_PREFIX:
+						t=p;
+						break;
+					case DISASM_STRF_NAME:
+						t=n;
+						break;
+					case DISASM_STRF_FIRST:
+						t=op[0];
+						tl=oplen[0];
+						break;
+					case DISASM_STRF_SECOND:
+						t=op[1];
+						tl=oplen[1];
+						break;
+					case DISASM_STRF_THIRD:
+						t=op[2];
+						tl=oplen[2];
+						break;
 					}
 					if (tl) {
 						memmove(s, t, tl);
