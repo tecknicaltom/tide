@@ -146,6 +146,7 @@ struct x86_insn_op {
 #define SIZE_Z			'z'		/* dword OR qword */
 #define SIZE_O			'o'		/* oword */
 #define SIZE_V			'v'		/* word OR dword OR qword */
+#define SIZE_VV			'V'		/* word OR dword OR sign extended dword */
 #define SIZE_P			'p'		/* word:word OR word:dword, memory only! */
 #define SIZE_S			's'		/* short/single real (32-bit) */
 #define SIZE_L			'l'		/* long/double real (64-bit) */
@@ -169,6 +170,11 @@ struct x86opc_insn_op_special {
 struct x86opc_insn {
 	char *name;
 	x86opc_insn_op op[3];
+};
+
+struct x86_64_insn_patch {
+	int opc;
+	x86opc_insn insn;
 };
 
 /* this can be a group (group!=0), an insn (group==0) && (insn.name!=0) or
@@ -205,6 +211,7 @@ extern char *x86_64regs[4][16];
 extern char *x86_ipregs[4];
 extern char *x86_segs[8];
 extern x86opc_insn x86_32_insns[256];
+extern x86_64_insn_patch x86_64_insn_patches[];
 extern x86opc_insn x86_32_insns_ext[256];
 extern x86opc_insn x86_insns_ext_f2[256];
 extern x86opc_insn x86_insns_ext_f3[256];
