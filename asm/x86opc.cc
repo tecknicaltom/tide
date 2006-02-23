@@ -78,6 +78,7 @@
 #define Ew	TYPE_E, 0, SIZE_W, SIZE_W
 #define Ed	TYPE_E, 0, SIZE_D, SIZE_D
 #define Eq	TYPE_E, 0, SIZE_Q, SIZE_Q
+#define Er	TYPE_E, 0, SIZE_R, SIZE_R
 #define Ev	TYPE_E, 0, SIZE_V, SIZE_V
 #define Es	TYPE_E, 0, SIZE_S, SIZE_S
 #define El	TYPE_E, 0, SIZE_L, SIZE_L
@@ -87,6 +88,7 @@
 #define Gw	TYPE_G, 0, SIZE_W, SIZE_W
 #define Gv	TYPE_G, 0, SIZE_V, SIZE_V
 #define Gd	TYPE_G, 0, SIZE_D, SIZE_D
+#define Gr	TYPE_G, 0, SIZE_R, SIZE_R
 #define Ib	TYPE_I, 0, SIZE_B, SIZE_B
 #define Iw	TYPE_I, 0, SIZE_W, SIZE_W
 #define Iv	TYPE_I, 0, SIZE_VV, SIZE_V
@@ -95,11 +97,12 @@
 #define sIbv	TYPE_Is,0, SIZE_B, SIZE_V
 #define Jb	TYPE_J, 0, SIZE_B, SIZE_B
 #define Jv	TYPE_J, 0, SIZE_VV, SIZE_V
-#define M	TYPE_M, 0, 0, 0
+#define M	TYPE_M, 0, SIZE_0, SIZE_0
 #define Mw	TYPE_M, 0, SIZE_W, SIZE_W
 #define Md	TYPE_M, 0, SIZE_D, SIZE_D
 #define Mp	TYPE_M, 0, SIZE_P, SIZE_P
 #define Mq	TYPE_M, 0, SIZE_Q, SIZE_Q
+#define Mr	TYPE_M, 0, SIZE_R, SIZE_R
 #define Mo	TYPE_M, 0, SIZE_O, SIZE_O
 #define Ms	TYPE_M, 0, SIZE_S, SIZE_S
 #define Ml	TYPE_M, 0, SIZE_L, SIZE_L
@@ -165,14 +168,14 @@
 #define __axw	TYPE_Rx, 0, SIZE_W, SIZE_W
 #define __dxw	TYPE_Rx, 2, SIZE_W, SIZE_W
 
-#define __axd	TYPE_Rx, 0, SIZE_D, SIZE_D
-#define __cxd	TYPE_Rx, 1, SIZE_D, SIZE_D
-#define __dxd	TYPE_Rx, 2, SIZE_D, SIZE_D
-#define __bxd	TYPE_Rx, 3, SIZE_D, SIZE_D
-#define __spd	TYPE_Rx, 4, SIZE_D, SIZE_D
-#define __bpd	TYPE_Rx, 5, SIZE_D, SIZE_D
-#define __sid	TYPE_Rx, 6, SIZE_D, SIZE_D
-#define __did	TYPE_Rx, 7, SIZE_D, SIZE_D
+#define __axdq	TYPE_Rx, 0, SIZE_R, SIZE_R
+#define __cxdq	TYPE_Rx, 1, SIZE_R, SIZE_R
+#define __dxdq	TYPE_Rx, 2, SIZE_R, SIZE_R
+#define __bxdq	TYPE_Rx, 3, SIZE_R, SIZE_R
+#define __spdq	TYPE_Rx, 4, SIZE_R, SIZE_R
+#define __bpdq	TYPE_Rx, 5, SIZE_R, SIZE_R
+#define __sidq	TYPE_Rx, 6, SIZE_R, SIZE_R
+#define __didq	TYPE_Rx, 7, SIZE_R, SIZE_R
 
 #define __es	TYPE_Sx, 0, SIZE_W, SIZE_W
 #define __cs	TYPE_Sx, 1, SIZE_W, SIZE_W
@@ -238,6 +241,12 @@ char *x86_segs[8] = {
 #define GROUP_EXT_AE		19
 #define GROUP_EXT_BA		20
 #define GROUP_EXT_C7		21
+
+#define GROUP_SPECIAL_0F01_3	0
+#define GROUP_SPECIAL_0F01_7	1
+#define GROUP_SPECIAL_0FAE_5	2
+#define GROUP_SPECIAL_0FAE_6	3
+#define GROUP_SPECIAL_0FAE_7	4
 
 x86opc_insn x86_32_insns[256] = {
 /* 00 */
@@ -515,8 +524,6 @@ x86opc_insn x86_32_insns[256] = {
 {"smi"},
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* repnz-prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* rep-prefix */
-//{0, {{SPECIAL_TYPE_GROUP, GROUP_F2}}},
-//{0, {{SPECIAL_TYPE_GROUP, GROUP_F3}}},
 {"hlt"},
 {"cmc"},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_F6}}},
@@ -551,10 +558,6 @@ x86_64_insn_patch x86_64_insn_patches[] = {
 {0x63, {"movsxd", {{Gv}, {Ed}}}}, // was arpl
 //{0x82, {0}}, // push es
 {0x9a, {0}}, // call Ap
-{0xa0, {"mov", {{__al}, {Ob}}}},
-{0xa1, {"mov", {{__ax}, {Ov}}}},
-{0xa2, {"mov", {{Ob}, {__al}}}},
-{0xa3, {"mov", {{Ov}, {__ax}}}},
 
 {0xc4, {0}}, // les
 {0xc5, {0}}, // lds
@@ -658,7 +661,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"cmovng", {{Gv}, {Ev}}},
 {"cmovg", {{Gv}, {Ev}}},
 /* 50 */
-{"&movmskps|movmskpd", {{Gd}, {VRo}}},
+{"&movmskps|movmskpd", {{Gr}, {VRo}}},
 {"&sqrtps|sqrtpd", {{Vo}, {Wo}}},
 {"&rsqrtps|rsqrtpd", {{Vo}, {Wo}}},
 {"&rcpps|rcppd", {{Vo}, {Wo}}},
@@ -691,7 +694,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"packssdw", {{Pu}, {Qu}}},
 {"punpcklqdq", {{Vo}, {WO}}},
 {"punpckhqdq", {{Vo}, {WO}}},
-{"movd", {{Pu}, {Ed}}},
+{"movd", {{Pu}, {Er}}},
 {"&movq|movdqa", {{Pu}, {Qu}}},
 /* 70 */
 {"&pshufw|pshufd", {{Pu}, {Qu}, {Ib}}},
@@ -709,7 +712,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {0},
 {"haddpd", {{Vo}, {WO}}},
 {"hsubpd", {{Vo}, {WO}}},
-{"movd", {{Ed}, {Pu}}},
+{"movd", {{Er}, {Pu}}},
 {"&movq|movdqa", {{Qu}, {Pu}}},
 /* 80 */
 {"jo", {{Jv}}},
@@ -787,20 +790,20 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"xadd", {{Eb}, {Gb}}},
 {"xadd", {{Ev}, {Gv}}},
 {"&cmpCCps|cmpCCpd", {{Vo}, {Wo}, {Ib}}},
-{"movnti", {{Md}, {Gd}}},
+{"movnti", {{Mr}, {Gr}}},
 {"pinsrw", {{Pu}, {Gw}, {Ib}}},
 {"pextrw", {{Gd}, {PRu}, {Ib}}},
 {"&shufps|shufpd", {{Vo}, {Wo}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_C7}}},
 /* C8 */
-{"bswap", {{__axd}}},
-{"bswap", {{__cxd}}},
-{"bswap", {{__dxd}}},
-{"bswap", {{__bxd}}},
-{"bswap", {{__spd}}},
-{"bswap", {{__bpd}}},
-{"bswap", {{__sid}}},
-{"bswap", {{__did}}},
+{"bswap", {{__axdq}}},
+{"bswap", {{__cxdq}}},
+{"bswap", {{__dxdq}}},
+{"bswap", {{__bxdq}}},
+{"bswap", {{__spdq}}},
+{"bswap", {{__bpdq}}},
+{"bswap", {{__sidq}}},
+{"bswap", {{__didq}}},
 /* D0 */
 {"addsubpd", {{Vo}, {WO}}},
 {"psrlw", {{Pu}, {Qu}}},
@@ -809,7 +812,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"paddq", {{Pu}, {Qu}}},
 {"pmullw", {{Pu}, {Qu}}},
 {"movq", {{WQ}, {Vq}}},
-{"pmovmskb", {{Gd}, {PRu}}},
+{"pmovmskb", {{Gr}, {PRu}}},
 /* D8 */
 {"psubusb", {{Pu}, {Qu}}},
 {"psubusw", {{Pu}, {Qu}}},
@@ -906,10 +909,10 @@ x86opc_insn x86_insns_ext_f2[256] = {
 /* 28 */
 {0},
 {0},
-{"cvtsi2sd", {{Vq}, {Ed}}},
+{"cvtsi2sd", {{Vq}, {Er}}},
 {0},
-{"cvttsd2si", {{Gd}, {Wq}}},
-{"cvtsd2si", {{Gd}, {Wq}}},
+{"cvttsd2si", {{Gr}, {Wq}}},
+{"cvtsd2si", {{Gr}, {Wq}}},
 {0},
 {0},
 /* 30 */
@@ -1197,10 +1200,10 @@ x86opc_insn x86_insns_ext_f3[256] = {
 /* 28 */
 {0},
 {0},
-{"cvtsi2ss", {{Vq}, {Ed}}},
+{"cvtsi2ss", {{Vq}, {Er}}},
 {0},
-{"cvttss2si", {{Gd}, {Wd}}},
-{"cvtss2si", {{Gd}, {Wd}}},
+{"cvttss2si", {{Gr}, {Wd}}},
+{"cvtss2si", {{Gr}, {Wd}}},
 {0},
 {0},
 /* 30 */
@@ -1542,8 +1545,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 /* 9 - GROUP_F6 */
 {
 {"test", {{Eb}, {Ib}}},
-//{"test", {{Eb}, {Ib}}},	unsure...
-{0},
+{"test", {{Eb}, {Ib}}},
 {"not", {{Eb}}},
 {"neg", {{Eb}}},
 {"mul", {{__al}, {Eb}}},
@@ -1597,14 +1599,14 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 },
 /* 14 - GROUP_EXT_01 */
 {
-{"sgdt", {{Ms}}},
-{"sidt", {{Ms}}},
-{"lgdt", {{Ms}}},
-{"lidt", {{Ms}}},
+{"sgdt", {{M}}},
+{"sidt", {{M}}},
+{"lgdt", {{M}}},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_3}}},
 {"smsw", {{Ew}}},
 {0},
 {"lmsw", {{Ew}}},
-{"invlpg", {{M}}}
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_7}}},
 },
 /* 15 - GROUP_EXT_18 */
 {
@@ -1657,9 +1659,9 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"ldmxcsr", {{Md}}},
 {"stmxcsr", {{Md}}},
 {0},
-{"lfence"},
-{"mfence"},
-{"sfence"},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0FAE_5}}},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0FAE_6}}},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0FAE_7}}},
 },
 /* 20 - GROUP_EXT_BA */
 {
@@ -1675,13 +1677,81 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 /* 21 - GROUP_EXT_C7 */
 {
 {0},
-{"?cmpxchg8b|cmpxchg8b|cmpxchg16b", {{Mq}}}, //FIXME
+{"?cmpxchg8b|cmpxchg8b|cmpxchg16b", {{M}}},
 {0},
 {0},
 {0},
 {0},
 {0},
 {0},
+},
+};
+
+x86opc_insn x86_special_group_insns[X86_SPECIAL_GROUPS][9] = {
+/* 0 - GROUP_SPECIAL_0F01_3 */
+{
+{"vmrun"},
+{"vmmcall"},
+{"vmload"},
+{"vmsave"},
+{"stgi"},
+{"clgi"},
+{"skinit"},
+{"invplga"},
+// with mod!=11:
+{"lidt", {{M}}},
+},
+/* 1 - GROUP_SPECIAL_0F01_7 */
+{
+{"swapgs"},
+{"rdtscp"},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+// with mod!=11:
+{"invplg", {{M}}},
+},
+/* 2 - GROUP_SPECIAL_0FAE_5 */
+{
+{"lfence"},
+{"lfence"},
+{"lfence"},
+{"lfence"},
+{"lfence"},
+{"lfence"},
+{"lfence"},
+{"lfence"},
+// with mod!=11:
+{0},
+},
+/* 3 - GROUP_SPECIAL_0FAE_6 */
+{
+{"mfence"},
+{"mfence"},
+{"mfence"},
+{"mfence"},
+{"mfence"},
+{"mfence"},
+{"mfence"},
+{"mfence"},
+// with mod!=11:
+{0},
+},
+/* 4 - GROUP_SPECIAL_0FAE_7 */
+{
+{"sfence"},
+{"sfence"},
+{"sfence"},
+{"sfence"},
+{"sfence"},
+{"sfence"},
+{"sfence"},
+{"sfence"},
+// with mod!=11:
+{"clflush", {{M}}},
 },
 };
 
