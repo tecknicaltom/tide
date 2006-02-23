@@ -109,7 +109,7 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 			byte buf[64];
 			if (pread(ofs, buf, 64)==64) {
 				int e = calc_entropy2(buf, 64);
-				infobox("64-byte entropy at offset %q08x: %d %%", ofs, e);
+				infobox("64-byte entropy at offset 0x%08qx: %d %%", ofs, e);
 			}
 		}
 		clearmsg(msg);
