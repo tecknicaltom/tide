@@ -262,23 +262,32 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 			}
 			break;
 		case SPECIAL_TYPE_GROUP: {
-			int m = mkreg(getmodrm());
-			insn.opcode |= m<<8;
+			int m = mkreg(getmodrm()) & 0x7;
 			decode_insn(&(*x86_group_insns)[(int)special.data][m]);
+			break;
+		}
+		case SPECIAL_TYPE_SGROUP: {
+			int m = getmodrm();
+			if (mkmod(m) != 3) {
+				m = 8;
+			} else {
+				m = mkrm(m) & 0x7;
+			}
+			decode_insn(&x86_special_group_insns[(int)special.data][m]);
 			break;
 		}
 		case SPECIAL_TYPE_FGROUP: {
 			int m = getmodrm();
 			if (mkmod(m) == 3) {
-				x86opc_finsn f = x86_float_group_insns[(int)special.data][mkreg(m)];
+				x86opc_finsn f = x86_float_group_insns[(int)special.data][mkreg(m) & 0x7];
 /*				fprintf(stderr, "special.data=%d, m=%d, mkreg(m)=%d, mkrm(m)=%d\n", special.data, m, mkreg(m), mkrm(m));*/
 				if (f.group) {
-					decode_insn(&f.group[mkrm(m)]);
+					decode_insn(&f.group[mkrm(m) & 0x7]);
 				} else if (f.insn.name) {
 					decode_insn(&f.insn);
 				} else invalidate();
 			} else {
-				decode_insn(&x86_modfloat_group_insns[(int)special.data][mkreg(m)]);
+				decode_insn(&x86_modfloat_group_insns[(int)special.data][mkreg(m) & 0x7]);
 			}
 			break;
 		}
@@ -691,12 +700,14 @@ int x86dis::esizeop(char c)
 		case X86_OPSIZE64: return 4;
 		default: {assert(0);}
 		}
-	case SIZE_P:
-		if (insn.eopsize == X86_OPSIZE16) return 4; else return 6;
+	case SIZE_R:
+		if (rexw(insn.rexprefix)) return 8; else return 4;
 	case SIZE_U:
 		if (insn.opsizeprefix == X86_PREFIX_OPSIZE) return 16; else return 8;
 	case SIZE_Z:
 		if (insn.opsizeprefix == X86_PREFIX_OPSIZE) return 8; else return 4;
+	case SIZE_P:
+		if (insn.eopsize == X86_OPSIZE16) return 4; else return 6;
 	}
 	return 0;
 }
