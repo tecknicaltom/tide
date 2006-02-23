@@ -135,18 +135,20 @@ struct x86_insn_op {
 #define SPECIAL_TYPE_INVALID		0
 #define SPECIAL_TYPE_PREFIX 		1
 #define SPECIAL_TYPE_GROUP 		2
-#define SPECIAL_TYPE_FGROUP 		3
+#define SPECIAL_TYPE_SGROUP 		3
+#define SPECIAL_TYPE_FGROUP 		4
 
 #define SIZE_0			'0'		/* size unimportant */
 #define SIZE_B			'b'		/* byte */
 #define SIZE_W			'w'		/* word */
 #define SIZE_D			'd'		/* dword */
 #define SIZE_Q			'q'		/* qword */
-#define SIZE_U			'u'		/* qword OR oword */
-#define SIZE_Z			'z'		/* dword OR qword */
+#define SIZE_U			'u'		/* qword OR oword (depending on 0x66 prefix) */
+#define SIZE_Z			'z'		/* dword OR qword (depending on 0x66 prefix) */
 #define SIZE_O			'o'		/* oword */
 #define SIZE_V			'v'		/* word OR dword OR qword */
 #define SIZE_VV			'V'		/* word OR dword OR sign extended dword */
+#define SIZE_R			'r'		/* dword OR qword (depending on rex size) */
 #define SIZE_P			'p'		/* word:word OR word:dword, memory only! */
 #define SIZE_S			's'		/* short/single real (32-bit) */
 #define SIZE_L			'l'		/* long/double real (64-bit) */
@@ -205,6 +207,7 @@ struct x86opc_finsn {
 #define X86_REG_IP		66
 
 #define X86_GROUPS		22
+#define X86_SPECIAL_GROUPS	5
 
 extern char *x86_regs[4][8];
 extern char *x86_64regs[4][16];
@@ -216,6 +219,7 @@ extern x86opc_insn x86_32_insns_ext[256];
 extern x86opc_insn x86_insns_ext_f2[256];
 extern x86opc_insn x86_insns_ext_f3[256];
 extern x86opc_insn x86_32_group_insns[X86_GROUPS][8];
+extern x86opc_insn x86_special_group_insns[X86_SPECIAL_GROUPS][9];
 
 extern x86opc_insn x86_modfloat_group_insns[8][8];
 extern x86opc_finsn x86_float_group_insns[8][8];
