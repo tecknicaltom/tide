@@ -79,8 +79,8 @@ protected:
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 			void	decode_op(x86_insn_op *op, x86opc_insn_op *xop);
 			void	decode_sib(x86_insn_op *op, int mod);
-			int	esizeaddr(char c);
-			int	esizeop(char c);
+			int	esizeop(uint c);
+			int	esizeop_ex(uint c);
 			byte	getbyte();
 			uint16	getword();
 			uint32	getdword();
