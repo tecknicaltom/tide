@@ -364,8 +364,8 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	case TYPE_Is: {
 		/* signed immediate */
 		op->type = X86_OPTYPE_IMM;
-		op->size = esizeop(xop->extendedsize);
-		int s = esizeop(xop->size);
+		op->size = esizeop(xop->size);
+		int s = esizeop_ex(xop->size);
 		switch (s) {
 		case 1:
 			op->imm = sint64(sint8(getbyte()));
@@ -396,8 +396,8 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	case TYPE_I: {
 		/* unsigned immediate */
 		op->type = X86_OPTYPE_IMM;
-		op->size = esizeop(xop->extendedsize);
-		int s = esizeop(xop->size);
+		op->size = esizeop(xop->size);
+		int s = esizeop_ex(xop->size);
 		switch (s) {
 		case 1:
 			op->imm = getbyte();
@@ -428,7 +428,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	case TYPE_Ix: {
 		/* fixed immediate */
 		op->type = X86_OPTYPE_IMM;
-		op->size = esizeop(xop->extendedsize);
+		op->size = esizeop(xop->size);
 		op->imm = xop->extra;
 		break;
 	}
@@ -634,70 +634,30 @@ dis_insn *x86dis::duplicateInsn(dis_insn *disasm_insn)
 	return insn;
 }
 
-int x86dis::esizeaddr(char c)
+int x86dis::esizeop(uint c)
 {
 	switch (c) {
 	case SIZE_B:
+	case SIZE_BV:
 		return 1;
 	case SIZE_W:
 		return 2;
 	case SIZE_D:
+	case SIZE_S:
 		return 4;
 	case SIZE_Q:
+	case SIZE_L:
 		return 8;
 	case SIZE_O:
 		return 16;
-	case SIZE_S:
-		return 4;
-	case SIZE_L:
-		return 8;
 	case SIZE_T:
 		return 10;
 	case SIZE_V:
 	case SIZE_VV:
-		switch (insn.eaddrsize) {
-		case X86_ADDRSIZE16: return 2;
-		case X86_ADDRSIZE32: return 4;
-		case X86_ADDRSIZE64: return 8;
-		default: {assert(0);}
-		}
-	case SIZE_P:
-		if (insn.eaddrsize==X86_ADDRSIZE16) return 4; else return 6;
-	}
-	return 0;
-}
-
-int x86dis::esizeop(char c)
-{
-	switch (c) {
-	case SIZE_B:
-		return 1;
-	case SIZE_W:
-		return 2;
-	case SIZE_D:
-		return 4;
-	case SIZE_Q:
-		return 8;
-	case SIZE_O:
-		return 16;
-	case SIZE_S:
-		return 4;
-	case SIZE_L:
-		return 8;
-	case SIZE_T:
-		return 10;
-	case SIZE_V:
 		switch (insn.eopsize) {
 		case X86_OPSIZE16: return 2;
 		case X86_OPSIZE32: return 4;
 		case X86_OPSIZE64: return 8;
-		default: {assert(0);}
-		}
-	case SIZE_VV:
-		switch (insn.eopsize) {
-		case X86_OPSIZE16: return 2;
-		case X86_OPSIZE32:
-		case X86_OPSIZE64: return 4;
 		default: {assert(0);}
 		}
 	case SIZE_R:
@@ -710,6 +670,21 @@ int x86dis::esizeop(char c)
 		if (insn.eopsize == X86_OPSIZE16) return 4; else return 6;
 	}
 	return 0;
+}
+
+int x86dis::esizeop_ex(uint c)
+{
+	switch (c) {
+	case SIZE_BV:
+	case SIZE_VV:
+		switch (insn.eopsize) {
+		case X86_OPSIZE16: return 2;
+		case X86_OPSIZE32:
+		case X86_OPSIZE64: return 4;
+		default: {assert(0);}
+		}
+	}
+	return esizeop(c);
 }
 
 byte x86dis::getbyte()
