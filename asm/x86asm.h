@@ -81,15 +81,14 @@ protected:
 	void emitsib_scale(int scale);
 	int encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int additional_opcode, int prefix, int eopsize, int eaddrsize);
 	int encode_modrm(x86_insn_op *op, char size, int allow_reg, int allow_mem, int eopsize, int eaddrsize);
-	int encode_modrm_v(x86addrcoding (*modrmc)[3][8], x86_insn_op *op, int mindispsize, int *mod, int *rm, int *dispsize);
+	int encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op, int mindispsize, int *mod, int *rm, int *dispsize);
 	int encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eopsize, int eaddrsize);
 	int encode_sib_v(x86_insn_op *op, int mindispsize, int *ss, int *index, int *base, int *mod, int *dispsize, int *disp);
-	int esizeaddr(char c, int size);
 	int esizeop(char c, int size);
 	int fetch_number(char **s, uint32 *value);
 	char flsz2hsz(int size);
-	char *immlsz2hsz(int size, int opsize);
-	char *lsz2hsz(int size, int opsize);
+	const char *immlsz2hsz(int size, int opsize);
+	const char *lsz2hsz(int size, int opsize);
 	int match_allops(x86asm_insn *insn, x86opc_insn *xinsn, int opsize, int addrsize);
 	void match_fopcodes(x86asm_insn *insn);
 	void match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode);
@@ -107,7 +106,7 @@ protected:
 	bool opxmm(x86_insn_op *op, char *xop);
 	bool opseg(x86_insn_op *op, char *xop);
 	bool opspecialregs(x86_insn_op *op, char *xop);
-	int simmsize(uint32 imm, int immsize);
+	int simmsize(uint64 imm, int immsize);
 	void splitstr(const char *s, char *name, char *op[3]);
 public:
 			x86asm(int opsize, int addrsize);
@@ -115,7 +114,7 @@ public:
 
 	virtual	asm_insn *alloc_insn();
 	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
-	virtual	char *get_name();
+	virtual	const char *get_name();
 	virtual	int translate_str(asm_insn *asm_insn, const char *s);
 };
 
