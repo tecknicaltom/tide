@@ -130,7 +130,7 @@ char *Assembler::get_error_msg()
 	return error_msg;
 }
 
-char *Assembler::get_name()
+const char *Assembler::get_name()
 {
 	return "generic asm";
 }
