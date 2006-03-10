@@ -70,128 +70,128 @@
 		1-8 - group number, esc value, etc
 */
 
-#define Ap	TYPE_A, 0, SIZE_P, SIZE_P
-#define Cd	TYPE_C, 0, SIZE_D, SIZE_D
-#define Dd	TYPE_D, 0, SIZE_D, SIZE_D
-#define E	TYPE_E, 0, SIZE_0, SIZE_0
-#define Eb	TYPE_E, 0, SIZE_B, SIZE_B
-#define Ew	TYPE_E, 0, SIZE_W, SIZE_W
-#define Ed	TYPE_E, 0, SIZE_D, SIZE_D
-#define Eq	TYPE_E, 0, SIZE_Q, SIZE_Q
-#define Er	TYPE_E, 0, SIZE_R, SIZE_R
-#define Ev	TYPE_E, 0, SIZE_V, SIZE_V
-#define Es	TYPE_E, 0, SIZE_S, SIZE_S
-#define El	TYPE_E, 0, SIZE_L, SIZE_L
-#define Et	TYPE_E, 0, SIZE_T, SIZE_T
-#define Ea	TYPE_E, 0, SIZE_A, SIZE_A
-#define Gb	TYPE_G, 0, SIZE_B, SIZE_B
-#define Gw	TYPE_G, 0, SIZE_W, SIZE_W
-#define Gv	TYPE_G, 0, SIZE_V, SIZE_V
-#define Gd	TYPE_G, 0, SIZE_D, SIZE_D
-#define Gr	TYPE_G, 0, SIZE_R, SIZE_R
-#define Ib	TYPE_I, 0, SIZE_B, SIZE_B
-#define Iw	TYPE_I, 0, SIZE_W, SIZE_W
-#define Iv	TYPE_I, 0, SIZE_VV, SIZE_V
-#define Ivq	TYPE_I, 0, SIZE_V, SIZE_V
-#define Ibv	TYPE_I, 0, SIZE_B, SIZE_V
-#define sIbv	TYPE_Is,0, SIZE_B, SIZE_V
-#define Jb	TYPE_J, 0, SIZE_B, SIZE_B
-#define Jv	TYPE_J, 0, SIZE_VV, SIZE_V
-#define M	TYPE_M, 0, SIZE_0, SIZE_0
-#define Mw	TYPE_M, 0, SIZE_W, SIZE_W
-#define Md	TYPE_M, 0, SIZE_D, SIZE_D
-#define Mp	TYPE_M, 0, SIZE_P, SIZE_P
-#define Mq	TYPE_M, 0, SIZE_Q, SIZE_Q
-#define Mr	TYPE_M, 0, SIZE_R, SIZE_R
-#define Mo	TYPE_M, 0, SIZE_O, SIZE_O
-#define Ms	TYPE_M, 0, SIZE_S, SIZE_S
-#define Ml	TYPE_M, 0, SIZE_L, SIZE_L
-#define Mt	TYPE_M, 0, SIZE_T, SIZE_T
-#define Ma	TYPE_M, 0, SIZE_A, SIZE_A
-#define Mu	TYPE_M, 0, SIZE_U, SIZE_U
-#define Ob	TYPE_O, 0, SIZE_B, SIZE_B
-#define Ov	TYPE_O, 0, SIZE_V, SIZE_V
-#define Pd	TYPE_P, 0, SIZE_D, SIZE_D
-#define Pq	TYPE_P, 0, SIZE_Q, SIZE_Q
-#define Pu	TYPE_P, 0, SIZE_U, SIZE_U
-#define PRq	TYPE_PR, 0, SIZE_Q, SIZE_Q
-#define PRu	TYPE_PR, 0, SIZE_U, SIZE_U
-#define Qd	TYPE_Q, 0, SIZE_D, SIZE_D
-#define Qq	TYPE_Q, 0, SIZE_Q, SIZE_Q
-#define Qu	TYPE_Q, 0, SIZE_U, SIZE_U
-#define Qz	TYPE_Q, 0, SIZE_Z, SIZE_Z
-#define Rb	TYPE_R, 0, SIZE_B, SIZE_B
-#define Rw	TYPE_R, 0, SIZE_W, SIZE_W
-#define Rd	TYPE_R, 0, SIZE_D, SIZE_D
-#define Sw	TYPE_S, 0, SIZE_W, SIZE_W
-#define Td	TYPE_T, 0, SIZE_D, SIZE_D
-#define Vd	TYPE_V, 0, SIZE_D, SIZE_D
-#define Vq	TYPE_V, 0, SIZE_Q, SIZE_Q
-#define Vo	TYPE_V, 0, SIZE_O, SIZE_O
-#define Vu	TYPE_V, 0, SIZE_U, SIZE_U
-#define Vz	TYPE_V, 0, SIZE_Z, SIZE_Z
-#define VRq	TYPE_VR, 0, SIZE_Q, SIZE_Q
-#define VRo	TYPE_VR, 0, SIZE_O, SIZE_O
-#define Wd	TYPE_W, 0, SIZE_D, SIZE_D
-#define Wq	TYPE_W, 0, SIZE_Q, SIZE_Q
-#define WQ	TYPE_W, 1, SIZE_Q, SIZE_Q    // requires 0x66 prefix
-#define Wo	TYPE_W, 0, SIZE_O, SIZE_O
-#define WO	TYPE_W, 1, SIZE_O, SIZE_O    // requires 0x66 prefix
-#define Wu	TYPE_W, 0, SIZE_U, SIZE_U
-#define Wz	TYPE_W, 0, SIZE_Z, SIZE_Z
+#define Ap	TYPE_A, 0, 0, SIZE_P
+#define Cd	TYPE_C, 0, 0, SIZE_D
+#define Dd	TYPE_D, 0, 0, SIZE_D
+#define E	TYPE_E, 0, 0, SIZE_0
+#define Eb	TYPE_E, 0, 0, SIZE_B
+#define Ew	TYPE_E, 0, 0, SIZE_W
+#define Ed	TYPE_E, 0, 0, SIZE_D
+#define Eq	TYPE_E, 0, 0, SIZE_Q
+#define Er	TYPE_E, 0, 0, SIZE_R
+#define Ev	TYPE_E, 0, 0, SIZE_V
+#define Es	TYPE_E, 0, 0, SIZE_S
+#define El	TYPE_E, 0, 0, SIZE_L
+#define Et	TYPE_E, 0, 0, SIZE_T
+#define Ea	TYPE_E, 0, 0, SIZE_A
+#define Gb	TYPE_G, 0, 0, SIZE_B
+#define Gw	TYPE_G, 0, 0, SIZE_W
+#define Gv	TYPE_G, 0, 0, SIZE_V
+#define Gd	TYPE_G, 0, 0, SIZE_D
+#define Gr	TYPE_G, 0, 0, SIZE_R
+#define Ib	TYPE_I, 0, 0, SIZE_B
+#define Iw	TYPE_I, 0, 0, SIZE_W
+#define Iv	TYPE_I, 0, 0, SIZE_VV
+#define Ivq	TYPE_I, 0, 0, SIZE_V
+#define Ibv	TYPE_I, 0, 0, SIZE_BV
+#define sIbv	TYPE_Is,0, 0, SIZE_BV
+#define Jb	TYPE_J, 0, 0, SIZE_B
+#define Jv	TYPE_J, 0, 0, SIZE_VV
+#define M	TYPE_M, 0, 0, SIZE_0
+#define Mw	TYPE_M, 0, 0, SIZE_W
+#define Md	TYPE_M, 0, 0, SIZE_D
+#define Mp	TYPE_M, 0, 0, SIZE_P
+#define Mq	TYPE_M, 0, 0, SIZE_Q
+#define Mr	TYPE_M, 0, 0, SIZE_R
+#define Mo	TYPE_M, 0, 0, SIZE_O
+#define Ms	TYPE_M, 0, 0, SIZE_S
+#define Ml	TYPE_M, 0, 0, SIZE_L
+#define Mt	TYPE_M, 0, 0, SIZE_T
+#define Ma	TYPE_M, 0, 0, SIZE_A
+#define Mu	TYPE_M, 0, 0, SIZE_U
+#define Ob	TYPE_O, 0, 0, SIZE_B
+#define Ov	TYPE_O, 0, 0, SIZE_V
+#define Pd	TYPE_P, 0, 0, SIZE_D
+#define Pq	TYPE_P, 0, 0, SIZE_Q
+#define Pu	TYPE_P, 0, 0, SIZE_U
+#define PRq	TYPE_PR, 0, 0, SIZE_Q
+#define PRu	TYPE_PR, 0, 0, SIZE_U
+#define Qd	TYPE_Q, 0, 0, SIZE_D
+#define Qq	TYPE_Q, 0, 0, SIZE_Q
+#define Qu	TYPE_Q, 0, 0, SIZE_U
+#define Qz	TYPE_Q, 0, 0, SIZE_Z
+#define Rb	TYPE_R, 0, 0, SIZE_B
+#define Rw	TYPE_R, 0, 0, SIZE_W
+#define Rd	TYPE_R, 0, 0, SIZE_D
+#define Sw	TYPE_S, 0, 0, SIZE_W
+#define Td	TYPE_T, 0, 0, SIZE_D
+#define Vd	TYPE_V, 0, 0, SIZE_D
+#define Vq	TYPE_V, 0, 0, SIZE_Q
+#define Vo	TYPE_V, 0, 0, SIZE_O
+#define Vu	TYPE_V, 0, 0, SIZE_U
+#define Vz	TYPE_V, 0, 0, SIZE_Z
+#define VRq	TYPE_VR, 0, 0, SIZE_Q
+#define VRo	TYPE_VR, 0, 0, SIZE_O
+#define Wd	TYPE_W, 0, 0, SIZE_D
+#define Wq	TYPE_W, 0, 0, SIZE_Q
+#define WQ	TYPE_W, 0, 0x66, SIZE_Q    // requires 0x66 prefix
+#define Wo	TYPE_W, 0, 0, SIZE_O
+#define WO	TYPE_W, 0, 0x66, SIZE_O    // requires 0x66 prefix
+#define Wu	TYPE_W, 0, 0, SIZE_U
+#define Wz	TYPE_W, 0, 0, SIZE_Z
 
-#define Ft	TYPE_F, 0, SIZE_T, SIZE_T
+#define Ft	TYPE_F, 0, 0, SIZE_T
 
-#define __st	TYPE_Fx, 0, SIZE_T, SIZE_T
+#define __st	TYPE_Fx, 0, 0, SIZE_T
 
-#define __1	TYPE_Ix, 1, SIZE_B, SIZE_B
-#define __3	TYPE_Ix, 3, SIZE_B, SIZE_B		/* for int 3 */
+#define __1	TYPE_Ix, 1, 0, SIZE_B
+#define __3	TYPE_Ix, 3, 0, SIZE_B		/* for int 3 */
 
-#define __al	TYPE_Rx, 0, SIZE_B, SIZE_B
-#define __cl	TYPE_Rx, 1, SIZE_B, SIZE_B
-#define __dl	TYPE_Rx, 2, SIZE_B, SIZE_B
-#define __bl	TYPE_Rx, 3, SIZE_B, SIZE_B
-#define __ah	TYPE_Rx, 4, SIZE_B, SIZE_B
-#define __ch	TYPE_Rx, 5, SIZE_B, SIZE_B
-#define __dh	TYPE_Rx, 6, SIZE_B, SIZE_B
-#define __bh	TYPE_Rx, 7, SIZE_B, SIZE_B
+#define __al	TYPE_Rx, 0, 0, SIZE_B
+#define __cl	TYPE_Rx, 1, 0, SIZE_B
+#define __dl	TYPE_Rx, 2, 0, SIZE_B
+#define __bl	TYPE_Rx, 3, 0, SIZE_B
+#define __ah	TYPE_Rx, 4, 0, SIZE_B
+#define __ch	TYPE_Rx, 5, 0, SIZE_B
+#define __dh	TYPE_Rx, 6, 0, SIZE_B
+#define __bh	TYPE_Rx, 7, 0, SIZE_B
 
-#define __ax	TYPE_Rx, 0, SIZE_V, SIZE_V
-#define __cx	TYPE_Rx, 1, SIZE_V, SIZE_V
-#define __dx	TYPE_Rx, 2, SIZE_V, SIZE_V
-#define __bx	TYPE_Rx, 3, SIZE_V, SIZE_V
-#define __sp	TYPE_Rx, 4, SIZE_V, SIZE_V
-#define __bp	TYPE_Rx, 5, SIZE_V, SIZE_V
-#define __si	TYPE_Rx, 6, SIZE_V, SIZE_V
-#define __di	TYPE_Rx, 7, SIZE_V, SIZE_V
+#define __ax	TYPE_Rx, 0, 0, SIZE_V
+#define __cx	TYPE_Rx, 1, 0, SIZE_V
+#define __dx	TYPE_Rx, 2, 0, SIZE_V
+#define __bx	TYPE_Rx, 3, 0, SIZE_V
+#define __sp	TYPE_Rx, 4, 0, SIZE_V
+#define __bp	TYPE_Rx, 5, 0, SIZE_V
+#define __si	TYPE_Rx, 6, 0, SIZE_V
+#define __di	TYPE_Rx, 7, 0, SIZE_V
 
-#define __axw	TYPE_Rx, 0, SIZE_W, SIZE_W
-#define __dxw	TYPE_Rx, 2, SIZE_W, SIZE_W
+#define __axw	TYPE_Rx, 0, 0, SIZE_W
+#define __dxw	TYPE_Rx, 2, 0, SIZE_W
 
-#define __axdq	TYPE_Rx, 0, SIZE_R, SIZE_R
-#define __cxdq	TYPE_Rx, 1, SIZE_R, SIZE_R
-#define __dxdq	TYPE_Rx, 2, SIZE_R, SIZE_R
-#define __bxdq	TYPE_Rx, 3, SIZE_R, SIZE_R
-#define __spdq	TYPE_Rx, 4, SIZE_R, SIZE_R
-#define __bpdq	TYPE_Rx, 5, SIZE_R, SIZE_R
-#define __sidq	TYPE_Rx, 6, SIZE_R, SIZE_R
-#define __didq	TYPE_Rx, 7, SIZE_R, SIZE_R
+#define __axdq	TYPE_Rx, 0, 0, SIZE_R
+#define __cxdq	TYPE_Rx, 1, 0, SIZE_R
+#define __dxdq	TYPE_Rx, 2, 0, SIZE_R
+#define __bxdq	TYPE_Rx, 3, 0, SIZE_R
+#define __spdq	TYPE_Rx, 4, 0, SIZE_R
+#define __bpdq	TYPE_Rx, 5, 0, SIZE_R
+#define __sidq	TYPE_Rx, 6, 0, SIZE_R
+#define __didq	TYPE_Rx, 7, 0, SIZE_R
 
-#define __es	TYPE_Sx, 0, SIZE_W, SIZE_W
-#define __cs	TYPE_Sx, 1, SIZE_W, SIZE_W
-#define __ss	TYPE_Sx, 2, SIZE_W, SIZE_W
-#define __ds	TYPE_Sx, 3, SIZE_W, SIZE_W
-#define __fs	TYPE_Sx, 4, SIZE_W, SIZE_W
-#define __gs	TYPE_Sx, 5, SIZE_W, SIZE_W
+#define __es	TYPE_Sx, 0, 0, SIZE_W
+#define __cs	TYPE_Sx, 1, 0, SIZE_W
+#define __ss	TYPE_Sx, 2, 0, SIZE_W
+#define __ds	TYPE_Sx, 3, 0, SIZE_W
+#define __fs	TYPE_Sx, 4, 0, SIZE_W
+#define __gs	TYPE_Sx, 5, 0, SIZE_W
 
-#define __st0	TYPE_F, 0, SIZE_T, SIZE_T
-#define __st1	TYPE_F, 1, SIZE_T, SIZE_T
-#define __st2	TYPE_F, 2, SIZE_T, SIZE_T
-#define __st3	TYPE_F, 3, SIZE_T, SIZE_T
-#define __st4	TYPE_F, 4, SIZE_T, SIZE_T
-#define __st5	TYPE_F, 5, SIZE_T, SIZE_T
-#define __st6	TYPE_F, 6, SIZE_T, SIZE_T
-#define __st7	TYPE_F, 7, SIZE_T, SIZE_T
+#define __st0	TYPE_F, 0, 0, SIZE_T
+#define __st1	TYPE_F, 1, 0, SIZE_T
+#define __st2	TYPE_F, 2, 0, SIZE_T
+#define __st3	TYPE_F, 3, 0, SIZE_T
+#define __st4	TYPE_F, 4, 0, SIZE_T
+#define __st5	TYPE_F, 5, 0, SIZE_T
+#define __st6	TYPE_F, 6, 0, SIZE_T
+#define __st7	TYPE_F, 7, 0, SIZE_T
 
 char *x86_regs[4][8] = {
 {"al",  "cl",  "dl",  "bl",  "ah",  "ch",  "dh",  "bh"},
