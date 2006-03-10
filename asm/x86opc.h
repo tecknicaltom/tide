@@ -140,6 +140,7 @@ struct x86_insn_op {
 
 #define SIZE_0			'0'		/* size unimportant */
 #define SIZE_B			'b'		/* byte */
+#define SIZE_BV			'B'		/* byte, extended to SIZE_V */
 #define SIZE_W			'w'		/* word */
 #define SIZE_D			'd'		/* dword */
 #define SIZE_Q			'q'		/* qword */
@@ -155,18 +156,21 @@ struct x86_insn_op {
 #define SIZE_T			't'		/* temp/extended real (80-bit) */
 #define SIZE_A			'a'		/* packed decimal (80-bit BCD) */
 
+#define INFO_PREFIX_66 0x66	0x66
+#define INFO_DEFAULT_64		1
+
 struct x86opc_insn_op {
-	char type;
-	char extra;
-	char size;
-	char extendedsize;
+	byte type;
+	byte extra;
+	byte info;
+	byte size;
 };
 
 struct x86opc_insn_op_special {
-	char type;
-	char data;
-	char res1;
-	char res2;
+	byte type;
+	byte data;
+	byte res1;
+	byte res2;
 };
 
 struct x86opc_insn {
