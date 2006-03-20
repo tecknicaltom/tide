@@ -293,6 +293,12 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		}
 		}
 	} else {
+		if (insn.opsizeprefix != X86_PREFIX_OPSIZE
+		 && (xinsn->op[0].info & 0x80))  {
+			// instruction has defaults to 64 bit opsize
+			insn.eopsize = X86_OPSIZE64;
+		}
+
 		insn.name = xinsn->name;
 		for (int i = 0; i < 3; i++) {
 			decode_op(&insn.op[i], &xinsn->op[i]);
@@ -546,7 +552,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	}
 	case TYPE_W: {
 		/* ModR/M (XMM reg or memory) */
-		if (xop->extra == 1 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
+		if (xop->info == 0x66 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
 			// HACK: some SSE3 opcodes require a 0x66 prefix
 			invalidate();
 		} else {
@@ -638,7 +644,6 @@ int x86dis::esizeop(uint c)
 {
 	switch (c) {
 	case SIZE_B:
-	case SIZE_BV:
 		return 1;
 	case SIZE_W:
 		return 2;
@@ -653,6 +658,7 @@ int x86dis::esizeop(uint c)
 	case SIZE_T:
 		return 10;
 	case SIZE_V:
+	case SIZE_BV:
 	case SIZE_VV:
 		switch (insn.eopsize) {
 		case X86_OPSIZE16: return 2;
@@ -676,6 +682,7 @@ int x86dis::esizeop_ex(uint c)
 {
 	switch (c) {
 	case SIZE_BV:
+		return 1;
 	case SIZE_VV:
 		switch (insn.eopsize) {
 		case X86_OPSIZE16: return 2;
@@ -1487,7 +1494,7 @@ void x86_64dis::prefixes()
 			continue;
 		case 0x65:
 			insn.segprefix = X86_PREFIX_GS;
-			continue;
+			continue;                	
 		case 0x66:
 			insn.opsizeprefix = X86_PREFIX_OPSIZE;
 			insn.eopsize = X86_OPSIZE16;
