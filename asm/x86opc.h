@@ -156,8 +156,8 @@ struct x86_insn_op {
 #define SIZE_T			't'		/* temp/extended real (80-bit) */
 #define SIZE_A			'a'		/* packed decimal (80-bit BCD) */
 
-#define INFO_PREFIX_66 0x66	0x66
-#define INFO_DEFAULT_64		1
+#define INFO_PREFIX_66		0x66
+#define INFO_DEFAULT_64		0x80
 
 struct x86opc_insn_op {
 	byte type;
