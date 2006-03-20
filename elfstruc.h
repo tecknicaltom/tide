@@ -52,11 +52,11 @@ typedef uint16 elf64_quarter;
 #define ELF_EI_MAG1			1
 #define ELF_EI_MAG2			2
 #define ELF_EI_MAG3			3
-#define ELF_EI_CLASS		4
+#define ELF_EI_CLASS			4
 #define ELF_EI_DATA			5
-#define ELF_EI_VERSION		6
-#define ELF_EI_OSABI		7
-#define ELF_EI_ABIVERSION	8
+#define ELF_EI_VERSION			6
+#define ELF_EI_OSABI			7
+#define ELF_EI_ABIVERSION		8
 #define ELF_EI_PAD			9
 
 #define EI_NIDENT			16
@@ -66,7 +66,7 @@ typedef uint16 elf64_quarter;
 #define ELFMAG2 'L'
 #define ELFMAG3 'F'
 
-#define ELFCLASSNONE		0
+#define ELFCLASSNONE			0
 #define ELFCLASS32			1
 #define ELFCLASS64			2
 
@@ -74,21 +74,21 @@ typedef uint16 elf64_quarter;
 #define ELFDATA2LSB			1
 #define ELFDATA2MSB			2
 
-#define ELFOSABI_SYSV		0
-#define ELFOSABI_HPUX		1
-#define ELFOSABI_NETBSD		2
-#define ELFOSABI_LINUX		3
-#define ELFOSABI_HURD		4
-#define ELFOSABI_86OPEN		5
+#define ELFOSABI_SYSV			0
+#define ELFOSABI_HPUX			1
+#define ELFOSABI_NETBSD			2
+#define ELFOSABI_LINUX			3
+#define ELFOSABI_HURD			4
+#define ELFOSABI_86OPEN			5
 #define ELFOSABI_SOLARIS		6
-#define ELFOSABI_MONTEREY	7
-#define ELFOSABI_IRIX		8
+#define ELFOSABI_MONTEREY		7
+#define ELFOSABI_IRIX			8
 #define ELFOSABI_FREEBSD		9
-#define ELFOSABI_TRU64		10
+#define ELFOSABI_TRU64			10
 #define ELFOSABI_MODESTO		11
 #define ELFOSABI_OPENBSD		12
-#define ELFOSABI_ARM		97
-#define ELFOSABI_STANDALONE	255
+#define ELFOSABI_ARM			97
+#define ELFOSABI_STANDALONE		255
 
 /* e_type */
 #define ELF_ET_NONE			0
@@ -307,6 +307,12 @@ struct ELF_PROGRAM_HEADER64 {
 	elf64_word p_filesz;
 	elf64_word p_memsz;
 	elf64_word p_align;
+};
+
+struct ELF_NHEADER32 {
+	elf32_word n_descsz;
+	elf32_word n_namesz;
+	elf32_word n_type;
 };
 
 /*
