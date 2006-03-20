@@ -70,6 +70,7 @@
 		1-8 - group number, esc value, etc
 */
 
+#define _064	TYPE_0, 0, INFO_DEFAULT_64, SIZE_0
 #define Ap	TYPE_A, 0, 0, SIZE_P
 #define Cd	TYPE_C, 0, 0, SIZE_D
 #define Dd	TYPE_D, 0, 0, SIZE_D
@@ -80,6 +81,7 @@
 #define Eq	TYPE_E, 0, 0, SIZE_Q
 #define Er	TYPE_E, 0, 0, SIZE_R
 #define Ev	TYPE_E, 0, 0, SIZE_V
+#define Ev64	TYPE_E, 0, INFO_DEFAULT_64, SIZE_V
 #define Es	TYPE_E, 0, 0, SIZE_S
 #define El	TYPE_E, 0, 0, SIZE_L
 #define Et	TYPE_E, 0, 0, SIZE_T
@@ -92,9 +94,11 @@
 #define Ib	TYPE_I, 0, 0, SIZE_B
 #define Iw	TYPE_I, 0, 0, SIZE_W
 #define Iv	TYPE_I, 0, 0, SIZE_VV
+#define Iv64	TYPE_I, 0, INFO_DEFAULT_64, SIZE_VV
 #define Ivq	TYPE_I, 0, 0, SIZE_V
 #define Ibv	TYPE_I, 0, 0, SIZE_BV
 #define sIbv	TYPE_Is,0, 0, SIZE_BV
+#define sIbv64	TYPE_Is,0, INFO_DEFAULT_64, SIZE_BV
 #define Jb	TYPE_J, 0, 0, SIZE_B
 #define Jv	TYPE_J, 0, 0, SIZE_VV
 #define M	TYPE_M, 0, 0, SIZE_0
@@ -164,6 +168,15 @@
 #define __bp	TYPE_Rx, 5, 0, SIZE_V
 #define __si	TYPE_Rx, 6, 0, SIZE_V
 #define __di	TYPE_Rx, 7, 0, SIZE_V
+
+#define __ax64	TYPE_Rx, 0, INFO_DEFAULT_64, SIZE_V
+#define __cx64	TYPE_Rx, 1, INFO_DEFAULT_64, SIZE_V
+#define __dx64	TYPE_Rx, 2, INFO_DEFAULT_64, SIZE_V
+#define __bx64	TYPE_Rx, 3, INFO_DEFAULT_64, SIZE_V
+#define __sp64	TYPE_Rx, 4, INFO_DEFAULT_64, SIZE_V
+#define __bp64	TYPE_Rx, 5, INFO_DEFAULT_64, SIZE_V
+#define __si64	TYPE_Rx, 6, INFO_DEFAULT_64, SIZE_V
+#define __di64	TYPE_Rx, 7, INFO_DEFAULT_64, SIZE_V
 
 #define __axw	TYPE_Rx, 0, 0, SIZE_W
 #define __dxw	TYPE_Rx, 2, 0, SIZE_W
@@ -340,36 +353,36 @@ x86opc_insn x86_32_insns[256] = {
 {"dec", {{__si}}},
 {"dec", {{__di}}},
 /* 50 */
-{"push", {{__ax}}},
-{"push", {{__cx}}},
-{"push", {{__dx}}},
-{"push", {{__bx}}},
-{"push", {{__sp}}},
-{"push", {{__bp}}},
-{"push", {{__si}}},
-{"push", {{__di}}},
+{"push", {{__ax64}}},
+{"push", {{__cx64}}},
+{"push", {{__dx64}}},
+{"push", {{__bx64}}},
+{"push", {{__sp64}}},
+{"push", {{__bp64}}},
+{"push", {{__si64}}},
+{"push", {{__di64}}},
 /* 58 */
-{"pop", {{__ax}}},
-{"pop", {{__cx}}},
-{"pop", {{__dx}}},
-{"pop", {{__bx}}},
-{"pop", {{__sp}}},
-{"pop", {{__bp}}},
-{"pop", {{__si}}},
-{"pop", {{__di}}},
+{"pop", {{__ax64}}},
+{"pop", {{__cx64}}},
+{"pop", {{__dx64}}},
+{"pop", {{__bx64}}},
+{"pop", {{__sp64}}},
+{"pop", {{__bp64}}},
+{"pop", {{__si64}}},
+{"pop", {{__di64}}},
 /* 60 */
 {"?pusha|pushad"},
 {"?popa|popad"},
 {"bound", {{Gv}, {Mq}}},
-{"arpl", {{Ew}, {Rw}}},          //{"movsxd", {{Gv}, {Ed}}}, PM64
+{"arpl", {{Ew}, {Rw}}},          	//{"movsxd", {{Gv}, {Ed}}}, PM64
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* fs-prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* gs-prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* op-size prefix */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* addr-size prefix */
 /* 68 */
-{"push", {{Iv}}},
+{"push", {{Iv64}}},
 {"imul", {{Gv}, {Ev}, {Iv}}},
-{"push", {{sIbv}}},
+{"push", {{sIbv64}}},
 {"imul", {{Gv}, {Ev}, {sIbv}}},
 {"insb"},
 {"?insw|insd"},
@@ -425,8 +438,8 @@ x86opc_insn x86_32_insns[256] = {
 {"?cwd|cdq|cqo"},
 {"call", {{Ap}}},
 {"fwait"},
-{"?pushf|pushfd|pushfq"},
-{"?popf|popfd|popfq"},
+{"?pushf|pushfd|pushfq", {{_064}}},
+{"?popf|popfd|popfq", {{_064}}},
 {"sahf"},
 {"lahf"},
 /* A0 */
@@ -1579,11 +1592,11 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {
 {"inc", {{Ev}}},
 {"dec", {{Ev}}},
-{"call", {{Ev}}},
+{"call", {{Ev64}}},
 {"call", {{Mp}}},
-{"jmp", {{Ev}}},
+{"jmp", {{Ev64}}},
 {"jmp", {{Mp}}},
-{"push", {{Ev}}},
+{"push", {{Ev64}}},
 {0}
 },
 /* 13 - GROUP_EXT_00 */
