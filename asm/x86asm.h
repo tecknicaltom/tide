@@ -68,7 +68,7 @@ protected:
 	bool addrsize_depend;
 
 	void delete_nonsense();
-	int delete_nonsense_insn(asm_code *c);
+	bool delete_nonsense_insn(asm_code *c);
 	void emitdisp(uint32 disp, int size);
 	void emitfarptr(uint32 s, uint32 o, bool big);
 	void emitimm(uint32 imm, int size);
@@ -85,7 +85,7 @@ protected:
 	int encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eopsize, int eaddrsize);
 	int encode_sib_v(x86_insn_op *op, int mindispsize, int *ss, int *index, int *base, int *mod, int *dispsize, int *disp);
 	int esizeop(char c, int size);
-	int fetch_number(char **s, uint32 *value);
+	bool fetch_number(char **s, uint64 *value);
 	char flsz2hsz(int size);
 	const char *immlsz2hsz(int size, int opsize);
 	const char *lsz2hsz(int size, int opsize);
@@ -109,7 +109,7 @@ protected:
 	int simmsize(uint64 imm, int immsize);
 	void splitstr(const char *s, char *name, char *op[3]);
 public:
-			x86asm(int opsize, int addrsize);
+		x86asm(int opsize, int addrsize);
 	virtual	~x86asm();
 
 	virtual	asm_insn *alloc_insn();
@@ -117,5 +117,12 @@ public:
 	virtual	const char *get_name();
 	virtual	int translate_str(asm_insn *asm_insn, const char *s);
 };
+
+/*
+class x86_64asm: public x86_asm {
+		x86_64asm(int opsize, int addrsize);
+	virtual	~x86_64asm();
+};
+*/
 
 #endif /* __X86ASM_H__ */
