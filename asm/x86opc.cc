@@ -151,6 +151,9 @@
 #define __1	TYPE_Ix, 1, 0, SIZE_B
 #define __3	TYPE_Ix, 3, 0, SIZE_B		/* for int 3 */
 
+#define X__al	TYPE_RXx, 0, 0, SIZE_B
+#define X__cl	TYPE_RXx, 1, 0, SIZE_B
+
 #define __al	TYPE_Rx, 0, 0, SIZE_B
 #define __cl	TYPE_Rx, 1, 0, SIZE_B
 #define __dl	TYPE_Rx, 2, 0, SIZE_B
@@ -159,6 +162,8 @@
 #define __ch	TYPE_Rx, 5, 0, SIZE_B
 #define __dh	TYPE_Rx, 6, 0, SIZE_B
 #define __bh	TYPE_Rx, 7, 0, SIZE_B
+
+#define X__ax	TYPE_RXx, 0, 0, SIZE_V
 
 #define __ax	TYPE_Rx, 0, 0, SIZE_V
 #define __cx	TYPE_Rx, 1, 0, SIZE_V
@@ -178,8 +183,8 @@
 #define __si64	TYPE_Rx, 6, INFO_DEFAULT_64, SIZE_V
 #define __di64	TYPE_Rx, 7, INFO_DEFAULT_64, SIZE_V
 
-#define __axw	TYPE_Rx, 0, 0, SIZE_W
-#define __dxw	TYPE_Rx, 2, 0, SIZE_W
+#define X__axw	TYPE_RXx, 0, 0, SIZE_W
+#define X__dxw	TYPE_RXx, 2, 0, SIZE_W
 
 #define __axdq	TYPE_Rx, 0, 0, SIZE_R
 #define __cxdq	TYPE_Rx, 1, 0, SIZE_R
@@ -270,8 +275,8 @@ x86opc_insn x86_32_insns[256] = {
 {"add", {{Ev}, {Gv}}},
 {"add", {{Gb}, {Eb}}},
 {"add", {{Gv}, {Ev}}},
-{"add", {{__al}, {Ib}}},
-{"add", {{__ax}, {Iv}}},
+{"add", {{X__al}, {Ib}}},
+{"add", {{X__ax}, {Iv}}},
 {"push", {{__es}}},
 {"pop", {{__es}}},
 /* 08 */
@@ -279,8 +284,8 @@ x86opc_insn x86_32_insns[256] = {
 {"or", {{Ev}, {Gv}}},
 {"or", {{Gb}, {Eb}}},
 {"or", {{Gv}, {Ev}}},
-{"or", {{__al}, {Ib}}},
-{"or", {{__ax}, {Iv}}},
+{"or", {{X__al}, {Ib}}},
+{"or", {{X__ax}, {Iv}}},
 {"push", {{__cs}}},
 {0, {{SPECIAL_TYPE_PREFIX}}},			/* prefix */
 /* 10 */
@@ -288,8 +293,8 @@ x86opc_insn x86_32_insns[256] = {
 {"adc", {{Ev}, {Gv}}},
 {"adc", {{Gb}, {Eb}}},
 {"adc", {{Gv}, {Ev}}},
-{"adc", {{__al}, {Ib}}},
-{"adc", {{__ax}, {Iv}}},
+{"adc", {{X__al}, {Ib}}},
+{"adc", {{X__ax}, {Iv}}},
 {"push", {{__ss}}},
 {"pop", {{__ss}}},
 /* 18 */
@@ -297,8 +302,8 @@ x86opc_insn x86_32_insns[256] = {
 {"sbb", {{Ev}, {Gv}}},
 {"sbb", {{Gb}, {Eb}}},
 {"sbb", {{Gv}, {Ev}}},
-{"sbb", {{__al}, {Ib}}},
-{"sbb", {{__ax}, {Iv}}},
+{"sbb", {{X__al}, {Ib}}},
+{"sbb", {{X__ax}, {Iv}}},
 {"push", {{__ds}}},
 {"pop", {{__ds}}},
 /* 20 */
@@ -306,8 +311,8 @@ x86opc_insn x86_32_insns[256] = {
 {"and", {{Ev}, {Gv}}},
 {"and", {{Gb}, {Eb}}},
 {"and", {{Gv}, {Ev}}},
-{"and", {{__al}, {Ib}}},
-{"and", {{__ax}, {Iv}}},
+{"and", {{X__al}, {Ib}}},
+{"and", {{X__ax}, {Iv}}},
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* es-prefix */
 {"daa"},
 /* 28 */
@@ -315,8 +320,8 @@ x86opc_insn x86_32_insns[256] = {
 {"sub", {{Ev}, {Gv}}},
 {"sub", {{Gb}, {Eb}}},
 {"sub", {{Gv}, {Ev}}},
-{"sub", {{__al}, {Ib}}},
-{"sub", {{__ax}, {Iv}}},
+{"sub", {{X__al}, {Ib}}},
+{"sub", {{X__ax}, {Iv}}},
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* cs-prefix */
 {"das"},
 /* 30 */
@@ -324,8 +329,8 @@ x86opc_insn x86_32_insns[256] = {
 {"xor", {{Ev}, {Gv}}},
 {"xor", {{Gb}, {Eb}}},
 {"xor", {{Gv}, {Ev}}},
-{"xor", {{__al}, {Ib}}},
-{"xor", {{__ax}, {Iv}}},
+{"xor", {{X__al}, {Ib}}},
+{"xor", {{X__ax}, {Iv}}},
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* ss-prefix */
 {"aaa"},
 /* 38 */
@@ -333,8 +338,8 @@ x86opc_insn x86_32_insns[256] = {
 {"cmp", {{Ev}, {Gv}}},
 {"cmp", {{Gb}, {Eb}}},
 {"cmp", {{Gv}, {Ev}}},
-{"cmp", {{__al}, {Ib}}},
-{"cmp", {{__ax}, {Iv}}},
+{"cmp", {{X__al}, {Ib}}},
+{"cmp", {{X__ax}, {Iv}}},
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* ds-prefix */
 {"aas"},
 /* 40 */
@@ -429,13 +434,13 @@ x86opc_insn x86_32_insns[256] = {
 {0, {{SPECIAL_TYPE_GROUP, GROUP_8F}}},
 /* 90 */
 {"nop"},		/* same as xchg (e)ax, (e)ax */
-{"xchg", {{__ax}, {__cx}}},
-{"xchg", {{__ax}, {__dx}}},
-{"xchg", {{__ax}, {__bx}}},
-{"xchg", {{__ax}, {__sp}}},
-{"xchg", {{__ax}, {__bp}}},
-{"xchg", {{__ax}, {__si}}},
-{"xchg", {{__ax}, {__di}}},
+{"xchg", {{X__ax}, {__cx}}},
+{"xchg", {{X__ax}, {__dx}}},
+{"xchg", {{X__ax}, {__bx}}},
+{"xchg", {{X__ax}, {__sp}}},
+{"xchg", {{X__ax}, {__bp}}},
+{"xchg", {{X__ax}, {__si}}},
+{"xchg", {{X__ax}, {__di}}},
 /* 98 */
 {"?cbw|cwde|cdqe"},
 {"?cwd|cdq|cqo"},
@@ -446,17 +451,17 @@ x86opc_insn x86_32_insns[256] = {
 {"sahf"},
 {"lahf"},
 /* A0 */
-{"mov", {{__al}, {Ob}}},
-{"mov", {{__ax}, {Ov}}},
-{"mov", {{Ob}, {__al}}},
-{"mov", {{Ov}, {__ax}}},
+{"mov", {{X__al}, {Ob}}},
+{"mov", {{X__ax}, {Ov}}},
+{"mov", {{Ob}, {X__al}}},
+{"mov", {{Ov}, {X__ax}}},
 {"movsb"},
 {"?movsw|movsd|movsq"},
 {"cmpsb"},
 {"?cmpsw|cmpsd|cmpsq"},
 /* A8 */
-{"test", {{__al}, {Ib}}},
-{"test", {{__ax}, {Iv}}},
+{"test", {{X__al}, {Ib}}},
+{"test", {{X__ax}, {Iv}}},
 {"stosb"},
 {"?stosw|stosd|stosq"},
 {"lodsb"},
@@ -522,19 +527,19 @@ x86opc_insn x86_32_insns[256] = {
 {"loopz", {{Jb}}},
 {"loop", {{Jb}}},
 {"*jcxz|jecxz|jrcxz", {{Jb}}},
-{"in", {{__al}, {Ib}}},
-{"in", {{__ax}, {Ib}}},
-{"out", {{Ib}, {__al}}},
-{"out", {{Ib}, {__ax}}},
+{"in", {{X__al}, {Ib}}},
+{"in", {{X__ax}, {Ib}}},
+{"out", {{Ib}, {X__al}}},
+{"out", {{Ib}, {X__ax}}},
 /* E8 */
 {"call", {{Jv}}},
 {"jmp", {{Jv}}},
 {"jmp", {{Ap}}},
 {"jmp", {{Jb}}},
-{"in", {{__al}, {__dxw}}},
-{"in", {{__ax}, {__dxw}}},
-{"out", {{__dxw}, {__al}}},
-{"out", {{__dxw}, {__ax}}},
+{"in", {{X__al}, {X__dxw}}},
+{"in", {{X__ax}, {X__dxw}}},
+{"out", {{X__dxw}, {X__al}}},
+{"out", {{X__dxw}, {X__ax}}},
 /* F0 */
 {0, {{SPECIAL_TYPE_PREFIX}}},		/* lock-prefix */
 {"smi"},
@@ -770,7 +775,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"cpuid"},
 {"bt", {{Ev}, {Gv}}},
 {"shld", {{Ev}, {Gv}, {Ib}}},
-{"shld", {{Ev}, {Gv}, {__cl}}},
+{"shld", {{Ev}, {Gv}, {X__cl}}},
 {0},
 {0},
 /* A8 */
@@ -779,7 +784,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"rsm"},
 {"bts", {{Ev}, {Gv}}},
 {"shrd", {{Ev}, {Gv}, {Ib}}},
-{"shrd", {{Ev}, {Gv}, {__cl}}},
+{"shrd", {{Ev}, {Gv}, {X__cl}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_AE}}},
 {"imul", {{Gv}, {Ev}}},
 /* B0 */
@@ -1569,25 +1574,25 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 },
 /* 10 - GROUP_D2 */
 {
-{"rol", {{Eb}, {__cl}}},
-{"ror", {{Eb}, {__cl}}},
-{"rcl", {{Eb}, {__cl}}},
-{"rcr", {{Eb}, {__cl}}},
-{"shl", {{Eb}, {__cl}}},
-{"shr", {{Eb}, {__cl}}},
-{"sal", {{Eb}, {__cl}}},
-{"sar", {{Eb}, {__cl}}}
+{"rol", {{Eb}, {X__cl}}},
+{"ror", {{Eb}, {X__cl}}},
+{"rcl", {{Eb}, {X__cl}}},
+{"rcr", {{Eb}, {X__cl}}},
+{"shl", {{Eb}, {X__cl}}},
+{"shr", {{Eb}, {X__cl}}},
+{"sal", {{Eb}, {X__cl}}},
+{"sar", {{Eb}, {X__cl}}}
 },
 /* 11 - GROUP_D3 */
 {
-{"rol", {{Ev}, {__cl}}},
-{"ror", {{Ev}, {__cl}}},
-{"rcl", {{Ev}, {__cl}}},
-{"rcr", {{Ev}, {__cl}}},
-{"shl", {{Ev}, {__cl}}},
-{"shr", {{Ev}, {__cl}}},
-{"sal", {{Ev}, {__cl}}},
-{"sar", {{Ev}, {__cl}}}
+{"rol", {{Ev}, {X__cl}}},
+{"ror", {{Ev}, {X__cl}}},
+{"rcl", {{Ev}, {X__cl}}},
+{"rcr", {{Ev}, {X__cl}}},
+{"shl", {{Ev}, {X__cl}}},
+{"shr", {{Ev}, {X__cl}}},
+{"sal", {{Ev}, {X__cl}}},
+{"sar", {{Ev}, {X__cl}}}
 },
 /* 12 - GROUP_F6 */
 {
@@ -1595,10 +1600,10 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"test", {{Eb}, {Ib}}},
 {"not", {{Eb}}},
 {"neg", {{Eb}}},
-{"mul", {{__al}, {Eb}}},
-{"imul", {{__al}, {Eb}}},
-{"div", {{__al}, {Eb}}},
-{"idiv", {{__al}, {Eb}}}
+{"mul", {{X__al}, {Eb}}},
+{"imul", {{X__al}, {Eb}}},
+{"div", {{X__al}, {Eb}}},
+{"idiv", {{X__al}, {Eb}}}
 },
 /* 13 - GROUP_F7 */
 {
@@ -1606,10 +1611,10 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"test", {{Ev}, {Iv}}},
 {"not", {{Ev}}},
 {"neg", {{Ev}}},
-{"mul", {{__ax}, {Ev}}},
-{"imul", {{__ax}, {Ev}}},
-{"div", {{__ax}, {Ev}}},
-{"idiv", {{__ax}, {Ev}}}
+{"mul", {{X__ax}, {Ev}}},
+{"imul", {{X__ax}, {Ev}}},
+{"div", {{X__ax}, {Ev}}},
+{"idiv", {{X__ax}, {Ev}}}
 },
 /* 14 - GROUP_FE */
 {
@@ -1987,7 +1992,7 @@ x86opc_insn fgroup_63[8] = {
 };
 
 x86opc_insn fgroup_74[8] = {
-{"fstsw", {{__axw}}},
+{"fstsw", {{X__axw}}},
 {0},
 {0},
 {0},
