@@ -574,6 +574,13 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		op->reg = xop->extra | !!rexb(insn.rexprefix) << 3;
 		break;
 	}
+	case TYPE_RXx: {
+		/* extra picks register */
+		op->type = X86_OPTYPE_REG;
+		op->size = esizeop(xop->size);
+		op->reg = xop->extra;
+		break;
+	}
 	case TYPE_S: {
 		/* reg of ModR/M picks segment register */
 		op->type = X86_OPTYPE_SEG;
