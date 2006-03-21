@@ -396,7 +396,7 @@ static bool bnstr2bin(uint64 &u64, const char *&str, int base)
 	int i = 0;
 	do {
 		int c = hexdigit(*str);
-		if ((c == -1) || (c >= base)) return (i == 0) ? false : true;
+		if (c == -1 || c >= base) return (i == 0) ? false : true;
 		u64 *= ubase;
 		u64 += c;
 		str++;
@@ -408,7 +408,7 @@ static bool bnstr2bin(uint64 &u64, const char *&str, int base)
 bool parseIntStr(const char *&str, uint64 &u64, int defaultbase)
 {
 	int base = defaultbase;
-	if (base == 10 && ht_strncmp("0x", str, 2) == 0) {
+	if (base == 10 && ht_strnicmp("0x", str, 2) == 0) {
 		str += 2;
 		base = 16;
 	}
@@ -418,7 +418,7 @@ bool parseIntStr(const char *&str, uint64 &u64, int defaultbase)
 bool parseIntStr(char *&str, uint64 &u64, int defaultbase)
 {
 	int base = defaultbase;
-	if (base == 10 && ht_strncmp("0x", str, 2) == 0) {
+	if (base == 10 && ht_strnicmp("0x", str, 2) == 0) {
 		str += 2;
 		base = 16;
 	}
