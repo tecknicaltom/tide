@@ -122,14 +122,15 @@ struct x86_insn_op {
 #define TYPE_Q		14		/* ModR/M (MMX reg or memory) */
 #define TYPE_R		15		/* rm of ModR/M picks general register */
 #define TYPE_Rx		16		/* extra picks register */
-#define TYPE_S		17		/* reg of ModR/M picks segment register */
-#define TYPE_Sx		18		/* extra picks segment register */
-#define TYPE_T		19		/* reg of ModR/M picks test register */
-#define TYPE_V		20		/* reg of ModR/M picks XMM register */
-#define TYPE_VR		21		/* reg of ModR/M picks XMM register */
-#define TYPE_W		22		/* ModR/M (XMM reg or memory) */
-#define TYPE_F		23		/* r/m of ModR/M picks a fpu register */
-#define TYPE_Fx		24		/* extra picks a fpu register */
+#define TYPE_RXx	17		/* extra picks register, no REX extension */
+#define TYPE_S		18		/* reg of ModR/M picks segment register */
+#define TYPE_Sx		19		/* extra picks segment register */
+#define TYPE_T		20		/* reg of ModR/M picks test register */
+#define TYPE_V		21		/* reg of ModR/M picks XMM register */
+#define TYPE_VR		22		/* reg of ModR/M picks XMM register */
+#define TYPE_W		23		/* ModR/M (XMM reg or memory) */
+#define TYPE_F		24		/* r/m of ModR/M picks a fpu register */
+#define TYPE_Fx		25		/* extra picks a fpu register */
 
 /* when name is == 0, the first op has a special meaning (layout see x86_insn_op_special) */
 #define SPECIAL_TYPE_INVALID		0
