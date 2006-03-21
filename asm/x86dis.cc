@@ -1500,7 +1500,7 @@ void x86_64dis::prefixes()
 			insn.eopsize = X86_OPSIZE16;
 			continue;
 		case 0x67:
-			insn.eaddrsize = X86_ADDRSIZE16;
+			insn.eaddrsize = X86_ADDRSIZE32;
 			continue;
 		case 0xf0:
 			insn.lockprefix = X86_PREFIX_LOCK;
