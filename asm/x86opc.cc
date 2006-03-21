@@ -235,25 +235,28 @@ char *x86_segs[8] = {
 #define GROUP_80		0
 #define GROUP_81		1
 #define GROUP_83		2
-#define GROUP_C0		3
-#define GROUP_C1		4
-#define GROUP_D0		5
-#define GROUP_D1		6
-#define GROUP_D2		7
-#define GROUP_D3		8
-#define GROUP_F6		9
-#define GROUP_F7		10
-#define GROUP_FE		11
-#define GROUP_FF		12
-#define GROUP_EXT_00		13
-#define GROUP_EXT_01		14
-#define GROUP_EXT_18		15
-#define GROUP_EXT_71		16
-#define GROUP_EXT_72		17
-#define GROUP_EXT_73		18
-#define GROUP_EXT_AE		19
-#define GROUP_EXT_BA		20
-#define GROUP_EXT_C7		21
+#define GROUP_8F		3
+#define GROUP_C0		4
+#define GROUP_C1		5
+#define GROUP_C6		6
+#define GROUP_C7                7
+#define GROUP_D0		8
+#define GROUP_D1		9
+#define GROUP_D2		10
+#define GROUP_D3		11
+#define GROUP_F6		12
+#define GROUP_F7		13
+#define GROUP_FE		14
+#define GROUP_FF		15
+#define GROUP_EXT_00		16
+#define GROUP_EXT_01		17
+#define GROUP_EXT_18		18
+#define GROUP_EXT_71		19
+#define GROUP_EXT_72		20
+#define GROUP_EXT_73		21
+#define GROUP_EXT_AE		22
+#define GROUP_EXT_BA		23
+#define GROUP_EXT_C7		24
 
 #define GROUP_SPECIAL_0F01_3	0
 #define GROUP_SPECIAL_0F01_7	1
@@ -423,7 +426,7 @@ x86opc_insn x86_32_insns[256] = {
 {"mov", {{Ev}, {Sw}}},
 {"lea", {{Gv}, {M}}},
 {"mov", {{Sw}, {Ev}}},
-{"pop", {{Ev}}},
+{0, {{SPECIAL_TYPE_GROUP, GROUP_8F}}},
 /* 90 */
 {"nop"},		/* same as xchg (e)ax, (e)ax */
 {"xchg", {{__ax}, {__cx}}},
@@ -485,8 +488,8 @@ x86opc_insn x86_32_insns[256] = {
 {"ret"},
 {"les", {{Gv}, {Mp}}},
 {"lds", {{Gv}, {Mp}}},
-{"mov", {{Eb}, {Ib}}},
-{"mov", {{Ev}, {Iv}}},
+{0, {{SPECIAL_TYPE_GROUP, GROUP_C6}}},
+{0, {{SPECIAL_TYPE_GROUP, GROUP_C7}}},
 /* C8 */
 {"enter", {{Iw}, {Ib}}},
 {"leave"},
@@ -569,9 +572,7 @@ x86_64_insn_patch x86_64_insn_patches[] = {
 {0x61, {0}}, // popa
 {0x62, {0}}, // bound
 {0x63, {"movsxd", {{Gv}, {Ed}}}}, // was arpl
-//{0x82, {0}}, // push es
 {0x9a, {0}}, // call Ap
-
 {0xc4, {0}}, // les
 {0xc5, {0}}, // lds
 {0xce, {0}}, // into
@@ -1489,7 +1490,18 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"xor", {{Ev}, {sIbv}}},
 {"cmp", {{Ev}, {sIbv}}}
 },
-/* 3 - GROUP_C0 */
+/* 3 - GROUP_8F */
+{
+{"pop", {{Ev64}}},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+},
+/* 4 - GROUP_C0 */
 {
 {"rol", {{Eb}, {Ib}}},
 {"ror", {{Eb}, {Ib}}},
@@ -1500,7 +1512,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Eb}, {Ib}}},
 {"sar", {{Eb}, {Ib}}}
 },
-/* 4 - GROUP_C1 */
+/* 5 - GROUP_C1 */
 {
 {"rol", {{Ev}, {Ib}}},
 {"ror", {{Ev}, {Ib}}},
@@ -1511,7 +1523,29 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Ev}, {Ib}}},
 {"sar", {{Ev}, {Ib}}}
 },
-/* 5 - GROUP_D0 */
+/* 6 - GROUP_C6 */
+{
+{"mov", {{Eb}, {Ib}}},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+},
+/* 7 - GROUP_C7 */
+{
+{"mov", {{Ev}, {Iv}}},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+},
+/* 8 - GROUP_D0 */
 {
 {"rol", {{Eb}, {__1}}},
 {"ror", {{Eb}, {__1}}},
@@ -1522,7 +1556,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Eb}, {__1}}},
 {"sar", {{Eb}, {__1}}}
 },
-/* 6 - GROUP_D1 */
+/* 9 - GROUP_D1 */
 {
 {"rol", {{Ev}, {__1}}},
 {"ror", {{Ev}, {__1}}},
@@ -1533,7 +1567,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Ev}, {__1}}},
 {"sar", {{Ev}, {__1}}}
 },
-/* 7 - GROUP_D2 */
+/* 10 - GROUP_D2 */
 {
 {"rol", {{Eb}, {__cl}}},
 {"ror", {{Eb}, {__cl}}},
@@ -1544,7 +1578,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Eb}, {__cl}}},
 {"sar", {{Eb}, {__cl}}}
 },
-/* 8 - GROUP_D3 */
+/* 11 - GROUP_D3 */
 {
 {"rol", {{Ev}, {__cl}}},
 {"ror", {{Ev}, {__cl}}},
@@ -1555,7 +1589,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"sal", {{Ev}, {__cl}}},
 {"sar", {{Ev}, {__cl}}}
 },
-/* 9 - GROUP_F6 */
+/* 12 - GROUP_F6 */
 {
 {"test", {{Eb}, {Ib}}},
 {"test", {{Eb}, {Ib}}},
@@ -1566,7 +1600,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"div", {{__al}, {Eb}}},
 {"idiv", {{__al}, {Eb}}}
 },
-/* 10 - GROUP_F7 */
+/* 13 - GROUP_F7 */
 {
 {"test", {{Ev}, {Iv}}},
 {"test", {{Ev}, {Iv}}},
@@ -1577,7 +1611,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"div", {{__ax}, {Ev}}},
 {"idiv", {{__ax}, {Ev}}}
 },
-/* 11 - GROUP_FE */
+/* 14 - GROUP_FE */
 {
 {"inc", {{Eb}}},
 {"dec", {{Eb}}},
@@ -1588,7 +1622,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {0}
 },
-/* 12 - GROUP_FF */
+/* 15 - GROUP_FF */
 {
 {"inc", {{Ev}}},
 {"dec", {{Ev}}},
@@ -1599,7 +1633,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"push", {{Ev64}}},
 {0}
 },
-/* 13 - GROUP_EXT_00 */
+/* 16 - GROUP_EXT_00 */
 {
 {"sldt", {{Ew}}},
 {"str", {{Ew}}},
@@ -1610,7 +1644,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {0}
 },
-/* 14 - GROUP_EXT_01 */
+/* 17 - GROUP_EXT_01 */
 {
 {"sgdt", {{M}}},
 {"sidt", {{M}}},
@@ -1621,7 +1655,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"lmsw", {{Ew}}},
 {0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_7}}},
 },
-/* 15 - GROUP_EXT_18 */
+/* 18 - GROUP_EXT_18 */
 {
 {"prefetchnta", {{M}}},
 {"prefetch0", {{M}}},
@@ -1632,7 +1666,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {0},
 },
-/* 16 - GROUP_EXT_71 */
+/* 19 - GROUP_EXT_71 */
 {
 {0},
 {0},
@@ -1643,7 +1677,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"psllw", {{PRu}, {Ib}}},
 {0}
 },
-/* 17 - GROUP_EXT_72 */
+/* 20 - GROUP_EXT_72 */
 {
 {0},
 {0},
@@ -1654,7 +1688,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"pssld", {{PRu}, {Ib}}},
 {0}
 },
-/* 18 - GROUP_EXT_73 */
+/* 21 - GROUP_EXT_73 */
 {
 {0},
 {0},
@@ -1665,7 +1699,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"psslq", {{PRu}, {Ib}}},
 {0}
 },
-/* 19 - GROUP_EXT_AE */
+/* 22 - GROUP_EXT_AE */
 {
 {"fxsave", {{M}}},
 {"fxrstor", {{M}}},
@@ -1676,7 +1710,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0FAE_6}}},
 {0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0FAE_7}}},
 },
-/* 20 - GROUP_EXT_BA */
+/* 23 - GROUP_EXT_BA */
 {
 {0},
 {0},
@@ -1687,7 +1721,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"btr", {{Ev}, {Ib}}},
 {"btc", {{Ev}, {Ib}}},
 },
-/* 21 - GROUP_EXT_C7 */
+/* 24 - GROUP_EXT_C7 */
 {
 {0},
 {"?cmpxchg8b|cmpxchg8b|cmpxchg16b", {{M}}},
