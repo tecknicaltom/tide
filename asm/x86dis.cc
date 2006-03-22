@@ -1057,7 +1057,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 		*(d++)='[';
 		strcpy(d, cs_default); d += strlen(cs_default);
 		bool first = true;
-		int reg;
+		int reg = 0;
 		switch (insn->eaddrsize) {
 		case X86_ADDRSIZE16:
 			reg = 1;
