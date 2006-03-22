@@ -83,11 +83,11 @@ char xref_type_short(int xt)
 bool valid_name(const char *str)
 {
 	if (!str || !*str) return false;
-	char mc = mapchar[(unsigned)*str];
+	char mc = mapchar[(uint8)*str];
 	if (mc == '_' || mc == '?' || mc == 'A' || mc == '@') {
 		str++;
 		while (*str) {
-			mc = mapchar[(unsigned)*str];
+			mc = mapchar[(uint8)*str];
 			if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 				str++;
 			} else return false;
@@ -105,13 +105,13 @@ void make_valid_name(char *result, const char *str)
 		*result = '\0';
 		return;
 	}
-	char mc = mapchar[(unsigned)*str];
+	char mc = mapchar[(uint8)*str];
 	if (!(mc == '_' || mc == '?' || mc == 'A' || mc == '@')) {
 		*result++ = '_';
 		str++;
 	}
 	while (*str) {
-		mc = mapchar[(unsigned)*str];
+		mc = mapchar[(uint8)*str];
 		if (mc == '_' || mc == '?' || mc == 'A' || mc == '0' || mc == ':' || mc == '.' || mc == '@') {
 			*result++ = *str;
 		} else {
