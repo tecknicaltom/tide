@@ -360,7 +360,7 @@ protected:
 
 struct ht_text_listbox_item {
 	ht_text_listbox_item	*next, *prev;
-	int			id;
+	int id;
 	void			*extra_data;
 	char			*data[0];
 };
@@ -387,6 +387,7 @@ public:
 	virtual	void *	getFirst();
 	virtual	void *	getLast();
 		uint	getID(void *entry);
+		void *	getExtra(void *entry);
 	virtual	void *	getNext(void *entry);
 	virtual	void *	getPrev(void *entry);
 	virtual	char *	getStr(int col, void *entry);
