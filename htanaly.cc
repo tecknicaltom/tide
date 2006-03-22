@@ -1924,7 +1924,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 			break;
 		}
 		case button_ok:
-			if (xcount) gotoAddress(list->getExtra(data.data->cursor_ptr), this);
+			if (xcount) gotoAddress((Address*)list->getExtra(data.data->cursor_ptr), this);
 			break;
 		}
 		dialog->getbounds(&b);
