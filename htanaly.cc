@@ -1874,7 +1874,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 			} else {
 				strcpy(str2, "?");
 			}
-			list->insert_str((long)x->addr, str, xref_type(x->type), str2);
+			list->insert_str_extra(xcount, x->addr, str, xref_type(x->type), str2);
 		});
 		list->attachTitle(text);
 		list->update();
@@ -1892,7 +1892,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 			break;
 		case 667:
 			if (xcount) {
-				analy->deleteXRef(Addr, (Address*)list->getID(data.data->cursor_ptr));
+				analy->deleteXRef(Addr, (Address*)list->getExtra(data.data->cursor_ptr));
 				analy->makeDirty();
 				analy_sub->output->invalidateCache();
 			}
@@ -1924,7 +1924,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 			break;
 		}
 		case button_ok:
-			if (xcount) gotoAddress((Address*)list->getID(data.data->cursor_ptr), this);
+			if (xcount) gotoAddress(list->getExtra(data.data->cursor_ptr), this);
 			break;
 		}
 		dialog->getbounds(&b);
