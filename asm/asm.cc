@@ -239,7 +239,7 @@ void Disassembler::hexq(char **s, int size, int options, uint64 imm)
 	char *t = *s;
 	*f++ = '%';
 	if (imm >= 0 && imm <= 9) {
-		*s += sprintf(*s, "%d", imm);
+		*s += ht_snprintf(*s, 32, "%qd", imm);
 	} else if (options & DIS_STYLE_SIGNED) {
 		if (!(options & DIS_STYLE_HEX_NOZEROPAD)) f += sprintf(f, "0%d", size);
 		*f++ = 'q';
