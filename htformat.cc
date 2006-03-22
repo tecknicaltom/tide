@@ -2735,7 +2735,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			FileOfs s = file->getSize();
 
 			char buf[32];
-			sprintf(buf, "%qd", o);
+			ht_snprintf(buf, sizeof buf, "%qd", o);
 			if (inputbox("resize", "new file size", buf, sizeof buf, 0)==button_ok) {
 				eval_scalar r;
 				if (eval(&r, buf, NULL, NULL, NULL)) {
