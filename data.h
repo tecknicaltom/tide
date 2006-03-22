@@ -98,9 +98,9 @@ inline HTMallocRes ht_malloc(size_t size)
 #define MAGIC32(magic) (unsigned long)(((unsigned char)magic[0]<<24) | ((unsigned char)magic[1]<<16) | ((unsigned char)magic[2]<<8) | (unsigned char)magic[3])
 
 /** No/invalid object */
-#define OBJID_INVALID			((unsigned long)0)
+#define OBJID_INVALID			((ObjectID)0)
 /** A placeholder object id */
-#define OBJID_TEMP			((unsigned long)-1)
+#define OBJID_TEMP			((ObjectID)-1)
 
 #define OBJID_OBJECT			MAGIC32("DAT\x00")
 
