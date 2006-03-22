@@ -2066,6 +2066,15 @@ uint ht_text_listbox::getID(void *entry)
 	}	    
 }
 
+void *ht_text_listbox::getExtra(void *entry)
+{
+	if (entry) {
+		return ((ht_text_listbox_item *)entry)->ptr;
+	} else {
+		return NULL;
+	}	    
+}
+
 void *ht_text_listbox::getLast()
 {
 	return last;
