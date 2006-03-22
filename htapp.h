@@ -225,23 +225,23 @@ protected:
 	uint colwidths[4];
 	
 public:
-		void		init(Bounds *b, ht_project *project);
+		void	init(Bounds *b, ht_project *project);
 			
-	virtual	int		calcCount();
-	virtual	void		draw();
+	virtual	int	calcCount();
+	virtual	void	draw();
 	virtual	void *	getFirst();
 	virtual	void *	getLast();
 	virtual	void *	getNext(void *entry);
 	virtual	void *	getPrev(void *entry);
 	virtual	char *	getStr(int col, void *entry);
-	virtual	void		handlemsg(htmsg *msg);
-	virtual	int		numColumns();
+	virtual	void	handlemsg(htmsg *msg);
+	virtual	int	numColumns();
 	virtual	void *	quickfind(char *s);
 	virtual	char *	quickfindCompletition(char *s);
-	virtual	bool		selectEntry(void *entry);
+	virtual	bool	selectEntry(void *entry);
 /* new */
 			char *	func(uint i, bool execute);
-			void		set_project(ht_project *project);
+			void	set_project(ht_project *project);
 };
 
 /*
