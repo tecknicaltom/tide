@@ -162,7 +162,7 @@ void ht_treeview::expand_all(void *node)
  */
 void ht_treeview::getdata(ObjectStream &s)
 {
-	PUT_INT32D(s, (int)selected);
+	PUT_INT32D(s, (long)selected);
 }
 
 /*
