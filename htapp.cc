@@ -771,7 +771,7 @@ void *ht_project_listbox::getLast()
 
 void *ht_project_listbox::getNext(void *entry)
 {
-	uint e=(uint)entry;
+	unsigned long e=(unsigned long)entry;
 	if (!e) return NULL;
 	if (project && (e < project->count())) {
 		return (void*)(e+1);
@@ -782,7 +782,7 @@ void *ht_project_listbox::getNext(void *entry)
 
 void *ht_project_listbox::getPrev(void *entry)
 {
-	uint e=(uint)entry;
+	unsigned long e=(unsigned long)entry;
 	if (e > 1) {
 		return (void*)(e-1);
 	} else {
@@ -795,10 +795,10 @@ char *ht_project_listbox::getStr(int col, void *entry)
 	static char mybuf[32];
 	if (project) switch (col) {
 		case 0:
-			ht_snprintf(mybuf, sizeof mybuf, "%s", ((ht_project_item*)(*project)[(int)entry-1])->get_filename());
+			ht_snprintf(mybuf, sizeof mybuf, "%s", ((ht_project_item*)(*project)[(long)entry-1])->get_filename());
 			break;
 		case 1:
-			ht_snprintf(mybuf, sizeof mybuf, "%s", ((ht_project_item*)(*project)[(int)entry-1])->get_path());
+			ht_snprintf(mybuf, sizeof mybuf, "%s", ((ht_project_item*)(*project)[(long)entry-1])->get_path());
 			break;
 		default:
 			strcpy(mybuf, "?");
