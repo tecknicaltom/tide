@@ -458,7 +458,7 @@ void ObjectStreamText::putLenString(const byte *string, int len, const char *des
 
 class TextSyntaxError: public MsgfException {
 public:
-	TextSyntaxError::TextSyntaxError(uint line)
+	TextSyntaxError(uint line)
 		: MsgfException("syntax error in line %d", line)
 	{
 	}
