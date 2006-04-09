@@ -75,6 +75,7 @@ protected:
 	int maxlen;
 
 /* new */
+	virtual		void	checkInfo(x86opc_insn *xinsn);
 			void	decode_insn(x86opc_insn *insn);
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 			void	decode_op(x86_insn_op *op, x86opc_insn_op *xop);
@@ -125,6 +126,7 @@ class x86_64dis: public x86dis {
 public:	
 				x86_64dis();
 				x86_64dis(BuildCtorArg&);
+	virtual		void	checkInfo(x86opc_insn *xinsn);
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 	virtual		void	prefixes();
 	virtual		uint64	getoffset();
