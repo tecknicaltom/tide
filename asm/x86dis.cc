@@ -58,6 +58,10 @@ x86dis::x86dis(X86OpSize aOpsize, X86AddrSize aAddrsize)
 	x86_group_insns = &x86_32_group_insns;
 }
 
+void x86dis::checkInfo(x86opc_insn *xinsn)
+{
+}
+
 dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 {
 	ocodep = code;
@@ -293,12 +297,8 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		}
 		}
 	} else {
-		if (insn.opsizeprefix != X86_PREFIX_OPSIZE
-		 && (xinsn->op[0].info & 0x80))  {
-			// instruction has defaults to 64 bit opsize
-			insn.eopsize = X86_OPSIZE64;
-		}
-
+		checkInfo(xinsn);
+		
 		insn.name = xinsn->name;
 		for (int i = 0; i < 3; i++) {
 			decode_op(&insn.op[i], &xinsn->op[i]);
@@ -552,7 +552,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	}
 	case TYPE_W: {
 		/* ModR/M (XMM reg or memory) */
-		if (xop->info == 0x66 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
+		if (xop->info == INFO_PREFIX_66 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
 			// HACK: some SSE3 opcodes require a 0x66 prefix
 			invalidate();
 		} else {
@@ -1528,6 +1528,16 @@ void x86_64dis::prefixes()
 			c = getbyte();
 		}
 		break;
+	}
+}
+
+
+void x86_64dis::checkInfo(x86opc_insn *xinsn)
+{
+	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
+	&& (xinsn->op[0].info & 0x80))  {
+		// instruction has defaults to 64 bit opsize
+		insn.eopsize = X86_OPSIZE64;
 	}
 }
 
