@@ -34,7 +34,7 @@ uint32 delinearize(uint32 d)
 
 uint64 delinearize64(uint64 d)
 {
-	return (uint64(delinearize(d>>32))<<32) | delinearize(d); 
+	return (uint64(delinearize(d))<<32)| delinearize(d>>32); /* there's less magic in here... */
 }
 
 int compare_keys_uint_delinear(Object *key_a, Object *key_b)
