@@ -126,13 +126,13 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 		text_search_pos start, end;
 
 		try {
-/* create history entry */
+			/* create history entry */
 			if (s->create_desc) {
 				char hist_desc[1024];
 				s->create_desc(hist_desc, sizeof hist_desc, form);
 				insert_history_entry((List*)getAtomValue(s->histid), hist_desc, form);
 			}
-/* search */
+			/* search */
 			switch (s->search_class) {
 				case SC_PHYSICAL: {
 					text_viewer_pos cursor;
@@ -274,7 +274,7 @@ ht_undo_data_delete_string2::~ht_undo_data_delete_string2()
 
 bool ht_undo_data_delete_string2::combine(ht_undo_data *ud)
 {
-	if (ud->getObjectID()==getObjectID()) {
+	if (ud->getObjectID() == getObjectID()) {
 		ht_undo_data_delete_string2 *ud2 = (ht_undo_data_delete_string2 *)ud;
 		if (ud2->apos.line == apos.line) {
 			if (ud2->apos.pofs == apos.pofs) {
@@ -356,7 +356,7 @@ ht_undo_data_insert_string::~ht_undo_data_insert_string()
 
 bool ht_undo_data_insert_string::combine(ht_undo_data *ud)
 {
-	if (ud->getObjectID()==getObjectID()) {
+	if (ud->getObjectID() == getObjectID()) {
 		ht_undo_data_insert_string *ud2 = (ht_undo_data_insert_string *)ud;
 		if (ud2->cpos.line == cpos.line) {
 			if (ud2->apos.pofs == apos.pofs + len) {
@@ -1182,17 +1182,17 @@ void ht_text_viewer::draw()
 	clear(bgcolor);
 	char line[1024];
 	text_viewer_pos pos;
-	pos.line=top_line;
+	pos.line = top_line;
 	int y;
-	for (y=0; y<size.h; y++) {
+	for (y=0; y < size.h; y++) {
 		lexer_state state;
 
-		pos.pofs=0;
+		pos.pofs = 0;
 
 //FIXME:debug:		if (!textfile->getline((top_line+y)|0x80000000, line, sizeof line, &state)) break;
 		uint linelen;
 		if (!textfile->getline(top_line+y, 0, line, sizeof line, &linelen, &state)) break;
-		line[linelen]=0;
+		line[linelen] = 0;
 
 		uint x=0;
 		if (lexer) {
@@ -1204,7 +1204,7 @@ void ht_text_viewer::draw()
 			p.line=pos.line;
 			p.pofs=pos.pofs;
 			int prev_linelen = -1;
-			while ((tok=lexer->gettoken(linep, linelen, p, start_of_line, &state, &toklen)) || (!*linep && (linelen>0))) {
+			while ((tok = lexer->gettoken(linep, linelen, p, start_of_line, &state, &toklen)) || (!*linep && (linelen>0))) {
 				uint k, i;
 				uint vtoklen=toklen;
 				bool print=true;
@@ -1213,13 +1213,13 @@ void ht_text_viewer::draw()
 
 				if (is_tab) vtoklen=tab_size-x%tab_size;
 
-				if (x>=xofs) {
-					k=x-xofs;
-					i=0;
-					if (k>(uint)size.w-1) {
+				if (x >= xofs) {
+					k = x-xofs;
+					i = 0;
+					if (k > (uint)size.w-1) {
 						break;
 					}
-				} else if (x+vtoklen>=xofs) {
+				} else if (x+vtoklen >= xofs) {
 					k=0;
 					i=xofs-x;
 				} else {
@@ -1273,8 +1273,8 @@ void ht_text_viewer::draw()
 			}
 			if (drawmeta) render_meta(x-xofs, y, &pos, metacolor);
 		}
-		if (highlight_wrap && (pos.line<sel_end.line) &&
-		(pos.line>=sel_start.line)) {
+		if (highlight_wrap && pos.line < sel_end.line
+		 && pos.line >= sel_start.line) {
 			int q = (drawmeta && show_EOL) ? strlen(EOL_string) : 0;
 			int p = (x+q>xofs) ? x+q-xofs : 0;
 			fill(p, y, size.w-p, 1, getcolor(palidx_generic_input_selected), ' ');
