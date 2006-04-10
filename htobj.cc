@@ -489,6 +489,7 @@ void ht_view::handlemsg(htmsg *msg)
 
 void ht_view::hidecursor()
 {
+	buf->setCursorMode(CURSOR_OFF);
 	screen->setCursorMode(CURSOR_OFF);
 }
 
@@ -664,9 +665,10 @@ void ht_view::setvisualbounds(Bounds *b)
 void ht_view::setcursor(int x, int y, CursorMode c)
 {
 	if (pointvisible(x, y)) {
-		screen->setCursor(size.x+x, size.y+y);
-		screen->setCursorMode(c);
+		buf->setCursor(x, y, c);
+		screen->setCursor(size.x+x, size.y+y, c);
 	} else {
+		buf->setCursorMode(CURSOR_OFF);
 		screen->setCursorMode(CURSOR_OFF);
 	}
 }
