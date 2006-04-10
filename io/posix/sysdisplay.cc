@@ -368,7 +368,7 @@ void CursesSystemDisplay::copyFromDisplay(const Display &d, int x, int y, const 
 			uint rawchar;
 			vcp color;
 			d.read(rawchar, color, ix, iy);
-			if ((x+ix<clipping.x+clipping.w) && (x+ix>=clipping.x))
+			if (x+ix < clipping.x+clipping.w && x+ix >= clipping.x)
 				putChar(k, rawchar, color);
 			k++;
 		}
@@ -492,7 +492,8 @@ void CursesSystemDisplay::show()
 	case CURSOR_NORMAL:
 		curs_set(1); break;
 	case CURSOR_BOLD:
-		curs_set(2); break;
+		if (curs_set(2) == ERR) curs_set(1); 
+		break;
 	}
 	refresh();
 }
