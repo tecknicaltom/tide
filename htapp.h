@@ -236,8 +236,8 @@ public:
 	virtual	char *	getStr(int col, void *entry);
 	virtual	void	handlemsg(htmsg *msg);
 	virtual	int	numColumns();
-	virtual	void *	quickfind(char *s);
-	virtual	char *	quickfindCompletition(char *s);
+	virtual	void *	quickfind(const char *s);
+	virtual	char *	quickfindCompletition(const char *s);
 	virtual	bool	selectEntry(void *entry);
 /* new */
 			char *	func(uint i, bool execute);
