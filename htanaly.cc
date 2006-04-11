@@ -202,7 +202,7 @@ int	SymbolBox::numColumns()
 	return 3;
 }
 
-void *SymbolBox::quickfind(char *s)
+void *SymbolBox::quickfind(const char *s)
 {
 	Symbol *tmp = analy->getSymbolByName(s);
 	if (tmp) return tmp;
@@ -219,7 +219,7 @@ void *SymbolBox::quickfind(char *s)
 }
 
 
-char	*SymbolBox::quickfindCompletition(char *s)
+char	*SymbolBox::quickfindCompletition(const char *s)
 {
 	if (analy->getSymbolByName(s)) {
 		return ht_strdup(s);
