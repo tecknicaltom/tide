@@ -500,7 +500,7 @@ void ht_history_listbox::handlemsg(htmsg *msg)
 	ht_listbox::handlemsg(msg);
 }
 
-void *ht_history_listbox::quickfind(char *s)
+void *ht_history_listbox::quickfind(const char *s)
 {
 	void *item = getFirst();
 	int slen = strlen(s);
@@ -510,7 +510,7 @@ void *ht_history_listbox::quickfind(char *s)
 	return item;
 }
 
-char	*ht_history_listbox::quickfindCompletition(char *s)
+char	*ht_history_listbox::quickfindCompletition(const char *s)
 {
 	void *item = getFirst();
 	char *res = NULL;
@@ -1861,7 +1861,7 @@ int	ht_listbox::numColumns()
 	return 1;
 }
 
-char	*ht_listbox::quickfindCompletition(char *s)
+char	*ht_listbox::quickfindCompletition(const char *s)
 {
 	return ht_strdup(s);
 }
@@ -2033,12 +2033,12 @@ int	ht_text_listbox::calcCount()
 	return count;
 }
 
-int	ht_text_listbox::compare_strn(char *s1, char *s2, int l)
+int	ht_text_listbox::compare_strn(const char *s1, const char *s2, int l)
 {
 	return ht_strncmp(s1, s2, l);
 }
 
-int	ht_text_listbox::compare_ccomm(char *s1, char *s2)
+int	ht_text_listbox::compare_ccomm(const char *s1, const char *s2)
 {
 	return ht_strccomm(s1, s2);
 }
@@ -2195,7 +2195,7 @@ int	ht_text_listbox::numColumns()
 	return cols;
 }
 
-void *ht_text_listbox::quickfind(char *s)
+void *ht_text_listbox::quickfind(const char *s)
 {
 	ht_text_listbox_item *item = first;
 	int slen = strlen(s);
@@ -2205,7 +2205,7 @@ void *ht_text_listbox::quickfind(char *s)
 	return item;
 }
 
-char	*ht_text_listbox::quickfindCompletition(char *s)
+char	*ht_text_listbox::quickfindCompletition(const char *s)
 {
 	ht_text_listbox_item *item = first;
 	char *res = NULL;
@@ -2318,12 +2318,12 @@ void	ht_itext_listbox::init(Bounds *b, int Cols, int Keycol)
 	ht_text_listbox::init(b, Cols, Keycol);
 }
 
-int	ht_itext_listbox::compare_strn(char *s1, char *s2, int l)
+int	ht_itext_listbox::compare_strn(const char *s1, const char *s2, int l)
 {
 	return ht_strnicmp(s1, s2, l);
 }
 
-int	ht_itext_listbox::compare_ccomm(char *s1, char *s2)
+int	ht_itext_listbox::compare_ccomm(const char *s1, const char *s2)
 {
 	return ht_strcicomm(s1, s2);
 }
