@@ -337,8 +337,8 @@ public:
 	virtual	void	gotoItemByPosition(uint pos);
 	virtual	void	handlemsg(htmsg *msg);
 	virtual	int	numColumns();
-	virtual	void *	quickfind(char *s) = 0;
-	virtual	char *	quickfindCompletition(char *s);
+	virtual	void *	quickfind(const char *s) = 0;
+	virtual	char *	quickfindCompletition(const char *s);
 	virtual	void	redraw();
 	virtual	void	resize(int rw, int rh);
 	virtual	bool	selectEntry(void *entry);
@@ -380,8 +380,8 @@ public:
 		void	init(Bounds *b, int Cols=1, int Keycol=0, uint Listboxcaps=LISTBOX_QUICKFIND);
 	virtual	void	done();
 	virtual	int	calcCount();
-	virtual	int	compare_strn(char *s1, char *s2, int l);
-	virtual	int	compare_ccomm(char *s1, char *s2);
+	virtual	int	compare_strn(const char *s1, const char *s2, int l);
+	virtual	int	compare_ccomm(const char *s1, const char *s2);
 	virtual	int	cursorAdjust();
 		void *	getEntryByID(uint id);
 	virtual	void *	getFirst();
@@ -396,8 +396,8 @@ public:
 		void	insert_str_extra(int id, void *extra_data, char *str, ...);
 		void	insert_str_extra(int id, void *extra_data, char **strs);
 	virtual	int	numColumns();
-	virtual	void *	quickfind(char *s);
-	virtual	char *	quickfindCompletition(char *s);
+	virtual	void *	quickfind(const char *s);
+	virtual	char *	quickfindCompletition(const char *s);
 		void	sort(int count, ht_text_listbox_sort_order *so);
 	virtual	void	update();
 protected:
@@ -410,8 +410,8 @@ protected:
 class ht_itext_listbox: public ht_text_listbox {
 public:
 		void	init(Bounds *b, int Cols=1, int Keycol=0);
-	virtual	int	compare_strn(char *s1, char *s2, int l);
-	virtual	int	compare_ccomm(char *s1, char *s2);
+	virtual	int	compare_strn(const char *s1, const char *s2, int l);
+	virtual	int	compare_ccomm(const char *s1, const char *s2);
 };
 
 /*
@@ -524,8 +524,8 @@ public:
 	virtual void *getPrev(void *entry);
 	virtual char *getStr(int col, void *entry);
 	virtual	void handlemsg(htmsg *msg);
-	virtual	void *quickfind(char *s);
-	virtual	char *quickfindCompletition(char *s);
+	virtual	void *quickfind(const char *s);
+	virtual	char *quickfindCompletition(const char *s);
 };
 
 /*
