@@ -863,7 +863,7 @@ int ht_project_listbox::numColumns()
 	return 2;
 }
 
-void *ht_project_listbox::quickfind(char *s)
+void *ht_project_listbox::quickfind(const char *s)
 {
 	void *item = getFirst();
 	int slen = strlen(s);
@@ -873,7 +873,7 @@ void *ht_project_listbox::quickfind(char *s)
 	return item;
 }
 
-char	*ht_project_listbox::quickfindCompletition(char *s)
+char	*ht_project_listbox::quickfindCompletition(const char *s)
 {
 	void *item = getFirst();
 	char *res = NULL;
