@@ -86,20 +86,20 @@ public:
 	int		idle_count;
 	int		symbols;
 
-			void		init(Bounds *b, Analyser *Analy);
-	virtual   void		done();
-	virtual   int		calcCount();
-	virtual   int		cursorAdjust();
-	virtual	int		estimateEntryPos(void *entry);
-	virtual   void *	getFirst();
-	virtual   void *	getLast();
-	virtual   void *	getNext(void *entry);
-	virtual   void *	getPrev(void *entry);
-	virtual   char *	getStr(int col, void *entry);
-	virtual	bool		idle();
-	virtual   int		numColumns();
-	virtual	void *	quickfind(char *s);
-	virtual	char *	quickfindCompletition(char *s);
+		void	init(Bounds *b, Analyser *Analy);
+	virtual void	done();
+	virtual int	calcCount();
+	virtual int	cursorAdjust();
+	virtual	int	estimateEntryPos(void *entry);
+	virtual void *	getFirst();
+	virtual void *	getLast();
+	virtual void *	getNext(void *entry);
+	virtual void *	getPrev(void *entry);
+	virtual char *	getStr(int col, void *entry);
+	virtual	bool	idle();
+	virtual int	numColumns();
+	virtual	void *	quickfind(const char *s);
+	virtual	char *	quickfindCompletition(const char *s);
 };
 
 struct CallChainNode {
