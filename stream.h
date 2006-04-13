@@ -77,8 +77,11 @@ public:
 		void			setLayered(Stream *newLayered, bool ownNewLayered);
 };
 
+
 #define	OS_FMT_DEC		0
 #define	OS_FMT_HEX		1
+
+class GetObject;
 
 /**
  *	A stream-layer, storing/loading |Object|s.
@@ -90,7 +93,8 @@ public:
 	virtual void		getBinary(void *buf, uint size, const char *desc) = 0;
 	virtual bool		getBool(const char *desc) = 0;
 	virtual uint64		getInt(uint size, const char *desc) = 0;
-	virtual void		getObject(Object *& object, const char *name, ObjectID id = OBJID_INVALID) = 0;
+	virtual Object *	getObjectInternal(const char *name, ObjectID id = OBJID_INVALID) = 0;
+		GetObject	getObject(const char *name, ObjectID id = OBJID_INVALID);
 	virtual char *		getString(const char *desc) = 0;
 	virtual byte *		getLenString(int &length, const char *desc) = 0;
 
@@ -106,6 +110,33 @@ public:
 
 	virtual void		corrupt() = 0;
 };
+
+class GetObject {
+private:
+	friend GetObject ObjectStream::getObject(const char *name, ObjectID id);
+	
+	ObjectStream &mO;
+	const char *mName;
+	ObjectID mId;
+
+	GetObject(ObjectStream &o, const char *name, ObjectID id = OBJID_INVALID)
+		: mO(o), mName(name), mId(id)
+	{
+	}
+
+	GetObject operator=(const GetObject &); // not implemented
+
+public:
+	template <typename T> operator T* () const
+	{
+		return dynamic_cast<T*>(mO.getObjectInternal(mName, mId));
+	}
+};
+
+inline GetObject ObjectStream::getObject(const char *name, ObjectID id)
+{
+	return GetObject(*this, name, id);
+}
 
 #define PUTX_BINARY(st, d, size, dstr)	(st).putBinary(d, size, dstr)
 #define PUTX_BOOL(st, d, dstr)		(st).putBool(d, dstr)
@@ -168,7 +199,7 @@ public:
 #define GETX_INT64X(st, dstr)		GETX_INT64(st, dstr)
 #define GETX_STRING(st, dstr)		(st).getString(dstr)
 #define GETX_LSTRING(st, size, dstr)	(st).getLenString(size, dstr)
-#define GETX_OBJECT(st, d, dstr)	(st).getObject((Object*&)(d), dstr)
+#define GETX_OBJECT(st, dstr)		(st).getObject(dstr)
 
 #define GET_BINARY(st, d, size)		GETX_BINARY(st, d, size, #d)
 #define GET_BOOL(st, d)			d=GETX_BOOL(st, #d)
@@ -189,7 +220,7 @@ public:
 #define GET_INT64X(st, d)		d=GETX_INT64X(st, #d)
 #define GET_STRING(st, d)		d=GETX_STRING(st, #d)
 #define GET_LSTRING(st, d, size)	d=GETX_LSTRING(st, size, #d)
-#define GET_OBJECT(st, d)		GETX_OBJECT(st, d, #d)
+#define GET_OBJECT(st, d)		d=GETX_OBJECT(st, #d)
 
 /**
  *	A object-stream-layer.
@@ -203,7 +234,7 @@ public:
 	virtual void		getBinary(void *buf, uint size, const char *desc);
 	virtual bool		getBool(const char *desc);
 	virtual uint64		getInt(uint size, const char *desc);
-	virtual void		getObject(Object *& object, const char *name, ObjectID id = OBJID_INVALID);
+	virtual Object *	getObjectInternal(const char *name, ObjectID id = OBJID_INVALID);
 	virtual char *		getString(const char *desc);
 	virtual byte *		getLenString(int &length, const char *desc);
 
