@@ -351,9 +351,8 @@ void Array::load(ObjectStream &s)
 	if (ecount) {
 		GET_INT32X(s, hom_objid);
 
-		for (uint i=0; i<ecount; i++) {
-			Object *obj;
-			s.getObject(obj, "element", hom_objid);
+		for (uint i=0; i < ecount; i++) {
+			Object *obj = s.getObjectInternal("element", hom_objid);
 			elems[i] = obj;
 		}
 	} else {
@@ -679,8 +678,7 @@ void SLinkedList::load(ObjectStream &s)
 	if (ecount) {
 		GET_INT32X(s, hom_objid);
 		for (int i=0; i < ecount; i++) {
-			Object *obj;
-			s.getObject(obj, "element", hom_objid);
+			Object *obj = s.getObjectInternal("element", hom_objid);
 			insert(obj);
 		}
 	} else {
@@ -980,8 +978,7 @@ void DLinkedList::load(ObjectStream &s)
 		GET_INT32X(s, hom_objid);
 
 		for (int i=0; i<ecount; i++) {
-			Object *obj;
-			s.getObject(obj, "element", hom_objid);
+			Object *obj = s.getObjectInternal("element", hom_objid);
 			insert(obj);
 		}
 	} else {
@@ -1401,7 +1398,7 @@ void BinaryTree::loadR(ObjectStream &s, BinTreeNode **n, int l, int r)
 	uint m = (l+r)/2;
 	loadR(s, &(*n)->left, l, m-1);
 
-	s.getObject((*n)->key, "element", hom_objid);
+	(*n)->key = s.getObjectInternal("element", hom_objid);
 
 	loadR(s, &(*n)->right, m+1, r);
 }
@@ -1409,7 +1406,7 @@ void BinaryTree::loadR(ObjectStream &s, BinTreeNode **n, int l, int r)
 void BinaryTree::load(ObjectStream &s)
 {
 	const void *m = getAtomValue(GETX_INT32(s, "comparator"));
-	if (!m) throw MsgException("BinaryTree::load() : invalid comparator!");
+	if (!m) throw MsgException("BinaryTree::load(): invalid comparator!");
 	compare = (Comparator)m;
 
 	GET_INT32D(s, ecount);
@@ -1722,7 +1719,7 @@ int AVLTree::loadR(ObjectStream &s, BinTreeNode *&n, int l, int r)
 
 	int L = loadR(s, n->left, l, m-1);
 
-	s.getObject(n->key, "element", hom_objid);
+	n->key = s.getObject("element", hom_objid);
 
 	int R = loadR(s, n->right, m+1, r);
 
