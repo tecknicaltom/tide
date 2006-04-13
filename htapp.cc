@@ -521,8 +521,7 @@ void file_window_load_fcfg_func(ObjectStream &f, void *context)
 		}
 	}
 
-	Analyser *a;
-	f.getObject((Object*&)a, "analyser");
+	Analyser *a = f.getObject("analyser");
 
 	htmsg m;
 	m.msg = msg_set_analyser;
