@@ -157,7 +157,7 @@ void store_history(ObjectStream &s)
 	PUT_INT32D(s, count);
 	for (uint i=0; i < count; i++) {
 		PUTX_INT32X(s, hist_atoms[i], "atom");
-		List *c=(List*)getAtomValue(hist_atoms[i]);
+		List *c = (List*)getAtomValue(hist_atoms[i]);
 		PUTX_OBJECT(s, c, "list");
 	}
 }
@@ -170,8 +170,7 @@ bool load_history(ObjectStream &s)
 		int atom;
 		GET_INT32X(s, atom);
 		destroy_hist_atom(atom);
-		List *c;
-		GETX_OBJECT(s, c, "list");
+		List *c = GETX_OBJECT(s, "list");
 		registerAtom(atom, c);
 	}
 	return true;
