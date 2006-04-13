@@ -227,9 +227,9 @@ int RegNodeFile::load_node(ObjectStream &s, ht_registry_node **node)
 	ht_registry_node_type type;
 	ht_registry_data *data;
 	int n = s.read(magic, sizeof magic);
-	if ((n != sizeof magic) || memcmp(magic, REGNODE_FILE_MAGIC, 4)==0) {
+	if (n != sizeof magic || memcmp(magic, REGNODE_FILE_MAGIC, 4)==0) {
 		type = s.getInt(4, NULL);
-		s.getObject((Object*&)data, NULL);
+		data = s.getObject(NULL);
 	} else {
 		MemoryFile g;
 		g.write(magic, n);
