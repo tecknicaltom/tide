@@ -39,7 +39,7 @@ class ObjectStreamInter: public ObjectStream {
 public:
 			ObjectStreamInter(Stream *s, bool own_stream);
 	/* extends ObjectStream */
-	virtual void	getObject(Object *&object, const char *name, ObjectID id = OBJID_INVALID);
+	virtual Object *getObjectInternal(const char *name, ObjectID id = OBJID_INVALID);
 	virtual void	putObject(const Object *object, const char *name, ObjectID id = OBJID_INVALID);
 };
 
@@ -75,7 +75,7 @@ public:
 	   
 				ObjectStreamText(Stream *s, bool own_stream);
 	/* extends ObjectStreamInter */
-	virtual void		getObject(Object *&object, const char *name, ObjectID id = OBJID_INVALID);
+	virtual Object *	getObjectInternal(const char *name, ObjectID id = OBJID_INVALID);
 	virtual void		putObject(const Object *object, const char *name, ObjectID id = OBJID_INVALID);
 	/* extends ObjectStream */
 	virtual void		getBinary(void *buf, uint size, const char *desc);
@@ -131,7 +131,7 @@ public:
 	virtual void		getBinary(void *buf, uint size, const char *desc);
 	virtual bool		getBool(const char *desc);
 	virtual uint64		getInt(uint size, const char *desc);
-	virtual void		getObject(Object *&object, const char *name, ObjectID id = OBJID_INVALID);
+	virtual Object *	getObjectInternal(const char *name, ObjectID id = OBJID_INVALID);
 	virtual char *		getString(const char *desc);
 	virtual byte *		getLenString(int &length, const char *desc);
 
