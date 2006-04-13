@@ -348,9 +348,9 @@ uint64 ObjectStreamLayer::getInt(uint size, const char *desc)
 	return mObjStream->getInt(size, desc);
 }
 
-void ObjectStreamLayer::getObject(Object *& object, const char *name, ObjectID id)
+Object *ObjectStreamLayer::getObjectInternal(const char *name, ObjectID id)
 {
-	return mObjStream->getObject(object, name, id);
+	return mObjStream->getObjectInternal(name, id);
 }
 
 char *ObjectStreamLayer::getString(const char *desc)
