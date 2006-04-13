@@ -549,18 +549,18 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 
 	loadlocations(st, loc->left, l, m-1);
 
-	GETX_OBJECT(st, loc->addr, "addr");
+	loc->addr = GETX_OBJECT(st , "addr");
 
 	// xrefs
-	GETX_OBJECT(st, loc->xrefs, "xrefs");
+	loc->xrefs = GETX_OBJECT(st, "xrefs");
 	
 	// comments
-	GETX_OBJECT(st, loc->comments, "comments");
+	loc->comments = GETX_OBJECT(st, "comments");
 	
 	analyser_get_addrtype(st, &loc->type);
 
 	// must be resolved later (thisfunc is of type Location not Address)
-	GETX_OBJECT(st, loc->thisfunc, "func");
+	loc->thisfunc = GETX_OBJECT(st, "func");
 	loc->flags = GETX_INT(st, 1, "flags");
 	loc->label = NULL;
 
@@ -578,8 +578,7 @@ static void loadsymbols(Analyser *analy, ObjectStream &st, Symbol *&symbol, int 
 
 	loadsymbols(analy, st, symbol->left, l, m-1);
 
-	Address *a;
-	GETX_OBJECT(st, a, "addr");
+	Address *a = GETX_OBJECT(st, "addr");
 
 	(symbol->location = analy->newLocation(a))->label = symbol;
 	delete a;
@@ -659,14 +658,13 @@ void Analyser::load(ObjectStream &st)
 
 	GET_INT32D(st, max_opcode_length);
 
-	Address *curfuncaddr;
-	GETX_OBJECT(st, curfuncaddr, "cur_func");
+	Address *curfuncaddr = GETX_OBJECT(st, "cur_func");
 	if (curfuncaddr) {
 		cur_func = newLocation(curfuncaddr);
+		delete curfuncaddr;
 	} else {
 		cur_func = NULL;
 	}
-	delete curfuncaddr;
 	
 	dirty = false;
 }
