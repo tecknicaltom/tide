@@ -66,19 +66,19 @@ ObjectStreamInter::ObjectStreamInter(Stream *s, bool own_s)
 {
 }
 
-void	ObjectStreamInter::getObject(Object *&object, const char *name, ObjectID id)
+Object *ObjectStreamInter::getObjectInternal(const char *name, ObjectID id)
 {
 	if (id == OBJID_INVALID) {
 		GET_INT32X(*this, id);
 		if (!id) {
-			object = NULL;
-			return;
+			return NULL;
 		}
 	}
 	object_builder build = (object_builder)getAtomValue(id);
 	if (!build) throw ObjectNotRegisteredException(id);
-	object = build();
-	object->load(*this);
+	Object *o = build();
+	o->load(*this);
+	return o;
 }
 
 void	ObjectStreamInter::putObject(const Object *object, const char *name, ObjectID id)
@@ -96,8 +96,7 @@ void	ObjectStreamInter::putObject(const Object *object, const char *name, Object
 		putIDComment(*this, id);
 		PUTX_INT32X(*this, id, "id");
 	}
-	object_builder build = (object_builder)getAtomValue(id);
-	if (!build) {
+	if (!getAtomValue(id)) {
 		throw ObjectNotRegisteredException(id);
 	}
 	object->store(*this);
@@ -301,13 +300,14 @@ uint64 ObjectStreamText::getInt(uint size, const char *desc)
 	return a;
 }
 
-void ObjectStreamText::getObject(Object *&object, const char *name, ObjectID id)
+Object *ObjectStreamText::getObjectInternal(const char *name, ObjectID id)
 {
 	readDesc(name);
 	expect('=');
 	expect('{');
-	ObjectStreamInter::getObject(object, name, id);
+	Object *o = ObjectStreamInter::getObjectInternal(name, id);
 	expect('}');
+	return o;
 }
 
 char *ObjectStreamText::getString(const char *desc)
@@ -613,11 +613,11 @@ uint64 ObjectStreamNative::getInt(uint size, const char *desc)
 	throw IllegalArgumentException(HERE);
 }
 
-void ObjectStreamNative::getObject(Object *&object, const char *name, ObjectID id)
+Object *ObjectStreamNative::getObjectInternal(const char *name, ObjectID id)
 {
 	Object *pp;
 	mStream->readx(&pp, sizeof pp);
-	object = pp;
+	return pp;
 }
 
 char	*ObjectStreamNative::getString(const char *desc)
