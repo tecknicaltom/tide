@@ -378,7 +378,7 @@ void VfsListbox::reread()
 	}
 }
 
-void *VfsListbox::quickfind(char *s)
+void *VfsListbox::quickfind(const char *s)
 {
 	ht_text_listbox_item *item = (ht_text_listbox_item *)e_cursor;
 	for (int j=0; j<2; j++) {
@@ -401,7 +401,7 @@ void *VfsListbox::quickfind(char *s)
 	return NULL;
 }
 
-char *VfsListbox::quickfindCompletition(char *s)
+char *VfsListbox::quickfindCompletition(const char *s)
 {
 	ht_text_listbox_item *item = first;
 	char *res = NULL;
