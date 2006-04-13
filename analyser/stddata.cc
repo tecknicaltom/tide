@@ -47,14 +47,14 @@ static void areaload(ObjectStream &st, area_s *&p, int level, int &left)
 	}
 	p = ht_malloc(sizeof (area_s));
 	if (level <= 1 || left <= 1) {
-		st.getObject(p->start, "start");
-		st.getObject(p->end, "end");
+		p->start = st.getObject("start");
+		p->end = st.getObject("end");
 		p->left = p->right = NULL;
 		left--;
 	} else {
 		areaload(st, p->left, level / 2, left);
-		st.getObject(p->start, "start");
-		st.getObject(p->end, "end");
+		p->start = st.getObject("start");
+		p->end = st.getObject("end");
 		left--;
 		areaload(st, p->right, level / 2 -1, left);
 	}
