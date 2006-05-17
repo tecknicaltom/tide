@@ -1328,6 +1328,9 @@ char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
 	char *s=insnstr;
 	char n[32];
 	switch (insn->name[0]) {
+	case '|':
+		pickname(n, insn->name, 0);
+		break;
 	case '?':
 		switch (insn->eopsize) {
 		case X86_OPSIZE16: 
