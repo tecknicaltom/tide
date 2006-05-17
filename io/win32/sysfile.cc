@@ -66,11 +66,21 @@ int sys_filename_cmp(const char *a, const char *b)
 	return tolower(*a) - tolower(*b);
 }
 
-int sys_canonicalize(char *result, const char *filename)
+int sys_canonicalize(char **result, const char *filename)
 {
 	if (!sys_filename_is_absolute(filename)) return ENOENT;
 	char *dunno;
-	return (GetFullPathName(filename, HT_NAME_MAX, result, &dunno) > 0) ? 0 : ENOENT;
+	int res;
+	int maxlen = 100;
+	*result = (char*)malloc(maxlen);
+	while ((res = GetFullPathName(filename, maxlen, *result, &dunno)) > 0) {
+		if (res >= maxlen) {
+			*result = (char*)realloc(res);
+			maxlen = res+1;
+		}
+		return 0;
+	}
+	return ENOENT;
 }
 
 static uint filetime_to_ctime(FILETIME f)
