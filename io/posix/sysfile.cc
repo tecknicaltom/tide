@@ -57,10 +57,16 @@ int sys_filename_cmp(const char *a, const char *b)
 	return *a - *b;
 }
 
-int sys_canonicalize(char *result, const char *filename)
+int sys_canonicalize(char **result, const char *filename)
 {
 	if (!sys_filename_is_absolute(filename)) return ENOENT;
-	return (realpath(filename, result)==result) ? 0 : ENOENT;
+	*result = (char*)malloc(HT_NAME_MAX);
+	if (realpath(filename, *result)==*result) {
+		return 0;
+	} else {
+		free(*result);
+		return ENOENT;
+	}
 }
 
 static char sys_find_dirname[HT_NAME_MAX];
