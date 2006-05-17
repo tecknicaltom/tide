@@ -155,7 +155,7 @@ char *		sys_filename_suffix(const char *fn);
 int		sys_tmpfile_fd();
 
 /* system-dependant (implementation in $MYSYSTEM/ *.cc) */
-int		sys_canonicalize(char *result, const char *filename);
+int		sys_canonicalize(char **result, const char *filename);
 int		sys_findclose(pfind_t &pfind);
 int		sys_findfirst(pfind_t &pfind, const char *dirname);
 int		sys_findnext(pfind_t &pfind);
