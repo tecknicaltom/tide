@@ -1722,14 +1722,16 @@ ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 	Bounds b;
 	get_stdbounds_file(&b);
 	int e;
-	char fullfilename[FILENAME_MAX];
-	if ((e = sys_canonicalize(fullfilename, filename))) {
-		LOG_EX(LOG_ERROR, "error loading file %s: %s", fullfilename, strerror(e));
+	char *fullfilename;
+	if ((e = sys_canonicalize(&fullfilename, filename))) {
+		LOG_EX(LOG_ERROR, "error loading file %s: %s", filename, strerror(e));
 		return NULL;
 	}
+	String f(fullfilename);
+	free(fullfilename);
 
 	ht_window *w;
-	if (!allow_duplicates && ((w = get_window_by_filename(fullfilename)))) {
+	if (!allow_duplicates && ((w = get_window_by_filename(f.contentChar())))) {
 		focus(w);
 		return w;
 	}
@@ -1738,7 +1740,6 @@ ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 	FileModificator *mfile = NULL;
 	FileLayer *file = NULL;
 	try {
-		String f(fullfilename);
 		emfile = new LocalFile(f, IOAM_READ, FOM_EXISTS);
 	    	if (!doFileChecks(emfile)) {
 			delete emfile;
@@ -1748,16 +1749,16 @@ ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 		file = new FileLayer(mfile, true);
 	} catch (const IOException &e) {
 		String s;
-		LOG_EX(LOG_ERROR, "error loading file %s: %y", fullfilename, &e.reason(s));
+		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e.reason(s));
 		if (file) delete file;
 		else if (mfile) delete mfile;
 		else delete emfile;
 		return NULL;
 	}
 
-	LOG("loading binary file %s...", fullfilename);
+	LOG("loading binary file %y...", &f);
 
-	return create_window_file_bin(&b, file, fullfilename, true);
+	return create_window_file_bin(&b, file, f.contentChar(), true);
 }
 
 ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, char *title, bool isfile)
@@ -1843,14 +1844,16 @@ ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates
 	get_stdbounds_file(&c);
 	b = c;
 	int e;
-	char fullfilename[FILENAME_MAX];
-	if ((e = sys_canonicalize(fullfilename, filename))) {
-		LOG_EX(LOG_ERROR, "error loading file %s: %s", fullfilename, strerror(e));
+	char *fullfilename;
+	if ((e = sys_canonicalize(&fullfilename, filename))) {
+		LOG_EX(LOG_ERROR, "error loading file %s: %s", filename, strerror(e));
 		return NULL;
 	}
-
+	String f(fullfilename);
+	free(fullfilename);
+	
 	ht_window *w;
-	if (!allow_duplicates && ((w = get_window_by_filename(fullfilename)))) {
+	if (!allow_duplicates && ((w = get_window_by_filename(f.contentChar())))) {
 		focus(w);
 		return w;
 	}
@@ -1859,7 +1862,6 @@ ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates
 	ht_ltextfile *tfile = NULL;
 	FileLayer *file = NULL;
 	try {
-		String f(fullfilename);
 		File *emfile = new LocalFile(f, IOAM_READ, FOM_EXISTS);
 
 		if (!doFileChecks(emfile)) {
@@ -1870,16 +1872,16 @@ ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates
 		file = new ht_layer_textfile(tfile, true);
 	} catch (const IOException &e) {
 		String s;
-		LOG_EX(LOG_ERROR, "error loading file %s: %y", fullfilename, &e.reason(s));
+		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e.reason(s));
 		if (file) delete file;
 		else if (tfile) delete tfile;
 		else delete emfile;
 		return NULL;
 	}
 
-	LOG("loading text file %s...", fullfilename);
+	LOG("loading text file %y...", &f);
 
-	return create_window_file_text(&b, file, fullfilename, true);
+	return create_window_file_text(&b, file, f.contentChar(), true);
 }
 
 ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, char *title, bool isfile)
@@ -2360,9 +2362,13 @@ void ht_app::handlemsg(htmsg *msg)
 
 							delete old;
 
-							char fullfn[FILENAME_MAX], *ff=fullfn;
-							if (sys_canonicalize(fullfn, fn)!=0) ff=fn;
-							e->window->settitle(ff);
+							char *fullfn;
+							if (sys_canonicalize(&fullfn, fn)==0) {
+								e->window->settitle(fullfn);
+								free(fullfn);							
+							} else {
+								e->window->settitle(fn);
+							}
 							clearmsg(msg);
 						} else {
 							String s1, s2;
