@@ -878,7 +878,7 @@ const char *x86asm::lsz2hsz(int size, int opsize)
 		case 16:
 			return hsz128_16;
 		}
-	} else {
+	} else if (opsize == X86_OPSIZE32) {
 		switch (size) {
 		case 1:
 			return hsz8_32;
@@ -893,7 +893,22 @@ const char *x86asm::lsz2hsz(int size, int opsize)
 		case 16:
 			return hsz128_32;
 		}
-	}
+	} /*else {
+		switch (size) {
+		case 1:
+			return hsz8_64;
+		case 2:
+			return hsz16_64;
+		case 4:
+			return hsz32_64;
+		case 6:
+			return hsz48_64;
+		case 8:
+			return hsz64_64;
+		case 16:
+			return hsz128_64;
+		}
+	}*/
 	return 0;
 }
 
@@ -1004,16 +1019,16 @@ int x86asm::match_allops(x86asm_insn *insn, x86opc_insn *xinsn, int opsize, int 
 
 static void pickname(char *result, const char *name, int n)
 {
-	char *s = strchr(name+1, '|');
-	if (!s) {
-		strcpy(result, name);
-		return;
-	}
-	if (n == 0) {
-		ht_snprintf(result, s - name, "%s", name + 1);
-	} else {
-		strcpy(result, s+1);
-	}
+	const char *s = name;
+	do {
+		name = s+1;
+		s = strchr(name, '|');
+		if (!s) {
+			strcpy(result, name);
+			return;
+		}
+	} while (n--);
+	ht_strlcpy(result, name, s-name+1);
 }
 
 int x86asm::match_opcode_name(char *input_name, const char *opcodelist_name)
@@ -1024,6 +1039,11 @@ int x86asm::match_opcode_name(char *input_name, const char *opcodelist_name)
 		pickname(n2, opcodelist_name, 1);
 		pickname(n3, opcodelist_name, 2);
 		switch (opcodelist_name[0]) {
+		case '|':
+			if (strcmp(n1, input_name)==0) return MATCHOPNAME_MATCH;
+			if (strcmp(n2, input_name)==0) return MATCHOPNAME_MATCH;
+			if (strcmp(n3, input_name)==0) return MATCHOPNAME_MATCH;
+			break;
 		case '?':
 			if (strcmp(n1, input_name)==0) return MATCHOPNAME_MATCH_IF_OPSIZE16;
 			if (strcmp(n2, input_name)==0) return MATCHOPNAME_MATCH_IF_OPSIZE32;
@@ -1053,15 +1073,15 @@ void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, by
 	int n = match_opcode_name(insn->name, opcode->name);
 	namefound |= n;
 	if (n != MATCHOPNAME_NOMATCH) {
-			insn->opsizeprefix = X86_PREFIX_NO;
-			if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE32) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE16)) {
-				if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, addrsize, n) && !addrsize_depend) || error) return;
-				if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
-			}
-			if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE16) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE32)) {
-				if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), addrsize, n) && !addrsize_depend) || error) return;
-				if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
-			}
+		insn->opsizeprefix = X86_PREFIX_NO;
+		if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE32) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE16)) {
+			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, addrsize, n) && !addrsize_depend) || error) return;
+			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
+		}
+		if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE16) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE32)) {
+			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), addrsize, n) && !addrsize_depend) || error) return;
+			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
+		}
 	}
 }
 
