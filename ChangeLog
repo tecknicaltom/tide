@@ -6,6 +6,8 @@ version 0.9.2:
 	- better Mach-O executable sections detection
 	- allow ':' key for changing comments in analyser
 	- [Win] use unicode output
+	- compile with gcc 4.1
+	- updated minilzo
 	- small bug fixes
 
 version 0.9.1:
