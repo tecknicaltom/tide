@@ -73,7 +73,7 @@ bool ht_compressed_stream::flush_compressed()
 		if (stream->write(cbuf, cbuf_len)!=cbuf_len) {
 			free(cbuf);
 			return false;
-		}			
+		}
 
 		free(cbuf);
 		
