@@ -28,6 +28,7 @@
 #include "analy_register.h"
 #include "analy_ppc.h"
 #include "analy_x86.h"
+#include "analy_arm.h"
 #include "coff_analy.h"
 #include "coff_s.h"
 
@@ -99,7 +100,7 @@ void CoffAnalyser::beginAnalysis()
 	 */
 	Address *entry=createAddress32(coff_shared->coff32header.entrypoint_address);
 	pushAddress(entry, entry);
-	
+
 	/*
 	 * give all sections a descriptive comment:
 	 */
@@ -392,7 +393,12 @@ void CoffAnalyser::initUnasm()
 		case COFF_MACHINE_POWERPC_BE:
 			analy_disasm = new AnalyPPCDisassembler();
 			((AnalyPPCDisassembler*)analy_disasm)->init(this, ANALY_PPC_32);
-			break;          
+			break;
+		case COFF_MACHINE_ARM:
+		case COFF_MACHINE_THUMB:
+			analy_disasm = new AnalyArmDisassembler();
+			((AnalyArmDisassembler*)analy_disasm)->init(this);
+			break;
 		case COFF_MACHINE_UNKNOWN:
 		default:
 			DPRINTF("no apropriate disassembler for machine %04x\n", coff_shared->coffheader.machine);
