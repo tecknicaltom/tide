@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	elf_analy.cc
  *
@@ -25,6 +25,7 @@
 #include "analy_ppc.h"
 #include "analy_register.h"
 #include "analy_x86.h"
+#include "analy_arm.h"
 #include "elf_analy.h"
 
 #include "htctrl.h"
@@ -47,7 +48,7 @@ extern "C" {
 /*
  *
  */
- 
+
 ElfAnalyser::ElfAnalyser()
 {
 }
@@ -173,7 +174,7 @@ void ElfAnalyser::beginAnalysis()
 			addComment(entry, 0, ";  executable entry point");
 			break;
 		default:
-			addComment(entry, 0, ";  entry point");               
+			addComment(entry, 0, ";  entry point");
 		}
 		addComment(entry, 0, ";****************************");
 		delete entry;
@@ -191,7 +192,7 @@ void ElfAnalyser::beginAnalysis()
 void ElfAnalyser::initInsertFakeSymbols()
 {
 	if (!elf_shared->undefined2fakeaddr) return;
-	
+
 	foreach(FakeAddr, fa, *elf_shared->undefined2fakeaddr, {
 		Address *address = createAddress32(fa->addr);
 		FileOfs h = elf_shared->sheaders.sheaders32[fa->secidx].sh_offset;
@@ -393,9 +394,9 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 				if (!getSymbolByName(label)) {
 					Address *address = createAddress64(sym.st_value);
 					char *demangled = cplus_demangle(label, DMGL_PARAMS | DMGL_ANSI);
-				
+
 					make_valid_name(label, label);
-				
+
 					ht_snprintf(elf_buffer, sizeof elf_buffer, "; data object %s, size %qd (%s)", (demangled) ? demangled : label, sym.st_size, bind);
 
 					if (demangled) free(demangled);
@@ -405,7 +406,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 					addComment(address, 0, elf_buffer);
 					addComment(address, 0, ";********************************************************");
 					assignSymbol(address, label, label_data);
-					
+
 					delete address;
 				}
 				break;
@@ -635,6 +636,15 @@ void ElfAnalyser::initUnasm()
 			((AnalyPPCDisassembler*)analy_disasm)->init(this, ANALY_PPC_64);
 		}
 		break;
+        case ELF_EM_ARM: // Arm
+                if (elf_shared->ident.e_ident[ELF_EI_CLASS] != ELFCLASS32) {
+                        errorbox("ARM cant be used in a 64-Bit ELF.");
+                } else {
+                        DPRINTF("initing analy_arm_disassembler\n");
+                        analy_disasm = new AnalyArmDisassembler();
+                        ((AnalyArmDisassembler*)analy_disasm)->init(this);
+                }
+                break;
 	default:
 		DPRINTF("no apropriate disassembler for machine %04x\n", machine);
 		warnbox("No disassembler for unknown machine type %04x!", machine);
@@ -693,7 +703,7 @@ Address *ElfAnalyser::fileofsToAddress(FileOfs fileofs)
 {
 	ELFAddress ea;
 	if (elf_ofs_to_addr(&elf_shared->sheaders, elf_shared->ident.e_ident[ELF_EI_CLASS], fileofs, &ea)) {
-		switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {          
+		switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
 			case ELFCLASS32: return createAddress32(ea.a32);
 			case ELFCLASS64: return createAddress64(ea.a64);
 		}
