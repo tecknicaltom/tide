@@ -57,7 +57,7 @@ class Assembler: public Object {
 protected:
 	int (*imm_eval_proc)(void *context, char *&s, uint64 &v);
 	void *imm_eval_context;
-	
+
 	asm_code *codes;
 	asm_code code;
 	char error_msg[256];
@@ -117,7 +117,7 @@ class Disassembler: public Object {
 protected:
 	int options;
 	bool highlight;
-	
+
 		const char *get_cs(AsmSyntaxHighlightEnum style);
 		void hexd(char **s, int size, int options, uint32 imm);
 		void hexq(char **s, int size, int options, uint64 imm);
@@ -177,6 +177,7 @@ public:
 #define ATOM_DISASM_X86_VXD	MAGIC32("DIS\x06")
 #define ATOM_DISASM_PPC		MAGIC32("DIS\x07")
 #define ATOM_DISASM_X86_64	MAGIC32("DIS\x08")
+#define ATOM_DISASM_ARM         MAGIC32("DIS\x09")
 
 #define ASM_SYNTAX_DEFAULT "\\@d"
 #define ASM_SYNTAX_COMMENT "\\@#"
