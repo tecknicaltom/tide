@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	asm.cc
  *
@@ -34,6 +34,7 @@
 #include "javadis.h"
 #include "x86dis.h"
 #include "ppcdis.h"
+#include "armdis.h"
 
 /*
  *	CLASS Assembler
@@ -303,6 +304,7 @@ BUILDER(ATOM_DISASM_JAVA, javadis, Disassembler)
 BUILDER(ATOM_DISASM_IA64, IA64Disassembler, Disassembler)
 BUILDER(ATOM_DISASM_PPC, PPCDisassembler, Disassembler)
 BUILDER(ATOM_DISASM_IL, ILDisassembler, Disassembler)
+BUILDER(ATOM_DISASM_ARM, ArmDisassembler, Disassembler)
 
 bool init_asm()
 {
@@ -314,11 +316,13 @@ bool init_asm()
 	REGISTER(ATOM_DISASM_PPC, PPCDisassembler)
 	REGISTER(ATOM_DISASM_IL, ILDisassembler)
 	REGISTER(ATOM_DISASM_X86_64, x86_64dis)
+	REGISTER(ATOM_DISASM_ARM, ArmDisassembler)
 	return true;
 }
 
 void done_asm()
 {
+	UNREGISTER(ATOM_DISASM_ARM, ArmDisassembler)
 	UNREGISTER(ATOM_DISASM_X86_64, x86dis)
 	UNREGISTER(ATOM_DISASM_IL, ILDisassembler)
 	UNREGISTER(ATOM_DISASM_PPC, PPCDisassembler)
