@@ -28,10 +28,6 @@
 #ifndef DIS_ASM_H
 #define DIS_ASM_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include <stdio.h>
 
 #define ATTRIBUTE_FPTR_PRINTF_2
@@ -44,11 +40,7 @@ enum bfd_endian {BFD_ENDIAN_LITTLE, BFD_ENDIAN_BIG};
 #define asymbol void
 typedef unsigned bfd_vma;
 typedef unsigned char bfd_byte;
-typedef int bfd_boolean;
 typedef int bfd;
-
-#define FALSE 0
-#define TRUE 1
 
 #define bfd_mach_arm_XScale 1
 #define bfd_mach_arm_iWMMXt 2
@@ -156,7 +148,7 @@ typedef struct disassemble_info {
   /* Function called to check if a SYMBOL is can be displayed to the user.
      This is used by some ports that want to hide special symbols when
      displaying debugging outout.  */
-  bfd_boolean (* symbol_is_valid)
+  bool (* symbol_is_valid)
     (asymbol *, struct disassemble_info * info);
 
   /* These are for buffer_read_memory.  */
@@ -195,7 +187,7 @@ typedef struct disassemble_info {
   unsigned int skip_zeroes_at_end;
 
   /* Whether the disassembler always needs the relocations.  */
-  bfd_boolean disassembler_needs_relocs;
+  bool disassembler_needs_relocs;
 
   /* Results from instruction decoders.  Not all decoders yet support
      this information.  This info is set each time an instruction is
@@ -218,103 +210,33 @@ typedef struct disassemble_info {
 
 } disassemble_info;
 
-
 /* Standard disassemblers.  Disassemble one instruction at the given
    target address.  Return number of octets processed.  */
-typedef int (*disassembler_ftype) (bfd_vma, disassemble_info *);
+typedef int (*disassembler_ftype)(bfd_vma, disassemble_info *);
 
-extern int print_insn_big_mips		(bfd_vma, disassemble_info *);
-extern int print_insn_little_mips	(bfd_vma, disassemble_info *);
-extern int print_insn_i386		(bfd_vma, disassemble_info *);
-extern int print_insn_i386_att		(bfd_vma, disassemble_info *);
-extern int print_insn_i386_intel	(bfd_vma, disassemble_info *);
-extern int print_insn_ia64		(bfd_vma, disassemble_info *);
-extern int print_insn_i370		(bfd_vma, disassemble_info *);
-extern int print_insn_m68hc11		(bfd_vma, disassemble_info *);
-extern int print_insn_m68hc12		(bfd_vma, disassemble_info *);
-extern int print_insn_m68k		(bfd_vma, disassemble_info *);
-extern int print_insn_z80		(bfd_vma, disassemble_info *);
-extern int print_insn_z8001		(bfd_vma, disassemble_info *);
-extern int print_insn_z8002		(bfd_vma, disassemble_info *);
-extern int print_insn_h8300		(bfd_vma, disassemble_info *);
-extern int print_insn_h8300h		(bfd_vma, disassemble_info *);
-extern int print_insn_h8300s		(bfd_vma, disassemble_info *);
-extern int print_insn_h8500		(bfd_vma, disassemble_info *);
-extern int print_insn_alpha		(bfd_vma, disassemble_info *);
-extern int print_insn_big_arm		(bfd_vma, disassemble_info *);
-extern int print_insn_little_arm	(bfd_vma, disassemble_info *);
-extern int print_insn_sparc		(bfd_vma, disassemble_info *);
-extern int print_insn_avr		(bfd_vma, disassemble_info *);
-extern int print_insn_bfin		(bfd_vma, disassemble_info *);
-extern int print_insn_d10v		(bfd_vma, disassemble_info *);
-extern int print_insn_d30v		(bfd_vma, disassemble_info *);
-extern int print_insn_dlx 		(bfd_vma, disassemble_info *);
-extern int print_insn_fr30		(bfd_vma, disassemble_info *);
-extern int print_insn_hppa		(bfd_vma, disassemble_info *);
-extern int print_insn_i860		(bfd_vma, disassemble_info *);
-extern int print_insn_i960		(bfd_vma, disassemble_info *);
-extern int print_insn_ip2k		(bfd_vma, disassemble_info *);
-extern int print_insn_m32r		(bfd_vma, disassemble_info *);
-extern int print_insn_m88k		(bfd_vma, disassemble_info *);
-extern int print_insn_maxq_little	(bfd_vma, disassemble_info *);
-extern int print_insn_maxq_big		(bfd_vma, disassemble_info *);
-extern int print_insn_mcore		(bfd_vma, disassemble_info *);
-extern int print_insn_mmix		(bfd_vma, disassemble_info *);
-extern int print_insn_mn10200		(bfd_vma, disassemble_info *);
-extern int print_insn_mn10300		(bfd_vma, disassemble_info *);
-extern int print_insn_mt                (bfd_vma, disassemble_info *);
-extern int print_insn_msp430		(bfd_vma, disassemble_info *);
-extern int print_insn_ns32k		(bfd_vma, disassemble_info *);
-extern int print_insn_crx               (bfd_vma, disassemble_info *);
-extern int print_insn_openrisc		(bfd_vma, disassemble_info *);
-extern int print_insn_big_or32		(bfd_vma, disassemble_info *);
-extern int print_insn_little_or32	(bfd_vma, disassemble_info *);
-extern int print_insn_pdp11		(bfd_vma, disassemble_info *);
-extern int print_insn_pj		(bfd_vma, disassemble_info *);
-extern int print_insn_big_powerpc	(bfd_vma, disassemble_info *);
-extern int print_insn_little_powerpc	(bfd_vma, disassemble_info *);
-extern int print_insn_rs6000		(bfd_vma, disassemble_info *);
-extern int print_insn_s390		(bfd_vma, disassemble_info *);
-extern int print_insn_sh		(bfd_vma, disassemble_info *);
-extern int print_insn_tic30		(bfd_vma, disassemble_info *);
-extern int print_insn_tic4x		(bfd_vma, disassemble_info *);
-extern int print_insn_tic54x		(bfd_vma, disassemble_info *);
-extern int print_insn_tic80		(bfd_vma, disassemble_info *);
-extern int print_insn_v850		(bfd_vma, disassemble_info *);
-extern int print_insn_vax		(bfd_vma, disassemble_info *);
-extern int print_insn_w65		(bfd_vma, disassemble_info *);
-extern int print_insn_xstormy16		(bfd_vma, disassemble_info *);
-extern int print_insn_xtensa		(bfd_vma, disassemble_info *);
-extern int print_insn_sh64		(bfd_vma, disassemble_info *);
-extern int print_insn_sh64x_media	(bfd_vma, disassemble_info *);
-extern int print_insn_frv		(bfd_vma, disassemble_info *);
-extern int print_insn_iq2000		(bfd_vma, disassemble_info *);
-extern int print_insn_xc16x		(bfd_vma, disassemble_info *);
-extern int print_insn_m32c	(bfd_vma, disassemble_info *);
+extern int print_insn_big_arm(bfd_vma, disassemble_info *);
+extern int print_insn_little_arm(bfd_vma, disassemble_info *);
 
-extern disassembler_ftype arc_get_disassembler (void *);
-extern disassembler_ftype cris_get_disassembler (bfd *);
+extern disassembler_ftype arc_get_disassembler(void *);
+extern disassembler_ftype cris_get_disassembler(bfd *);
 
-extern void print_mips_disassembler_options (FILE *);
-extern void print_ppc_disassembler_options (FILE *);
-extern void print_arm_disassembler_options (FILE *);
-extern void parse_arm_disassembler_option (char *);
-extern int get_arm_regname_num_options (void);
-extern int set_arm_regname_option (int);
-extern int get_arm_regnames (int, const char **, const char **, const char *const **);
-extern bfd_boolean arm_symbol_is_valid (asymbol *, struct disassemble_info *);
+extern void print_arm_disassembler_options(FILE *);
+extern void parse_arm_disassembler_option(char *);
+extern int get_arm_regname_num_options(void);
+extern int set_arm_regname_option(int);
+extern int get_arm_regnames(int, const char **, const char **, const char *const **);
+extern bool arm_symbol_is_valid(asymbol *, struct disassemble_info *);
 
 /* Fetch the disassembler for a given BFD, if that support is available.  */
-extern disassembler_ftype disassembler (bfd *);
+extern disassembler_ftype disassembler(bfd *);
 
 /* Amend the disassemble_info structure as necessary for the target architecture.
    Should only be called after initialising the info->arch field.  */
-extern void disassemble_init_for_target (struct disassemble_info * info);
+extern void disassemble_init_for_target(struct disassemble_info * info);
 
 /* Document any target specific options available from the disassembler.  */
-extern void disassembler_usage (FILE *);
+extern void disassembler_usage(FILE *);
 
-
 /* This block of definitions is for particular callers who read instructions
    into a buffer before calling the instruction decoder.  */
 
@@ -331,16 +253,13 @@ extern void perror_memory (int, bfd_vma, struct disassemble_info *);
 /* Just print the address in hex.  This is included for completeness even
    though both GDB and objdump provide their own (to print symbolic
    addresses).  */
-extern void generic_print_address
-  (bfd_vma, struct disassemble_info *);
+extern void generic_print_address(bfd_vma, struct disassemble_info *);
 
 /* Always true.  */
-extern int generic_symbol_at_address
-  (bfd_vma, struct disassemble_info *);
+extern int generic_symbol_at_address(bfd_vma, struct disassemble_info *);
 
 /* Also always true.  */
-extern bfd_boolean generic_symbol_is_valid
-  (asymbol *, struct disassemble_info *);
+extern bool generic_symbol_is_valid(asymbol *, struct disassemble_info *);
 
 /* Method to initialize a disassemble_info struct.  This should be
    called by all applications creating such a struct.  */
@@ -353,9 +272,5 @@ extern void init_disassemble_info (struct disassemble_info *info, void *stream,
 #define INIT_DISASSEMBLE_INFO_NO_ARCH(INFO, STREAM, FPRINTF_FUNC) \
   init_disassemble_info (&(INFO), (STREAM), (fprintf_ftype) (FPRINTF_FUNC))
 
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif /* ! defined (DIS_ASM_H) */
