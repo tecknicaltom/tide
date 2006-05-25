@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy_register.h
  *
@@ -32,6 +32,7 @@
 #define ATOM_ANALY_IL		MAGIC32("AAS\x03")
 #define ATOM_ANALY_JAVA		MAGIC32("AAS\x04")
 #define ATOM_ANALY_PPC		MAGIC32("AAS\x05")
+#define ATOM_ANALY_ARM          MAGIC32("AAS\x06")
 
 /*
  *	ANX.: analyser objects
