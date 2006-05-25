@@ -30,6 +30,7 @@
 #include "analy_register.h"
 #include "analy_ppc.h"
 #include "analy_x86.h"
+#include "analy_arm.h"
 #include "htctrl.h"
 #include "htdebug.h"
 #include "htiobox.h"
@@ -105,7 +106,7 @@ void PEAnalyser::beginAnalysis()
 	setSymbolTreeOptimizeThreshold(100);
 
 	bool pe32 = (pe_shared->opt_magic == COFF_OPTMAGIC_PE32);
-	
+
 	/*
 	 *	entrypoint
 	 */
@@ -116,7 +117,7 @@ void PEAnalyser::beginAnalysis()
 		entry = createAddress64(pe_shared->pe64.header.entrypoint_address+pe_shared->pe64.header_nt.image_base);
 	}
 	pushAddress(entry, entry);
-	
+
 	/*
 	 * give all sections a descriptive comment:
 	 */
@@ -223,7 +224,7 @@ void PEAnalyser::beginAnalysis()
 		if (!assignSymbol(faddr, label, label_func)) {
 			// multiple import of a function (duplicate labelname)
 			// -> mangle name a bit more
-			addComment(faddr, 0, "; duplicate import");               
+			addComment(faddr, 0, "; duplicate import");
 			ht_snprintf(buffer, sizeof buffer, "%s_%x", label, f->address);
 			assignSymbol(faddr, buffer, label_func);
 		}
@@ -551,7 +552,7 @@ void PEAnalyser::initUnasm()
 		case COFF_MACHINE_POWERPC64_BE:
 			analy_disasm = new AnalyPPCDisassembler();
 			((AnalyPPCDisassembler*)analy_disasm)->init(this, pe64 ? ANALY_PPC_64 : ANALY_PPC_32);
-			break;          
+			break;
 		case COFF_MACHINE_IA64:
 			if (!pe64) {
 				errorbox("Intel IA64 cant be used in PE32 format.");
@@ -559,7 +560,13 @@ void PEAnalyser::initUnasm()
 				analy_disasm = new AnalyIA64Disassembler();
 				((AnalyIA64Disassembler*)analy_disasm)->init(this);
 			}
-			break;          
+			break;
+		case COFF_MACHINE_ARM: // ARM
+		case COFF_MACHINE_THUMB: // Thumb
+			DPRINTF("initing arm_disassembler\n");
+			analy_disasm = new AnalyArmDisassembler();
+			((AnalyArmDisassembler *)analy_disasm)->init(this);
+                        break;
 		case COFF_MACHINE_UNKNOWN:
 		default:
 			DPRINTF("no apropriate disassembler for machine %04x\n", pe_shared->coffheader.machine);
