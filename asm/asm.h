@@ -23,8 +23,6 @@
 
 #include "data.h"
 
-#define CPU_X86	1
-
 #define MAX_INSN_SIZE	16
 
 struct CPU_ADDR {
