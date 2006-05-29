@@ -26,13 +26,6 @@
 #include "htiobox.h"
 #include "snprintf.h"
 
-/*
- *
- */
-AnalyPPCDisassembler::AnalyPPCDisassembler()
-{
-}
-
 void AnalyPPCDisassembler::init(Analyser *A, int aMode)
 {
 	mode = aMode;
@@ -118,33 +111,6 @@ branch_enum_t AnalyPPCDisassembler::isBranch(OPCODE *opcode)
 		}
 		return br_jXX;
 	}
-/*	alphadis_insn *alpha_insn = (alphadis_insn *) opcode;
-	if (alpha_insn->valid) {
-		switch ((alpha_insn->table+alpha_insn->code)->type) {
-			case ALPHA_GROUP_BRA:
-				if (alpha_insn->table == alpha_instr_tbl) {
-					switch (alpha_insn->code) {
-						case 0x30:
-							return br_jump;
-						case 0x34:
-							return br_call;
-						default:
-							if (alpha_insn->code > 0x30) return br_jXX;
-					}
-				}
-				return br_nobranch;
-			case ALPHA_GROUP_JMP: {
-				switch (alpha_insn->code) {
-					case 0:
-					case 3:
-					case 1:
-						return br_call;
-					case 2:
-						return br_return;
-				}
-			}
-		}
-	}*/
 	return br_nobranch;
 }
 
