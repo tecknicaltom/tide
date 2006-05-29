@@ -76,7 +76,7 @@ public:
 	virtual	char		*getName();
 	virtual	char		*str(dis_insn *disasm_insn, int style);
 	virtual	char		*strf(dis_insn *disasm_insn, int style, char *format);
-	virtual	ObjectID getObjectID() const;
+	virtual	ObjectID	getObjectID() const;
 	virtual	bool		validInsn(dis_insn *disasm_insn);
 	virtual void		store(ObjectStream &f) const;
 };
