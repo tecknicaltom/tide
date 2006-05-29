@@ -30,7 +30,7 @@
 class AnalyPPCDisassembler: public AnalyDisassembler {
 	int mode;
 public:
-				AnalyPPCDisassembler();
+				AnalyPPCDisassembler() {};
 				AnalyPPCDisassembler(BuildCtorArg&);
 
 		void		init(Analyser *A, int mode);
