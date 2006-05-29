@@ -20,8 +20,6 @@ class ArmDisassembler : public Disassembler
 protected:
     ArmDisInsn insn;
 
-    virtual ~ArmDisassembler() {}
-
     virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
     virtual	dis_insn	*duplicateInsn(dis_insn *disasm_insn);
     virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
