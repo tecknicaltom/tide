@@ -75,7 +75,7 @@ int sys_canonicalize(char **result, const char *filename)
 	*result = (char*)malloc(maxlen);
 	while ((res = GetFullPathName(filename, maxlen, *result, &dunno)) > 0) {
 		if (res >= maxlen) {
-			*result = (char*)realloc(res);
+			*result = (char*)realloc(*result, res);
 			maxlen = res+1;
 		}
 		return 0;
