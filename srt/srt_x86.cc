@@ -76,7 +76,7 @@ void srt_x86_setreg(CPU *cpu, uint idx, Object *o)
 
 class sym_int_reg_x86: public sym_int_reg {
 public:
-	sym_int_reg_x86::sym_int_reg_x86(uint r): sym_int_reg(r)
+	sym_int_reg_x86(uint r): sym_int_reg(r)
 	{
 	}
 
