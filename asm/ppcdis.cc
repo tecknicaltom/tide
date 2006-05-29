@@ -65,8 +65,6 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 		const byte *opindex;
 		const struct powerpc_operand *operand;
 		bool invalid;
-		bool need_comma;
-		bool need_paren;
 
 		table_op = PPC_OP (opcode->opcode);
 
@@ -85,13 +83,9 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 		if (invalid) continue;
 
 		/* The instruction is valid.  */
-//		fprintf(out, "%s", opcode->name);
 		insn.name = opcode->name;
-//		if (opcode->operands[0] != 0) fprintf(out, "\t");
 
 		/* Now extract and print the operands.  */
-		need_comma = false;
-		need_paren = false;
 		int opidx = 0;
 		for (opindex = opcode->operands; *opindex != 0; opindex++) {
 			sint32 value;
@@ -122,11 +116,6 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 				continue;
 			}
 
-			if (need_comma) {
-				//fprintf(out, ", ");
-				need_comma = false;
-			}
-
 			if (operand->flags & PPC_OPERAND_GPR_0) {
 				if (value) {
 					insn.op[opidx].flags |= PPC_OPERAND_GPR;
@@ -152,35 +141,8 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 			} else if ((operand->flags & PPC_OPERAND_CR) == 0 || (dialect & PPC_OPCODE_PPC) == 0) {
 				insn.op[opidx++].imm = (sint64)value;
 			} else {
-				insn.op[opidx++].creg = value;
-				if (operand->bits == 3) {
-					//fprintf(out, "cr%d", value);
-				} else {
+				insn.op[opidx++].creg = value;			}
 
-//					static const char *cbnames[4] = { "lt", "gt", "eq", "so" };
-					int cr;
-					int cc;
-					cr = value >> 2;
-//					if (cr != 0) fprintf(out, "4*cr%d", cr);
-					cc = value & 3;
-					if (cc != 0) {
-//						if (cr != 0) fprintf(out, "+");
-//						fprintf(out, "%s", cbnames[cc]);
-					}
-				}
-			}
-
-			if (need_paren) {
-//				fprintf(out, ")");
-				need_paren = false;
-			}
-
-			if ((operand->flags & PPC_OPERAND_PARENS) == 0) {
-				need_comma = true;
-			} else {
-//				fprintf(out, "(");
-				need_paren = true;
-			}
 		}
 		insn.ops = opidx;
 
