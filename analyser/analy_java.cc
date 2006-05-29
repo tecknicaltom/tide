@@ -26,13 +26,6 @@
 #include "javadis.h"
 #include "strtools.h"
 
-/*
- *
- */
-AnalyJavaDisassembler::AnalyJavaDisassembler()
-{
-}
-
 void AnalyJavaDisassembler::init(Analyser *A, java_token_func token_func, void *context)
 {
 	disasm = new javadis(token_func, context);
@@ -42,23 +35,7 @@ void AnalyJavaDisassembler::init(Analyser *A, java_token_func token_func, void *
 /*
  *
  */
-void  AnalyJavaDisassembler::load(ObjectStream &f)
-{
-	AnalyDisassembler::load(f);
-}
-
-/*
- *
- */
-void AnalyJavaDisassembler::done()
-{
-	AnalyDisassembler::done();
-}
-
-/*
- *
- */
-ObjectID	AnalyJavaDisassembler::getObjectID() const
+ObjectID AnalyJavaDisassembler::getObjectID() const
 {
 	return ATOM_ANALY_JAVA;
 }
@@ -126,13 +103,4 @@ branch_enum_t AnalyJavaDisassembler::isBranch(OPCODE *opcode)
 		return br_call;
 	} else return br_nobranch;
 }
-
-/*
- *
- */
-void AnalyJavaDisassembler::store(ObjectStream &f) const
-{
-	AnalyDisassembler::store(f);
-}
-
 
