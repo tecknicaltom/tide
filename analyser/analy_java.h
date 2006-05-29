@@ -6,7 +6,7 @@
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
- *   published by the Free Software Foundation.
+ *	published by the Free Software Foundation.
  *
  *	This program is distributed in the hope that it will be useful,
  *	but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -26,17 +26,14 @@
 
 class AnalyJavaDisassembler: public AnalyDisassembler {
 public:
-					AnalyJavaDisassembler();
+					AnalyJavaDisassembler() {};
 					AnalyJavaDisassembler(BuildCtorArg&);
 		void			init(Analyser *A, java_token_func token_func, void *context);
-		void 			load(ObjectStream &f);
-	virtual void    	 	done();
 	virtual	ObjectID		getObjectID() const;
 
 	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
 	virtual	void			examineOpcode(OPCODE *opcode);
 	virtual	branch_enum_t	 	isBranch(OPCODE *opcode);
-	virtual	void			store(ObjectStream &f) const;
 };
 
 #endif /* ANALY_JAVA_H */
