@@ -155,12 +155,12 @@ static const char immhsz16_16[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char immhsz32_16[] = { 0 };
 static const char immhsz64_16[] = { 0 };
 
-static const char immhsz8_32[] = { SIZE_B, SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz8_32[] = { SIZE_B, SIZE_BV, SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char immhsz16_32[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char immhsz32_32[] = { SIZE_V, SIZE_VV, 0 };
 static const char immhsz64_32[] = { 0 };
 
-static const char immhsz8_64[] = { SIZE_B, SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz8_64[] = { SIZE_B, SIZE_BV, SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char immhsz16_64[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char immhsz32_64[] = { SIZE_V, SIZE_VV, 0 };
 static const char immhsz64_64[] = { SIZE_V, 0 };
@@ -416,14 +416,17 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	case X86ASM_PREFIX_0F:
 		emitbyte(0x0f);
 	case X86ASM_PREFIX_NO:
+		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F20F:
 		emitbyte(0xf2);
 		emitbyte(0x0f);
+		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F30F:
 		emitbyte(0xf3);
 		emitbyte(0x0f);
+		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_DF: i++;
 	case X86ASM_PREFIX_DE: i++;
@@ -434,9 +437,9 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	case X86ASM_PREFIX_D9: i++;
 	case X86ASM_PREFIX_D8:
 		emitbyte(0xd8+i);
+		emitmodrm(opcodeb);
 		break;
 	}
-	emitmodrm(opcodeb);
 
 	/* encode the ops */
 	for (int i=0; i<3; i++) {
@@ -458,6 +461,9 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 		break;
 	case 4:
 		emitdword(disp);
+		break;
+	case 8:
+		emitqword(disp);
 		break;
 	}
 	switch (immsize) {
@@ -678,6 +684,7 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 		emitmodrm_rm(op->reg);
 		break;
 	case TYPE_Rx:
+	case TYPE_RXx:
 		/* extra picks register */
 		return 1;
 	case TYPE_S:
@@ -872,6 +879,8 @@ const char *x86asm::immlsz2hsz(int size, int opsize)
 			return immhsz16_16;
 		case 4:
 			return immhsz32_16;
+		case 8:
+			return immhsz64_16;
 		}
 	} else {
 		switch (size) {
@@ -881,6 +890,8 @@ const char *x86asm::immlsz2hsz(int size, int opsize)
 			return immhsz16_32;
 		case 4:
 			return immhsz32_32;
+		case 8:
+			return immhsz64_32;
 		}
 	}
 	return 0;
@@ -958,6 +969,8 @@ int x86asm::match_type(x86_insn_op *op, x86opc_insn_op *xop, int addrsize)
 	while (*hop) {
 		if (*hop == xop->type) {
 			if (xop->type == TYPE_Rx) {
+				if (xop->extra == (op->reg & 7)) return r;
+			} else if (xop->type == TYPE_RXx) {
 				if (xop->extra == op->reg) return r;
 			} else if (xop->type == TYPE_Sx) {
 				if (xop->extra == op->seg) return r;
