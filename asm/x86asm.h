@@ -66,6 +66,8 @@ protected:
 	bool ambiguous;
 	bool namefound;
 	bool addrsize_depend;
+	bool need_rex;
+	bool forbid_rex;
 
 	void delete_nonsense();
 	bool delete_nonsense_insn(asm_code *c);
@@ -100,28 +102,29 @@ protected:
 	bool opfarptr(x86_insn_op *op, char *xop);
 	bool opimm(x86_insn_op *op, char *xop);
 	bool opplugimm(x86_insn_op *op, char *xop);
-	bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop);
-	bool opreg(x86_insn_op *op, char *xop);
+	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop);
+	virtual bool opreg(x86_insn_op *op, char *xop);
 	bool opmmx(x86_insn_op *op, char *xop);
-	bool opxmm(x86_insn_op *op, char *xop);
+	virtual bool opxmm(x86_insn_op *op, char *xop);
 	bool opseg(x86_insn_op *op, char *xop);
 	bool opspecialregs(x86_insn_op *op, char *xop);
 	int simmsize(uint64 imm, int immsize);
-	void splitstr(const char *s, char *name, char *op[3]);
+	void splitstr(const char *s, char *name, int size, char *op[3], int opsize);
 public:
 		x86asm(int opsize, int addrsize);
-	virtual	~x86asm();
 
 	virtual	asm_insn *alloc_insn();
 	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
 	virtual	const char *get_name();
-	virtual	int translate_str(asm_insn *asm_insn, const char *s);
+	virtual	bool translate_str(asm_insn *asm_insn, const char *s);
 };
 
 /*
 class x86_64asm: public x86_asm {
-		x86_64asm(int opsize, int addrsize);
-	virtual	~x86_64asm();
+		x86_64asm();
+	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop);
+	virtual bool opreg(x86_insn_op *op, char *xop);
+	virtual bool opxmm(x86_insn_op *op, char *xop);
 };
 */
 
