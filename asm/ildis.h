@@ -26,15 +26,15 @@
 #include "ilopc.h"
 
 struct ILDisInsn {
-	bool			valid;
-	int			size;
-	byte			op;
+	bool	valid;
+	int	size;
+	byte	op;
 	union {
-				uint32			ui;
-				uint64			q;
-				float			f;
-				double			df;
-				int			i;
+		uint32	ui;
+		uint64	q;
+		float	f;
+		double	df;
+		int	i;
 	} data;
 	ILOpcodeTabEntry	*prefix;
 	ILOpcodeTabEntry	*opcode;
@@ -63,7 +63,7 @@ public:
 	virtual void		initialize(char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context);
 	virtual	char		*str(dis_insn *disasm_insn, int style);
 	virtual	char		*strf(dis_insn *disasm_insn, int style, char *format);
-	virtual	ObjectID getObjectID() const;
+	virtual	ObjectID	getObjectID() const;
 	virtual	bool		validInsn(dis_insn *disasm_insn);
 };
 								
