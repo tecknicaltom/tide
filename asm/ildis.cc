@@ -210,88 +210,88 @@ char *ILDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
 		sprintf(insnstr, "db              %s0x%02x", cs_number, dis_insn->data.ui);
 	} else {
 		switch (dis_insn->op) {
-			case IL_OPCODE_ARGS_NONE:
-				sprintf(insnstr, "%-15s", dis_insn->opcode->name);
-				break;
-			case IL_OPCODE_ARGS_UINT8:
-			case IL_OPCODE_ARGS_UINT16:
-			case IL_OPCODE_ARGS_LONG_ARG:
-			case IL_OPCODE_ARGS_LONG_VAR:
-			case IL_OPCODE_ARGS_ANN_ARG: 
-			case IL_OPCODE_ARGS_ANN_DEAD: 
-			case IL_OPCODE_ARGS_ANN_LIVE:  {
-				sprintf(insnstr, "%-15s %s%u", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
-				break;
-			}
-			case IL_OPCODE_ARGS_INT8:
-			case IL_OPCODE_ARGS_INT16:
-			case IL_OPCODE_ARGS_INT32:
-			case IL_OPCODE_ARGS_SHORT_VAR:
-			case IL_OPCODE_ARGS_SHORT_ARG:
-			case IL_OPCODE_ARGS_ANN_REF_S: {
-				sprintf(insnstr, "%-15s %s%d", dis_insn->opcode->name, cs_number, dis_insn->data.i);
-				break;
-			}
-			case IL_OPCODE_ARGS_INT64:
-				ht_snprintf(insnstr, 100, "%-15s %s%qd", dis_insn->opcode->name, cs_number, &dis_insn->data.q);
-				break;                    
-			case IL_OPCODE_ARGS_CALL:
-			case IL_OPCODE_ARGS_CALLI:
-			case IL_OPCODE_ARGS_CALLVIRT:
-			case IL_OPCODE_ARGS_NEW:
-			case IL_OPCODE_ARGS_TOKEN: {
-				uint32 token = dis_insn->data.ui;
-				char *tokenstr = NULL;
-				if (token_func) {
-					tokenstr = token_func(token, context);
-					if (tokenstr) {
-						sprintf(insnstr, "%-15s %s", dis_insn->opcode->name, tokenstr);
-						break;
-					}
+		case IL_OPCODE_ARGS_NONE:
+			sprintf(insnstr, "%-15s", dis_insn->opcode->name);
+			break;
+		case IL_OPCODE_ARGS_UINT8:
+		case IL_OPCODE_ARGS_UINT16:
+		case IL_OPCODE_ARGS_LONG_ARG:
+		case IL_OPCODE_ARGS_LONG_VAR:
+		case IL_OPCODE_ARGS_ANN_ARG: 
+		case IL_OPCODE_ARGS_ANN_DEAD: 
+		case IL_OPCODE_ARGS_ANN_LIVE:  {
+			sprintf(insnstr, "%-15s %s%u", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
+			break;
+		}
+		case IL_OPCODE_ARGS_INT8:
+		case IL_OPCODE_ARGS_INT16:
+		case IL_OPCODE_ARGS_INT32:
+		case IL_OPCODE_ARGS_SHORT_VAR:
+		case IL_OPCODE_ARGS_SHORT_ARG:
+		case IL_OPCODE_ARGS_ANN_REF_S: {
+			sprintf(insnstr, "%-15s %s%d", dis_insn->opcode->name, cs_number, dis_insn->data.i);
+			break;
+		}
+		case IL_OPCODE_ARGS_INT64:
+			ht_snprintf(insnstr, 100, "%-15s %s%qd", dis_insn->opcode->name, cs_number, &dis_insn->data.q);
+			break;                    
+		case IL_OPCODE_ARGS_CALL:
+		case IL_OPCODE_ARGS_CALLI:
+		case IL_OPCODE_ARGS_CALLVIRT:
+		case IL_OPCODE_ARGS_NEW:
+		case IL_OPCODE_ARGS_TOKEN: {
+			uint32 token = dis_insn->data.ui;
+			char *tokenstr = NULL;
+			if (token_func) {
+				tokenstr = token_func(token, context);
+				if (tokenstr) {
+					sprintf(insnstr, "%-15s %s", dis_insn->opcode->name, tokenstr);
+					break;
 				}
-				sprintf(insnstr, "%-15s %s0x%08x", dis_insn->opcode->name, cs_number, token);
-				break;
 			}
-			case IL_OPCODE_ARGS_STRING: {
-				if ((dis_insn->data.ui & IL_META_TOKEN_MASK) == IL_META_TOKEN_STRING) {
-					uint32 strofs = dis_insn->data.ui & (~IL_META_TOKEN_MASK);
-					char *str = NULL;
-					if (string_func) {
-						str = string_func(strofs, context);
-					}
-					if (str) {
-						sprintf(insnstr, "%-15s %s\"%s\"", dis_insn->opcode->name, cs_string, str);
-						break;
-					}
+			sprintf(insnstr, "%-15s %s0x%08x", dis_insn->opcode->name, cs_number, token);
+			break;
+		}
+		case IL_OPCODE_ARGS_STRING: {
+			if ((dis_insn->data.ui & IL_META_TOKEN_MASK) == IL_META_TOKEN_STRING) {
+				uint32 strofs = dis_insn->data.ui & (~IL_META_TOKEN_MASK);
+				char *str = NULL;
+				if (string_func) {
+					str = string_func(strofs, context);
 				}
+				if (str) {
+					sprintf(insnstr, "%-15s %s\"%s\"", dis_insn->opcode->name, cs_string, str);
+					break;
+				}
+			}
+			sprintf(insnstr, "%-15s %s0x%08x", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
+			break;
+		}
+		case IL_OPCODE_ARGS_LONG_JUMP:
+		case IL_OPCODE_ARGS_SHORT_JUMP: {
+			CPU_ADDR caddr;
+			caddr.addr32.offset = dis_insn->data.ui;
+			int slen;
+			char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : NULL;
+			if (s) {
+				char *p = insnstr + sprintf(insnstr, "%-15s ", dis_insn->opcode->name);
+				memmove(p, s, slen);
+				p[slen] = 0;
+			} else {
 				sprintf(insnstr, "%-15s %s0x%08x", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
-				break;
 			}
-			case IL_OPCODE_ARGS_LONG_JUMP:
-			case IL_OPCODE_ARGS_SHORT_JUMP: {
-				CPU_ADDR caddr;
-				caddr.addr32.offset = dis_insn->data.ui;
-				int slen;
-				char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : NULL;
-				if (s) {
-					char *p = insnstr + sprintf(insnstr, "%-15s ", dis_insn->opcode->name);
-					memmove(p, s, slen);
-					p[slen] = 0;
-				} else {
-					sprintf(insnstr, "%-15s %s0x%08x", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
-				}
-				break;
-			}
-			case IL_OPCODE_ARGS_FLOAT32: {
-				sprintf(insnstr, "%-15s %s%f", dis_insn->opcode->name, cs_number, dis_insn->data.f);
-				break;
-			}
-			case IL_OPCODE_ARGS_FLOAT64: {
-				sprintf(insnstr, "%-15s %s%f", dis_insn->opcode->name, cs_number, dis_insn->data.df);
-				break;
-			}
-			default:
-				sprintf(insnstr, "%-15s [unsupported paramtype]", dis_insn->opcode->name);
+			break;
+		}
+		case IL_OPCODE_ARGS_FLOAT32: {
+			sprintf(insnstr, "%-15s %s%f", dis_insn->opcode->name, cs_number, dis_insn->data.f);
+			break;
+		}
+		case IL_OPCODE_ARGS_FLOAT64: {
+		sprintf(insnstr, "%-15s %s%f", dis_insn->opcode->name, cs_number, dis_insn->data.df);
+			break;
+		}
+		default:
+			sprintf(insnstr, "%-15s [unsupported paramtype]", dis_insn->opcode->name);
 		}
 	}
 	
@@ -308,6 +308,3 @@ bool ILDisassembler::validInsn(dis_insn *disasm_insn)
 {
 	return ((ILDisInsn *)disasm_insn)->valid;
 }
-
-	
-
