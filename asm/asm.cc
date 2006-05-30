@@ -167,11 +167,6 @@ void Assembler::pushcode()
 	(*t)->next = NULL;
 }
 
-int Assembler::translate_str(asm_insn *asm_insn, const char *s)
-{
-	return 0;
-}
-
 void Assembler::set_error_msg(char *format, ...)
 {
 	va_list arg;
