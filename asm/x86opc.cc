@@ -85,7 +85,6 @@
 #define Es	TYPE_E, 0, 0, SIZE_S
 #define El	TYPE_E, 0, 0, SIZE_L
 #define Et	TYPE_E, 0, 0, SIZE_T
-#define Ea	TYPE_E, 0, 0, SIZE_A
 #define Gb	TYPE_G, 0, 0, SIZE_B
 #define Gw	TYPE_G, 0, 0, SIZE_W
 #define Gv	TYPE_G, 0, 0, SIZE_V
