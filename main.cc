@@ -358,11 +358,11 @@ int main(int argc, char *argv[])
 	} catch (const Exception &x) {
 		done();
 		String s;
-		ht_fprintf(stderr, "FATAL: %s: %y\n", "unhandled exception", &x.reason(s));
+		ht_fprintf(stderr, "\n\nFATAL: %s: %y\n", "unhandled exception", &x.reason(s));
 		return 1;
 	} catch (...) {
 		done();
-		fprintf(stderr, "FATAL: unknown %s!?\n", "unhandled exception");
+		fprintf(stderr, "\n\nFATAL: unknown %s!?\n", "unhandled exception");
 		return 1;
 	}
 
