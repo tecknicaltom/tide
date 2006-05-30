@@ -66,6 +66,7 @@ protected:
 		void emitbyte(byte b);
 		void emitword(uint16 w);
 		void emitdword(uint32 d);
+		void emitqword(uint64 q);
 		void free_asm_codes();
 		void deletecode(asm_code *c);
 		void clearcode();
