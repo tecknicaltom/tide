@@ -57,12 +57,12 @@ protected:
 
 	int modrmv;
 	int sibv;
-	int disp;
+	uint64 disp;
 	int dispsize;
-	int imm;
+	uint64 imm;
 	int imm2;
 	int immsize;
-	int address;
+	uint64 address;
 	bool ambiguous;
 	bool namefound;
 	bool addrsize_depend;
@@ -73,7 +73,7 @@ protected:
 	bool delete_nonsense_insn(asm_code *c);
 	void emitdisp(uint32 disp, int size);
 	void emitfarptr(uint32 s, uint32 o, bool big);
-	void emitimm(uint32 imm, int size);
+	void emitimm(uint64 imm, int size);
 	void emitmodrm(int modrm);
 	void emitmodrm_mod(int mod);
 	void emitmodrm_reg(int reg);
@@ -86,7 +86,8 @@ protected:
 	int encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op, int mindispsize, int *mod, int *rm, int *dispsize);
 	int encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eopsize, int eaddrsize);
 	int encode_sib_v(x86_insn_op *op, int mindispsize, int *ss, int *index, int *base, int *mod, int *dispsize, int *disp);
-	int esizeop(char c, int size);
+	int esizeop(uint c, int size);
+	int esizeop_ex(uint c, int size);
 	bool fetch_number(char **s, uint64 *value);
 	char flsz2hsz(int size);
 	const char *immlsz2hsz(int size, int opsize);
