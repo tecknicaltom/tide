@@ -75,12 +75,13 @@ public:
 			Assembler(bool bigendian);
 			Assembler(BuildCtorArg&) {};
 	virtual		~Assembler();
+
 /* new */
 	virtual	asm_insn *alloc_insn();
 	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
 		char *get_error_msg();
 	virtual	const char *get_name();
-	virtual	int translate_str(asm_insn *asm_insn, const char *s);
+	virtual	bool translate_str(asm_insn *asm_insn, const char *s) = 0;
 		void set_error_msg(char *format, ...);
 		void set_imm_eval_proc(int (*imm_eval_proc)(void *context, char *&s, uint64 &v), void *imm_eval_context);
 		asm_code *shortest(asm_code *codes);
