@@ -265,12 +265,15 @@ char *x86_segs[8] = {
 #define GROUP_EXT_AE		22
 #define GROUP_EXT_BA		23
 #define GROUP_EXT_C7		24
+#define GROUP_EXT_F3_C7		25
 
-#define GROUP_SPECIAL_0F01_3	0
-#define GROUP_SPECIAL_0F01_7	1
-#define GROUP_SPECIAL_0FAE_5	2
-#define GROUP_SPECIAL_0FAE_6	3
-#define GROUP_SPECIAL_0FAE_7	4
+#define GROUP_SPECIAL_0F01_0	0
+#define GROUP_SPECIAL_0F01_1	1
+#define GROUP_SPECIAL_0F01_3	2
+#define GROUP_SPECIAL_0F01_7	3
+#define GROUP_SPECIAL_0FAE_5	4
+#define GROUP_SPECIAL_0FAE_6	5
+#define GROUP_SPECIAL_0FAE_7	6
 
 x86opc_insn x86_32_insns[256] = {
 /* 00 */
@@ -597,8 +600,8 @@ x86opc_insn x86_32_insns_ext[256] = {
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_01}}},
 {"lar", {{Gv}, {Ew}}},
 {"lsl", {{Gv}, {Ew}}},
-{"syscall"},
 {0},
+{"syscall"},
 {"clts"},
 {"sysret"},
 /* 08 */
@@ -654,7 +657,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"sysenter"},
 {"sysexit"},
 {0},
-{0},
+{"getsec"},
 /* 38 */
 {0, {{SPECIAL_TYPE_OPC_GROUP, GROUP_OPC_0F38}}},
 {0},
@@ -728,8 +731,8 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"pcmpewd", {{Pu}, {Qu}}},
 {"emms"},
 /* 78 */
-{0},
-{0},
+{"vmread", {{Er}, {Gr}}},
+{"vmwrite", {{Gr}, {Er}}},
 {0},
 {0},
 {"haddpd", {{Vo}, {WO}}},
@@ -1398,7 +1401,7 @@ x86opc_insn x86_insns_ext_f3[256] = {
 {0},
 {0},
 {0},
-{0},
+{0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_F3_C7}}},
 /* c8 */
 {0},
 {0},
@@ -2239,8 +2242,8 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 },
 /* 17 - GROUP_EXT_01 */
 {
-{"sgdt", {{M}}},
-{"sidt", {{M}}},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_0}}},
+{0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_1}}},
 {"lgdt", {{M}}},
 {0, {{SPECIAL_TYPE_SGROUP, GROUP_SPECIAL_0F01_3}}},
 {"smsw", {{Ew}}},
@@ -2322,13 +2325,50 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {0},
 {0},
+{"vmptrld", {{Mq}}},
+{"vmptrst", {{Mq}}},
+},
+/* 24 - GROUP_EXT_F3_C7 */
+{
 {0},
+{0},
+{0},
+{0},
+{0},
+{0},
+{"vmxon", {{Mq}}},
 {0},
 },
 };
 
 x86opc_insn x86_special_group_insns[X86_SPECIAL_GROUPS][9] = {
-/* 0 - GROUP_SPECIAL_0F01_3 */
+/* 0 - GROUP_SPECIAL_0F01_0 */
+{
+{0},
+{"vmcall"},
+{"vmlaunch"},
+{"vmresume"},
+{"vmxoff"},
+{0},
+{0},
+{0},
+// with mod!=11:
+{"sgdt", {{M}}},
+},
+/* 1 - GROUP_SPECIAL_0F01_1 */
+{
+{"monitor"},
+{"mwait"},
+{0},
+{0},
+{0},
+{0},
+{0},
+{0},
+// with mod!=11:
+{"sidt", {{M}}},
+},
+/* 2 - GROUP_SPECIAL_0F01_3 */
 {
 {"vmrun"},
 {"vmmcall"},
