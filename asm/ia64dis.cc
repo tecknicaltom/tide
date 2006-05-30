@@ -26,10 +26,6 @@
 #include "ia64opc.h"
 #include "snprintf.h"
 
-IA64Disassembler::IA64Disassembler()
-{
-}
-
 bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
 {
 	IA64DisInsn *insn = (IA64DisInsn *)disasm_insn;
@@ -389,11 +385,11 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 				slot->op[0].reg = ((slot->data >> 6) & (0x7f));
 				slot->op[2].type = IA64_OPERAND_IMM;
 				slot->op[2].imm = ((slot->data >> 13) & (0x7f))
-							|(((slot->data >> 27) & (0x1ff)) << 7)
-							|(((slot->data >> 22) & (0x1f)) << 16)
-							|(((slot->data >> 21) & (1)) << 21)
-							|(insn.slot[slot_nb+1].data << 22)
-							|(((slot->data >> 36) & (1)) << 63);
+						|(((slot->data >> 27) & (0x1ff)) << 7)
+						|(((slot->data >> 22) & (0x1f)) << 16)
+						|(((slot->data >> 21) & (1)) << 21)
+						|(insn.slot[slot_nb+1].data << 22)
+						|(((slot->data >> 36) & (1)) << 63);
 				break;
 			default:
 				break;
@@ -404,8 +400,6 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 
 dis_insn *IA64Disassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 {
-/*	byte data[] = {0x19, 0x18, 0x00, 0x18, 0x1e, 0x10, 0x00, 0x09, 0x79, 0xb0, 0x2b, 0x00, 0x00, 0x00, 0x00, 0x20};
-	code = data;*/
 	cpu_addr = addr;
 	insn.selected = 0;
 	if (maxlen < 16) {
@@ -424,32 +418,6 @@ dis_insn *IA64Disassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 		if (insn.tmplt->slot[0] == IA64_SLOT_INVALID) {
 			insn.valid = false;
 		} else {
-/*
-
-01101011 11101011 10110111 00000000
-00100000 01011111 11111111 11111111
-11111111 11111111 11100001 00000000
-00011000 01000001 00010000 00000101
-
-
-
-
-
-orig:
-00000010 01100000 10000000 00011001
-00111111 00100011 00100000 00000010
-10000000 00000000 01000010 11000000
-00000001 00100000 00000001 10000100
-
-rev:
-10000100 00000001 00100000 00000001
-11000000 0.1000010 00000000 10000000
-00000010 00100000 00.100011 00111111
-00011001 10000000 01100000 000.00010
-
-10001100111111000110011000000001100000000
-10001100111111000110011000000001100000000
-*/
 			insn.slot[0].data = 
 				  ((uint32)(code[0] >> 5))
 				| (((uint32)code[1]) << 3)
@@ -532,19 +500,15 @@ char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, char *format)
 
 	IA64DisInsn *dis_insn = (IA64DisInsn *) disasm_insn;
 	if (!dis_insn->valid) {
-//		is_invalid:
-//          assert(dis_insn->size==1);
 		char *is = insnstr + sprintf(insnstr, "db              ");
 		for (int i=0; i < dis_insn->size; i++) {
 			is += sprintf(is, "%s%02x", cs_number, dis_insn->data[i]);
 			if (i==7) is += sprintf(is, "-");
-//               if (i+1 != dis_insn->size) is += sprintf(is, "%s, ", cs_symbol);
 		}
 	} else {
 		char *is = insnstr;
 		IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
 		is[0] = 0;
-//          char c[] = ".#'";
 		if (slot->valid) {
 			char qp[6];
 			if (slot->qp) {
@@ -564,102 +528,99 @@ char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, char *format)
 				}
 				w:
 				switch (slot->op[i].type) {
-					case IA64_OPERAND_1:
-						is += ht_snprintf(is, 256, "%s1", cs_number);
-						break;
-					case IA64_OPERAND_REG:
-						is += ht_snprintf(is, 256, "%sr%d", cs_default, slot->op[i].reg);
-						break;                              
-					case IA64_OPERAND_BREG:
-						is += ht_snprintf(is, 256, "%sbr%d", cs_default, slot->op[i].reg);
-						break;                              
-					case IA64_OPERAND_FREG:
-						is += ht_snprintf(is, 256, "%sf%d", cs_default, slot->op[i].reg);
-						break;                              
-					case IA64_OPERAND_PREG:
-						is += ht_snprintf(is, 256, "%sp%d", cs_default, slot->op[i].reg);
-						break;
-					case IA64_OPERAND_AREG:
-						is += ht_snprintf(is, 256, "%sar%d", cs_default, slot->op[i].reg);
-						break;
-					case IA64_OPERAND_PRALL:
-						is += ht_snprintf(is, 256, "%spr", cs_default);
-						break;
-					case IA64_OPERAND_PRROT:
-						is += ht_snprintf(is, 256, "%spr.rot", cs_default);
-						break;
-					case IA64_OPERAND_AR_PFS:
-						is += ht_snprintf(is, 256, "%sar.pfs", cs_default);
-						break;
-					case IA64_OPERAND_IP:
-						is += ht_snprintf(is, 256, "%sip", cs_default);
-						break;
-					case IA64_OPERAND_MEM_REG:
-						is += ht_snprintf(is, 256, "%s[%sr%d%s]", cs_symbol, cs_default, slot->op[i].reg, cs_symbol);
-						break;                              
-					case IA64_OPERAND_IMM:
-						is += ht_snprintf(is, 256, "%s%qx", cs_number, &slot->op[i].imm);
-						break;                              
-					case IA64_OPERAND_ADDRESS: {
-						CPU_ADDR caddr;
-						caddr.flat64.addr = slot->op[i].ofs;
-						int slen;
-						char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : NULL;
-						if (s) {
-							char *p = is;
-							memmove(p, s, slen);
-							p[slen] = 0;
-							is += slen;
-						} else {
-							is += ht_snprintf(is, 256, "%s0x%qx", cs_number, &slot->op[i].ofs);
-						}
-						break;
+				case IA64_OPERAND_1:
+					is += ht_snprintf(is, 256, "%s1", cs_number);
+					break;
+				case IA64_OPERAND_REG:
+					is += ht_snprintf(is, 256, "%sr%d", cs_default, slot->op[i].reg);
+					break;                              
+				case IA64_OPERAND_BREG:
+					is += ht_snprintf(is, 256, "%sbr%d", cs_default, slot->op[i].reg);
+					break;                              
+				case IA64_OPERAND_FREG:
+					is += ht_snprintf(is, 256, "%sf%d", cs_default, slot->op[i].reg);
+					break;                              
+				case IA64_OPERAND_PREG:
+					is += ht_snprintf(is, 256, "%sp%d", cs_default, slot->op[i].reg);
+					break;
+				case IA64_OPERAND_AREG:
+					is += ht_snprintf(is, 256, "%sar%d", cs_default, slot->op[i].reg);
+					break;
+				case IA64_OPERAND_PRALL:
+					is += ht_snprintf(is, 256, "%spr", cs_default);
+					break;
+				case IA64_OPERAND_PRROT:
+					is += ht_snprintf(is, 256, "%spr.rot", cs_default);
+					break;
+				case IA64_OPERAND_AR_PFS:
+					is += ht_snprintf(is, 256, "%sar.pfs", cs_default);
+					break;
+				case IA64_OPERAND_IP:
+					is += ht_snprintf(is, 256, "%sip", cs_default);
+					break;
+				case IA64_OPERAND_MEM_REG:
+					is += ht_snprintf(is, 256, "%s[%sr%d%s]", cs_symbol, cs_default, slot->op[i].reg, cs_symbol);
+					break;                              
+				case IA64_OPERAND_IMM:
+					is += ht_snprintf(is, 256, "%s%qx", cs_number, &slot->op[i].imm);
+					break;                              
+				case IA64_OPERAND_ADDRESS: {
+					CPU_ADDR caddr;
+					caddr.flat64.addr = slot->op[i].ofs;
+					int slen;
+					char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : NULL;
+					if (s) {
+						char *p = is;
+						memmove(p, s, slen);
+						p[slen] = 0;
+						is += slen;
+					} else {
+						is += ht_snprintf(is, 256, "%s0x%qx", cs_number, &slot->op[i].ofs);
 					}
-					case IA64_OPERAND_REG_FILE: {
-						char *dbs[] = {"pmc", "pmd", "pkr", "rr", "ibr", "dbr", "itr", "dtr", "msr"};
-						is += ht_snprintf(is, 256, "%s%s[%sr%d%s]", dbs[slot->op[i].regfile.db], cs_symbol, cs_default, slot->op[i].regfile.idx, cs_symbol);
-					}
+					break;
+				}
+				case IA64_OPERAND_REG_FILE: {
+					char *dbs[] = {"pmc", "pmd", "pkr", "rr", "ibr", "dbr", "itr", "dtr", "msr"};
+					is += ht_snprintf(is, 256, "%s%s[%sr%d%s]", dbs[slot->op[i].regfile.db], cs_symbol, cs_default, slot->op[i].regfile.idx, cs_symbol);
+				}
 				}
 			}
 		} else {
 			is += ht_snprintf(is, 256, "%s%d       %-20s", cs_comment, dis_insn->selected, "invalid");
 		}
-//		line += insn.slot[line].next;
-//		if (line > 2) line = 0;
-		//
 		
 		char tmplt_str[100];
 		tmplt_str[0] = 0;
 		char *t = tmplt_str;
 		for (int i=0; i<3; i++) {
 		switch (insn.tmplt->slot[i] & 0x0f) {
-			case IA64_SLOT_INVALID:
-				t+=sprintf(t, "*");
-				goto e;
-				break;
-			case IA64_SLOT_M_UNIT:
-				t+=sprintf(t, "M");
-				break;
-			case IA64_SLOT_I_UNIT:
-				t+=sprintf(t, "I");
-				break;
-			case IA64_SLOT_L_UNIT:
-				t+=sprintf(t, "L");
-				break;
-			case IA64_SLOT_X_UNIT:
-				t+=sprintf(t, "X");
-				break;
-			case IA64_SLOT_F_UNIT:
-				t+=sprintf(t, "F");
-				break;
-			case IA64_SLOT_B_UNIT:
-				t+=sprintf(t, "B");
-				break;
+		case IA64_SLOT_INVALID:
+			t+=sprintf(t, "*");
+			goto e;
+			break;
+		case IA64_SLOT_M_UNIT:
+			t+=sprintf(t, "M");
+			break;
+		case IA64_SLOT_I_UNIT:
+			t+=sprintf(t, "I");
+			break;
+		case IA64_SLOT_L_UNIT:
+			t+=sprintf(t, "L");
+			break;
+		case IA64_SLOT_X_UNIT:
+			t+=sprintf(t, "X");
+			break;
+		case IA64_SLOT_F_UNIT:
+			t+=sprintf(t, "F");
+			break;
+		case IA64_SLOT_B_UNIT:
+			t+=sprintf(t, "B");
+			break;
 		}
 		}
 		e:;
 //		is += ht_snprintf(is, 256, "                   t=%02x(%s) s0=%013Q s1=%013Q s2=%013Q", insn.tmplt_idx, tmplt_str, &insn.slot[0].data, &insn.slot[1].data, &insn.slot[2].data);
-/*          for (int i=0; i < dis_insn->size; i++) {
+/*		for (int i=0; i < dis_insn->size; i++) {
 			is += sprintf(is, "%s%02x", cs_number, dis_insn->data[i]);
 			if (i==7) is += sprintf(is, "-");
 		}*/
@@ -678,6 +639,3 @@ bool IA64Disassembler::validInsn(dis_insn *disasm_insn)
 {
 	return ((IA64DisInsn *)disasm_insn)->valid;
 }
-
-	
-
