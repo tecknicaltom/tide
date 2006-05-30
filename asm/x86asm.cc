@@ -150,45 +150,41 @@ static const int lop2hop[12][8] = {
 	{},
 };
 
-/* byte */
-static const char immhsz8_16[] = { SIZE_B, SIZE_BV, SIZE_W, SIZE_V, SIZE_VV, SIZE_D, 0 };
-/* uint16 */
-static const char immhsz16_16[] = { SIZE_W, SIZE_V, SIZE_VV, SIZE_D, 0 };
-/* uint32 */
-static const char immhsz32_16[] = { SIZE_D, 0 };
+static const char immhsz8_16[] = { SIZE_B, SIZE_BV, SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz16_16[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz32_16[] = { 0 };
+static const char immhsz64_16[] = { 0 };
 
-/* byte */
-static const char immhsz8_32[] = { SIZE_B, SIZE_W, SIZE_V, SIZE_VV, SIZE_D, 0 };
-/* uint16 */
-static const char immhsz16_32[] = { SIZE_W, SIZE_D, SIZE_V, SIZE_VV, 0 };
-/* uint32 */
-static const char immhsz32_32[] = { SIZE_D, SIZE_V, SIZE_VV, 0 };
+static const char immhsz8_32[] = { SIZE_B, SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz16_32[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz32_32[] = { SIZE_V, SIZE_VV, 0 };
+static const char immhsz64_32[] = { 0 };
 
-/* byte */
+static const char immhsz8_64[] = { SIZE_B, SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz16_64[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
+static const char immhsz32_64[] = { SIZE_V, SIZE_VV, 0 };
+static const char immhsz64_64[] = { SIZE_V, 0 };
+
 static const char hsz8_16[] = { SIZE_B, 0 };
-/* uint16 */
-static const char hsz16_16[] = { SIZE_W, SIZE_V, 0 };
-/* uint32 */
+static const char hsz16_16[] = { SIZE_W, SIZE_V, SIZE_VV, 0 };
 static const char hsz32_16[] = { SIZE_D, SIZE_P, SIZE_Z, 0 };
-/* pword */
 static const char hsz48_16[] = { 0 };
-/* uint64 */
 static const char hsz64_16[] = { SIZE_Q, SIZE_U, SIZE_Z, 0};
-/* oword */
 static const char hsz128_16[] = { SIZE_O, SIZE_U, 0};
 
-/* byte */
 static const char hsz8_32[] = { SIZE_B, 0 };
-/* uint16 */
 static const char hsz16_32[] = { SIZE_W, 0 };
-/* uint32 */
-static const char hsz32_32[] = { SIZE_D, SIZE_V, SIZE_Z, 0 };
-/* pword */
+static const char hsz32_32[] = { SIZE_D, SIZE_V, SIZE_VV, SIZE_R, SIZE_Z, 0 };
 static const char hsz48_32[] = { SIZE_P, 0 };
-/* uint64 */
 static const char hsz64_32[] = { SIZE_Q, SIZE_U, SIZE_Z, 0};
-/* oword */
 static const char hsz128_32[] = { SIZE_O, SIZE_U, 0};
+
+static const char hsz8_64[] = { SIZE_B, 0 };
+static const char hsz16_64[] = { SIZE_W, 0 };
+static const char hsz32_64[] = { SIZE_D, SIZE_Z, 0 };
+static const char hsz48_64[] = { 0 };
+static const char hsz64_64[] = { SIZE_Q, SIZE_U, SIZE_V, SIZE_VV, SIZE_R, SIZE_Z, 0};
+static const char hsz128_64[] = { SIZE_O, SIZE_U, 0};
 
 static const int reg2size[4]= {1, 2, 4, 8};
 
@@ -263,7 +259,7 @@ void x86asm::emitdisp(uint32 d, int size)
 	disp = d;
 }
 
-void x86asm::emitimm(uint32 i, int size)
+void x86asm::emitimm(uint64 i, int size)
 {
 	immsize = size;
 	imm = i;
@@ -420,17 +416,14 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	case X86ASM_PREFIX_0F:
 		emitbyte(0x0f);
 	case X86ASM_PREFIX_NO:
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F20F:
 		emitbyte(0xf2);
 		emitbyte(0x0f);
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F30F:
 		emitbyte(0xf3);
 		emitbyte(0x0f);
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_DF: i++;
 	case X86ASM_PREFIX_DE: i++;
@@ -441,9 +434,9 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	case X86ASM_PREFIX_D9: i++;
 	case X86ASM_PREFIX_D8:
 		emitbyte(0xd8+i);
-		emitmodrm(opcodeb);
 		break;
 	}
+	emitmodrm(opcodeb);
 
 	/* encode the ops */
 	for (int i=0; i<3; i++) {
@@ -480,6 +473,9 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	case 6:
 		emitdword(imm);
 		emitword(imm2);
+		break;
+	case 8:
+		emitqword(imm);
 		break;
 	}
 	return 1;
@@ -575,7 +571,7 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 	case TYPE_A:
 		/* direct address without ModR/M */
 		if (op->type == X86_OPTYPE_FARPTR) {
-			int size = esizeop(xop->size, eopsize);
+			int size = esizeop_ex(xop->size, eopsize);
 			emitfarptr(op->farptr.seg, op->farptr.offset, size == 6);
 		} else {
 			emitimm(op->imm, op->size);
@@ -592,7 +588,7 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 	case TYPE_E:
 		/* ModR/M (general reg or memory) */
 		if (!encode_modrm(op, xop->size, 1, 1, eopsize, eaddrsize)) return 0; //XXX
-		psize=esizeop(xop->size, eopsize); //XXX
+		psize = esizeop(xop->size, eopsize); //XXX
 		break;
 	case TYPE_F:
 		/* r/m of ModR/M picks a fpu register */
@@ -607,13 +603,13 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 		break;
 	case TYPE_Is: {
 		/* signed immediate */
-		int size = esizeop(xop->size, eopsize);
+		int size = esizeop_ex(xop->size, eopsize);
 		emitimm(op->imm, size);
 		break;
 	}
 	case TYPE_I: {
 		/* unsigned immediate */
-		int size = esizeop(xop->size, eopsize);
+		int size = esizeop_ex(xop->size, eopsize);
 		emitimm(op->imm, size);
 		break;
 	}
@@ -622,8 +618,8 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 		return 1;
 	case TYPE_J: {
 		/* relative branch offset */
-		int size = esizeop(xop->size, eopsize);
-		emitimm(op->imm-address-code.size-size, size);
+		int size = esizeop_ex(xop->size, eopsize);
+		emitimm(uint32(op->imm - address - code.size - size), size);
 		break;
 	}
 	case TYPE_M:
@@ -642,6 +638,9 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 			break;
 		case X86_ADDRSIZE32:
 			emitdisp(op->mem.disp, 4);
+			break;
+		case X86_ADDRSIZE64:
+			emitdisp(op->mem.disp, 8);
 			break;
 		}
 		break;
@@ -696,9 +695,9 @@ int x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eops
 	if (!psize) {
 //		set_error_msg(X86ASM_ERRMSG_INTERNAL"FIXME: size ??? %s, %d\n", __FILE__, __LINE__);
 	}
-	if (!*esize) *esize=psize;
-/*	if (!(options & X86ASM_ALLOW_AMBIGUOUS) && (*esize!=psize)) {
-		ambiguous=1;
+	if (!*esize) *esize = psize;
+/*	if (!(options & X86ASM_ALLOW_AMBIGUOUS) && *esize != psize) {
+		ambiguous = 1;
 		set_error_msg(X86ASM_ERRMSG_AMBIGUOUS);
 		return 0;
 	}*/
@@ -710,9 +709,9 @@ int x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_index
 	int ss, scale=op->mem.scale, index=op->mem.index, base=op->mem.base, mod, dispsize;
 	if (base == X86_REG_NO && index != X86_REG_NO) {
 		switch (scale) {
-		case 1:case 4:case 8:
+		case 1: case 4: case 8:
 			break;
-		case 2:case 3:case 5:case 9:
+		case 2: case 3: case 5: case 9:
 			scale--;
 			base = index;
 			break;
@@ -778,15 +777,15 @@ int x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_index
 		dispsize = 4;
 		if (!mindispsize) *disp = 0;
 	}
-	*_mod=mod;
-	*_ss=ss;
-	*_index=index;
-	*_base=base;
-	*_dispsize=dispsize;
+	*_mod = mod;
+	*_ss = ss;
+	*_index = index;
+	*_base = base;
+	*_dispsize = dispsize;
 	return 1;
 }
 
-int x86asm::esizeop(char c, int size)
+int x86asm::esizeop(uint c, int size)
 {
 	switch (c) {
 	case SIZE_B:
@@ -794,24 +793,51 @@ int x86asm::esizeop(char c, int size)
 	case SIZE_W:
 		return 2;
 	case SIZE_D:
+	case SIZE_S:
 		return 4;
 	case SIZE_Q:
+	case SIZE_L:
 		return 8;
 	case SIZE_O:
 		return 16;
-	case SIZE_S:
-		return 4;
-	case SIZE_L:
-		return 8;
 	case SIZE_T:
 		return 10;
 	case SIZE_V:
-		if (size == X86_OPSIZE16) return 2; else return 4;
+	case SIZE_BV:
+	case SIZE_VV:
+		switch (size) {
+		case X86_OPSIZE16: return 2;
+		case X86_OPSIZE32: return 4;
+		case X86_OPSIZE64: return 8;
+		}
+/*	case SIZE_R:
+		if (rexw(insn.rexprefix)) return 8; else return 4;
+	case SIZE_U:
+		if (insn.opsizeprefix == X86_PREFIX_OPSIZE) return 16; else return 8;
+	case SIZE_Z:
+		if (insn.opsizeprefix == X86_PREFIX_OPSIZE) return 8; else return 4;
+*/
 	case SIZE_P:
 		if (size == X86_OPSIZE16) return 4; else return 6;
 	}
 	return 0;
 }
+
+int x86asm::esizeop_ex(uint c, int size)
+{
+	switch (c) {
+	case SIZE_BV:
+		return 1;
+	case SIZE_VV:
+		switch (size) {
+		case X86_OPSIZE16: return 2;
+		case X86_OPSIZE32:
+		case X86_OPSIZE64: return 4;
+		}
+	}
+	return esizeop(c, size);
+}
+
 
 bool x86asm::fetch_number(char **s, uint64 *value)
 {
