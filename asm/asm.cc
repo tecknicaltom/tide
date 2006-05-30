@@ -138,7 +138,7 @@ void Assembler::emitqword(uint64 q)
 		code.data[code.size+6] = (byte)(q>>48);
 		code.data[code.size+7] = (byte)(q>>56);
 	}
-	code.size += 4;
+	code.size += 8;
 }
 
 void Assembler::free_asm_codes()
