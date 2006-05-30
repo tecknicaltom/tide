@@ -213,8 +213,8 @@ struct x86opc_finsn {
 #define X86_REG_IP		66
 
 #define X86_OPC_GROUPS		2
-#define X86_GROUPS		25
-#define X86_SPECIAL_GROUPS	5
+#define X86_GROUPS		26
+#define X86_SPECIAL_GROUPS	7
 
 extern char *x86_regs[4][8];
 extern char *x86_64regs[4][16];
