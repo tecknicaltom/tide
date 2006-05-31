@@ -304,8 +304,8 @@ void Win32SystemDisplay::show()
 	COORD xy, xy2;
 
 	if (cursor_mode != CURSOR_OFF) {
-		xy.X = cursorx + dy;
-		xy.Y = cursory + dx;
+		xy.X = cursorx + dx;
+		xy.Y = cursory + dy;
 	} else {
 		xy.X = dx;
 		xy.Y = dy;
@@ -322,6 +322,11 @@ void Win32SystemDisplay::show()
 		}
 		last_cursor_mode = cursor_mode;
 	}
+
+/*	char s[1024];
+	sprintf(s, "%d, %d   ", xy.X, xy.Y);
+	nprint(0, 0, VCP(VC_WHITE, VC_BLACK), s, 10);*/
+
 	xy.X = 0;
 	xy.Y  = 0;
 	xy2.X = w;
