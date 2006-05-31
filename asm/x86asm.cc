@@ -1341,7 +1341,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 {
 	/* FIXME: dirty implementation ! */
 	int opsize=0, hsize=0;
-	int floatptr=0;
+	bool floatptr = false;
 
 	// typecast
 	while (strchr(" \t", *s) && *s) s++;
@@ -1366,15 +1366,15 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 	} else if (ht_strncmp(s, "single", 6) == 0) {
 		hsize = 4;
 		s += 6;
-		floatptr = 1;
+		floatptr = true;
 	} else if (ht_strncmp(s, "double", 6) == 0) {
 		hsize = 8;
 		s += 6;
-		floatptr = 1;
+		floatptr = true;
 	} else if (ht_strncmp(s, "extended", 8) == 0) {
 		hsize = 10;
 		s += 8;
-		floatptr = 1;
+		floatptr = true;
 	}
 	if (hsize) {
 		if (!strchr(" \t", *s) || !*s) return false;
@@ -1419,7 +1419,7 @@ cont:
 		} else {
 			while (!strchr(" \t*+-[]()", *s) && *s) s++;
 		}
-		ht_strlcpy(buf, t, s-t);
+		ht_strlcpy(buf, t, MIN(sizeof buf, s-t+1));
 		t = buf;
 		if (*t == '+') {
 			sign = 1;
@@ -1497,16 +1497,16 @@ cont:
 		if (disp > 0xffff) {
 			if (addrsize == X86_ADDRSIZEUNKNOWN) {
 				addrsize = X86_ADDRSIZE32;
-			} else if (addrsize != X86_ADDRSIZE32) return 0;
+			} else if (addrsize != X86_ADDRSIZE32) return false;
 		}
 	} else {
 		/* signed disp */
 		int s = simmsize(disp, 4);
-		if (s > 4) return 0;
+		if (s > 4) return false;
 		if (s > 2) {
 			if (addrsize == X86_ADDRSIZEUNKNOWN) {
 				addrsize = X86_ADDRSIZE32;
-			} else if (addrsize != X86_ADDRSIZE32) return 0;
+			} else if (addrsize != X86_ADDRSIZE32) return false;
 		}
 	}
 	op->type = X86_OPTYPE_MEM;
