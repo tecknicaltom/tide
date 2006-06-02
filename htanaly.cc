@@ -657,14 +657,14 @@ static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 /*
  *	for assembler
  */
-static int ht_aviewer_symbol_to_addr(void *Aviewer, char *&s, uint64 &v)
+static int ht_aviewer_symbol_to_addr(void *Aviewer, const char *s, uint64 &v)
 {
 	// FIXNEW
 	ht_aviewer *aviewer = (ht_aviewer*)Aviewer;
 	Address *a;
 	if (*s == '@') {
 		s++;
-		if (parseIntStr(s, v, 10)) {
+		if (str2int(s, v, 10)) {
 			viewer_pos vp;
 			if (!aviewer->offset_to_pos(v, &vp)) {
 				set_eval_error("invalid offset: %08x", v);
@@ -678,36 +678,23 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, char *&s, uint64 &v)
 		}
 		// invalid number after @
 		return false;
-	} else {
-		char *k=ht_strdup(s);
-		char *t=k;
-		while (!strchr("+/-* \t[]", *t) && *t) t++;
-		char temp=*t;
-		*t=0;
-		if ((*k == '$') && (k[1] == 0)) {
-			*t = temp;
-			s += t-k;
-			free(k);
-			if (aviewer->getCurrentAddress(&a)) {
-				a->putIntoArray((byte*)&v);
-				delete a;
-				return true;
-			} else {
-				return false;
-			}
+	} else if (strcmp(s, "&") ==0) {
+		if (aviewer->getCurrentAddress(&a)) {
+			a->putIntoArray((byte*)&v);
+			delete a;
+			return true;
+		} else {
+			return false;
 		}
-		Symbol *l = aviewer->analy->getSymbolByName(k);
-		*t=temp;
+	} else {
+		Symbol *l = aviewer->analy->getSymbolByName(s);
 		if (l) {
 			// Label
-			s += t-k;
 			a = l->location->addr;
 			if (a->putIntoUInt64(v)) {
-				free(k);
 				return true;
 			}
 		}
-		free(k);
 	}
 	return false;
 }
@@ -1207,7 +1194,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		viewer_pos current_pos;
 		Address *current_address;
 		if (get_current_pos(&current_pos) && getCurrentAddress(&current_address)) {
-			a->set_imm_eval_proc(/*(int(*)(void *context, char **s, uint32 *v))*/ht_aviewer_symbol_to_addr, (void*)this);
+			a->set_imm_eval_proc(ht_aviewer_symbol_to_addr, (void*)this);
 			int want_length;
 			analy->getDisasmStr(current_address, want_length);
 			dialog_assemble(this, current_pos, analy->mapAddr(current_address), a, analy->disasm, analy->getDisasmStrFormatted(current_address), want_length);
