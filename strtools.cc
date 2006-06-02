@@ -365,22 +365,27 @@ byte *ht_memmem(const byte *haystack, int haystack_len, const byte *needle, int 
 }
 
 /* common string parsing functions */
-void whitespaces(char *&str)
+bool is_whitespace(char c)
 {
-	while ((unsigned char)*str<=32) {
+	return c && (unsigned char)c <= 32;
+}
+
+void whitespaces(const char *&str)
+{
+	while ((unsigned char)*str <= 32) {
 		if (!*str) return;
 		str++;
 	}
 }
 
-void non_whitespaces(char *&str)
+void non_whitespaces(const char *&str)
 {
-	while ((unsigned char)*str>32) {
+	while ((unsigned char)*str > 32) {
 		str++;
 	}
 }
 
-bool waitforchar(char *&str, char b)
+bool waitforchar(const char *&str, char b)
 {
 	while (*str != b) {
 		if (!*str) return false;
@@ -423,6 +428,44 @@ bool parseIntStr(char *&str, uint64 &u64, int defaultbase)
 		base = 16;
 	}
 	return bnstr2bin(u64, (const char *&)str, base);
+}
+
+bool str2int(const char *str, uint64 &u64, int defaultbase)
+{
+	uint base = defaultbase;
+	size_t len = strlen(str);
+	if (!len) return false;
+	bool n = false;
+	if (defaultbase == 10) {
+		if (ht_strnicmp("0x", str, 2) == 0) {
+			str += 2;
+			base = 16;
+			len -= 2;
+			if (!len) return false;
+		} else {
+			switch (tolower(str[len-1])) {
+			case 'b': base = 2; break;
+			case 'o': base = 8; break;
+			case 'h': base = 16; break;
+			}
+			len--;
+			if (!len) return false;
+			if (str[0] == '-') {
+				str++; len--;
+				if (!len) return false;
+				n = true;
+			}
+		}
+	}
+	do {
+		int c = hexdigit(str[0]);
+		if (c == -1 || c >= int(base)) return false;
+		u64 *= base;
+		u64 += c;
+		str++;
+	} while (len--);
+	if (n) u64 = -u64;
+	return true;
 }
 
 /* hex/string functions */
