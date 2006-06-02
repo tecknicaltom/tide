@@ -71,7 +71,7 @@ protected:
 
 	void delete_nonsense();
 	bool delete_nonsense_insn(asm_code *c);
-	void emitdisp(uint32 disp, int size);
+	void emitdisp(uint64 disp, int size);
 	void emitfarptr(uint32 s, uint32 o, bool big);
 	void emitimm(uint64 imm, int size);
 	void emitmodrm(int modrm);
@@ -88,7 +88,7 @@ protected:
 	int encode_sib_v(x86_insn_op *op, int mindispsize, int *ss, int *index, int *base, int *mod, int *dispsize, int *disp);
 	int esizeop(uint c, int size);
 	int esizeop_ex(uint c, int size);
-	bool fetch_number(char **s, uint64 *value);
+	bool fetch_number(const char *s, uint64 *value);
 	char flsz2hsz(int size);
 	const char *immlsz2hsz(int size, int opsize);
 	const char *lsz2hsz(int size, int opsize);
@@ -103,7 +103,7 @@ protected:
 	bool opfarptr(x86_insn_op *op, char *xop);
 	bool opimm(x86_insn_op *op, char *xop);
 	bool opplugimm(x86_insn_op *op, char *xop);
-	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop);
+	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *xop);
 	virtual bool opreg(x86_insn_op *op, char *xop);
 	bool opmmx(x86_insn_op *op, char *xop);
 	virtual bool opxmm(x86_insn_op *op, char *xop);
@@ -111,6 +111,7 @@ protected:
 	bool opspecialregs(x86_insn_op *op, char *xop);
 	int simmsize(uint64 imm, int immsize);
 	void splitstr(const char *s, char *name, int size, char *op[3], int opsize);
+	void tok(const char **s, char *res, int reslen, const char *sep);
 public:
 		x86asm(int opsize, int addrsize);
 
