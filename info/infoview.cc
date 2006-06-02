@@ -101,35 +101,35 @@ char *memndup(const char *s, int n)
  *
  */
 
-bool parse_xref_body(File *f, Container *t, char *&n, uint *o, uint *line, bool note)
+bool parse_xref_body(File *f, Container *t, const char *&n, uint *o, uint *line, bool note)
 {
 	whitespaces(n);
-	char *l = strchr(n, ':');
+	const char *l = strchr(n, ':');
 	if (!l) return false;
-	char *e = l;
+	const char *e = l;
 	while (e > n && ((unsigned char)*(e-1)<=32)) e--;
 	char *name = NULL;
 	char *target = NULL;
-	char *end = l;
+	const char *end = l;
 	bool extrabreak=false;
 	l++;
 	whitespaces(l);
 	if (*(end+1) == ':') {
 		name = memndup(n, e-n);
 		end+=2;
-	} else if ((note && (l-1 > end)) || (!note && (*(end+1) == ' '))){
-		if (*(end+1) == '\n') extrabreak = true;
-		char *v = l;
+	} else if ((note && l-1 > end) || (!note && end[1] == ' ')){
+		if (end[1] == '\n') extrabreak = true;
+		const char *v = l;
 		if (*l == '(') {
 			v = strchr(l, ')');
 			if (!v) return false;
 		}
-		char *q = v;
+		const char *q = v;
 		while (*q && (*q != '.') && (*q != ',')) q++;
 		if (!*q) return false;
-		char *p = q;
+		const char *p = q;
 
-		while ((q>l) && ((unsigned char)*(q-1)<=32)) q--;
+		while (q > l && ((unsigned char)q[-1] <= 32)) q--;
 		name = memndup(n, e-n);
 		target = memndup(l, q-l);
 		end = p+1;
@@ -145,7 +145,7 @@ bool parse_xref_body(File *f, Container *t, char *&n, uint *o, uint *line, bool 
 		ttt++;
 	}		
 
-	char *p = name;
+	const char *p = name;
 	info_xref *x = new info_xref(thetarget, *o);
 	t->insert(new KeyValue(new info_pos(*line, *o), x));
 	while (*p) {
@@ -168,16 +168,15 @@ bool parse_xref_body(File *f, Container *t, char *&n, uint *o, uint *line, bool 
 		(*line)++;
 	}
 	free(thetarget);
-	if (name) free(name);
-	if (target) free(target);
-//	fprintf(stderr, "t2\n");
+	free(name);
+	free(target);
 	n = end;
 	return true;
 }
 
-Container *parse_info_node(File *fl, char *infotext)
+Container *parse_info_node(File *fl, const char *infotext)
 {
-	char *n = infotext;
+	const char *n = infotext;
 	bool linestart = true;
 	FileOfs f = 0;
 	uint o = 0;
@@ -185,12 +184,12 @@ Container *parse_info_node(File *fl, char *infotext)
 	Container *t = new AVLTree(true);
 
 	while (*n && (*n != 0x1f)) {
-		char *on = n;
+		const char *on = n;
 		uint oo = o;
 		uint ol = l;
 		FileOfs of = f;
-		char *k = (*n == '*') ? n : strchr(n, '*');
-		if ((k == n) && (ht_strnicmp(n, "*note", 5) == 0)) {
+		const char *k = (*n == '*') ? n : strchr(n, '*');
+		if (k == n && ht_strnicmp(n, "*note", 5) == 0) {
 			n += 5;
 			if (!parse_xref_body(fl, t, n, &o, &l, true)) {
 				n = on;
@@ -437,11 +436,11 @@ void ht_info_viewer::draw()
 	ht_text_viewer::draw();
 }
 
-int ht_info_viewer::find_node(char *infotext, char *node)
+int ht_info_viewer::find_node(const char *infotext, char *node)
 {
 	char *tags[] = {"File", "Node", "Prev", "Next", "Up"};
 #define NUM_NODE_TAGS (sizeof (tags) / sizeof (tags[0]))
-	char *s = infotext;
+	const char *s = infotext;
 	char *firstnode = NULL;
 	while ((s=strchr(s, 0x1f))) {
 		s++;
@@ -450,7 +449,7 @@ int ht_info_viewer::find_node(char *infotext, char *node)
 		if (cr) {
 			while (*s && (s<cr)) {
 				whitespaces(s);
-				char *os = s;
+				const char *os = s;
 				for (uint i=0; i<NUM_NODE_TAGS; i++) {
 					uint l = strlen(tags[i]);
 					if (ht_strncmp(s, tags[i], l) == 0 && s[l] == ':') {
