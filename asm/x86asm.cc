@@ -188,16 +188,6 @@ static const char hsz128_64[] = { SIZE_O, SIZE_U, 0};
 
 static const int reg2size[4]= {1, 2, 4, 8};
 
-static int iswhitespace(char c)
-{
-	return ((unsigned char)c)<=' ' && c;
-}
-
-static int isnotwhitespace(char c)
-{
-	return !(((unsigned char)c)<=' ') && c;
-}
-
 /*
  *	CLASS x86asm
  */
@@ -253,7 +243,7 @@ bool x86asm::delete_nonsense_insn(asm_code *code)
 	return false;
 }
 
-void x86asm::emitdisp(uint32 d, int size)
+void x86asm::emitdisp(uint64 d, int size)
 {
 	dispsize = size;
 	disp = d;
@@ -846,9 +836,9 @@ int x86asm::esizeop_ex(uint c, int size)
 }
 
 
-bool x86asm::fetch_number(char **s, uint64 *value)
+bool x86asm::fetch_number(const char *s, uint64 *value)
 {
-	return parseIntStr(*s, *value, 10);
+	return str2int(s, *value);
 }
 
 char x86asm::flsz2hsz(int size)
@@ -1283,8 +1273,12 @@ bool x86asm::opseg(x86_insn_op *op, char *xop)
 
 bool x86asm::opfarptr(x86_insn_op *op, char *xop)
 {
+	return false;
+/*
+FIXME:
 	uint64 seg, offset;
 	char *x = xop;
+	
 	if (!fetch_number(&x, &seg)) return false;
 	if (*x != ':') return false;
 	x++;
@@ -1295,13 +1289,13 @@ bool x86asm::opfarptr(x86_insn_op *op, char *xop)
 	op->farptr.seg = seg;
 	op->farptr.offset = offset;
 	return true;
+*/
 }
 
 bool x86asm::opimm(x86_insn_op *op, char *xop)
 {
 	uint64 i;
-	if (!fetch_number(&xop, &i)) return false;
-	if (*xop) return false;
+	if (!fetch_number(xop, &i)) return false;
 	op->type = X86_OPTYPE_IMM;
 	if (i > 0xffffffffULL) {
 		op->size = 8; 
@@ -1337,61 +1331,60 @@ bool x86asm::opplugimm(x86_insn_op *op, char *xop)
 	return false;
 }
 
-bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
+bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 {
 	/* FIXME: dirty implementation ! */
 	int opsize=0, hsize=0;
 	bool floatptr = false;
+	char token[256];
+	const char *sep = " \t[]()*+-:";
 
-	// typecast
-	while (strchr(" \t", *s) && *s) s++;
-	if (ht_strncmp(s, "byte", 4) == 0) {
+	tok(&s, token, sizeof token, sep);
+	// typecast	
+	if (strcmp(token, "byte") == 0) {
 		hsize = 1;
 		s += 4;
-	} else if (ht_strncmp(s, "word", 4) == 0) {
+	} else if (strcmp(token, "word") == 0) {
 		hsize = 2;
 		s += 4;
-	} else if (ht_strncmp(s, "dword", 5) == 0) {
+	} else if (strcmp(token, "dword") == 0) {
 		hsize = 4;
 		s += 5;
-	} else if (ht_strncmp(s, "pword", 5) == 0) {
+	} else if (strcmp(token, "pword") == 0) {
 		hsize = 6;
 		s += 5;
-	} else if (ht_strncmp(s, "qword", 5) == 0) {
+	} else if (strcmp(token, "qword") == 0) {
 		hsize = 8;
 		s += 5;
-	} else if (ht_strncmp(s, "oword", 5) == 0) {
+	} else if (strcmp(token, "oword") == 0) {
 		hsize = 16;
 		s += 5;
-	} else if (ht_strncmp(s, "single", 6) == 0) {
+	} else if (strcmp(token, "single") == 0) {
 		hsize = 4;
 		s += 6;
 		floatptr = true;
-	} else if (ht_strncmp(s, "double", 6) == 0) {
+	} else if (strcmp(token, "double") == 0) {
 		hsize = 8;
 		s += 6;
 		floatptr = true;
-	} else if (ht_strncmp(s, "extended", 8) == 0) {
+	} else if (strcmp(token, "extended") == 0) {
 		hsize = 10;
 		s += 8;
 		floatptr = true;
 	}
 	if (hsize) {
-		if (!strchr(" \t", *s) || !*s) return false;
-		while (strchr(" \t", *s) && *s) s++;
-		if (!ht_strncmp(s, "ptr", 3) == 0) return false;
+		tok(&s, token, sizeof token, sep);		
+		if (!strcmp(token, "ptr") == 0) return false;
 		opsize = hsize;
 		s += 3;
-		while (strchr(" \t", *s) && *s) s++;
+		tok(&s, token, sizeof token, sep);
 	}
 
 	// segprefixes (e.g. fs:)
-	while (strchr(" \t", *s) && *s) s++;
 	for (int i = 0; i<8; i++) {
 		if (x86_segs[i]) {
-			int l = strlen(x86_segs[i]);
-			if (ht_strncmp(s, x86_segs[i], l)==0 && s[l]==':') {
-				s += l+1;
+			if (strcmp(x86_segs[i], token)==0) {
+				if (*s++ != ':') return false;
 				static const int c2p[8] = {X86_PREFIX_ES, X86_PREFIX_CS, X86_PREFIX_SS, X86_PREFIX_DS, X86_PREFIX_FS, X86_PREFIX_GS, 0, 0};
 				asm_insn->segprefix = c2p[i];
 				break;
@@ -1399,45 +1392,44 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *s)
 		}
 	}
 
-	if (*s != '[') return 0;
-	s++;
+	if (*s++ != '[') return false;
 
 	int scale = 0, index = X86_REG_NO, base = X86_REG_NO;
 	uint64 disp = 0;
 	int addrsize = X86_ADDRSIZEUNKNOWN;
 	int lasttokenreg = X86_REG_NO;
 
-	int sign = 1;
-	char buf[128]; /* FIXME: possible buffer overflow */
+	int sign = 0;
 	while (1) {
 cont:
-		char *t;
-		while (strchr(" \t", *s) && *s) s++;
-		t = s;
-		if (strchr("*+-[]()", *s) && *s) {
+		if (*s == '+') {
 			s++;
-		} else {
-			while (!strchr(" \t*+-[]()", *s) && *s) s++;
-		}
-		ht_strlcpy(buf, t, MIN(sizeof buf, s-t+1));
-		t = buf;
-		if (*t == '+') {
-			sign = 1;
+			if (!sign) sign = 1;
 			continue;
 		}
-		if (*t == '-') {
-			sign = -1;
+		if (*s == '-') {
+			s++;
+			if (sign) {
+				sign = -sign;
+			} else {
+				sign = -1;
+			}
 			continue;
 		}
-		if (*t == ']') break;
-		if (*t == '*') {
+		if (*s == ']') {
+			if (sign) return false;
+			break;
+		}
+		if (*s == '*') {
+			s++;
+			tok(&s, token, sizeof token, sep);
 			if (lasttokenreg == X86_REG_NO) {
 				/* FIXME: case "imm*reg" not yet supported! 
 				cleaner implementation needed ! */
 				return false;
 			} else {
 				uint64 v;
-				if (!fetch_number(&s, &v)) return 0;
+				if (!str2int(token, v)) return 0;
 				if (v > 1) {
 					if (index == lasttokenreg) {
 						scale += v-1;
@@ -1449,32 +1441,35 @@ cont:
 					}
 				}
 			}
-			lasttokenreg=X86_REG_NO;
+			lasttokenreg = X86_REG_NO;
+			sign = 0;
 			continue;
 		}
+		tok(&s, token, sizeof token, sep);
 		/* test if reg */
 		for (int i=1; i<3; i++) {
 			for (int j=0; j<8; j++) {
-				if (x86_regs[i][j] && strcmp(t, x86_regs[i][j])==0) {
-					if (sign < 0) return 0;
-					int caddrsize=(i==1) ? X86_ADDRSIZE16 : X86_ADDRSIZE32;
-					if (addrsize==X86_ADDRSIZEUNKNOWN) {
-						addrsize=caddrsize;
-					} else if (addrsize!=caddrsize) return 0;
-					if (index==j) {
+				if (x86_regs[i][j] && strcmp(token, x86_regs[i][j])==0) {
+					if (sign < 1) return 0;
+					int caddrsize = (i==1) ? X86_ADDRSIZE16 : X86_ADDRSIZE32;
+					if (addrsize == X86_ADDRSIZEUNKNOWN) {
+						addrsize = caddrsize;
+					} else if (addrsize != caddrsize) return 0;
+					if (index == j) {
 						scale++;
-					} else if (base==X86_REG_NO) {
-						base=j;
-					} else if (index==X86_REG_NO) {
-						index=j;
-						scale=1;
-					} else if ((base==j) && (scale==1)) {
-						int t=index;
-						index=base;
-						base=t;
-						scale=2;
-					} else return 0;
-					lasttokenreg=j;
+					} else if (base == X86_REG_NO) {
+						base = j;
+					} else if (index == X86_REG_NO) {
+						index = j;
+						scale = 1;
+					} else if (base == j && scale == 1) {
+						int t = index;
+						index = base;
+						base = t;
+						scale = 2;
+					} else return false;
+					lasttokenreg = j;
+					sign = 0;
 					goto cont;
 				}
 			}
@@ -1483,8 +1478,9 @@ cont:
 
 		/* test if number */
 		uint64 v;
-		if ((imm_eval_proc && imm_eval_proc(imm_eval_context, t, v))
-		 || fetch_number(&t, &v)) {
+		if ((imm_eval_proc && imm_eval_proc(imm_eval_context, token, v))
+		 || str2int(token, v)) {
+			if (!sign) return false;
 			if (sign < 0) disp -= v; else disp += v;
 			continue;
 		}
@@ -1583,9 +1579,9 @@ bool x86asm::translate_str(asm_insn *asm_insn, const char *s)
 	const char *p = s, *a, *b;
 
 	/* prefixes */
-	while (iswhitespace(*p)) p++;
+	whitespaces(p);
 	a=p;
-	while (isnotwhitespace(*p)) p++;
+	non_whitespaces(p);
 	b=p;
 	if (ht_strncmp(a, "rep", b-a) == 0 || ht_strncmp(a, "repe", b-a) == 0
 	 || ht_strncmp(a, "repz", b-a) == 0) {
@@ -1649,27 +1645,39 @@ void x86asm::splitstr(const char *s, char *name, int size, char *op[3], int opsi
 	*op[1]=0;
 	*op[2]=0;
 	/* find name */
-	while (iswhitespace(*s)) s++;
+	whitespaces(s);
 	a = s;
-	while (isnotwhitespace(*s)) s++;
+	non_whitespaces(s);
 	b = s;
 	ht_strlcpy(name, a, MIN(b-a+1, size));
 	/* find ops */
 	for (int i = 0; i < 3; i++) {
-		while (iswhitespace(*s)) s++;
+		whitespaces(s);
 		if (!*s) break;
 		a = s;
-		while (*s && *s != ',') s++;
-		while (iswhitespace(*(s-1))) s--;
+		waitforchar(s, ',');
+		while (is_whitespace(s[-1])) s--;
 		if (!*s) wantbreak = true;
 		b = s;
-		while (iswhitespace(*s)) s++;
+		whitespaces(s);
 		if (!*s) wantbreak = true;
 		ht_strlcpy(op[i], a, MIN(b-a+1, opsize));
-		while (iswhitespace(*s)) s++;
+		whitespaces(s);
 		if (wantbreak || *s != ',') break;
 		s++;
 	}
+}
+
+void x86asm::tok(const char **s, char *res, int reslen, const char *sep)
+{
+	whitespaces(*s);
+	if (reslen <= 0) return;
+	while (reslen > 1) {
+		if (strchr(sep, **s)) break;
+		*res++ = *((*s)++);
+		reslen--;
+	}
+	*res = 0;
 }
 
 /************************************************************************
