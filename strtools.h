@@ -58,13 +58,15 @@ void memdowncase(byte *buf, int len);
 byte *ht_memmem(const byte *haystack, int haystack_len, const byte *needle, int needle_len);
 
 /* common string parsing functions */
-void non_whitespaces(char *&str);
-void whitespaces(char *&str);
-bool waitforchar(char *&str, char b);
+bool is_whitespace(char c);
+void non_whitespaces(const char *&str);
+void whitespaces(const char *&str);
+bool waitforchar(const char *&str, char b);
 
 /* string evaluation functions */
 bool parseIntStr(char *&str, uint64 &u64, int defaultbase);
 bool parseIntStr(const char *&str, uint64 &u64, int defaultbase);
+bool str2int(const char *str, uint64 &u64, int defaultbase = 10);
 
 /* hex/string functions */
 int hexdigit(char a);
