@@ -293,10 +293,9 @@ uint64 ObjectStreamText::getInt(uint size, const char *desc)
 		if (s-str >= 39) setSyntaxError();
 		readChar();
 	} while (mapchar[(byte)cur]=='0' || mapchar[(byte)cur]=='A');
-	*s=0; s=str;
+	*s=0;
 	uint64 a;
-	const char *s2 = s;
-	if (!parseIntStr(s2, a, 10)) setSyntaxError();
+	if (!str2int(str, a)) setSyntaxError();
 	return a;
 }
 
