@@ -200,7 +200,7 @@ void Assembler::set_error_msg(char *format, ...)
 	error=1;
 }
 
-void Assembler::set_imm_eval_proc(int (*p)(void *context, char *&s, uint64 &v), void *c)
+void Assembler::set_imm_eval_proc(int (*p)(void *context, const char *s, uint64 &v), void *c)
 {
 	imm_eval_proc = p;
 	imm_eval_context = c;
