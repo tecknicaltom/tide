@@ -28,10 +28,10 @@
 class PEAnalyser: public Analyser {
 public:
 	ht_pe_shared_data 	*pe_shared;
-	File 		*file;
+	File 			*file;
 	Area			*validarea;
 
-				PEAnalyser();
+				PEAnalyser() {};
 				PEAnalyser(BuildCtorArg&);
 		void		init(ht_pe_shared_data *Pe_shared, File *File);
 		void 		load(ObjectStream &f);
