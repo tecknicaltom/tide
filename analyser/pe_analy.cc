@@ -42,13 +42,6 @@
 #include "snprintf.h"
 #include "x86asm.h"
 
-/*
- *
- */
-PEAnalyser::PEAnalyser()
-{
-}
-
 void	PEAnalyser::init(ht_pe_shared_data *Pe_shared, File *File)
 {
 	pe_shared = Pe_shared;
