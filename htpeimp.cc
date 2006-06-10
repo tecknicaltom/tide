@@ -208,7 +208,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					/* by name */
 					FileOfs function_desc_ofs;
 					uint16 hint = 0;
-					if (!pe_rva_to_ofs(&pe_shared->sections, thunk.function_desc_address, &function_desc_ofs)) {
+					if (pe_rva_to_ofs(&pe_shared->sections, thunk.function_desc_address, &function_desc_ofs)) {
 						if (function_desc_ofs >= file->getSize()) goto pe_read_error;
 						file->seek(function_desc_ofs);
 					} else {
