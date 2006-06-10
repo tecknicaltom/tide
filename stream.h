@@ -129,7 +129,7 @@ private:
 public:
 	template <typename T> operator T* () const
 	{
-		return dynamic_cast<T*>(mO.getObjectInternal(mName, mId));
+		return static_cast<T*>(mO.getObjectInternal(mName, mId));
 	}
 };
 
