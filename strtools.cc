@@ -447,9 +447,11 @@ bool str2int(const char *str, uint64 &u64, int defaultbase)
 			case 'b': base = 2; break;
 			case 'o': base = 8; break;
 			case 'h': base = 16; break;
+			default: goto skip;
 			}
-			len--;
-			if (!len) return false;
+				len--;
+				if (!len) return false;
+			skip:
 			if (str[0] == '-') {
 				str++; len--;
 				if (!len) return false;
@@ -457,13 +459,14 @@ bool str2int(const char *str, uint64 &u64, int defaultbase)
 			}
 		}
 	}
+	u64 = 0;
 	do {
 		int c = hexdigit(str[0]);
 		if (c == -1 || c >= int(base)) return false;
 		u64 *= base;
 		u64 += c;
 		str++;
-	} while (len--);
+	} while (--len);
 	if (n) u64 = -u64;
 	return true;
 }
