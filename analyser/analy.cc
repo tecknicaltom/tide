@@ -560,7 +560,8 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 	analyser_get_addrtype(st, &loc->type);
 
 	// must be resolved later (thisfunc is of type Location not Address)
-	loc->thisfunc = GETX_OBJECT(st, "func");
+	Address *a = GETX_OBJECT(st, "func");
+	loc->thisfunc = (Location *)a;
 	loc->flags = GETX_INT(st, 1, "flags");
 	loc->label = NULL;
 
