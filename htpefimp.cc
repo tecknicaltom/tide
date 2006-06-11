@@ -81,7 +81,7 @@ ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 		createHostStruct(&lib, PEF_ImportedLibrary_struct, pef_shared->byte_order);
 
 		file->seek(nametable + lib.nameOffset);
-		char *libname = fgetstrz(file);
+		char *libname = fgetstrz(*file);
 
 		ht_pef_import_library *library=new ht_pef_import_library(libname);
 		pef_shared->imports.libs->insert(library);
@@ -96,7 +96,7 @@ ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 			uint32 symbol_class = entry >> 24;
 
 			file->seek(nametable+symbol_ofs);
-			char *symbol_name = fgetstrz(file);
+			char *symbol_name = fgetstrz(*file);
 
 			ht_pef_import_function *func = new ht_pef_import_function(i, symbol_num, symbol_name, symbol_class);
 			pef_shared->imports.funcs->insert(func);
