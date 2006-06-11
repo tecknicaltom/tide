@@ -221,7 +221,7 @@ void NEAnalyser::beginAnalysis()
 			char *mod = (imp->module-1 < ne_shared->modnames_count) ? ne_shared->modnames[imp->module-1] : (char*)"invalid!";
 			if (imp->byname) {
 				file->seek(h + imp->name_ofs);
-				name = getstrp(*file);
+				name = file->readstrp();
 			}
 			char *label = import_func_name(mod, name, imp->byname ? 0 : imp->ord);
 			if (name) free(name);
