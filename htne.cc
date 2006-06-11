@@ -176,7 +176,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 		if (file->read(buf, 2) != 2) break;
 		int w = createHostInt(buf, 2, little_endian);
 		file->seek(no+w);
-		ne_shared->modnames[i] = getstrp(*file);
+		ne_shared->modnames[i] = file->readstrp();
 	}
 
 	/* do relocations */
