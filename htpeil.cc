@@ -137,7 +137,7 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 				file->read(&sec_entry, sizeof sec_entry);
 				createHostStruct(&sec_entry, IL_METADATA_SECTION_ENTRY_struct, little_endian);
 				String name("?");
-				getStringz(file, name);
+				getStringz(*file, name);
 				int nlen = name.length() + 1;
 				uint32 dummy;
 				if (nlen % 4) {
