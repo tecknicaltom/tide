@@ -75,7 +75,7 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 	if (isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)) {
 		file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset
 			+ elf_shared->sheaders.sheaders32[symtab_shidx].sh_name);
-		getStringz(file, symtab_name);
+		getStringz(*file, symtab_name);
 	}
 
 	char desc[128];
@@ -104,7 +104,7 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 		file->readx(&sym, sizeof sym);
 		createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 		file->seek(sto+sym.st_name);          
-		char *name = fgetstrz(file);
+		char *name = fgetstrz(*file);
 		/* FIXME: error handling (also in elf_analy.cc) */
 		if (!name) continue;
 
@@ -145,7 +145,7 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 			default: {
 				String s("?");
 				if (isValidELFSectionIdx(elf_shared, sym.st_shndx)) {
-					getStringz(file, s);
+					getStringz(*file, s);
 				}
 				tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11y ", &s);
 				break;
