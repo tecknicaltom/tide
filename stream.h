@@ -52,6 +52,21 @@ public:
 		void			setAccessModex(IOAccessMode mode);
 	virtual	uint			write(const void *buf, uint size);
 		void			writex(const void *buf, uint size);
+
+		char *			readstrz();
+		bool			readStringz(String &s);
+		void			writestrz(const char *str);
+
+		char *			readstrp();
+		void			writestrp(const char *str);
+
+		char *			readstrw();
+		void			writestrw( const char *str);
+
+		char *			readstrl();
+		void			writestrl(const char *str);
+		void *			readmeml(uint32 &len);
+		void			writememl(void *mem, uint32 len);
 };
 
 /**
@@ -287,6 +302,9 @@ public:
 	virtual FileOfs			tell() const;
 	virtual void			truncate(FileOfs newsize);
 	virtual int			vcntl(uint cmd, va_list vargs);
+	
+		void			move(FileOfs src, FileOfs dest, FileOfs size);
+		char *			fgetstrz();
 };
 
 /**
@@ -501,28 +519,5 @@ public:
 	virtual uint		write(const void *buf, uint size);
 };
 
-void fileMove(File &file, FileOfs src, FileOfs dest, FileOfs size);
-
-/** read string from file (zero-terminated, 8-bit chars) */
-char *fgetstrz(File &file);
-/** read string from stream (zero-terminated, 8-bit chars) */
-char *getstrz(Stream &stream);
-/** read string from stream (zero-terminated, 8-bit chars) */
-bool getStringz(Stream &stream, String &s);
-/** write string into stream (zero-terminated, 8-bit chars) */
-void putstrz(Stream &stream, const char *str);
-
-/** read string from stream (8-bit length followed by content aka. Pascal-style) */
-char *getstrp(Stream &stream);
-/** write string into stream (8-bit length followed by content aka. Pascal-style) */
-void putstrp(Stream &stream, const char *str);
-
-/** read string from stream (zero-terminated, 16-bit chars) */
-char *getstrw(Stream &stream);
-/** write string into stream (zero-terminated, 16-bit chars) */
-void putstrw(Stream &stream, const char *str);
-
-char *getlstr(Stream &stream);
-void putlstr(Stream &stream, const char *str);
 
 #endif /* __STREAM_H__ */
