@@ -426,17 +426,17 @@ int File::cntl(uint cmd, ...)
 	return ret;
 }
 
-void fileMove(File *file, FileOfs src, FileOfs dest, FileOfs size)
+void fileMove(File &file, FileOfs src, FileOfs dest, FileOfs size)
 {
 	if (dest < src) {
 		char tbuf[FILE_TRANSFER_BUFSIZE];
 		while (size != 0) {
 			FileOfs k = size;
 			if (k > sizeof tbuf) k = sizeof tbuf;
-			file->seek(src);
-			file->readx(tbuf, k);
-			file->seek(dest);
-			file->writex(tbuf, k);
+			file.seek(src);
+			file.readx(tbuf, k);
+			file.seek(dest);
+			file.writex(tbuf, k);
 			src += k;
 			dest += k;
 			size -= k;
@@ -450,10 +450,10 @@ void fileMove(File *file, FileOfs src, FileOfs dest, FileOfs size)
 			if (k > sizeof tbuf) k = sizeof tbuf;
 			src -= k;
 			dest -= k;
-			file->seek(src);
-			file->readx(tbuf, k);
-			file->seek(dest);
-			file->writex(tbuf, k);
+			file.seek(src);
+			file.readx(tbuf, k);
+			file.seek(dest);
+			file.writex(tbuf, k);
 			size -= k;
 		}
 	}
@@ -473,7 +473,7 @@ void File::cut(uint size)
 	FileOfs o = t+size;
 	if (o > getSize()) throw IOException(EINVAL);
 	FileOfs s = getSize()-o;
-	fileMove(this, o, t, s);
+	fileMove(*this, o, t, s);
 	truncate(getSize()-size);
 	seek(t);
 }
@@ -560,7 +560,7 @@ void File::insert(const void *buf, uint size)
 	FileOfs t = tell();
 	FileOfs s = getSize()-t;
 	extend(getSize()+size);
-	fileMove(this, t, t+size, s);
+	fileMove(*this, t, t+size, s);
 	seek(t);
 	writex(buf, size);
 }
@@ -1475,15 +1475,15 @@ uint CroppedFile::write(const void *buf, uint size)
 /*
  *	string stream functions
  */
-char *fgetstrz(File *file)
+char *fgetstrz(File &file)
 {
-	FileOfs o = file->tell();
+	FileOfs o = file.tell();
 	/* get string size */
 	char buf[64];
 	int s, z = 0;
 	bool found = false;
 	while (!found) {
-		s = file->read(buf, 64);
+		s = file.read(buf, 64);
 		for (int i=0; i < s; i++) {
 			z++;
 			if (buf[i] == 0) {
@@ -1495,21 +1495,21 @@ char *fgetstrz(File *file)
 	/* read string */
 	char *str = ht_malloc(z);
 	if (!str) throw std::bad_alloc();
-	file->seek(o);
-	file->readx(str, z);
+	file.seek(o);
+	file.readx(str, z);
 	return str;
 }
 
 // FIXME: more dynamical solution appreciated
 #define REASONABLE_STRING_LIMIT	1024
  
-char *getstrz(Stream *stream)
+char *getstrz(Stream &stream)
 {
 	/* get string size */
 	char buf[REASONABLE_STRING_LIMIT];
 	int z = 0;
 	while (1) {
-		stream->readx(buf+z, 1);
+		stream.readx(buf+z, 1);
 		z++;
 		if (z >= REASONABLE_STRING_LIMIT) {
 			z = REASONABLE_STRING_LIMIT;
@@ -1525,13 +1525,13 @@ char *getstrz(Stream *stream)
 	return str;
 }
 
-bool getStringz(Stream *stream, String &s)
+bool getStringz(Stream &stream, String &s)
 {
 	String r;
 	try {
 		while (1) {
 			char c;
-			stream->readx(&c, 1);
+			stream.readx(&c, 1);
 			if (!c) break;
 			r += c;
 		}
@@ -1542,24 +1542,24 @@ bool getStringz(Stream *stream, String &s)
 	}
 }
 
-void putstrz(Stream *stream, const char *str)
+void putstrz(Stream &stream, const char *str)
 {
 	if (str) {
-		stream->writex(str, strlen(str)+1);
+		stream.writex(str, strlen(str)+1);
 	} else {
 		byte n = 0;
-		stream->writex(&n, 1);
+		stream.writex(&n, 1);
 	}
 }
 
-char *getstrp(Stream *stream)
+char *getstrp(Stream &stream)
 {
-	unsigned char l;
-	stream->readx(&l, 1);
+	uint8 l;
+	stream.readx(&l, 1);
 	char *str = ht_malloc(l+1);
 	if (!str) throw std::bad_alloc();
 	try {
-		stream->readx(str, l);
+		stream.readx(str, l);
 	} catch (...) {
 		free(str);
 		throw;
@@ -1568,31 +1568,78 @@ char *getstrp(Stream *stream)
 	return str;
 }
 
-void putstrp(Stream *stream, const char *str)
+char *getlstr(Stream &stream)
 {
-	unsigned char l = str ? strlen(str) : 0;
-	stream->writex(&l, 1);
-	stream->writex(str, l);
+	uint32 l = 0;
+	for (int i=0; i<4; i++) {
+		uint8 b;
+		stream.readx(&b, 1);
+		l <<= 7;
+		l |= b & 0x7f;
+		if (!(b & 0x80)) break;
+	}
+	char *str = ht_malloc(l+1);
+	if (!str) throw std::bad_alloc();	
+	try {
+		stream.readx(str, l);
+	} catch (...) {
+		free(str);
+		throw;
+	}
+	str[l] = 0;
+	return str;
 }
 
-char *getstrw(Stream *stream)
+void putlstr(Stream &stream, const char *str)
+{
+	uint8 b;
+	uint32 len = strlen(str);
+	if (!len) {
+		b = 0;
+		stream.writex(&b, 1);
+		return;
+	}
+	int i = 4;
+	uint32 a = 0xfe000000;
+	while (!(len & a)) {
+		a >>= 7;
+		i--;
+	}
+	len <<= (4-i)*7;
+	while (i--) {
+		a = i ? 0x80 : 0;
+		b = ((len & 0xfe000000) >> (3 * 7)) | a;
+		len <<= 7;
+		stream.writex(&b, 1);
+		return;
+	}
+}
+
+void putstrp(Stream &stream, const char *str)
+{
+	unsigned char l = str ? strlen(str) : 0;
+	stream.writex(&l, 1);
+	stream.writex(str, l);
+}
+
+char *getstrw(Stream &stream)
 {
 	short t;
 	byte lbuf[2];
-	stream->readx(lbuf, 2);
+	stream.readx(lbuf, 2);
 	int l = lbuf[0] | lbuf[1] << 8;
 	char *a = ht_malloc(l+1);
 	if (!a) throw std::bad_alloc();
 	for (int i=0; i < l; i++) {
 		// FIXME: this looks wrong
-		stream->readx(&t, 2);
+		stream.readx(&t, 2);
 		a[i] = (char)t;
 	}
 	a[l] = 0;
 	return a;
 }
 
-void putstrw(Stream *stream, const char *str)
+void putstrw(Stream &stream, const char *str)
 {
 	/* FIXME: someone implement me ? */
 	throw NotImplementedException(HERE);
