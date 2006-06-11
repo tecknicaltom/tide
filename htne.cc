@@ -109,7 +109,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 	file->readx(&ne_shared->hdr, sizeof ne_shared->hdr);
 	createHostStruct(&ne_shared->hdr, NE_HEADER_struct, little_endian);
 
-/* read segment descriptors */
+	/* read segment descriptors */
 	ne_shared->segments.segment_count = ne_shared->hdr.cseg;
 	ne_shared->segments.segments = ht_malloc(sizeof (NE_SEGMENT) * ne_shared->segments.segment_count);
 
@@ -122,7 +122,8 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 		if (s->flags & NE_HASRELOC) reloc_needed = true;
 		s++;
 	}
-/* read entrypoint descriptors */
+
+	/* read entrypoint descriptors */
 	FileOfs o = h + ne_shared->hdr.enttab;
 	NE_ENTRYPOINT_HEADER e;
 	file->seek(o);
@@ -163,7 +164,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 
 	ne_shared->entrypoints = ep;
 
-/* read module names */
+	/* read module names */
 	o = h + ne_shared->hdr.modtab;
 	FileOfs no = h + ne_shared->hdr.imptab;
 	file->seek(o);
@@ -175,10 +176,10 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 		if (file->read(buf, 2) != 2) break;
 		int w = createHostInt(buf, 2, little_endian);
 		file->seek(no+w);
-		ne_shared->modnames[i] = getstrp(file);
+		ne_shared->modnames[i] = getstrp(*file);
 	}
 
-/* do relocations */
+	/* do relocations */
 	if (reloc_needed) {
 		ht_ne_reloc_file *rf = new ht_ne_reloc_file(file, false, (ht_ne_shared_data*)shared_data);
 
