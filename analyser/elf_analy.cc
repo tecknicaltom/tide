@@ -204,7 +204,7 @@ void ElfAnalyser::initInsertFakeSymbols()
 		FileOfs sto = elf_shared->sheaders.sheaders32[
 			elf_shared->sheaders.sheaders32[fa->secidx].sh_link].sh_offset;
 		file->seek(sto + sym.st_name);
-		char *name = fgetstrz(*file);
+		char *name = file->fgetstrz();
 		char buf[1024];
 		ht_snprintf(buf, sizeof buf, "undef_%s", name);
 		free(name);
@@ -230,7 +230,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 			createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 
 			file->seek(sto+sym.st_name);
-			char *name = fgetstrz(*file);
+			char *name = file->fgetstrz();
 			if (!name) continue;
 
 			switch (sym.st_shndx) {
@@ -334,7 +334,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 			createHostStruct(&sym, ELF_SYMBOL64_struct, elf_shared->byte_order);
 
 			file->seek(sto+sym.st_name);
-			char *name = fgetstrz(*file);
+			char *name = file->fgetstrz();
 			if (!name) continue;
 
 			switch (sym.st_shndx) {
