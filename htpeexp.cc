@@ -99,7 +99,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	/* get export filename */
 	if (!pe_rva_to_ofs(&pe_shared->sections, edir.name_address, &ename_ofs)) goto pe_read_error;
 	file->seek(ename_ofs);
-	ename=fgetstrz(*efile);
+	ename = efile->fgetstrz();
 
 	/* read in function entrypoint table */
 	FileOfs efunct_ofs;
@@ -158,7 +158,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 			FileOfs en;
 			if (!pe_rva_to_ofs(&pe_shared->sections, *(enamet+i), &en)) goto pe_read_error;
 			file->seek(en);
-			getStringz(*efile, s);
+			efile->readStringz(s);
 
 			ht_pe_export_function *efd = new ht_pe_export_function(f, o+edir.ordinal_base, s.contentChar());
 			pe_shared->exports.funcs->insert(efd);
