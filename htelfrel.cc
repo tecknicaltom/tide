@@ -78,7 +78,7 @@ static ht_view *htelfreloctable_init(Bounds *b, File *file, ht_format_group *gro
 	if (isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)) {
 		file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset
 			+ elf_shared->sheaders.sheaders32[reloctab_shidx].sh_name);
-		getStringz(file, reloctab_name);
+		getStringz(*file, reloctab_name);
 	}
 
 	char desc[128];
