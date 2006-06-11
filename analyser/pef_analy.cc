@@ -152,7 +152,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 			createHostStruct(&sym, PEF_SYMBOL32_struct, pef_shared->byte_order);
 
 			file->seek(sto+sym.st_name);
-			char *name = fgetstrz(file);
+			char *name = fgetstrz(*file);
 			if (!name) continue;
 
 			switch (sym.st_shndx) {
