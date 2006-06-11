@@ -153,7 +153,7 @@ void MachoAnalyser::beginAnalysis()
 				if (nlist.strx && (nlist.type & MACHO_SYMBOL_N_TYPE == MACHO_SYMBOL_TYPE_N_SECT)) {
 					char macho_buffer[1024];
 					file->seek(s->stroff+nlist.strx);
-					char *label = fgetstrz(*file);
+					char *label = file->fgetstrz();
 //					fprintf(stderr, "symbol '%s' addr %08x\n", label, nlist.value);
 					Address *address = createAddress32(nlist.value);
 					if (validAddress(address, scvalid)) {
