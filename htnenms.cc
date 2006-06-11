@@ -58,7 +58,7 @@ static ht_view *htnenames_init(Bounds *b, File *file, ht_format_group *group)
 
 	file->seek(h+ne_shared->hdr.restab);
 	i=0;
-	while (*(n=getstrp(*file))) {
+	while (*(n = file->readstrp())) {
 		char buf[2];
 		file->read(buf, 2);
 		uint16 ent = createHostInt(buf, 2, little_endian);
@@ -80,7 +80,7 @@ static ht_view *htnenames_init(Bounds *b, File *file, ht_format_group *group)
 
 	file->seek(ne_shared->hdr.nrestab);
 	i=0;
-	while (*(n=getstrp(*file))) {
+	while (*(n = file->readstrp())) {
 		char buf[2];
 		file->read(buf, 2);
 		uint16 ent = createHostInt(buf, 2, little_endian);
