@@ -99,18 +99,18 @@ struct ImageSymDescriptor {
  */
 
 #define MAX_BYTES_PER_SEGMENT		0xff00
-#define MAX_SYMBOLS_PER_SEGMENT	0x4000
+#define MAX_SYMBOLS_PER_SEGMENT		0x4000
 
-static void write_sym(Stream *stream, uint32 addr, char *name, uint *bytes_written)
+static void write_sym(Stream &stream, uint32 addr, char *name, uint *bytes_written)
 {
 	ImageSymDescriptor desc;
 	desc.address = addr;
-	stream->write(&desc, sizeof desc); // FIXME: endianess !
+	stream.write(&desc, sizeof desc); // FIXME: endianess !
 	putstrp(stream, name);
 	*bytes_written += sizeof desc + 1 + strlen(name);
 }
 
-static void g(Stream *stream, Symbol *s, uint *bytes_written, uint *symbols_written, uint16 *ptr_table)
+static void g(Stream &stream, Symbol *s, uint *bytes_written, uint *symbols_written, uint16 *ptr_table)
 {
 	if (*bytes_written >= MAX_BYTES_PER_SEGMENT) return;
 	if (*symbols_written >= MAX_SYMBOLS_PER_SEGMENT) return;
@@ -118,7 +118,7 @@ static void g(Stream *stream, Symbol *s, uint *bytes_written, uint *symbols_writ
 	uint32 addr;
 	if (s->location->addr->byteSize() == sizeof addr) {
 		s->location->addr->putIntoArray((byte*)&addr);
-//          addr -= 0xbff70000;	/* FIXME: hack for kernel32.dll */
+//		addr -= 0xbff70000;	/* FIXME: hack for kernel32.dll */
 	} else {
 		addr = 0;
 	}
@@ -160,13 +160,13 @@ int export_to_sym(Analyser *analy, File *file)
 
 	uint bytes_written = sizeof seg_head, symbols_written = 0;
 
-	write_sym(file, 0xff000000, "_TEXT", &bytes_written);
+	write_sym(*file, 0xff000000, "_TEXT", &bytes_written);
 
 	uint16 *ptr_table = ht_malloc(MAX_SYMBOLS_PER_SEGMENT * sizeof *ptr_table);
 
 	Symbol *sym = NULL;
 	while ((sym = analy->enumSymbols(sym))) {
-		g(file, sym, &bytes_written, &symbols_written, ptr_table);
+		g(*file, sym, &bytes_written, &symbols_written, ptr_table);
 	}
 	
 	uint sym_ptr_table_ptr = bytes_written;
