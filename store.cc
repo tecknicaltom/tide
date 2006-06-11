@@ -133,7 +133,7 @@ uint64 ObjectStreamBin::getInt(uint size, const char *desc)
 
 char *ObjectStreamBin::getString(const char *desc)
 {
-	return getstrz(*mStream);
+	return mStream->readstrz();
 }
 
 byte *ObjectStreamBin::getLenString(int &length, const char *desc)
@@ -199,7 +199,7 @@ void ObjectStreamBin::putSeparator()
 
 void ObjectStreamBin::putString(const char *string, const char *desc)
 {
-	putstrz(*mStream, string);
+	mStream->writestrz(string);
 }
 
 void ObjectStreamBin::putLenString(const byte *string, int len, const char *desc)
