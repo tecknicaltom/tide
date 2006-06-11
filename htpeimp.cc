@@ -125,7 +125,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 			if (iname_ofs >= file->getSize()) goto pe_read_error;
 			file->seek(iname_ofs);
 		}
-		getStringz(file, dllname);
+		getStringz(*file, dllname);
 		dll_count++;
 
 		/*** imported functions by name or by ordinal ***/
@@ -217,7 +217,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					}
 					file->readx(&hint, 2);
 					hint = createHostInt(&hint, 2, little_endian);
-					getStringz(file, s);
+					getStringz(*file, s);
 					func = new ht_pe_import_function(dll_index, fthunk_rva, s.contentChar(), hint);
 				}
 			} else {
@@ -235,7 +235,7 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 					file->seek(function_desc_ofs);
 					file->readx(&hint, 2);
 					hint = createHostInt(&hint, 2, little_endian);
-					getStringz(file, s);
+					getStringz(*file, s);
 					func = new ht_pe_import_function(dll_index, fthunk_rva, s.contentChar(), hint);
 				}
 			}
