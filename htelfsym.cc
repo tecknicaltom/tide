@@ -75,7 +75,7 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 	if (isValidELFSectionIdx(elf_shared, elf_shared->header32.e_shstrndx)) {
 		file->seek(elf_shared->sheaders.sheaders32[elf_shared->header32.e_shstrndx].sh_offset
 			+ elf_shared->sheaders.sheaders32[symtab_shidx].sh_name);
-		getStringz(*file, symtab_name);
+		file->readStringz(symtab_name);
 	}
 
 	char desc[128];
@@ -104,7 +104,7 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 		file->readx(&sym, sizeof sym);
 		createHostStruct(&sym, ELF_SYMBOL32_struct, elf_shared->byte_order);
 		file->seek(sto+sym.st_name);          
-		char *name = fgetstrz(*file);
+		char *name = file->fgetstrz();
 		/* FIXME: error handling (also in elf_analy.cc) */
 		if (!name) continue;
 
@@ -133,23 +133,23 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 		*tt++ = ' ';
 		*tt = 0;
 		switch (sym.st_shndx) {
-			case ELF_SHN_UNDEF:
-				tt += ht_snprintf(tt, sizeof t - (tt-t), "*undefined  ");
-				break;
-			case ELF_SHN_ABS:
-				tt += ht_snprintf(tt, sizeof t - (tt-t), "*absolute   ");
-				break;
-			case ELF_SHN_COMMON:
-				tt += ht_snprintf(tt, sizeof t - (tt-t), "*common     ");
-				break;
-			default: {
-				String s("?");
-				if (isValidELFSectionIdx(elf_shared, sym.st_shndx)) {
-					getStringz(*file, s);
-				}
-				tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11y ", &s);
-				break;
+		case ELF_SHN_UNDEF:
+			tt += ht_snprintf(tt, sizeof t - (tt-t), "*undefined  ");
+			break;
+		case ELF_SHN_ABS:
+			tt += ht_snprintf(tt, sizeof t - (tt-t), "*absolute   ");
+			break;
+		case ELF_SHN_COMMON:
+			tt += ht_snprintf(tt, sizeof t - (tt-t), "*common     ");
+			break;
+		default: {
+			String s("?");
+			if (isValidELFSectionIdx(elf_shared, sym.st_shndx)) {
+				file->readStringz(s);
 			}
+			tt += ht_snprintf(tt, sizeof t - (tt-t), "%-11y ", &s);
+			break;
+		}
 		}
 		tt += ht_snprintf(tt, sizeof t - (tt-t), "%s", name);
 		free(name);
