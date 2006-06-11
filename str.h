@@ -80,6 +80,7 @@ public:
 	inline	bool		isEmpty() const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
+		void		grab(String &s);
 		byte *		grabContent();
 		char *		grabContentChar();
 	virtual	void		store(ObjectStream &s) const;
