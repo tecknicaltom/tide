@@ -424,6 +424,19 @@ int String::findStringBwd(const String &s, int start, int ith_match) const
 }
 
 /**
+ *	Assign s, destroy s
+ */
+void String::grab(String &s)
+{
+	free(mContent);
+	mLength = s.mLength;
+	mContent = s.mContent;
+	s.mLength = 0;
+	s.mContent = NULL;
+	s.realloc(0);
+}
+
+/**
  *	Get the content of the String.
  *	The original String gets destroyed.
  *	It's up to you to free the content.
