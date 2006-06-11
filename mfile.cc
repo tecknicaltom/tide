@@ -692,7 +692,7 @@ void FileModificator::flushMods()
 		if (fa->getObjectID() == OBJID_CFA) {
 			CopiedFileArea *cfa = (CopiedFileArea*)fa;
 			if (cfa->start > cfa->src_start) {
-				fileMove(mFile, cfa->src_start, cfa->start, cfa->size);
+				fileMove(*mFile, cfa->src_start, cfa->start, cfa->size);
 			}
 		}
 	);
@@ -701,7 +701,7 @@ void FileModificator::flushMods()
 		if (fa->getObjectID() == OBJID_CFA) {
 			CopiedFileArea *cfa = (CopiedFileArea*)fa;
 			if (cfa->start < cfa->src_start) {
-				fileMove(mFile, cfa->src_start, cfa->start, cfa->size);
+				fileMove(*mFile, cfa->src_start, cfa->start, cfa->size);
 			}
 		}
 	);
