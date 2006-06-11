@@ -106,7 +106,7 @@ static void write_sym(Stream &stream, uint32 addr, char *name, uint *bytes_writt
 	ImageSymDescriptor desc;
 	desc.address = addr;
 	stream.write(&desc, sizeof desc); // FIXME: endianess !
-	putstrp(stream, name);
+	stream.writestrp(name);
 	*bytes_written += sizeof desc + 1 + strlen(name);
 }
 
