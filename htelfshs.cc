@@ -123,7 +123,7 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 			s = "?";
 
 			file->seek(so+elf_shared->sheaders.sheaders32[i].sh_name);
-			getStringz(file, s);
+			getStringz(*file, s);
 
 			char t[1024];
 			ht_snprintf(t, sizeof t, "section %d: %y", i, &s);
@@ -166,7 +166,7 @@ static ht_view *htelfsectionheaders_init(Bounds *b, File *file, ht_format_group 
 			char *s;
 			try {
 				file->seek(so+elf_shared->sheaders.sheaders64[i].sh_name);
-				s = getstrz(file);
+				s = getstrz(*file);
 			} catch (const EOFException &) {
 				s = ht_strdup("?");
 			}
