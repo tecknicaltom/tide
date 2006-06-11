@@ -1478,11 +1478,11 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 				break;
 			case 1:
 				op->mem.hasdisp = true;
-				op->mem.disp = (sint8)getbyte();
+				op->mem.disp = sint64(sint8(getbyte()));
 				break;
 			case 2:
 				op->mem.hasdisp = true;
-				op->mem.disp = (sint32)getdword();
+				op->mem.disp = sint64(sint32(getdword()));
 				break;
 			}
 		}
@@ -1544,7 +1544,7 @@ void x86_64dis::prefixes()
 void x86_64dis::checkInfo(x86opc_insn *xinsn)
 {
 	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
-	&& (xinsn->op[0].info & 0x80))  {
+	&& (xinsn->op[0].info & 0x80)) {
 		// instruction has defaults to 64 bit opsize
 		insn.eopsize = X86_OPSIZE64;
 	}
