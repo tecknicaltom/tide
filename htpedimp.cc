@@ -95,7 +95,7 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 		FileOfs dllname_ofs;
 		if (!pe_rva_to_ofs(&pe_shared->sections, dimport.name-base, &dllname_ofs)) goto pe_read_error;
 		file->seek(dllname_ofs);
-		char *dllname=fgetstrz(file);
+		char *dllname=fgetstrz(*file);
 		ht_pe_import_library *lib=new ht_pe_import_library(dllname);
 		pe_shared->dimports.libs->insert(lib);
 		dll_count++;
@@ -125,7 +125,7 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 				file->seek(nofs);
 				file->read(&hint, 2);
 				hint = createHostInt(&hint, 2, little_endian);
-				char *name=fgetstrz(file);
+				char *name=fgetstrz(*file);
 				func=new ht_pe_import_function(dll_index, ava, name, hint);
 				free(name);
 			}
