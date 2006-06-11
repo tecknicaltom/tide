@@ -105,7 +105,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 			createHostStruct(&subdir, PE_RESOURCE_DIRECTORY_struct, little_endian);
 			if (hasname) {
 				peresource_file->seek(peresource_dir_ofs+entry.name & 0x7fffffff);
-				char *name = getstrw(peresource_file);
+				char *name = getstrw(*peresource_file);
 				ht_snprintf(peresource_string, sizeof peresource_string, "%s [%d]", name, subdir.name_count+subdir.id_count);
 				free(name);
 			} else {
