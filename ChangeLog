@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 0.9.3:
+	- [x86] andpd had wrong mnemonic
+
 version 0.9.2:
 	- updated ELF program header types
 	- better Mach-O executable sections detection
