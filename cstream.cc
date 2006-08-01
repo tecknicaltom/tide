@@ -27,7 +27,7 @@
 
 #include <string.h>
 
-ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream)
+CompressedStream::CompressedStream(Stream *stream, bool own_stream)
 	: StreamLayer(stream, own_stream)
 {
 	if ((stream->getAccessMode() & (IOAM_READ | IOAM_WRITE)) == (IOAM_READ | IOAM_WRITE)) {
@@ -39,7 +39,7 @@ ht_compressed_stream::ht_compressed_stream(Stream *stream, bool own_stream)
 	buffer = ht_malloc(buffersize);
 }
 
-ht_compressed_stream::~ht_compressed_stream()
+CompressedStream::~CompressedStream()
 {
 	if (getAccessMode() & IOAM_WRITE) {
 		flush_compressed();
@@ -47,7 +47,7 @@ ht_compressed_stream::~ht_compressed_stream()
 	free(buffer);
 }
 
-void ht_compressed_stream::flush_compressed()
+void CompressedStream::flush_compressed()
 {
 	if (bufferpos) {
 		byte cbuf[bufferpos + bufferpos / 64 + 16 + 3];
@@ -68,7 +68,7 @@ void ht_compressed_stream::flush_compressed()
 	}
 }
 
-void ht_compressed_stream::flush_uncompressed()
+void CompressedStream::flush_uncompressed()
 {
 	if (bufferpos == 0) {
 		free(buffer);
@@ -100,7 +100,7 @@ void ht_compressed_stream::flush_uncompressed()
 	}
 }
 
-uint	ht_compressed_stream::read(void *aBuf, uint size)
+uint CompressedStream::read(void *aBuf, uint size)
 {
 	uint ssize = size;
 	byte *buf = (byte *)aBuf;
@@ -124,7 +124,7 @@ uint	ht_compressed_stream::read(void *aBuf, uint size)
 	return ssize;
 }
 
-uint	ht_compressed_stream::write(const void *aBuf, uint size)
+uint CompressedStream::write(const void *aBuf, uint size)
 {
 	uint ssize = size;
 	const byte *buf = (const byte *)aBuf;
