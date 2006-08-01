@@ -1053,7 +1053,7 @@ static void pickname(char *result, const char *name, int n)
 		name = s+1;
 		s = strchr(name, '|');
 		if (!s) {
-			strcpy(result, name-1);
+			strcpy(result, name);
 			return;
 		}
 	} while (n--);
