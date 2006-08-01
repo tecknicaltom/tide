@@ -56,7 +56,7 @@ int autoCompare(const Object *a, const Object *b)
 
 int Object::compareTo(const Object *obj) const
 {
-	int a=1;
+//	int a=1;
 	throw NotImplementedException(HERE);
 }
 
