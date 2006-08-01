@@ -29,14 +29,14 @@
  
 #define COMPRESSED_STREAM_DEFAULT_GRANULARITY 10240
 
-class ht_compressed_stream: public StreamLayer {
+class CompressedStream: public StreamLayer {
 protected:
 	byte *buffer;
 	uint buffersize;
 	uint bufferpos;
 public:
-			ht_compressed_stream(Stream *stream, bool own_stream);
-	virtual		~ht_compressed_stream();
+			CompressedStream(Stream *stream, bool own_stream);
+	virtual		~CompressedStream();
 /* overwritten */
 	virtual	uint	read(void *buf, uint size);
 	virtual	uint	write(const void *buf, uint size);
