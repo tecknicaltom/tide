@@ -55,7 +55,7 @@ ObjectStream *create_object_stream(Stream &f, int object_stream_type)
 		s = new ObjectStreamText(&f, false);
 		break;
 	case object_stream_bin_compressed: {
-		ht_compressed_stream *cs=new ht_compressed_stream(&f, false);
+		CompressedStream *cs = new CompressedStream(&f, false);
 		s = new ObjectStreamBin(cs, true);
 		break;
 	}
