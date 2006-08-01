@@ -1117,7 +1117,7 @@ bool init_registry()
 	 *	load default registry
 	 */
 	ConstMemMapFile f(default_reg, sizeof default_reg);
-	ht_compressed_stream c(&f, false);
+	CompressedStream c(&f, false);
 	ObjectStreamBin o(&c, false);
 
 	GET_OBJECT(o, registry);
