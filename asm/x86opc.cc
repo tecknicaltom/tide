@@ -477,8 +477,8 @@ x86opc_insn x86_insns[256] = {
 {0, {{SPECIAL_TYPE_FGROUP, 6}}},
 {0, {{SPECIAL_TYPE_FGROUP, 7}}},
 /* E0 */
-{"loopnz", {{Jb}}},
-{"loopz", {{Jb}}},
+{"|loopnz|loopne", {{Jb}}},
+{"|loopz|loope", {{Jb}}},
 {"loop", {{Jb}}},
 {"?jcxz|jecxz", {{Jb}}},
 {"in", {{__al}, {Ib}}},
