@@ -25,6 +25,7 @@
 #include "htdebug.h"
 #include "stream.h"
 #include "snprintf.h"
+#include "strtools.h"
 #include "tools.h"
 #include "vxd.h"
 #include "x86dis.h"
@@ -1298,7 +1299,7 @@ static void pickname(char *result, const char *name, int n)
 			return;
 		}
 	} while (n--);
-	ht_snprintf(result, s-name+1, "%s", name);
+	ht_strlcpy(result, name, s-name+1);
 }
 
 char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
