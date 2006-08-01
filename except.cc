@@ -29,23 +29,22 @@
 /*
  *	Exception
  */
-Exception::~Exception()
-{
-}
-
 String &Exception::reason(String &result) const
 {
 	result = "Unknown Exception";
 	return result;
 }
 
+
+int Exception::toString(char *buf, int buflen) const
+{
+	String s;
+	return reason(s).toString(buf, buflen);
+}
+
 /*
  *	MsgException
  */
-MsgException::MsgException()
-{
-}
-
 MsgException::MsgException(const char *e)
 {
 	ht_strlcpy(estr, e, sizeof estr);
@@ -61,7 +60,7 @@ String &MsgException::reason(String &result) const
  *	MsgfException
  */
 MsgfException::MsgfException(const char *e,...)
-: MsgException("")
+: MsgException()
 {
 	va_list va;
 	va_start(va, e);
