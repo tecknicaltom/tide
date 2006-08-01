@@ -28,11 +28,11 @@
 /**
  *	A exception.
  */
-class Exception {
+class Exception: public Object {
 public:
-	virtual			~Exception();
 	/* new */
 	virtual String &	reason(String &result) const;
+	virtual	int		toString(char *buf, int buflen) const;
 };
 
 #define MSG_EXCEPTION_MAX_ERRSTR		256
@@ -45,7 +45,7 @@ protected:
 	char estr[MSG_EXCEPTION_MAX_ERRSTR];
 public:
 		MsgException(const char *errstr);
-		MsgException();
+		MsgException() {};
 	/* new */
 	virtual	String &reason(String &result) const;
 };
