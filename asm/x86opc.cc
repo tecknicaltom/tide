@@ -2261,7 +2261,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {0},
 },
-/* 19 - GROUP_EXT_71 */
+/* 16 - GROUP_EXT_71 */
 {
 {0},
 {0},
@@ -2272,7 +2272,7 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {"psllw", {{PRu}, {Ib}}},
 {0}
 },
-/* 20 - GROUP_EXT_72 */
+/* 17 - GROUP_EXT_72 */
 {
 {0},
 {0},
@@ -2280,19 +2280,19 @@ x86opc_insn x86_32_group_insns[X86_GROUPS][8] = {
 {0},
 {"psrad", {{PRu}, {Ib}}},
 {0},
-{"pssld", {{PRu}, {Ib}}},
+{"pslld", {{PRu}, {Ib}}},
 {0}
 },
-/* 21 - GROUP_EXT_73 */
+/* 18 - GROUP_EXT_73 */
 {
 {0},
 {0},
 {"psrlq", {{PRu}, {Ib}}},
+{"psrldq", {{PRu}, {Ib}}},
 {0},
-{"psraq", {{PRu}, {Ib}}},
 {0},
-{"psslq", {{PRu}, {Ib}}},
-{0}
+{"psllq", {{PRu}, {Ib}}},
+{"pslldq", {{PRu}, {Ib}}},
 },
 /* 22 - GROUP_EXT_AE */
 {
