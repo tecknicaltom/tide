@@ -79,8 +79,8 @@
 #define CHAR_FILLED_M		0x2592	/* FILLED, medium density */
 #define CHAR_FILLED_H		0x2593  /* FILLED, high density */
 #define CHAR_FILLED_F		0x2588  /* FILLED, filled entirely */
-#define CHAR_FILLED_HU		0x2580  /* FILLED, upper half - filled entirely */
-#define CHAR_FILLED_HL		0x2584  /* FILLED, lower half - filled entirely */
+#define CHAR_FILLED_HU		0x2580 /* FILLED, upper half - filled entirely */
+#define CHAR_FILLED_HL		0x2584 /* FILLED, lower half - filled entirely */
 #define CHAR_QUAD_SMALL		0x25a0
 #define CHAR_ARROW_UP		0x2191
 #define CHAR_ARROW_DOWN		0x2193
@@ -94,6 +94,7 @@ class screendrawbuf: public genericdrawbuf {
 protected:
 	void *buf;	// actually CHAR_INFO *
 	int cursorx, cursory;
+	int dx, dy;
 	bool cursor_visible;
 	bool cursor_redraw;
 	bool init_console();
