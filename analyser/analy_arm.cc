@@ -8,12 +8,7 @@ void AnalyArmDisassembler::init(Analyser *A)
     AnalyDisassembler::init(A);
 }
 
-void AnalyArmDisassembler::done()
-{
-    AnalyDisassembler::done();
-}
-
-ObjectID AnalyArmDisassembler::object_id() const
+ObjectID AnalyArmDisassembler::getObjectID() const
 {
     return ATOM_ANALY_ARM;
 }
