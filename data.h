@@ -898,9 +898,9 @@ struct AVLTreeNode: public BinTreeNode {
 class AVLTree: public BinaryTree {
 private:
 	virtual	AVLTreeNode *	allocNode() const;
-			void	cloneR(AVLTreeNode *node);
-			BinTreeNode *removeR(Object *key, BinTreeNode *&root, int &change, int cmp);
-			int	loadR(ObjectStream &s, BinTreeNode *&n, int l, int r);
+		void		cloneR(AVLTreeNode *node);
+		BinTreeNode *	removeR(Object *key, BinTreeNode *&root, int &change, int cmp);
+		int		loadR(ObjectStream &s, BinTreeNode *&n, int l, int r);
 public:
 				AVLTree(BuildCtorArg&);
 				AVLTree(bool own_objects, Comparator comparator = autoCompare);
