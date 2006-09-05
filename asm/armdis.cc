@@ -65,131 +65,129 @@ public:
         // little endian specific
         insn->iscond = (unsigned) buf[3] < 0xe0;
         print_insn_little_arm(addr, &di);
-        FILE *f=fopen("/tmp/htlog","a");fprintf(f,"%s\n",insn->opstr);fclose(f);
+//	FILE *f=fopen("/tmp/htlog","a");fprintf(f,"%s\n",insn->opstr);fclose(f);
     }
 };
 
-ArmDisassembler::BFDInterface *ArmDisassembler::bfdif;
+ArmDisassembler::ArmDisassembler()
+{
+	bfdif = new BFDInterface;	
+}
+
+void ArmDisassembler::load(ObjectStream &f)
+{
+	bfdif = new BFDInterface;
+	Disassembler::load(f);
+}
 
 dis_insn *ArmDisassembler::duplicateInsn(dis_insn *disasm_insn)
 {
-    ArmDisInsn *insn = (ArmDisInsn *) malloc(sizeof(ArmDisInsn));
-    *insn = *(ArmDisInsn *)disasm_insn;
-    return insn;
+	ArmDisInsn *insn = (ArmDisInsn *) malloc(sizeof(ArmDisInsn));
+	*insn = *(ArmDisInsn *)disasm_insn;
+	return insn;
 }
 
 void ArmDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align)
 {
-    min_length = 4;
-    max_length = 4;
-    min_look_ahead = 4;
-    avg_look_ahead = 4;
-    addr_align = 4;
+	min_length = 4;
+	max_length = 4;
+	min_look_ahead = 4;
+	avg_look_ahead = 4;
+	addr_align = 4;
 }
 
 byte ArmDisassembler::getSize(dis_insn *disasm_insn)
 {
-    return 4;//((ArmDisInsn*)disasm_insn)->size;
+	return 4;//((ArmDisInsn*)disasm_insn)->size;
 }
 
 char *ArmDisassembler::getName()
 {
-    return "Arm/Disassembler";
+	return "Arm/Disassembler";
 }
 
-ObjectID ArmDisassembler::object_id() const
+ObjectID ArmDisassembler::getObjectID() const
 {
-    return ATOM_DISASM_ARM;
+	return ATOM_DISASM_ARM;
 }
 
 bool ArmDisassembler::validInsn(dis_insn *disasm_insn)
 {
-    return true;
-    ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
-    return memcmp(adi->opstr, "undefined", 9) != 0;
+	return true;
+	ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
+	return memcmp(adi->opstr, "undefined", 9) != 0;
 }
 
 dis_insn *ArmDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 {
-    if (bfdif == 0)
-        bfdif = new BFDInterface;
-
-    bfdif->Decode(code, maxlen, addr.addr32.offset, &insn);
+	bfdif->Decode(code, maxlen, addr.addr32.offset, &insn);
 #if 0
-    char *pc;
-    if (insn.offset == ~0u && (pc = strstr(insn.opstr, ", pc, #")) != 0)
-        insn.offset = atol(pc + 7);
+	char *pc;
+	if (insn.offset == ~0u && (pc = strstr(insn.opstr, ", pc, #")) != 0)
+		insn.offset = atol(pc + 7);
 #endif
-    return &insn;
+	return &insn;
 }
 
 char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, char *)
 {
-    ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
+	ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
 
-    if (style & DIS_STYLE_HIGHLIGHT)
-        enable_highlighting();
+	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 
-    //const char *cs_default = get_cs(e_cs_default);
-    const char *cs_number = get_cs(e_cs_number);
-    //const char *cs_symbol = get_cs(e_cs_symbol);
+	//const char *cs_default = get_cs(e_cs_default);
+	const char *cs_number = get_cs(e_cs_number);
+	//const char *cs_symbol = get_cs(e_cs_symbol);
 
-    static char buf[512];
-    char *out = buf;
-    const char *in = adi->opstr;
+	static char buf[512];
+	char *out = buf;
+	const char *in = adi->opstr;
 
-    while (*in && *in != '\t')
-        *out++ = *in++;
-    if (*in == 0)
-        goto strfend;
+	while (in[0] && in[0] != '\t') *out++ = *in++;
+	if (!in[0]) goto strfend;
 
-    in++; // skip tab
-    while (out < buf + 12)
-        *out++ = ' ';
+	in++; // skip tab
+	while (out < buf + 12) *out++ = ' ';
 
-    while (*in && *in != ';')
-        if (*in != '@')
-            *out++ = *in++;
-        else
-        {
-            in++;
-            CPU_ADDR caddr;
-            caddr.addr32.offset = adi->offset;
-            int slen;
-            char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : 0;
-            if (s)
-            {
-                if (out + slen > buf + sizeof(buf) - 1)
-                    slen = buf + sizeof(buf) - 1 - out;
-                memmove(out, s, slen);
-                out[slen] = 0;
-                out += slen;
-            }
-            else
-                out += sprintf(out, "%s0x%x", cs_number, adi->offset);
+	while (*in && *in != ';') {
+    		if (*in != '@') {
+        		*out++ = *in++;
+		} else {
+        		in++;
+	        	CPU_ADDR caddr;
+	        	caddr.addr32.offset = adi->offset;
+	        	int slen;
+	        	char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : 0;
+	    		if (s) {
+	            		if (out + slen > buf + sizeof(buf) - 1)
+	                		slen = buf + sizeof(buf) - 1 - out;
+	            		memcpy(out, s, slen);
+	            		out[slen] = 0;
+	            		out += slen;
+        		} else {
+            			out += sprintf(out, "%s0x%x", cs_number, adi->offset);
+			}
+		}
         }
 
-    if (*in == ';' && out[-1] == '\t')
-        out--;
+	if (*in == ';' && out[-1] == '\t') out--;
 
-    if (char *p = strstr(buf, "[pc, #"))
-        if (adi->offset != ~0u)
-        {
-            CPU_ADDR caddr;
-            caddr.addr32.offset = adi->offset;
-            int slen;
-            char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : 0;
-            if (s)
-            {
-                if (out + slen > buf + sizeof(buf) - 1)
-                    slen = buf + sizeof(buf) - 1 - out;
-                memmove(out = p, s, slen);
-                out += slen;
-            }
+	char *p = strstr(buf, "[pc, #");
+	if (p && adi->offset != ~0u) {
+		CPU_ADDR caddr;
+        	caddr.addr32.offset = adi->offset;
+        	int slen;
+        	char *s = (addr_sym_func) ? addr_sym_func(caddr, &slen, addr_sym_func_context) : 0;
+        	if (s) {
+        		if (out + slen > buf + sizeof(buf) - 1)
+                		slen = buf + sizeof(buf) - 1 - out;
+            		memcpy(out = p, s, slen);
+            		out += slen;
+        	}
         }
 
 strfend:
-    *out = 0;
-    disable_highlighting();
-    return buf;
+	*out = 0;
+	disable_highlighting();
+	return buf;
 }
