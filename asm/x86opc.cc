@@ -644,8 +644,8 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"&movaps|movapd", {{Wo}, {Vo}}},
 {"&cvtpi2ps|cvtpi2pd", {{Vu}, {Qq}}},
 {"&movntps|movntpd", {{Mo}, {Vo}}},
-{"&cvttps2pi|cvttpd2pi", {{Pq}, {Wu}}},
-{"&cvtps2pi|cvtpd2pi", {{Pq}, {Wu}}},
+{"&cvttps2pi|cvttpd2pi", {{Pq}, {Wo}}},
+{"&cvtps2pi|cvtpd2pi", {{Pq}, {Wo}}},
 {"&ucomiss|ucomisd", {{Vz}, {Wz}}},
 {"&comiss|comisd", {{Vz}, {Wz}}},
 /* 30 */
@@ -685,7 +685,7 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"|cmovng|cmovle", {{Gv}, {Ev}}},
 {"|cmovg|cmovnle", {{Gv}, {Ev}}},
 /* 50 */
-{"&movmskps|movmskpd", {{Gr}, {VRo}}},
+{"&movmskps|movmskpd", {{Gd}, {VRo}}},
 {"&sqrtps|sqrtpd", {{Vo}, {Wo}}},
 {"&rsqrtps|rsqrtpd", {{Vo}, {Wo}}},
 {"&rcpps|rcppd", {{Vo}, {Wo}}},
