@@ -894,7 +894,7 @@ int ht_vsnprintf (char *str, size_t count, const char *fmt, va_list args)
 
 int ht_snprintf(char *str, size_t count, const char *fmt,...)
 {
-	size_t ret;
+	int ret;
 	va_list ap;
 
 	va_start(ap, fmt);
