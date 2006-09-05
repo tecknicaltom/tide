@@ -9,8 +9,7 @@ public:
     AnalyArmDisassembler() {}
     AnalyArmDisassembler(BuildCtorArg&);
                 void                    init(Analyser *A);
-    virtual	void			done();
-    virtual	ObjectID		object_id() const;
+    virtual	ObjectID		getObjectID() const;
     virtual	Address *		branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
     virtual	void			examineOpcode(OPCODE *opcode);
     virtual	branch_enum_t		isBranch(OPCODE *opcode);
