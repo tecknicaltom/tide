@@ -831,6 +831,7 @@ void x86dis::load(ObjectStream &f)
 	x86_insns = &x86_32_insns;
 	x86_insns_ext = &x86_32_insns_ext;
 	x86_group_insns = &x86_32_group_insns;
+	Disassembler::load(f);
 }
 
 ObjectID x86dis::getObjectID() const
