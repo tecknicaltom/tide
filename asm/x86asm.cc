@@ -334,6 +334,8 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 		match_opcodes(x86_32_insns_ext, insn, X86ASM_PREFIX_0F);
 		match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F);
 		match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F);
+		match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38);
+		match_opcodes(x86_opc_group_insns[1], insn, X86ASM_PREFIX_0F3A);
 		if (namefound && insn->repprefix != X86_PREFIX_NO) {
 			set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
 		}
@@ -418,6 +420,16 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 		emitbyte(0x0f);
 		emitbyte(opcodeb);
 		break;
+	case X86ASM_PREFIX_0F38:
+		emitbyte(0x0f);
+		emitbyte(0x38);
+		emitbyte(opcodeb);
+		break;
+	case X86ASM_PREFIX_0F3A:
+		emitbyte(0x0f);
+		emitbyte(0x3a);
+		emitbyte(opcodeb);
+		break;
 	case X86ASM_PREFIX_DF: i++;
 	case X86ASM_PREFIX_DE: i++;
 	case X86ASM_PREFIX_DD: i++;
@@ -440,8 +452,8 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	}
 
 	/* write the rest */
-	if (modrmv!=-1) emitbyte(modrmv);
-	if (sibv!=-1) emitbyte(sibv);
+	if (modrmv != -1) emitbyte(modrmv);
+	if (sibv != -1) emitbyte(sibv);
 	switch (dispsize) {
 	case 1:
 		emitbyte(disp);
@@ -1142,11 +1154,16 @@ int x86asm::match_opcode_final(x86opc_insn *opcode, x86asm_insn *insn, int prefi
 
 void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix)
 {
-	for (int i=0; i<256; i++) {
+	for (int i=0; i < 256; i++) {
 		if (!opcodes[i].name) {
 			x86opc_insn_op_special special=*((x86opc_insn_op_special*)(&opcodes[i].op[0]));
 			if (special.type == SPECIAL_TYPE_GROUP) {
-				x86opc_insn *group=x86_32_group_insns[special.data];
+				x86opc_insn *group = x86_32_group_insns[special.data];
+				for (int g=0; g < 8; g++) {
+					match_opcode(&group[g], insn, prefix, i, g);
+				}
+			} else if (special.type == SPECIAL_TYPE_SGROUP) {
+				x86opc_insn *group = x86_sgroup_insns[special.data];
 				for (int g=0; g < 8; g++) {
 					match_opcode(&group[g], insn, prefix, i, g);
 				}
