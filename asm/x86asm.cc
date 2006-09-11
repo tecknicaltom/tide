@@ -375,7 +375,13 @@ int x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int
 	dispsize = 0;
 	immsize = 0;
 	if (additional_opcode != -1) {
-		emitmodrm_reg(additional_opcode);
+		if (additional_opcode & 0x800) {
+			emitmodrm_mod(3);
+			emitmodrm_reg(additional_opcode & 0x7);
+			emitmodrm_rm((additional_opcode >> 3) & 0x7);
+		} else {
+			emitmodrm_reg(additional_opcode);
+		}
 	}
 
 	if (eopsize != opsize || insn->opsizeprefix == X86_PREFIX_OPSIZE) {
@@ -1157,19 +1163,24 @@ void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix)
 	for (int i=0; i < 256; i++) {
 		if (!opcodes[i].name) {
 			x86opc_insn_op_special special=*((x86opc_insn_op_special*)(&opcodes[i].op[0]));
-			if (special.type == SPECIAL_TYPE_GROUP) {
-				x86opc_insn *group = x86_32_group_insns[special.data];
+			if (special.type==SPECIAL_TYPE_GROUP) {
+				x86opc_insn *group=x86_group_insns[special.data];
 				for (int g=0; g < 8; g++) {
-					match_opcode(&group[g], insn, prefix, i, g);
-				}
-			} else if (special.type == SPECIAL_TYPE_SGROUP) {
-				x86opc_insn *group = x86_sgroup_insns[special.data];
-				for (int g=0; g < 8; g++) {
-					match_opcode(&group[g], insn, prefix, i, g);
+					x86opc_insn_op_special special2 = *((x86opc_insn_op_special*)(&group[g].op[0]));
+					if (special2.type == SPECIAL_TYPE_SGROUP) {
+						x86opc_insn *group = x86_special_group_insns[special2.data];
+						for (int h=0; h < 8; h++) {
+							match_opcode(&group[h], insn, prefix, i, (h<<3) + g + 0x800);
+						}
+						match_opcode(&group[8], insn, prefix, i, -1);
+					} else {
+						match_opcode(&group[g], insn, prefix, i, g);
+					}
 				}
 			}
+		} else {
+			match_opcode(&opcodes[i], insn, prefix, i, -1);
 		}
-		match_opcode(&opcodes[i], insn, prefix, i, -1);
 	}
 }
 
