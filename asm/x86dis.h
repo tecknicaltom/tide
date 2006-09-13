@@ -126,11 +126,11 @@ class x86_64dis: public x86dis {
 public:	
 				x86_64dis();
 				x86_64dis(BuildCtorArg&);
-	virtual		void	checkInfo(x86opc_insn *xinsn);
-	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
-	virtual		void	prefixes();
-	virtual		uint64	getoffset();
-	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
+	virtual	void		checkInfo(x86opc_insn *xinsn);
+	virtual	void		decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
+	virtual	void		prefixes();
+	virtual	uint64		getoffset();
+	virtual	void		filloffset(CPU_ADDR &addr, uint64 offset);
 		void		load(ObjectStream &f);
 	virtual ObjectID	getObjectID() const;
 	
