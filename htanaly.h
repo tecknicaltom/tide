@@ -95,7 +95,7 @@ public:
 	virtual void *	getLast();
 	virtual void *	getNext(void *entry);
 	virtual void *	getPrev(void *entry);
-	virtual char *	getStr(int col, void *entry);
+	virtual const char *getStr(int col, void *entry);
 	virtual	bool	idle();
 	virtual int	numColumns();
 	virtual	void *	quickfind(const char *s);
@@ -147,7 +147,7 @@ public:
 	FileOfs		fofs;
 	Address		*addr;
 	char		*displayformat;
-		void	init(Bounds *b, ht_aviewer *A, char *Format);
+		void	init(Bounds *b, ht_aviewer *A, const char *Format);
 	virtual	void	done();
 	virtual	int	gettext(char *text, int maxlen);
 		void	update(Address *cursor_addr, FileOfs ecursor_addr);
@@ -161,15 +161,15 @@ public:
 class ht_aviewer;
 class ht_analy_sub: public ht_sub {
 public:
-	Analyser		*analy;
+	Analyser	*analy;
 	Address        *lowestaddress, *highestaddress;
 	AnalyserOutput *output;
 	ht_aviewer	*aviewer;
 	
-			void init(File *file, ht_aviewer *A, Analyser *analyser, Address *Lowestaddress, Address *Highestaddress);
+		void	init(File *file, ht_aviewer *A, Analyser *analyser, Address *Lowestaddress, Address *Highestaddress);
 	virtual	void	done();
-	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
-	virtual	bool closest_line_id(LINE_ID *line_id);
+	virtual	bool	convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
+	virtual	bool	closest_line_id(LINE_ID *line_id);
 	virtual	void	first_line_id(LINE_ID *line_id);
 	virtual	bool	getline(char *line, const LINE_ID line_id);
 	virtual	void	last_line_id(LINE_ID *line_id);
@@ -192,7 +192,7 @@ public:
 	ht_analy_sub *analy_sub;
 	bool one_load_hack;
 	bool pause;
-		void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy);
+		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy);
 	virtual	void done();
 		bool convertAddressToViewerPos(Address *a, viewer_pos *p);
 		bool convertViewerPosToAddress(const viewer_pos &p, Address **a);
