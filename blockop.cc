@@ -363,7 +363,7 @@ Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size,
 	blockop_o = ctx->o;
 	eval_scalar r;
 	if (!eval(&r, action, blockop_func_eval, blockop_symbol_eval, file)) {
-		char *s;
+		const char *s;
 		int p;
 		get_eval_error(&s, &p);
 		throw MsgfException("error evaluating '%s': %s at %d", action, s, p);
@@ -410,7 +410,7 @@ bool blockop_str_process(Object *context, ht_text *progress_indicator)
 			blockop_i = ctx->i;
 			blockop_o = ctx->o;
 			if (!eval(&r, ctx->action, blockop_func_eval, blockop_symbol_eval, ctx->file)) {
-				char *s;
+				const char *s;
 				int p;
 				get_eval_error(&s, &p);
 				throw MsgfException("error evaluating '%s': %s at %d", ctx->action, s, p);
@@ -485,7 +485,7 @@ Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size,
 	eval_scalar r;
 	eval_int ir;
 	if (!eval(&r, action, blockop_func_eval, blockop_symbol_eval, file)) {
-		char *s;
+		const char *s;
 		int p;
 		get_eval_error(&s, &p);
 		throw MsgfException("error evaluating '%s': %s at %d", action, s, p);
@@ -533,7 +533,7 @@ bool blockop_int_process(Object *context, ht_text *progress_indicator)
 			blockop_o = ctx->o;
 			blockop_i = ctx->i;
 			if (!eval(&r, ctx->action, blockop_func_eval, blockop_symbol_eval, ctx->file)) {
-				char *s;
+				const char *s;
 				int p;
 				get_eval_error(&s, &p);
 				throw MsgfException("error evaluating '%s': %s at %d", ctx->action, s, p);
