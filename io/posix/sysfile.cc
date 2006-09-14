@@ -189,20 +189,20 @@ void sys_suspend()
 
 static const char *openmode2mode(FileOpenMode om, IOAccessMode am)
 {
-	char *mode = NULL;
+	const char *mode = NULL;
 
 	switch (om) {
-		case FOM_APPEND:
-			mode = "ab+";
-			break;
-		case FOM_CREATE:
-			if (am & IOAM_WRITE) mode = "wb";
-			if (am & IOAM_READ) mode = "wb+";
-			break;
-		case FOM_EXISTS:
-			if (am & IOAM_READ) mode = "rb";
-			if (am & IOAM_WRITE) mode = "rb+";
-			break;
+	case FOM_APPEND:
+		mode = "ab+";
+		break;
+	case FOM_CREATE:
+		if (am & IOAM_WRITE) mode = "wb";
+		if (am & IOAM_READ) mode = "wb+";
+		break;
+	case FOM_EXISTS:
+		if (am & IOAM_READ) mode = "rb";
+		if (am & IOAM_WRITE) mode = "rb+";
+		break;
 	}
 	return mode;
 }
