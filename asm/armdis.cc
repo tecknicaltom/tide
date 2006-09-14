@@ -101,7 +101,7 @@ byte ArmDisassembler::getSize(dis_insn *disasm_insn)
 	return 4;//((ArmDisInsn*)disasm_insn)->size;
 }
 
-char *ArmDisassembler::getName()
+const char *ArmDisassembler::getName()
 {
 	return "Arm/Disassembler";
 }
@@ -129,7 +129,7 @@ dis_insn *ArmDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 	return &insn;
 }
 
-char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, char *)
+const char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, const char *)
 {
 	ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
 
@@ -172,6 +172,7 @@ char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, char *)
 
 	if (*in == ';' && out[-1] == '\t') out--;
 
+	{
 	char *p = strstr(buf, "[pc, #");
 	if (p && adi->offset != ~0u) {
 		CPU_ADDR caddr;
@@ -185,7 +186,8 @@ char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, char *)
             		out += slen;
         	}
         }
-
+	}
+	
 strfend:
 	*out = 0;
 	disable_highlighting();
