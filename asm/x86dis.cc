@@ -783,7 +783,7 @@ int x86dis::getmodrm()
 	return modrm;
 }
 
-char *x86dis::getName()
+const char *x86dis::getName()
 {
 	return "x86/Disassembler";
 }
@@ -1193,89 +1193,89 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 }
 
 
-void x86dis::str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print)
+void x86dis::str_format(char **str, const char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print)
 {
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_symbol = get_cs(e_cs_symbol);
 
-	char *f=*format;
-	char *s=*str;
+	const char *f = *format;
+	char *s = *str;
 	while (*f) {
-		if (*f==stopchar) break;
+		if (*f == stopchar) break;
 		switch (*f) {
-			case '\t':
-				if (print) do *(s++)=' '; while ((s-insnstr) % DIS_STYLE_TABSIZE);
-				break;
-			case DISASM_STRF_VAR:
-				f++;
-				if (print) {
-					char *t=0;
-					int tl=0;
-					switch (*f) {
-					case DISASM_STRF_PREFIX:
-						t=p;
-						break;
-					case DISASM_STRF_NAME:
-						t=n;
-						break;
-					case DISASM_STRF_FIRST:
-						t=op[0];
-						tl=oplen[0];
-						break;
-					case DISASM_STRF_SECOND:
-						t=op[1];
-						tl=oplen[1];
-						break;
-					case DISASM_STRF_THIRD:
-						t=op[2];
-						tl=oplen[2];
-						break;
-					}
-					if (tl) {
-						memmove(s, t, tl);
-						s+=tl;
-						*s=0;
-					} else {
-						strcpy(s, t);
-						s += strlen(s);
-					}
-				}
-				break;
-			case DISASM_STRF_COND: {
+		case '\t':
+			if (print) do *(s++)=' '; while ((s-insnstr) % DIS_STYLE_TABSIZE);
+			break;
+		case DISASM_STRF_VAR:
+			f++;
+			if (print) {
 				char *t=0;
-				f++;
+				int tl=0;
 				switch (*f) {
-					case DISASM_STRF_PREFIX:
-						t=p;
-						break;
-					case DISASM_STRF_NAME:
-						t=n;
-						break;
-					case DISASM_STRF_FIRST:
-						t=op[0];
-						break;
-					case DISASM_STRF_SECOND:
-						t=op[1];
-						break;
-					case DISASM_STRF_THIRD:
-						t=op[2];
-						break;
+				case DISASM_STRF_PREFIX:
+					t=p;
+					break;
+				case DISASM_STRF_NAME:
+					t=n;
+					break;
+				case DISASM_STRF_FIRST:
+					t=op[0];
+					tl=oplen[0];
+					break;
+				case DISASM_STRF_SECOND:
+					t=op[1];
+					tl=oplen[1];
+					break;
+				case DISASM_STRF_THIRD:
+					t=op[2];
+					tl=oplen[2];
+					break;
 				}
-				f+=2;
-				if ((t) && (t[0])) {
-					str_format(&s, &f, p, n, op, oplen, *(f-1), 1);
+				if (tl) {
+					memmove(s, t, tl);
+					s+=tl;
+					*s=0;
 				} else {
-					str_format(&s, &f, p, n, op, oplen, *(f-1), 0);
+					strcpy(s, t);
+					s += strlen(s);
 				}
+			}
+			break;
+		case DISASM_STRF_COND: {
+			char *t=0;
+			f++;
+			switch (*f) {
+			case DISASM_STRF_PREFIX:
+				t=p;
+				break;
+			case DISASM_STRF_NAME:
+				t=n;
+				break;
+			case DISASM_STRF_FIRST:
+				t=op[0];
+				break;
+			case DISASM_STRF_SECOND:
+				t=op[1];
+				break;
+			case DISASM_STRF_THIRD:
+				t=op[2];
 				break;
 			}
-			default:
-				if (print) {
-					bool x = (strchr(",.-=+-*/[]()", *f) != NULL) && *f;
-					if (x) { strcpy(s, cs_symbol); s += strlen(cs_symbol); }
-					*(s++) = *f;
-					if (x) { strcpy(s, cs_default); s += strlen(cs_default); }
-				}
+			f += 2;
+			if (t && t[0]) {
+				str_format(&s, &f, p, n, op, oplen, *(f-1), 1);
+			} else {
+				str_format(&s, &f, p, n, op, oplen, *(f-1), 0);
+			}
+			break;
+		}
+		default:
+			if (print) {
+				bool x = (strchr(",.-=+-*/[]()", *f) != NULL) && *f;
+				if (x) { strcpy(s, cs_symbol); s += strlen(cs_symbol); }
+				*(s++) = *f;
+				if (x) { strcpy(s, cs_default); s += strlen(cs_default); }
+			}
 		}
 		f++;
 	}
@@ -1284,7 +1284,7 @@ void x86dis::str_format(char **str, char **format, char *p, char *n, char *op[3]
 	*str=s;
 }
 
-char *x86dis::str(dis_insn *disasm_insn, int options)
+const char *x86dis::str(dis_insn *disasm_insn, int options)
 {
 	return strf(disasm_insn, options, DISASM_STRF_DEFAULT_FORMAT);
 }
@@ -1303,7 +1303,7 @@ static void pickname(char *result, const char *name, int n)
 	ht_strlcpy(result, name, s-name+1);
 }
 
-char *x86dis::strf(dis_insn *disasm_insn, int opt, char *format)
+const char *x86dis::strf(dis_insn *disasm_insn, int opt, const char *format)
 {
 	x86dis_insn *insn = (x86dis_insn*)disasm_insn;
 	char prefix[64];
