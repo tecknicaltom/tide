@@ -1914,15 +1914,15 @@ struct IA64Operand {
 };
 
 struct IA64OpcodeEntry {
-	char						*name;
+	const char			*name;
 	IA64EnumOpcodeFormat		format;
 	IA64EnumOpcodeTemplateRole   	role;
-	IA64Operand				op1; // FIXME make array
-	IA64Operand				op2;
-	IA64Operand				op3;
-	IA64Operand				op4;
-	IA64Operand				op5;
-	IA64Operand				op6;
+	IA64Operand			op1; // FIXME make array
+	IA64Operand			op2;
+	IA64Operand			op3;
+	IA64Operand			op4;
+	IA64Operand			op5;
+	IA64Operand			op6;
 };
 																						  
 extern IA64Template IA64Templates[];
