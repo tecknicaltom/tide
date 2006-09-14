@@ -130,9 +130,9 @@ protected:
 	uint caps;
 
 /* new */
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 public:
-			void init(Bounds *b, const char *desc, uint caps);
+		void init(Bounds *b, const char *desc, uint caps);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -256,7 +256,7 @@ public:
 /* overwritten */
 	virtual	int childcount() const;
 	virtual	bool focus(ht_view *view);
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 		void getbounds(Bounds *b);
 	virtual ht_view *getfirstchild();
 	virtual	ht_view *getselected();
@@ -322,7 +322,7 @@ protected:
 	bool isdirty_cursor_line;
 
 /* overwritten */
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 	virtual	bool next_logical_pos(viewer_pos pos, viewer_pos *npos);
 	virtual	bool next_logical_offset(FileOfs ofs, FileOfs *nofs);
 	virtual	Object *vstate_create();
