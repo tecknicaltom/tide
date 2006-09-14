@@ -142,7 +142,7 @@ void AddressX86Flat32::store(ObjectStream &s) const
 
 int AddressX86Flat32::stringify(char *s, int max_length, int format) const
 {
-	char *formats[] = {
+	const char *formats[] = {
 		"%s%x%s",
 		"%s%8x%s",
 		"%s%08x%s",
@@ -281,7 +281,7 @@ void AddressX86_1632::store(ObjectStream &s) const
 
 int AddressX86_1632::stringify(char *s, int max_length, int format) const
 {
-	char *formats[] = {
+	const char *formats[] = {
 		"%s%x%s:%s%x%s",
 		"%s%4x%s:%s%08x%s",
 		"%s%04x%s:%s%08x%s",
@@ -424,7 +424,7 @@ void AddressX86_1616::store(ObjectStream &s) const
 
 int AddressX86_1616::stringify(char *s, int max_length, int format) const
 {
-	char *formats[] = {
+	const char *formats[] = {
 		"%s%x%s:%s%04x%s",
 		"%s%4x%s:%s%04x%s",
 		"%s%04x%s:%s%04x%s",
@@ -636,7 +636,12 @@ void	AnalyX86Disassembler::examineOpcode(OPCODE *opcode)
 branch_enum_t AnalyX86Disassembler::isBranch(OPCODE *opcode)
 {
 	x86dis_insn *o = (x86dis_insn*)opcode;
-	char *opcode_str = o->name;
+	const char *opcode_str = o->name;
+	if (opcode_str[0] == '|') {
+		opcode_str++;
+	}
+	
+	
 	if (opcode_str[0]=='j') {
 		if (opcode_str[1]=='m') return br_jump; else return br_jXX;
 	} else if ((opcode_str[0]=='l') && (opcode_str[1]=='o')  && (opcode_str[2]=='o')) {
