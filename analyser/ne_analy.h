@@ -31,7 +31,7 @@ public:
 	Area			*validarea;
 
 				NEAnalyser();
-				NEAnalyser(BuildCtorArg&);
+				NEAnalyser(BuildCtorArg&a): Analyser(a){};
 		void		init(ht_ne_shared_data *ne_shared, File *file);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
