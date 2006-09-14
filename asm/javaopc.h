@@ -57,7 +57,7 @@ struct java_insn_op {
 };
 
 struct javaopc_insn {
-	char *name;
+	const char *name;
 	int optype[2];
 };
 
