@@ -42,23 +42,23 @@ format_viewer_if htfinfo_if = {
  
 void	ht_finfo_text::init(Bounds *b, File *f)
 {
-	ht_statictext::init(b, 0, align_left, 1);
-	options|=VO_BROWSABLE;
-	olddesc=desc;
-	desc=FINFO_DESC;
-	file=f;
+	ht_statictext::init(b, FINFO_DESC, align_left, 1);
+	options |= VO_BROWSABLE;
+//	olddesc = desc;
+//	desc =;
+	file = f;
 }
 
 void	ht_finfo_text::done()
 {
-	desc=olddesc;
+//	desc = olddesc;
 	ht_statictext::done();
 }
 
 #define FINFO_IDENTIFIER_WIDTH 24
 #define FINFO_IDENTIFIER_WIDTH_STR "24"
 
-int print_time(char *f, int max_len, char *prefix, time_t time)
+int print_time(char *f, int max_len, const char *prefix, time_t time)
 {
 	tm tt;
 	memcpy(&tt, localtime(&time), sizeof tt);
@@ -97,10 +97,10 @@ int ht_finfo_text::gettext(char *text, int max_len)
 		};
 	
 		uint32 ulm[3]={pstat_mode_usr, pstat_mode_grp, pstat_mode_oth};
-		char *uls[3]={"user", "group", "world"};
+		const char *uls[3]={"user", "group", "world"};
 	
 		uint32 alm[3]={pstat_mode_r, pstat_mode_w, pstat_mode_x};
-		char *als[3]={"read", "write", "execute"};
+		const char *als[3]={"read", "write", "execute"};
 		
 		if (max_len-(t-text) > 1) *t++ = '\n';
 
