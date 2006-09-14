@@ -190,7 +190,7 @@ static int pe_viewer_func_section(eval_scalar *result, eval_scalar *q)
 /*
  *	CLASS ht_pe_aviewer
  */
-void ht_pe_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_pe_shared_data *PE_shared)
+void ht_pe_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_pe_shared_data *PE_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	pe_shared = PE_shared;
