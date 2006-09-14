@@ -50,7 +50,7 @@ public:
 	MemoryFile *datafile;
 	
 	ht_history_entry(char *str=0, ObjectStreamBin *data = NULL, MemoryFile *datafile = NULL);
-	ht_history_entry(BuildCtorArg&);
+	ht_history_entry(BuildCtorArg &a): Object(a) {};
 	~ht_history_entry();
 /* overwritten */
 	virtual int	compareTo(const Object *) const;
