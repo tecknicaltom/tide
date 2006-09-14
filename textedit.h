@@ -319,7 +319,7 @@ public:
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void resize(int rw, int rh);
 /* new */
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 			uint get_line_length(uint line);
 			uint get_line_vlength(uint line);
 			uint get_line_indent(uint line);
@@ -384,7 +384,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
 	/* position indicator string */
 	virtual	int get_pindicator_str(char *buf, int max_len);
