@@ -33,7 +33,7 @@ public:
 	Analyser	*a;
 	
 				CodeAnalyser();
-				CodeAnalyser(BuildCtorArg&);
+				CodeAnalyser(BuildCtorArg&a): Object(a) {};
 		void      	init(Analyser *A);
 	virtual	void		load(ObjectStream &s);
 	virtual	void 		done();
