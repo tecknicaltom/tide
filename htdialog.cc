@@ -474,7 +474,7 @@ void *ht_history_listbox::getPrev(void *entry)
 	}
 }
 
-char *ht_history_listbox::getStr(int col, void *entry)
+const char *ht_history_listbox::getStr(int col, void *entry)
 {
 	return ((ht_history_entry*)(*history)[(long)entry-1])->desc;
 }
@@ -1607,7 +1607,7 @@ void ht_listbox::draw()
 			}
 			int X = -x;
 			for (int j=0; j < cols; j++) {
-				char *s = getStr(j, entry);
+				const char *s = getStr(j, entry);
 				int slen = strlen(s);
 				if (slen > widths[j]) {
 					widths[j] = slen;
@@ -2092,7 +2092,7 @@ void *ht_text_listbox::getPrev(void *entry)
 	return ((ht_text_listbox_item *)entry)->prev;
 }
 
-char *ht_text_listbox::getStr(int col, void *entry)
+const char *ht_text_listbox::getStr(int col, void *entry)
 {
 	if (entry && (col < cols)) {
 		return ((ht_text_listbox_item *)entry)->data[col];
@@ -2135,7 +2135,7 @@ void	ht_text_listbox::insert_str_extra(int id, void *extra_data, const char *str
 	item->extra_data = extra_data;
 	va_list str2;
 	va_start(str2, str);
-	char *str3 = str;
+	const char *str3 = str;
 	for (int i=0; i<cols; i++) {
 		int slen = strlen(str3);
 		if (slen > widths[i]) {
@@ -2170,7 +2170,7 @@ void ht_text_listbox::insert_str(int id, const char *str, ...)
 	item->extra_data = NULL;
 	va_list str2;
 	va_start(str2, str);
-	char *str3 = str;
+	const char *str3 = str;
 	for (int i=0; i<cols; i++) {
 		int slen = strlen(str3);
 		if (slen > widths[i]) {
@@ -2494,7 +2494,7 @@ void ht_statictext::settext(const char *aText)
  *	CLASS ht_listpopup_dialog
  */
 
-void ht_listpopup_dialog::init(Bounds *b, char *desc)
+void ht_listpopup_dialog::init(Bounds *b, const char *desc)
 {
 	ht_dialog::init(b, desc, FS_TITLE | FS_MOVE);
 	VIEW_DEBUG_NAME("ht_listpopup_dialog");
@@ -2661,7 +2661,7 @@ int ht_listpopup::run_listpopup()
 	return r;
 }
 
-void ht_listpopup::insertstring(char *string)
+void ht_listpopup::insertstring(const char *string)
 {
 	listpopup->insertstring(string);
 }
@@ -2747,7 +2747,7 @@ void ht_label::handlemsg(htmsg *msg)
  *	CLASS ht_progress_indicator
  */
 
-void	ht_progress_indicator::init(Bounds *b, char *hint)
+void	ht_progress_indicator::init(Bounds *b, const char *hint)
 {
 	ht_window::init(b, NULL, 0);
 
