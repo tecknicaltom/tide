@@ -101,7 +101,7 @@ struct ImageSymDescriptor {
 #define MAX_BYTES_PER_SEGMENT		0xff00
 #define MAX_SYMBOLS_PER_SEGMENT		0x4000
 
-static void write_sym(Stream &stream, uint32 addr, char *name, uint *bytes_written)
+static void write_sym(Stream &stream, uint32 addr, const char *name, uint *bytes_written)
 {
 	ImageSymDescriptor desc;
 	desc.address = addr;
@@ -143,7 +143,7 @@ int export_to_sym(Analyser *analy, File *file)
 	if ((!analy) || (!file)) return /*HTML_OUTPUT_ERR_GENERIC*/1;
 	if (analy->active) return /*HTML_OUTPUT_ERR_ANALY_NOT_FINISHED*/1;
 
-	char *module_name = "TEST";
+	const char *module_name = "TEST";
 	ImageSymHeader head;
 	ImageSymSegHeader seg_head;
 
