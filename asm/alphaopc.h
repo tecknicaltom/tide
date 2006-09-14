@@ -25,11 +25,11 @@
 
 struct alpha_opcode_tab_entry {
 	uint16	fcode;
-	char	*name;
+	const char *name;
 	byte	type;
 };
 
-extern char *alpha_reg_names[];
+extern const char *alpha_reg_names[];
 extern alpha_opcode_tab_entry alpha_instr_tbl[];
 extern alpha_opcode_tab_entry alpha_instr_tbl_ext10[];
 extern alpha_opcode_tab_entry alpha_instr_tbl_ext11[];
