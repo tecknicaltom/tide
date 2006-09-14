@@ -68,7 +68,7 @@ static ht_search_request* create_request_hexascii(text_search_pos *start, text_s
 typedef ht_search_request* (*create_request_func)(text_search_pos *ret_start, text_search_pos *ret_end, ht_view *form, uint search_class);
 
 struct ht_text_search_method {
-	char *name;
+	const char *name;
 	uint search_class;			// SC_*
 	uint search_mode_mask;		// SEARCHMODE_*
 	uint histid;
@@ -1690,10 +1690,10 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
+			const char *s=func(msg->data1.integer, 0);
 			if (s) {
 				msg->msg=msg_retval;
-				msg->data1.str=s;
+				msg->data1.cstr=s;
 			}
 			break;
 		}
