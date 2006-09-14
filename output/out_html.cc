@@ -26,9 +26,9 @@
 #include "x86dis.h"
 #include "string.h"
 
-char *header = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html>\n<head>\n";
-char *footer = "</body>\n</html>\n";
-char *stylesheet = "<style type=\"text/css\">\n"
+const char *header = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html>\n<head>\n";
+const char *footer = "</body>\n</html>\n";
+const char *stylesheet = "<style type=\"text/css\">\n"
 "<!--\n"
 "body {\n"
 "\tfont: 10pt arial,helvetica,sans-serif;\n"
