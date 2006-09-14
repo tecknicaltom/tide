@@ -43,7 +43,7 @@ class Analyser;
 class Address: public Object {
 public:
 				Address() {};
-				Address(BuildCtorArg&) {};
+				Address(BuildCtorArg&a): Object(a) {};
 	virtual	bool		add(int offset) = 0;
 	virtual	int		byteSize() = 0;
 	virtual Address	*	clone() const = 0;
@@ -65,7 +65,7 @@ public:
 class InvalidAddress: public Address {
 public:
 				InvalidAddress() {};
-				InvalidAddress(BuildCtorArg&);
+				InvalidAddress(BuildCtorArg&a): Address(a) {};
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
 	virtual	int		compareTo(const Object *obj) const;
@@ -90,7 +90,7 @@ public:
 class AddressFlat32: public Address {
 public:
 	uint32 addr;
-				AddressFlat32(BuildCtorArg&);
+				AddressFlat32(BuildCtorArg&a): Address(a) {};
 				AddressFlat32(uint32 a=0);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
@@ -115,7 +115,7 @@ public:
 class AddressFlat64: public Address {
 public:
 	uint64 addr;
-				AddressFlat64(BuildCtorArg&);
+				AddressFlat64(BuildCtorArg&a): Address(a) {};
 				AddressFlat64(uint64 a=0);
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
@@ -178,7 +178,7 @@ public:
 	Analyser		*analy;
 	Disassembler		*disasm;
 					AnalyDisassembler();
-					AnalyDisassembler(BuildCtorArg &) {};
+					AnalyDisassembler(BuildCtorArg &a): Object(a) {};
 
 		void			init(Analyser *A);
 
@@ -205,7 +205,7 @@ public:
 	Address		*addr;
 	xref_enum_t	type;
 				AddrXRef(Address *a, xref_enum_t aType = xrefread);
-				AddrXRef(BuildCtorArg&);
+				AddrXRef(BuildCtorArg&a): Object(a) {};
 	virtual			~AddrXRef();
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
@@ -290,7 +290,7 @@ class AddressQueueItem: public Object {
 public:
 	Address	*addr;
 	Address	*func;
-				AddressQueueItem(BuildCtorArg&);
+				AddressQueueItem(BuildCtorArg&a): Object(a) {};
 				AddressQueueItem(Address *Addr, Address *Func);
 				~AddressQueueItem();
 	virtual	void		load(ObjectStream &s);
@@ -328,7 +328,7 @@ public:
 	int			location_count;
 
 				Analyser() {};
-				Analyser(BuildCtorArg&) {};
+				Analyser(BuildCtorArg&a): Object(a) {};
 
 		void		init();
 	virtual	void		load(ObjectStream &s);
