@@ -269,12 +269,12 @@ int ht_view::datasize()
 	return 0;
 }
 
-char *ht_view::defaultpalette()
+const char *ht_view::defaultpalette()
 {
 	return palkey_generic_window_default;
 }
 
-char *ht_view::defaultpaletteclass()
+const char *ht_view::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
