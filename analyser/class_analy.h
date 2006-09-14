@@ -31,7 +31,7 @@ public:
 	File			*file;
 
 				ClassAnalyser() {};
-				ClassAnalyser(BuildCtorArg&);
+				ClassAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_class_shared_data *Class_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
