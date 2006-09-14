@@ -30,8 +30,8 @@ public:
 	File 		*file;
 	Area			*validarea;
 
-				LEAnalyser();
-				LEAnalyser(BuildCtorArg&);				
+				LEAnalyser() {};
+				LEAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_le_shared_data *le_shared, File *file);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
