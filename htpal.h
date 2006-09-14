@@ -43,7 +43,7 @@ public:
 	vcp color;
 
 		palette_entry(uint idx=0, vcp color=0);
-		palette_entry(BuildCtorArg&);
+		palette_entry(BuildCtorArg&a): ht_registry_data(a) {};
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
