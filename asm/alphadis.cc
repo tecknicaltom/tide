@@ -252,7 +252,7 @@ void Alphadis::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_
 	addr_align = 4;
 }
 
-char *Alphadis::getName()
+const char *Alphadis::getName()
 {
 	return "alpha/disassembler";
 }
@@ -267,7 +267,7 @@ ObjectID Alphadis::getObjectID() const
 	return ATOM_DISASM_ALPHA;
 }
 
-char	*Alphadis::str(dis_insn *disasm_insn, int style)
+const char *Alphadis::str(dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
@@ -277,7 +277,7 @@ char	*Alphadis::str(dis_insn *disasm_insn, int style)
 #define A_REG_C alpha_reg_names[alpha_insn->regC]
 #define A_NAME (alpha_insn->table+alpha_insn->code)->name
 
-char	*Alphadis::strf(dis_insn *disasm_insn, int style, char *format)
+const char *Alphadis::strf(dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 	
@@ -300,7 +300,7 @@ char	*Alphadis::strf(dis_insn *disasm_insn, int style, char *format)
 				strcpy(insnstr, "db         ? * 3");
 				break;
 			case 4:
-				sprintf(insnstr, "dd         %s0x%08lx", cs_number, alpha_insn->data);
+				sprintf(insnstr, "dd         %s0x%08x", cs_number, alpha_insn->data);
 				break;
 			default: { /* braces for empty assert */
 				assert(0);
@@ -312,7 +312,7 @@ char	*Alphadis::strf(dis_insn *disasm_insn, int style, char *format)
 			if (alpha_insn->regB != REG_LIT)
 				sprintf(insnstr, "%-10s %s%s,%s %s%s,%s %s", A_NAME, A_REG_A, cs_symbol, cs_default, A_REG_B, cs_symbol, cs_default, A_REG_C);
 			else
-				sprintf(insnstr, "%-10s %s%s,%s %s0x%lx%s,%s %s", A_NAME, A_REG_A, cs_symbol, cs_default, cs_number, alpha_insn->data, cs_symbol, cs_default, A_REG_C);
+				sprintf(insnstr, "%-10s %s%s,%s %s0x%x%s,%s %s", A_NAME, A_REG_A, cs_symbol, cs_default, cs_number, alpha_insn->data, cs_symbol, cs_default, A_REG_C);
 			break;
 		case ALPHA_GROUP3:
 		case ALPHA_GROUP_FLD:
@@ -364,7 +364,7 @@ char	*Alphadis::strf(dis_insn *disasm_insn, int style, char *format)
 			break;
 		}
 		case ALPHA_GROUP_PAL:
-			sprintf(insnstr, "%-10s %s0x%08lx", A_NAME, cs_number, alpha_insn->data);
+			sprintf(insnstr, "%-10s %s0x%08x", A_NAME, cs_number, alpha_insn->data);
 			break;
 		default:
 			goto is_invalid;
