@@ -1291,7 +1291,7 @@ void ht_text_viewer::draw()
 #endif /* TIME_DRAW */
 }
 
-char *ht_text_viewer::func(uint i, bool execute)
+const char *ht_text_viewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 5: {
@@ -2164,7 +2164,7 @@ void ht_text_editor::delete_lines(uint line, uint count)
 	textfile->delete_lines(line, count);
 }
 
-char *ht_text_editor::func(uint i, bool execute)
+const char *ht_text_editor::func(uint i, bool execute)
 {
 	switch (i) {
 		case 2:
