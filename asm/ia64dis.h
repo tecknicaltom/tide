@@ -87,7 +87,7 @@ protected:
 	IA64DisInsn	insn;
 public:
 			IA64Disassembler() {};
-			IA64Disassembler(BuildCtorArg&);
+			IA64Disassembler(BuildCtorArg&a): Disassembler(a) {};
 
 	virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn	*duplicateInsn(dis_insn *disasm_insn);
