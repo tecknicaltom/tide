@@ -26,7 +26,7 @@
 class AddressX86Flat32: public Address {
 public:
 	uint32 addr;
-	AddressX86Flat32(BuildCtorArg&);
+	AddressX86Flat32(BuildCtorArg&a): Address(a) {};
 	AddressX86Flat32(uint32 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
@@ -53,7 +53,7 @@ public:
 	uint16 seg;
 	uint16 addr;
 public:
-	AddressX86_1616(BuildCtorArg&);
+	AddressX86_1616(BuildCtorArg&a): Address(a) {};
 	AddressX86_1616(uint16 seg=0, uint16 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
@@ -80,7 +80,7 @@ public:
 	uint16 seg;
 	uint32 addr;
 public:
-	AddressX86_1632(BuildCtorArg&);
+	AddressX86_1632(BuildCtorArg&a): Address(a) {};
 	AddressX86_1632(uint16 seg=0, uint32 addr=0);
 	virtual bool add(int offset);
 	virtual int byteSize();
@@ -115,7 +115,7 @@ public:
 	int flags;
 
 				AnalyX86Disassembler() {};
-				AnalyX86Disassembler(BuildCtorArg&);
+				AnalyX86Disassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
 		void		init(Analyser *A, int flags);
 		void 		load(ObjectStream &f);
 	virtual	ObjectID	getObjectID() const;
