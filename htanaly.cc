@@ -165,7 +165,7 @@ void *SymbolBox::getPrev(void *entry)
 	return analy->enumSymbolsReverse((Symbol *)entry);
 }
 
-char *SymbolBox::getStr(int col, void *entry)
+const char *SymbolBox::getStr(int col, void *entry)
 {
 	if (!entry) return NULL;
 	Symbol *l = ((Symbol *)entry);
@@ -378,7 +378,7 @@ void	CallChain::select_node(void *node)
 /*
  *
  */
-void AnalyInfoline::init(Bounds *b, ht_aviewer *A, char *Format)
+void AnalyInfoline::init(Bounds *b, ht_aviewer *A, const char *Format)
 {
 	ht_statictext::init(b, 0, align_left);
 	VIEW_DEBUG_NAME("AnalyInfoline");
@@ -490,7 +490,7 @@ bool AnalyInfoline::valid()
 /*
  *
  */
-void ht_aviewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy)
+void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy)
 {
 	analy = Analy;
 	if (Analy) {
