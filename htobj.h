@@ -139,8 +139,8 @@ public:
 	uint g_hdist, g_vdist;
 
 	palette pal;
-	char *pal_class;
-	char *pal_name;
+	const char *pal_class;
+	const char *pal_name;
 
 /*debug:*/const char *view_debug_name;
 
@@ -185,7 +185,7 @@ public:
 	virtual	void		getdata(ObjectStream &s);
 	virtual ht_view 	*getfirstchild();
 	virtual	uint		getnumber();
-		char		*getpalette();
+		const char	*getpalette();
 	virtual	ht_view		*getselected();
 	virtual void		handlemsg(htmsg *msg);
 		void		hidecursor();
@@ -213,8 +213,8 @@ public:
 	virtual	void		setgroup(ht_group *group);
 	virtual	void		setnumber(uint number);
 		void		setoptions(int options);
-	virtual	void		setpalette(char *pal_name);
-		void		setpalettefull(char *pal_name, char *pal_class);
+	virtual	void		setpalette(const char *pal_name);
+		void		setpalettefull(const char *pal_name, const char *pal_class);
 	virtual	void		store(ObjectStream &s) const;
 		void 		unrelocate_to(ht_view *view);
 };
@@ -279,7 +279,7 @@ public:
 	virtual	void selectfirst();
 	virtual	void selectlast();
 	virtual	void setdata(ObjectStream &s);
-	virtual	void setpalette(char *pal_name);
+	virtual	void setpalette(const char *pal_name);
 	virtual	void store(ObjectStream &s) const;
 /* new */
 	virtual	void reorder_view(ht_view *v, int rx, int ry);
@@ -413,12 +413,12 @@ protected:
 
 	int action_state;
 	
-			bool next_action_state();
+		bool next_action_state();
 public:
 		ht_window() {}
 		ht_window(BuildCtorArg&);
 
-		void	init(Bounds *b, const char *desc, uint framestyle, uint number=0);
+		void init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
