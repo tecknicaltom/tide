@@ -34,7 +34,7 @@ public:
 	Area			*validarea;
 
 				MachoAnalyser() {};
-				MachoAnalyser(BuildCtorArg&);
+				MachoAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_macho_shared_data *macho_shared, File *File);
 		void		load(ObjectStream &f);
 	virtual	void		done();
