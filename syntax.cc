@@ -42,7 +42,7 @@ bool regmatch(char *str, regex_t *preg, int *len)
 	return false;
 }
 
-bool match_sorted_stringtable(char *s, uint slen, char **strings, uint strings_count)
+bool match_sorted_stringtable(char *s, uint slen, const char **strings, uint strings_count)
 {
 	int a=0, b=strings_count-1;
 	int m;
@@ -318,7 +318,7 @@ syntax_lexer_rule c_syntax_lexer_rules[]={
 	{ 0, 0, LRST_EMPTY, false, false, 0 }
 };
 
-char *c_reserved[]=
+const char *c_reserved[]=
 {
 /* types */
 	"bool", "char", "void", "int", "short", "long",
@@ -349,11 +349,11 @@ char *c_reserved[]=
 void ht_c_syntax_lexer::init()
 {
 	ht_lang_syntax_lexer::init(c_syntax_lexer_rules);
-	c_reserved_sorted=create_sorted_stringtable(c_reserved);
+	c_reserved_sorted = create_sorted_stringtable(c_reserved);
 
-	char **table=c_reserved;
+	const char **table=c_reserved;
 	
-	char **x=table;
+	const char **x=table;
 	while (*x) x++;
 	c_reserved_count=x-table;
 
@@ -390,7 +390,7 @@ lexer_state ht_c_syntax_lexer::getinitstate()
 	return LEX_CST_NORMAL;
 }
 
-char *ht_c_syntax_lexer::getname()
+const char *ht_c_syntax_lexer::getname()
 {
 	return "C/C++";
 }
@@ -601,7 +601,7 @@ lexer_state ht_html_syntax_lexer::getinitstate()
 	return LEX_HTMLST_NORMAL;
 }
 
-char *ht_html_syntax_lexer::getname()
+const char *ht_html_syntax_lexer::getname()
 {
 	return "HTML";
 }
@@ -652,11 +652,11 @@ int qsort_stringlist(const void *e1, const void *e2)
 	return strcmp(*(char **)e1, *(char **)e2);
 }
 	
-char **create_sorted_stringtable(char **table)
+const char **create_sorted_stringtable(const char **table)
 {
-	char **x=table;
+	const char **x=table;
 	while (*x) x++;
-	char **stab = ht_malloc(sizeof (char*) * (x-table+1));
+	const char **stab = ht_malloc(sizeof (char*) * (x-table+1));
 	memcpy(stab, table, sizeof (char*) * (x-table+1));
 	
 	qsort(stab, x-table, sizeof(char*), qsort_stringlist);
