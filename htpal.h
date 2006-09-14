@@ -29,7 +29,7 @@
 
 struct defpal {
 	int idx;
-	char *name;
+	const char *name;
 	int color;
 };
 
@@ -116,7 +116,7 @@ public:
  */
 
 vcp getcolorv(palette *pal, uint index);
-bool load_pal(char *pal_class, char *pal_flavour, palette *p);
+bool load_pal(const char *pal_class, const char *pal_flavour, palette *p);
 
 /*
  *	INIT
