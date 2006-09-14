@@ -66,7 +66,7 @@ protected:
 	int mode;
 public:
 			PPCDisassembler(int mode);
-			PPCDisassembler(BuildCtorArg&);
+			PPCDisassembler(BuildCtorArg&a): Disassembler(a) {};
 
 		void		load(ObjectStream &f);
 	virtual	dis_insn	*decode(byte *code, int maxlen, CPU_ADDR addr);
