@@ -250,7 +250,7 @@ void AddressFlat32::store(ObjectStream &st) const
 
 int AddressFlat32::stringify(char *s, int max_length, int format) const
 {
-	char *formats[] = {
+	const char *formats[] = {
 		"%s%x%s",
 		"%s%8x%s",
 		"%s%08x%s",
@@ -380,7 +380,7 @@ void AddressFlat64::store(ObjectStream &st) const
 
 int AddressFlat64::stringify(char *s, int max_length, int format) const
 {
-	char *formats[] = {
+	const char *formats[] = {
 		"%s%qx%s",
 		"%s%16qx%s",
 		"%s%016qx%s",
@@ -500,7 +500,8 @@ void CommentList::appendPostComment(int special)
 const char *CommentList::getName(uint i)
 {
 	Object *d = get(findByIdx(i));
-	return d ? ((d->getObjectID()==OBJID_UINT) ? comment_lookup(((UInt*)d)->value): ((String*)d)->contentChar()) : NULL;
+//	return d ? ((d->getObjectID()==OBJID_UINT) ? comment_lookup(((UInt*)d)->value): 
+	return d ? ((String*)d)->contentChar() : NULL;
 }
 
 /*
@@ -1200,7 +1201,7 @@ void	Analyser::doBranch(branch_enum_t branch, OPCODE *opcode, int len)
 		case	br_call: {
 			addXRef(branch_addr, addr, xrefcall);
 			bool special_func = false;
-			char *lprfx = LPRFX_SUB;
+			const char *lprfx = LPRFX_SUB;
 			if (!getSymbolByAddress(branch_addr) && validCodeAddress(branch_addr)) {
 				// should be in code_analy
 				byte buf[16];
@@ -1651,7 +1652,7 @@ const char *Analyser::getDisasmStrFormatted(Address *Addr)
 		byte buf[16];
 		int bz = bufPtr(Addr, buf, sizeof(buf));
 		OPCODE *o=disasm->decode(buf, MIN(bz, max_opcode_length), mapAddr(Addr));
-		char *res = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
+		const char *res = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
 
 		addr_sym_func_context = NULL;
 		addr_sym_func = NULL;
