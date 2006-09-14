@@ -62,7 +62,7 @@ int ht_dialog::aclone()
 	return 1;
 }
 
-char *ht_dialog::defaultpalette()
+const char *ht_dialog::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -194,7 +194,7 @@ void ht_cluster::done()
 	ht_view::done();
 }
 
-char *ht_cluster::defaultpalette()
+const char *ht_cluster::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -612,7 +612,7 @@ int ht_inputfield::datasize()
 	return sizeof (ht_inputfield_data);
 }
 
-char *ht_inputfield::defaultpalette()
+const char *ht_inputfield::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -1280,7 +1280,7 @@ void ht_button::done()
 	ht_view::done();
 }
 
-char *ht_button::defaultpalette()
+const char *ht_button::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -1361,7 +1361,7 @@ void	ht_listbox_title::done()
 	ht_view::done();
 }
 
-char *ht_listbox_title::defaultpalette()
+const char *ht_listbox_title::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -1579,7 +1579,7 @@ int  ht_listbox::datasize()
 	return sizeof (ht_listbox_data);
 }
 
-char *ht_listbox::defaultpalette()
+const char *ht_listbox::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -2101,7 +2101,7 @@ char *ht_text_listbox::getStr(int col, void *entry)
 	}
 }
 
-void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char **strs)
+void	ht_text_listbox::insert_str_extra(int id, void *extra_data, const char **strs)
 {
 	// FIXME: code duplication...
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
@@ -2126,7 +2126,7 @@ void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char **strs)
 	count++;
 }
 
-void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char *str, ...)
+void	ht_text_listbox::insert_str_extra(int id, void *extra_data, const char *str, ...)
 {
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
 	item->next = NULL;
@@ -2155,12 +2155,12 @@ void	ht_text_listbox::insert_str_extra(int id, void *extra_data, char *str, ...)
 	count++;
 }
 
-void	ht_text_listbox::insert_str(int id, char **strs)
+void	ht_text_listbox::insert_str(int id, const char **strs)
 {
 	insert_str_extra(id, NULL, strs);
 }
 
-void ht_text_listbox::insert_str(int id, char *str, ...)
+void ht_text_listbox::insert_str(int id, const char *str, ...)
 {
 	// FIXME: same as insert_str(id, NULL, str, ...)
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
@@ -2366,7 +2366,7 @@ void ht_statictext::done()
 	ht_view::done();
 }
 
-char *ht_statictext::defaultpalette()
+const char *ht_statictext::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -2516,7 +2516,7 @@ int	ht_listpopup_dialog::datasize()
 	return sizeof (ht_listpopup_dialog_data);
 }
 
-char *ht_listpopup_dialog::defaultpalette()
+const char *ht_listpopup_dialog::defaultpalette()
 {
 	return palkey_generic_blue;
 }
@@ -2543,7 +2543,7 @@ void ht_listpopup_dialog::init_text_listbox(Bounds *b)
 	insert(listbox);
 }
 
-void ht_listpopup_dialog::insertstring(char *string)
+void ht_listpopup_dialog::insertstring(const char *string)
 {
 	((ht_text_listbox *)listbox)->insert_str(listbox->calcCount(), string);
 	listbox->update();
@@ -2711,7 +2711,7 @@ void ht_label::done()
 	ht_view::done();
 }
 
-char *ht_label::defaultpalette()
+const char *ht_label::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -2768,7 +2768,7 @@ void	ht_progress_indicator::init(Bounds *b, char *hint)
 	insert(t);
 }
 
-char *ht_progress_indicator::defaultpalette()
+const char *ht_progress_indicator::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -2806,7 +2806,7 @@ int ht_color_block::datasize()
 	return sizeof (ht_color_block_data);
 }
 
-char *ht_color_block::defaultpalette()
+const char *ht_color_block::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
