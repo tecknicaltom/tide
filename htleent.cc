@@ -99,7 +99,7 @@ static ht_view *htleentrypoints_init(Bounds *b, File *file, ht_format_group *gro
 		file->seek(o);
 		o+=file->read(&hdr, sizeof hdr);
 		if (!hdr.entry_count) break;
-		char *flags_str;
+		const char *flags_str;
 		if (hdr.flags & LE_ENTRYPOINT_BUNDLE_32BIT) {
 			flags_str="32-bit";
 		} else {
