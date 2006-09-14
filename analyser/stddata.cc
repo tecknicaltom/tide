@@ -30,10 +30,6 @@
 /*
  *   Area
  */
-Area::Area()
-{
-}
-
 void Area::init()
 {
 	a = NULL;
