@@ -44,58 +44,58 @@
 #define LE_SIZEOF_HEADER				196
 
 struct LE_HEADER {
-	uint16		magic PACKED;				// Magic number
-	byte		border PACKED;				// The byte ordering for the VXD
-	byte		worder PACKED;				// The uint16 ordering for the VXD
-	uint32	level PACKED;				// The EXE format level for now = 0
-	uint16		cpu PACKED;					// The CPU type
-	uint16		os PACKED;					// The OS type
-	uint32	ver PACKED;					// Module version
-	uint32	mflags PACKED;				// Module flags
-	uint32	pagecnt PACKED;				// Module # pages
-	uint32	startobj PACKED;				// Object # for instruction pointer
-	uint32	eip PACKED;					// Extended instruction pointer
-	uint32	stackobj PACKED;				// Object # for stack pointer
-	uint32	esp PACKED;					// Extended stack pointer
-	uint32	pagesize PACKED;				// VXD page size
-	uint32	lastpagesize PACKED;			// Last page size in VXD
-	uint32	fixupsize PACKED;				// Fixup section size
-	uint32	fixupsum PACKED;				// Fixup section checksum
-	uint32	ldrsize PACKED;				// Loader section size
-	uint32	ldrsum PACKED;				// Loader section checksum
-	uint32	objtab PACKED;				// Object table offset
-	uint32	objcnt PACKED;				// Number of objects in module
-	uint32	pagemap PACKED;				// Object page map offset
-	uint32	itermap PACKED;				// Object iterated data map offset
-	uint32	rsrctab PACKED;				// Offset of Resource Table
-	uint32	rsrccnt PACKED;				// Number of resource entries
-	uint32	restab PACKED;				// Offset of resident name table
-	uint32	enttab PACKED;				// Offset of Entry Table
-	uint32	dirtab PACKED;				// Offset of Module Directive Table
-	uint32	dircnt PACKED;				// Number of module directives
-	uint32	fpagetab PACKED;				// Offset of Fixup Page Table
-	uint32	frectab PACKED;				// Offset of Fixup Record Table
-	uint32	impmod PACKED;				// Offset of Import Module Name Table
-	uint32	impmodcnt PACKED;				// Number of entries in Import Module Name Table
-	uint32	impproc PACKED;				// Offset of Import Procedure Name Table
-	uint32	pagesum PACKED;				// Offset of Per-Page Checksum Table
-	uint32	datapage PACKED;				// Offset of Enumerated Data Pages
-	uint32	preload PACKED;				// Number of preload pages
-	uint32	nrestab PACKED;				// Offset of Non-resident Names Table
-	uint32	cbnrestab PACKED;				// Size of Non-resident Name Table
-	uint32	nressum PACKED;				// Non-resident Name Table Checksum
-	uint32	autodata PACKED;				// Object # for automatic data object
-	uint32	debuginfo PACKED;				// Offset of the debugging information
-	uint32	debuglen PACKED;				// The length of the debugging info. in bytes
-	uint32	instpreload PACKED;			// Number of instance pages in preload section of VXD file
-	uint32	instdemand PACKED;			// Number of instance pages in demand load section of VXD file
-	uint32	heapsize PACKED;				// Size of heap - for 16-bit apps
-	byte		res3[12] PACKED;				// Reserved words
-	uint32	winresoff PACKED;
-	uint32	winreslen PACKED;
-	uint16		devid PACKED;				// Device ID for VxD
-	uint16		ddkver PACKED;				// DDK version for VxD
-  };
+	uint16		magic;				// Magic number
+	byte		border;				// The byte ordering for the VXD
+	byte		worder;				// The uint16 ordering for the VXD
+	uint32	level;				// The EXE format level for now = 0
+	uint16		cpu;					// The CPU type
+	uint16		os;					// The OS type
+	uint32	ver;					// Module version
+	uint32	mflags;				// Module flags
+	uint32	pagecnt;				// Module # pages
+	uint32	startobj;				// Object # for instruction pointer
+	uint32	eip;					// Extended instruction pointer
+	uint32	stackobj;				// Object # for stack pointer
+	uint32	esp;					// Extended stack pointer
+	uint32	pagesize;				// VXD page size
+	uint32	lastpagesize;			// Last page size in VXD
+	uint32	fixupsize;				// Fixup section size
+	uint32	fixupsum;				// Fixup section checksum
+	uint32	ldrsize;				// Loader section size
+	uint32	ldrsum;				// Loader section checksum
+	uint32	objtab;				// Object table offset
+	uint32	objcnt;				// Number of objects in module
+	uint32	pagemap;				// Object page map offset
+	uint32	itermap;				// Object iterated data map offset
+	uint32	rsrctab;				// Offset of Resource Table
+	uint32	rsrccnt;				// Number of resource entries
+	uint32	restab;				// Offset of resident name table
+	uint32	enttab;				// Offset of Entry Table
+	uint32	dirtab;				// Offset of Module Directive Table
+	uint32	dircnt;				// Number of module directives
+	uint32	fpagetab;				// Offset of Fixup Page Table
+	uint32	frectab;				// Offset of Fixup Record Table
+	uint32	impmod;				// Offset of Import Module Name Table
+	uint32	impmodcnt;				// Number of entries in Import Module Name Table
+	uint32	impproc;				// Offset of Import Procedure Name Table
+	uint32	pagesum;				// Offset of Per-Page Checksum Table
+	uint32	datapage;				// Offset of Enumerated Data Pages
+	uint32	preload;				// Number of preload pages
+	uint32	nrestab;				// Offset of Non-resident Names Table
+	uint32	cbnrestab;				// Size of Non-resident Name Table
+	uint32	nressum;				// Non-resident Name Table Checksum
+	uint32	autodata;				// Object # for automatic data object
+	uint32	debuginfo;				// Offset of the debugging information
+	uint32	debuglen;				// The length of the debugging info. in bytes
+	uint32	instpreload;			// Number of instance pages in preload section of VXD file
+	uint32	instdemand;			// Number of instance pages in demand load section of VXD file
+	uint32	heapsize;				// Size of heap - for 16-bit apps
+	byte		res3[12];				// Reserved words
+	uint32	winresoff;
+	uint32	winreslen;
+	uint16		devid;				// Device ID for VxD
+	uint16		ddkver;				// DDK version for VxD
+} PACKED;
 
 /*
  1 1 1 1  1 1
@@ -165,19 +165,19 @@ struct LE_HEADER {
 #define LE_SIZEOF_OBJECT				24
 
 struct LE_OBJECT	{
-	uint32	vsize PACKED;
-	uint32	base_reloc_addr PACKED;
-	uint32	flags PACKED;
-	uint32	page_map_index PACKED;
-	uint32	page_map_count PACKED;
-	byte		name[4] PACKED;
-};
+	uint32	vsize;
+	uint32	base_reloc_addr;
+	uint32	flags;
+	uint32	page_map_index;
+	uint32	page_map_count;
+	byte		name[4];
+} PACKED;
 
 struct LE_PAGE_MAP_ENTRY {
-	uint16 high PACKED;
-	byte	low PACKED;
-	byte	flags PACKED;
-};
+	uint16 high;
+	byte	low;
+	byte	flags;
+} PACKED;
 
 /*
  *	ENTRYPOINTS
@@ -187,23 +187,23 @@ struct LE_PAGE_MAP_ENTRY {
 #define LE_ENTRYPOINT_BUNDLE_32BIT		(1<<1)
 
 struct LE_ENTRYPOINT_BUNDLE {
-	byte entry_count PACKED;
-	byte flags PACKED;
-	uint16 obj_index PACKED;
-};
+	byte entry_count;
+	byte flags;
+	uint16 obj_index;
+} PACKED;
 
 #define LE_ENTRYPOINT_EXPORTED	(1<<0)
 #define LE_ENTRYPOINT_SHARED		(1<<1)
 
 struct LE_ENTRYPOINT16 {
-	byte flags PACKED;
-	uint16 offset PACKED;
-};
+	byte flags;
+	uint16 offset;
+} PACKED;
 
 struct LE_ENTRYPOINT32 {
-	byte flags PACKED;
-	uint32 offset PACKED;
-};
+	byte flags;
+	uint32 offset;
+} PACKED;
 
 /*
  *	FIXUPS
@@ -232,49 +232,49 @@ struct LE_ENTRYPOINT32 {
 #define   LE_FIXUP_RELOC_IORD8		(1<<7)
 
 struct LE_FIXUP {
-	uint8	address_type PACKED;
-	uint8	reloc_type PACKED;
-};
+	uint8	address_type;
+	uint8	reloc_type;
+} PACKED;
 
 // if address_type == 8, reloc_type = 0
 struct LE_FIXUP_INTERNAL16 {
-	uint8	seg PACKED;
-	uint16	ofs PACKED;
-};
+	uint8	seg;
+	uint16	ofs;
+} PACKED;
 
 struct LE_FIXUP_INTERNAL32 {
-	uint8	seg PACKED;
-	uint32	ofs PACKED;
-};
+	uint8	seg;
+	uint32	ofs;
+} PACKED;
 
 /*
  *	VxD specific
  */
 
 struct LE_VXD_DESCRIPTOR {
-	uint32	next PACKED;
-	uint16	sdk_version PACKED;
-	uint16	device_number PACKED;
-	uint8	version_major PACKED;
-	uint8	version_minor PACKED;
-	uint16	flags PACKED;
-	uint8	name[8] PACKED;		// not (null-)terminated, fill with spaces
-	uint32	init_order PACKED;
-	uint32    ctrl_ofs PACKED;
-	uint32    v86_ctrl_ofs PACKED;
-	uint32    pm_ctrl_ofs PACKED;
-	uint32    v86_ctrl_csip PACKED;
-	uint32    pm_ctrl_csip PACKED;
-	uint32	rm_ref_data PACKED;	// "Reference data from real mode"
-	uint32	service_table_ofs PACKED;
-	uint32	service_table_size PACKED;
-	uint32	win32_service_table_ofs PACKED;
-	uint32	prev PACKED;			// normally 'verP' (Prev)
-	uint32	size PACKED;			// size of this structure (0x50 = 80)
-	uint32	reserved0 PACKED;		// normally '1vsR' (Rsv1)
-	uint32	reserved1 PACKED;		// normally '2vsR' (Rsv2)
-	uint32	reserved2 PACKED;		// normally '3vsR' (Rsv3)
-};
+	uint32	next;
+	uint16	sdk_version;
+	uint16	device_number;
+	uint8	version_major;
+	uint8	version_minor;
+	uint16	flags;
+	uint8	name[8];		// not (null-)terminated, fill with spaces
+	uint32	init_order;
+	uint32    ctrl_ofs;
+	uint32    v86_ctrl_ofs;
+	uint32    pm_ctrl_ofs;
+	uint32    v86_ctrl_csip;
+	uint32    pm_ctrl_csip;
+	uint32	rm_ref_data;	// "Reference data from real mode"
+	uint32	service_table_ofs;
+	uint32	service_table_size;
+	uint32	win32_service_table_ofs;
+	uint32	prev;			// normally 'verP' (Prev)
+	uint32	size;			// size of this structure (0x50 = 80)
+	uint32	reserved0;		// normally '1vsR' (Rsv1)
+	uint32	reserved1;		// normally '2vsR' (Rsv2)
+	uint32	reserved2;		// normally '3vsR' (Rsv3)
+} PACKED;
 
 /*
  *	internal
