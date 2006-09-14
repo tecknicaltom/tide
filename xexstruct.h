@@ -33,13 +33,13 @@ typedef unsigned int RVA;
 #define XEX_MAGIC3	'2'
 
 struct XEX_IMAGE_HEADER {
-	byte	magic_id[XEX_MAGIC_LENGTH] PACKED;
-	uint32	flags PACKED;
-	uint32	offset_unpack PACKED;
-	uint32	res PACKED;
-	uint32	file_header_offset PACKED;
-	uint32	number_of_sections PACKED;
-};
+	byte	magic_id[XEX_MAGIC_LENGTH];
+	uint32	flags;
+	uint32	offset_unpack;
+	uint32	res;
+	uint32	file_header_offset;
+	uint32	number_of_sections;
+} PACKED;
 
 #define XEX_HEADER_FIELD_MODULES	0x0002ff
 #define XEX_HEADER_FIELD_LOADERINFO	0x0003ff
@@ -77,15 +77,15 @@ struct XEX_IMAGE_HEADER {
 struct XEX_IMAGE_HEADER_INFO_ENTRY {
 	union {
 		struct {
-			byte	res PACKED;
-			byte	classe PACKED;
-			byte	type PACKED;
-			byte	size PACKED;
+			byte	res;
+			byte	classe;
+			byte	type;
+			byte	size;
 		} b;
 		uint32 type PACKED;
-	};
-	uint32	value PACKED;
-};
+	} PACKED;
+	uint32	value;
+} PACKED;
 
 #define XEX_LOADER_RAW 1
 #define XEX_LOADER_COMPRESSED 2
