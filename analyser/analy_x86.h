@@ -27,7 +27,7 @@ class AddressX86Flat32: public Address {
 public:
 	uint32 addr;
 	AddressX86Flat32(BuildCtorArg&a): Address(a) {};
-	AddressX86Flat32(uint32 addr=0);
+	AddressX86Flat32(uint32 a=0): addr(a) {};
 	virtual bool add(int offset);
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
