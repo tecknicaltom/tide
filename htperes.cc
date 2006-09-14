@@ -109,7 +109,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 				ht_snprintf(peresource_string, sizeof peresource_string, "%s [%d]", name, subdir.name_count+subdir.id_count);
 				free(name);
 			} else {
-				char *s = (!level) ? matchhash(entry.name & 0xffff, restypes) : NULL;
+				const char *s = (!level) ? matchhash(entry.name & 0xffff, restypes) : NULL;
 				if (s) {
 					ht_snprintf(peresource_string, sizeof peresource_string, "ID %04x, %s [%d]", entry.name & 0xffff, s, subdir.name_count+subdir.id_count);
 				} else {
@@ -121,7 +121,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 		} else {
 			char *rm = peresource_string;
 			char *rm_end = rm + sizeof peresource_string;
-			char *s = matchhash((char)entry.name, languages);
+			const char *s = matchhash((char)entry.name, languages);
 			if (s) {
 				rm += ht_snprintf(rm, rm_end-rm, "resource, %s (%04x) ", s, entry.name & 0xffff);
 			} else {
@@ -167,7 +167,7 @@ static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group
 	}
 	if (!sec_rva || !sec_size) return NULL;
 
-	ht_static_treeview *t=new ht_pe_resource_viewer();
+	ht_pe_resource_viewer *t=new ht_pe_resource_viewer();
 	t->init(b, DESC_PE_RESOURCES);
 
 	void *root;
@@ -216,7 +216,7 @@ format_viewer_if htperesources_if = {
  *	CLASS ht_pe_resource_viewer
  */
 
-void ht_pe_resource_viewer::init(Bounds *b, char *desc)
+void ht_pe_resource_viewer::init(Bounds *b, const char *desc)
 {
 	ht_static_treeview::init(b, desc);
 	VIEW_DEBUG_NAME("ht_pe_resource_viewer");
