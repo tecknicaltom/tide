@@ -60,7 +60,7 @@ struct ht_tag_flags {
 
 struct ht_tag_flags_s {
 	char bitidx PACKED;
-	char *desc PACKED;
+	const char *desc PACKED;
 };
 
 /* GROUP-TAG */
