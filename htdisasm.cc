@@ -113,20 +113,21 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 			uint aci = 0;
 			int best = 0;
 			while (ac2) {
-				char s[1024]="", *tmp = s;
+				char s[1024], *tmp = s;
 				for (int i=0; i < ac2->size; i++) {
 					tmp += sprintf(tmp, "%02x ", ac2->data[i]);
 				}
-				if ((best == 0) && (want_length == ac2->size)) {
-					   best = aci+1;
+				if (best == 0 && want_length == ac2->size) {
+					best = aci+1;
 				}
+				const char *tmp2;
 				if (disasm) {
 					dis_insn *o=disasm->decode((byte *)ac2->data, ac2->size, cpuaddr);
-					tmp = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
+					tmp2 = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
 				} else {
-					tmp = "<no disassembler>";
+					tmp2 = "<no disassembler>";
 				}
-				list->insert_str(aci, s, tmp);
+				list->insert_str(aci, s, tmp2);
 				ac2 = ac2->next;
 				aci++;
 			}
@@ -176,7 +177,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
  *	CLASS ht_disasm_viewer
  */
 
-void ht_disasm_viewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t)
+void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, format_group);
 	assem = a;
@@ -274,7 +275,7 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			byte data[32];
 			int datalen = vread(current_pos, data, sizeof data);
 			dis_insn *o = disasm->decode(data, datalen, cpuaddr);
-			char *curinsn = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
+			const char *curinsn = disasm->strf(o, DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE, DISASM_STRF_SMALL_FORMAT);
 			int want_length = disasm->getSize(o);
 
 			dialog_assemble(this, current_pos, cpuaddr, assem, disasm, curinsn, want_length);
@@ -429,7 +430,7 @@ bool ht_disasm_sub::getline(char *line, const LINE_ID line_id)
 	CPU_ADDR caddr;
 	caddr.addr32.seg = 0;
 	caddr.addr32.offset = ofs;
-	char *s;
+	const char *s;
 	char *l = line;
 	if (c) {
 		dis_insn *insn = disasm->decode(buf, c, caddr);
