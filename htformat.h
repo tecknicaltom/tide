@@ -203,7 +203,7 @@ public:
 	virtual	void vselect_get(viewer_pos *start, viewer_pos *end);
 	virtual	void vselect_set(viewer_pos start, viewer_pos end);
 	virtual	uint vwrite(viewer_pos pos, void *buf, uint size);
-	virtual	bool string_to_pos(char *string, viewer_pos *pos);
+	virtual	bool string_to_pos(const char *string, viewer_pos *pos);
 	virtual	bool qword_to_pos(uint64 q, viewer_pos *pos);
 
 	/* string evaluation */
@@ -216,7 +216,7 @@ public:
 	/* misc */
 		void clear_viewer_pos(viewer_pos *p);
 		File *get_file();
-		bool string_to_qword(char *string, uint64 *q);
+		bool string_to_qword(const char *string, uint64 *q);
 		bool vstate_save();
 };
 
