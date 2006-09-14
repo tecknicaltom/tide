@@ -112,14 +112,14 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 
 		tt += ht_snprintf(tt, sizeof t - (tt-t), "%04x ", i);
 
-		char *bind = matchhash(ELF32_ST_BIND(sym.st_info), elf_st_bind);
+		const char *bind = matchhash(ELF32_ST_BIND(sym.st_info), elf_st_bind);
 		if (bind) {
 			tt += ht_snprintf(tt, sizeof t - (tt-t), "%-8s ", bind);
 		} else {
 			tt += ht_snprintf(tt, sizeof t - (tt-t), "? (%d) ", ELF32_ST_BIND(sym.st_info));
 		}
 
-		char *type = matchhash(ELF32_ST_TYPE(sym.st_info), elf_st_type);
+		const char *type = matchhash(ELF32_ST_TYPE(sym.st_info), elf_st_type);
 		if (type) {
 			tt += ht_snprintf(tt, sizeof t - (tt-t), "%-8s ", type);
 		} else {
