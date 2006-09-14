@@ -459,7 +459,7 @@ bool file_open_dialog(char **name, uint *mode)
 	return false;
 }
 
-uint autodetect_file_open_mode(char *filename)
+static uint autodetect_file_open_mode(const char *filename)
 {
 #define AUTODETECT_SIZE	128
 	FILE *f=fopen(filename, "rb");
@@ -789,7 +789,7 @@ void *ht_project_listbox::getPrev(void *entry)
 	}
 }
 
-char *ht_project_listbox::getStr(int col, void *entry)
+const char *ht_project_listbox::getStr(int col, void *entry)
 {
 	static char mybuf[32];
 	if (project) switch (col) {
@@ -912,7 +912,7 @@ void ht_project_listbox::set_project(ht_project *p)
  *	CLASS ht_project_window
  */
 
-void	ht_project_window::init(Bounds *b, char *desc, uint framestyle, uint number, ht_project **p)
+void ht_project_window::init(Bounds *b, const char *desc, uint framestyle, uint number, ht_project **p)
 {
 	ht_window::init(b, desc, framestyle, number);
 	project = p;
@@ -1047,7 +1047,7 @@ void ht_status::render()
 				break;
 			case STATUS_ANALY_ACTIVE:
 				if (some_analyser_active) {
-					char *analysers[] = {"Analy", "aNaly", "anAly", "anaLy", "analY", "anaLy", "anAly", "aNaly"};
+					const char *analysers[] = {"Analy", "aNaly", "anAly", "anaLy", "analY", "anaLy", "anAly", "aNaly"};
 					strcpy(buf, analysers[analy_ani]);
 					buf += 5;
 				}
@@ -1666,7 +1666,7 @@ ht_window *ht_app::create_window_clipboard()
 		get_stdbounds_file(&b);
 /*		ht_file_window *window=new ht_file_window();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, clipboard);*/
-		ht_window *window=new ht_window();
+		ht_window *window = new ht_window();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 		
 /*		Bounds k=b;
@@ -1685,7 +1685,7 @@ ht_window *ht_app::create_window_clipboard()
 		k.y=k.h-2;
 		k.w-=7;
 		k.h=1;
-		ht_statictext *ind=new ht_statictext();
+		ht_statictext *ind = new ht_statictext();
 		ind->init(&k, NULL, align_left, false, true);
 		ind->disable_buffering();
 		ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
@@ -1696,7 +1696,7 @@ ht_window *ht_app::create_window_clipboard()
 		b.y=0;
 		b.w-=2;
 		b.h-=2;
-		ht_clipboard_viewer *v=new ht_clipboard_viewer();
+		ht_clipboard_viewer *v = new ht_clipboard_viewer();
 		v->init(&b, "clipboard", VC_EDIT | VC_GOTO | VC_SEARCH, clipboard, 0);
 
 		window->insert(v);
@@ -1707,9 +1707,9 @@ ht_window *ht_app::create_window_clipboard()
 	return NULL;
 }
 
-ht_window *ht_app::create_window_file(char *filename, uint mode, bool allow_duplicates)
+ht_window *ht_app::create_window_file(const char *filename, uint mode, bool allow_duplicates)
 {
-	if (mode==FOM_AUTO) mode=autodetect_file_open_mode(filename);
+	if (mode == FOM_AUTO) mode = autodetect_file_open_mode(filename);
 	switch (mode) {
 		case FOM_BIN: return create_window_file_bin(filename, allow_duplicates);
 		case FOM_TEXT: return create_window_file_text(filename, allow_duplicates);
@@ -1717,7 +1717,7 @@ ht_window *ht_app::create_window_file(char *filename, uint mode, bool allow_dupl
 	return NULL;
 }
 
-ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
+ht_window *ht_app::create_window_file_bin(const char *filename, bool allow_duplicates)
 {
 	Bounds b;
 	get_stdbounds_file(&b);
@@ -1761,7 +1761,7 @@ ht_window *ht_app::create_window_file_bin(char *filename, bool allow_duplicates)
 	return create_window_file_bin(&b, file, f.contentChar(), true);
 }
 
-ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, char *title, bool isfile)
+ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile)
 {
 	ht_file_window *window = new ht_file_window();
 	window->init(b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
@@ -1838,7 +1838,7 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, char *titl
 	return window;
 }
 
-ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates)
+ht_window *ht_app::create_window_file_text(const char *filename, bool allow_duplicates)
 {
 	Bounds b, c;
 	get_stdbounds_file(&c);
@@ -1884,7 +1884,7 @@ ht_window *ht_app::create_window_file_text(char *filename, bool allow_duplicates
 	return create_window_file_text(&b, file, f.contentChar(), true);
 }
 
-ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, char *title, bool isfile)
+ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *title, bool isfile)
 {
 	Bounds b=*c;
 
@@ -1945,7 +1945,7 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, char *title,
 	return window;
 }
 
-ht_window *ht_app::create_window_help(char *file, char *node)
+ht_window *ht_app::create_window_help(const char *file, const char *node)
 {
 	ht_window *w = get_window_by_type(AWT_HELP);
 	if (w) {
@@ -2091,7 +2091,7 @@ ht_view *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
 }
 #endif
 
-ht_window *ht_app::create_window_ofm(char *url1, char *url2)
+ht_window *ht_app::create_window_ofm(const char *url1, const char *url2)
 {
 	Bounds b;
 	get_stdbounds_file(&b);
@@ -2253,7 +2253,7 @@ void ht_app::get_stdbounds_tool(Bounds *b)
 	b->h = h;
 }
 
-ht_window *ht_app::get_window_by_filename(char *filename)
+ht_window *ht_app::get_window_by_filename(const char *filename)
 {
 	foreach(ht_app_window_entry, e, *windows, {
 		// FIXME: filename_compare (taking into account slash/backslash, and case)
@@ -2500,10 +2500,10 @@ void ht_app::handlemsg(htmsg *msg)
 			}
 			break;
 		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
+			const char *s = func(msg->data1.integer, 0);
 			if (s) {
-				msg->msg=msg_retval;
-				msg->data1.str=s;
+				msg->msg = msg_retval;
+				msg->data1.cstr = s;
 			} else clearmsg(msg);
 			return;
 		}
@@ -2789,7 +2789,7 @@ static int my_compare_func(const char *a, const char *b)
 	return strcmp(a, b);
 }
 
-ht_view *ht_app::popup_view_list(char *dialog_title)
+ht_view *ht_app::popup_view_list(const char *dialog_title)
 {
 	if (!battlefield->current) return NULL;
 	Bounds b, c;
@@ -2878,7 +2878,7 @@ int ht_app::popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *
 	return count;
 }
 
-ht_window *ht_app::popup_window_list(char *dialog_title)
+ht_window *ht_app::popup_window_list(const char *dialog_title)
 {
 	Bounds b, c;
 	getbounds(&b);
@@ -2921,7 +2921,7 @@ ht_window *ht_app::popup_window_list(char *dialog_title)
 	return result;
 }
 
-void ht_app::project_opencreate(char *filename)
+void ht_app::project_opencreate(const char *filename)
 {
 	char fn[HT_NAME_MAX];
 	char cwd[HT_NAME_MAX];
@@ -3022,7 +3022,7 @@ ht_file_window::ht_file_window()
 {
 }
 
-void ht_file_window::init(Bounds *b, char *desc, uint framestyle, uint number, File *f)
+void ht_file_window::init(Bounds *b, const char *desc, uint framestyle, uint number, File *f)
 {
 	ht_window::init(b, desc, framestyle, number);
 	file = f;
