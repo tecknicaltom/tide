@@ -388,7 +388,7 @@ void ht_pe_import_viewer::dosort()
 	sort(2, sortord);
 }
 
-char *ht_pe_import_viewer::func(uint i, bool execute)
+const char *ht_pe_import_viewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 2:
