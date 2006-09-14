@@ -594,31 +594,31 @@ void	AnalyX86Disassembler::examineOpcode(OPCODE *opcode)
 		taccess access;
 		xref_enum_t xref = xrefoffset;
 		switch (op->type) {
-			case X86_OPTYPE_IMM:
-				access.type = acoffset;
-				access.indexed = false;
-				addr = createAddress(0, op->imm);
-				break;
-			case X86_OPTYPE_FARPTR:
-				if (flags & ANALYX86DISASSEMBLER_FLAGS_SEGMENTED) {
-					addr = createAddress(op->farptr.seg, op->farptr.offset);
+		case X86_OPTYPE_IMM:
+			access.type = acoffset;
+			access.indexed = false;
+			addr = createAddress(0, op->imm);
+			break;
+		case X86_OPTYPE_FARPTR:
+			if (flags & ANALYX86DISASSEMBLER_FLAGS_SEGMENTED) {
+				addr = createAddress(op->farptr.seg, op->farptr.offset);
+			}
+			access.type = acoffset;
+			access.indexed = false;
+			break;
+		case X86_OPTYPE_MEM:
+			if (op->mem.hasdisp) {
+				addr = createAddress(0, op->mem.disp);
+				access.type = acread;
+				access.indexed = (op->mem.base != X86_REG_NO) || (op->mem.index != X86_REG_NO);
+				access.size = op->size;
+				if (strcmp(o->name, "cmp")==0 || strcmp(o->name, "test")==0 || strcmp(o->name, "push")==0) {
+					xref = xrefread;
+				} else {
+					xref = (i==0) ? xrefwrite : xrefread;
 				}
-				access.type = acoffset;
-				access.indexed = false;
-				break;
-			case X86_OPTYPE_MEM:
-				if (op->mem.hasdisp) {
-					addr = createAddress(0, op->mem.disp);
-					access.type = acread;
-					access.indexed = (op->mem.base != X86_REG_NO) || (op->mem.index != X86_REG_NO);
-					access.size = op->size;
-					if (strcmp(o->name, "cmp")==0 || strcmp(o->name, "test")==0 || strcmp(o->name, "push")==0) {
-						xref = xrefread;
-					} else {
-						xref = (i==0) ? xrefwrite : xrefread;
-					}
-				}
-				break;
+			}
+			break;
 		}
 		if (addr) {
 			if (analy->validAddress(addr, scvalid)) {
