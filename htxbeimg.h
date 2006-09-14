@@ -34,7 +34,7 @@ class ht_xbe_aviewer: public ht_aviewer {
 public:
 	ht_xbe_shared_data *xbe_shared;
 
-		void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_xbe_shared_data *xbe_shared);
+		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_xbe_shared_data *xbe_shared);
 	virtual bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual void setAnalyser(Analyser *a);
 };
