@@ -183,7 +183,7 @@ format_viewer_if htpeil_if = {
  *	CLASS ht_pe_header_viewer
  */
 
-void ht_pe_il_viewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *group)
+void ht_pe_il_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_pe_il_viewer");
