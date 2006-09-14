@@ -181,7 +181,7 @@ int find_pal_entry_idx(pal_layout *layout, const char *name)
 	return -1;
 }
 
-bool load_pal(char *pal_class, char *pal_flavour, palette *p)
+bool load_pal(const char *pal_class, const char *pal_flavour, palette *p)
 {
 	if ((!pal_flavour) || (!pal_class)) return false;
 	char dir[256];		/* secure */
