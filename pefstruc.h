@@ -31,31 +31,31 @@ enum PEF_ARCH {
 };
 
 struct PEF_CONTAINER_HEADER {
-	byte	tag1[4] PACKED;
-	byte	tag2[4] PACKED;
-	byte	architecture[4] PACKED;
-	uint32	formatVersion PACKED;	// normally 1
-	uint32	dateTimeStamp PACKED;	// number of seconds measured from January 1, 1904
-	uint32	oldDefVersion PACKED;
-	uint32	oldImpVersion PACKED;
-	uint32	currentVersion PACKED;
-	uint16	sectionCount PACKED;
-	uint16	instSectionCount PACKED;
-	uint32	reservedA PACKED;
-};
+	byte	tag1[4];
+	byte	tag2[4];
+	byte	architecture[4];
+	uint32	formatVersion;	// normally 1
+	uint32	dateTimeStamp;	// number of seconds measured from January 1, 1904
+	uint32	oldDefVersion;
+	uint32	oldImpVersion;
+	uint32	currentVersion;
+	uint16	sectionCount;
+	uint16	instSectionCount;
+	uint32	reservedA;
+} PACKED;
 
 struct PEF_SECTION_HEADER {
-	sint32	nameOffset PACKED;	// 0xffffffff for no name
-	uint32	defaultAddress PACKED;
-	uint32	totalSize PACKED;
-	uint32	unpackedSize PACKED;
-	uint32	packedSize PACKED;
-	uint32	containerOffset PACKED;
-	byte	sectionKind PACKED;
-	byte	shareKind PACKED;
-	byte	alignment PACKED;
-	byte	reservedA PACKED;
-};
+	sint32	nameOffset;	// 0xffffffff for no name
+	uint32	defaultAddress;
+	uint32	totalSize;
+	uint32	unpackedSize;
+	uint32	packedSize;
+	uint32	containerOffset;
+	byte	sectionKind;
+	byte	shareKind;
+	byte	alignment;
+	byte	reservedA;
+} PACKED;
 
 // sectionKind
 #define PEF_SK_Code		0	// R-x
@@ -74,36 +74,36 @@ struct PEF_SECTION_HEADER {
 #define PEF_SHK_ProtectedShare	5
 
 struct PEF_LOADER_INFO_HEADER {
-	sint32	mainSection PACKED;          
-	uint32	mainOffset PACKED;           
-	sint32	initSection PACKED;          
-	uint32	initOffset PACKED;           
-	sint32	termSection PACKED;          
-	uint32	termOffset PACKED;           
-	uint32	importedLibraryCount PACKED;
-	uint32	totalImportedSymbolCount PACKED;
-	uint32	relocSectionCount PACKED;
-	uint32	relocInstrOffset PACKED;
-	uint32	loaderStringsOffset PACKED;
-	uint32	exportHashOffset PACKED;
-	uint32	exportHashTablePower PACKED;
-	uint32	exportedSymbolCount PACKED;
-};
+	sint32	mainSection;          
+	uint32	mainOffset;           
+	sint32	initSection;          
+	uint32	initOffset;           
+	sint32	termSection;          
+	uint32	termOffset;           
+	uint32	importedLibraryCount;
+	uint32	totalImportedSymbolCount;
+	uint32	relocSectionCount;
+	uint32	relocInstrOffset;
+	uint32	loaderStringsOffset;
+	uint32	exportHashOffset;
+	uint32	exportHashTablePower;
+	uint32	exportedSymbolCount;
+} PACKED;
 
 struct PEFAddress {
 	uint32 a32;
-};
+} PACKED;
 
 struct PEF_ImportedLibrary {
-	uint32	nameOffset PACKED;
-	uint32	oldImpVersion PACKED;
-	uint32	currentVersion PACKED;
-	uint32	importedSymbolCount PACKED;
-	uint32	firstImportedSymbol PACKED;
-	uint8	options PACKED;
-	uint8	reservedA PACKED;
-	uint16	reservedB PACKED;
-};
+	uint32	nameOffset;
+	uint32	oldImpVersion;
+	uint32	currentVersion;
+	uint32	importedSymbolCount;
+	uint32	firstImportedSymbol;
+	uint8	options;
+	uint8	reservedA;
+	uint16	reservedB;
+} PACKED;
 
 #define PEF_CODE_SYMBOL		0	// code address
 #define PEF_DATA_SYMBOL		1	// data address
@@ -116,7 +116,7 @@ struct PEF_LoaderRelocationHeader {
 	uint16	reservedA;
 	uint32	relocCount;
 	uint32	firstRelocOffset;
-};
+} PACKED;
 
 //#define	PEF_
 
