@@ -91,7 +91,7 @@ class AddressFlat32: public Address {
 public:
 	uint32 addr;
 				AddressFlat32(BuildCtorArg&a): Address(a) {};
-				AddressFlat32(uint32 a=0);
+				AddressFlat32(uint32 a=0): addr(a) {};
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
 	virtual	AddressFlat32 *	clone() const;
@@ -116,7 +116,7 @@ class AddressFlat64: public Address {
 public:
 	uint64 addr;
 				AddressFlat64(BuildCtorArg&a): Address(a) {};
-				AddressFlat64(uint64 a=0);
+				AddressFlat64(uint64 a=0): addr(a) {};
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
 	virtual	int		compareTo(const Object *obj) const;
