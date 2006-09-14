@@ -34,7 +34,7 @@ public:
 	Area			*validarea;
 
 				ElfAnalyser();	
-				ElfAnalyser(BuildCtorArg&);
+				ElfAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_elf_shared_data *elf_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
