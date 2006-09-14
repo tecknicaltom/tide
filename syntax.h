@@ -69,7 +69,7 @@ public:
 	virtual	vcp getcolor_syntax(uint pal_index)=0;
 	virtual	lexer_state getinitstate()=0;
 	virtual	lexer_token geterrortoken()=0;
-	virtual	char *getname()=0;
+	virtual	const char *getname()=0;
 	virtual	lexer_token gettoken(void *buf, uint buflen, text_pos p, bool start_of_line, lexer_state *ret_state, uint *ret_len)=0;
 	virtual	vcp gettoken_color(lexer_token t)=0;
 };
@@ -114,7 +114,7 @@ public:
 	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();
 	virtual	lexer_token geterrortoken();
-	virtual	char *getname();
+	virtual	const char *getname();
 	virtual	lexer_token gettoken(void *buf, uint buflen, text_pos p, bool start_of_line, lexer_state *ret_state, uint *ret_len);
 	virtual	vcp gettoken_color(lexer_token t);
 };
@@ -140,7 +140,7 @@ public:
 	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();
 	virtual	lexer_token geterrortoken();
-	virtual	char *getname();
+	virtual	const char *getname();
 	virtual	lexer_token gettoken(void *buf, uint buflen, text_pos p, bool start_of_line, lexer_state *ret_state, uint *ret_len);
 	virtual	vcp gettoken_color(lexer_token t);
 };
