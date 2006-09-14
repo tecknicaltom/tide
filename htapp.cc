@@ -125,7 +125,7 @@ bool file_new_dialog(uint *mode)
 	c.w=b.w-2-c.x;
 	c.h=b.h-2-c.y;
 
-	ht_text_listbox *mode_input=new ht_text_listbox();
+	ht_text_listbox *mode_input = new ht_text_listbox();
 	mode_input->init(&c);
 	
 	mode_input->insert_str(FOM_TEXT, "text");
@@ -745,7 +745,7 @@ void ht_project_listbox::draw()
 	}
 }
 
-char *ht_project_listbox::func(uint i, bool execute)
+const char *ht_project_listbox::func(uint i, bool execute)
 {
 	return NULL;
 }
@@ -991,7 +991,7 @@ void ht_status::done()
 	ht_view::done();
 }
 
-char *ht_status::defaultpalette()
+const char *ht_status::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
@@ -1096,7 +1096,7 @@ void ht_keyline::done()
 	ht_view::done();
 }
 
-char *ht_keyline::defaultpalette()
+const char *ht_keyline::defaultpalette()
 {
 	return palkey_generic_keys_default;
 }
@@ -1149,7 +1149,7 @@ void ht_desktop::done()
 	ht_view::done();
 }
 
-char *ht_desktop::defaultpalette()
+const char *ht_desktop::defaultpalette()
 {
 	return palkey_generic_desktop_default;
 }
@@ -2146,12 +2146,12 @@ ht_window *ht_app::create_window_ofm(char *url1, char *url2)
 	return window;
 }
 
-char *ht_app::defaultpalette()
+const char *ht_app::defaultpalette()
 {
 	return NULL;
 }
 
-char *ht_app::defaultpaletteclass()
+const char *ht_app::defaultpaletteclass()
 {
 	return NULL;
 }
@@ -2203,7 +2203,7 @@ bool ht_app::focus(ht_view *view)
 	return ht_dialog::focus(view);
 }
 
-char *ht_app::func(uint i, bool execute)
+const char *ht_app::func(uint i, bool execute)
 {
 	switch (i) {
 		case 1:
