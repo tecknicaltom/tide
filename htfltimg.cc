@@ -107,7 +107,7 @@ format_viewer_if htfltimage_if = {
 /*
  *	CLASS ht_flt_aviewer
  */
-void ht_flt_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_flt_shared_data *FLT_shared)
+void ht_flt_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_flt_shared_data *FLT_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	flt_shared = FLT_shared;
