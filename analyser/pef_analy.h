@@ -34,7 +34,7 @@ public:
 	Area			*validarea;
 
 				PEFAnalyser();
-				PEFAnalyser(BuildCtorArg&);
+				PEFAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_pef_shared_data *pef_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
