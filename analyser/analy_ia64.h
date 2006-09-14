@@ -27,7 +27,7 @@
 class AnalyIA64Disassembler: public AnalyDisassembler {
 public:
 					AnalyIA64Disassembler();
-					AnalyIA64Disassembler(BuildCtorArg&);
+					AnalyIA64Disassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
 		void			init(Analyser *A);
 	virtual void			done();
 	virtual	ObjectID		getObjectID() const;
