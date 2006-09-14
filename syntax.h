@@ -53,7 +53,7 @@ struct syntax_lexer_rule {
 	lexer_state_set needstate;
 	bool need_line_start;
 	lexer_rule_string_type string_type;
-	char *string;
+	const char *string;
 	lexer_state state;
 	lexer_token token;
 };
@@ -100,7 +100,7 @@ public:
 
 class ht_c_syntax_lexer: public ht_lang_syntax_lexer {
 protected:
-	char **c_reserved_sorted;
+	const char **c_reserved_sorted;
 	uint c_reserved_count;
 
 	palette c_pal;
@@ -146,7 +146,7 @@ public:
 };
 #endif
 
-char **create_sorted_stringtable(char **table);
+const char **create_sorted_stringtable(const char **table);
 
 /*
  *	syntax palette
