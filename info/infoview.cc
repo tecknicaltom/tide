@@ -436,7 +436,7 @@ void ht_info_viewer::draw()
 	ht_text_viewer::draw();
 }
 
-int ht_info_viewer::find_node(const char *infotext, char *node)
+int ht_info_viewer::find_node(const char *infotext, const char *node)
 {
 	const char *tags[] = {"File", "Node", "Prev", "Next", "Up"};
 #define NUM_NODE_TAGS (sizeof (tags) / sizeof (tags[0]))
@@ -481,7 +481,7 @@ Container *ht_info_viewer::get_xrefs()
 	return xrefs;
 }
 
-bool ht_info_viewer::gotonode(char *f, char *n)
+bool ht_info_viewer::gotonode(const char *f, const char *n)
 {
 	return igotonode(f, n, true);
 }
@@ -505,7 +505,7 @@ uint ht_info_viewer::readfile(char *fn, char **text)
 	return len;
 }
 
-bool ht_info_viewer::igotonode(char *f, char *n, bool add2hist)
+bool ht_info_viewer::igotonode(const char *f, const char *n, bool add2hist)
 {
 	char *infotext = NULL;
 	char nfile[HT_NAME_MAX];
