@@ -150,7 +150,7 @@ void Assembler::free_asm_codes()
 	}
 }
 
-char *Assembler::get_error_msg()
+const char *Assembler::get_error_msg()
 {
 	return error_msg;
 }
@@ -191,7 +191,7 @@ void Assembler::pushcode()
 	(*t)->next = NULL;
 }
 
-void Assembler::set_error_msg(char *format, ...)
+void Assembler::set_error_msg(const char *format, ...)
 {
 	va_list arg;
 	va_start(arg, format);
@@ -288,7 +288,7 @@ bool Disassembler::selectNext(dis_insn *disasm_insn)
 	return false;
 }
 
-char *Disassembler::str(dis_insn *disasm_insn, int style)
+const char *Disassembler::str(dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, DISASM_STRF_DEFAULT_FORMAT);
 }
