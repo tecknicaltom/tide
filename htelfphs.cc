@@ -108,8 +108,8 @@ static ht_view *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group 
 			n->init(file, i);
 		
 			char t[32];
-			char *etype=matchhash(elf_shared->pheaders.pheaders32[i].p_type, elf_ph_type);
-			if (!etype) etype="?";
+			const char *etype = matchhash(elf_shared->pheaders.pheaders32[i].p_type, elf_ph_type);
+			if (!etype) etype = "?";
 			ht_snprintf(t, sizeof t, "entry %d (%s)", i, etype);
 		
 			n->add_staticmask_ptable(elfprogramheader32, h+i*elf_shared->header32.e_phentsize, elf_bigendian);
@@ -143,7 +143,7 @@ static ht_view *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group 
 			n->init(file, i);
 		
 			char t[32];
-			char *etype=matchhash(elf_shared->pheaders.pheaders64[i].p_type, elf_ph_type);
+			const char *etype=matchhash(elf_shared->pheaders.pheaders64[i].p_type, elf_ph_type);
 			if (!etype) etype="?";
 			ht_snprintf(t, sizeof t, "entry %d (%s)", i, etype);
 		
