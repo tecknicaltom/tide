@@ -92,9 +92,9 @@ protected:
 	Container *xrefs;
 	Container *history;
 
-			int find_node(const char *infofile, char *node);
+			int find_node(const char *infofile, const char *node);
 			Container *get_xrefs();
-			bool igotonode(char *file, char *node, bool add2hist);
+			bool igotonode(const char *file, const char *node, bool add2hist);
 			uint readfile(char *fn, char **text);
 public:
 			void init(Bounds *b);
@@ -105,7 +105,7 @@ public:
 	virtual int get_pindicator_str(char *buf, int max_len);
 	virtual	void handlemsg(htmsg *msg);
 /* new */	
-	virtual	bool gotonode(char *file, char *node);
+	virtual	bool gotonode(const char *file, const char *node);
 };
 
 #endif /* __INFOVIEW_H__ */
