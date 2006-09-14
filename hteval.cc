@@ -62,7 +62,7 @@ public:
 		return 3;
 	}
 
-	virtual	char *getname()
+	virtual	const char *getname()
 	{
 		return "bla";
 	}
@@ -299,7 +299,7 @@ static void do_eval(ht_strinputfield *s, ht_statictext *t, char *b)
 		}
 		scalar_destroy(&r);
 	} else {
-		char *str="?";
+		const char *str="?";
 		int pos=0;
 		get_eval_error(&str, &pos);
 		s->isetcursor(pos);
@@ -319,7 +319,7 @@ void eval_dialog()
 	b.y=(c.h-b.h)/2;
 	ht_dialog *d=new ht_dialog();
 	c=b;
-	char *hint="type integer, float or string expression to evaluate";
+	const char *hint="type integer, float or string expression to evaluate";
 
 	d->init(&b, "evaluate", FS_TITLE | FS_MOVE | FS_RESIZE);
 
