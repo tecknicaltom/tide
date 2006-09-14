@@ -47,7 +47,7 @@ typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_
 typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen);
 
 struct ht_search_method {
-	char *name;
+	const char *name;
 	uint search_class;			// SC_*
 	uint search_mode_mask;		// SEARCHMODE_*
 	uint histid;
@@ -57,7 +57,7 @@ struct ht_search_method {
 };
 
 struct ht_replace_method {
-	char *name;
+	const char *name;
 	uint histid;
 	create_form_func create_form;
 	create_replace_context_func create_replace_context;
@@ -85,19 +85,17 @@ static bool test_str_to_ofs(FileOfs *ofs, byte *str, uint strlen, ht_format_view
 	return true;
 }
 
-bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *format, char *desc)
+static bool test_str_to_pos(viewer_pos *pos, byte *str, uint strlen, ht_format_viewer *format, const char *desc)
 {
 #define TEST_STR_TO_POS_MAXSTRLEN      128
-	if (strlen>TEST_STR_TO_POS_MAXSTRLEN) {
+	if (strlen > TEST_STR_TO_POS_MAXSTRLEN) {
 		throw MsgfException("%s: expression too long (len %d, max %d)", desc, strlen, TEST_STR_TO_POS_MAXSTRLEN);
-		return false;
 	}
-	if (strlen>0) {
+	if (strlen > 0) {
 		char s[TEST_STR_TO_POS_MAXSTRLEN+1];
 		bin2str(s, str, strlen);
 		if (!format->string_to_pos(s, pos)) {
 			throw MsgfException("%s: invalid expression: '%s'", desc, s);
-			return false;
 		}
 	}
 	return true;
@@ -203,7 +201,7 @@ ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht
 					s.len, (byte*)s.value);
 			}
 		} else {
-			char *str;
+			const char *str;
 			int pos;
 			get_eval_error(&str, &pos);
 			throw MsgfException("eval error at pos %d: %s", pos, str);
@@ -1344,9 +1342,9 @@ ht_view *ht_search_dialog::get_search_modeform()
 	return smodes[smodeidx].view;
 }
 
-void ht_search_dialog::insert_search_mode(int id, char *desc, ht_view *v)
+void ht_search_dialog::insert_search_mode(int id, const char *desc, ht_view *v)
 {
-	if (smodecount<MAX_SEARCH_DIALOG_MODES) {
+	if (smodecount < MAX_SEARCH_DIALOG_MODES) {
 		search_mode_xgroup->insert(v);
 		search_mode_popup->insertstring(desc);
 		smodes[smodecount].id=id;
@@ -1457,9 +1455,9 @@ ht_view *ht_replace_dialog::get_replace_modeform()
 	return rmodes[rmodeidx].view;
 }
 
-void ht_replace_dialog::insert_replace_mode(int id, char *desc, ht_view *v)
+void ht_replace_dialog::insert_replace_mode(int id, const char *desc, ht_view *v)
 {
-	if (rmodecount<MAX_REPLACE_DIALOG_MODES) {
+	if (rmodecount < MAX_REPLACE_DIALOG_MODES) {
 		replace_mode_xgroup->insert(v);
 		replace_mode_popup->insertstring(desc);
 		rmodes[rmodecount].id=id;
