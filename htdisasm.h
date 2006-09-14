@@ -46,8 +46,8 @@ protected:
 /* new */
 	virtual	ht_disasm_sub *get_disasm_sub();
 public:
-			void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
-	virtual 	void done();
+		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
+	virtual void done();
 /* overwritten */
 	virtual	const char *func(uint i, bool execute);
 	virtual	int  get_pindicator_str(char *buf, int max_len);
