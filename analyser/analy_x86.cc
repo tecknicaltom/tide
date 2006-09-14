@@ -26,11 +26,6 @@
 #include "snprintf.h"
 #include "x86dis.h"
 
-AddressX86Flat32::AddressX86Flat32(uint32 Addr)
-{
-	addr = Addr;
-}
-
 bool AddressX86Flat32::add(int offset)
 {
 	// check for overflow
