@@ -281,7 +281,7 @@ lexer_token ht_info_lexer::geterrortoken()
 	return 42;
 }
 
-char *ht_info_lexer::getname()
+const char *ht_info_lexer::getname()
 {
 	return "infoview";
 }
@@ -425,7 +425,7 @@ void ht_info_viewer::done()
 	ht_text_viewer::done();
 }
 
-char *ht_info_viewer::defaultpalette()
+const char *ht_info_viewer::defaultpalette()
 {
 	return palkey_generic_help_default;
 }
@@ -438,7 +438,7 @@ void ht_info_viewer::draw()
 
 int ht_info_viewer::find_node(const char *infotext, char *node)
 {
-	char *tags[] = {"File", "Node", "Prev", "Next", "Up"};
+	const char *tags[] = {"File", "Node", "Prev", "Next", "Up"};
 #define NUM_NODE_TAGS (sizeof (tags) / sizeof (tags[0]))
 	const char *s = infotext;
 	char *firstnode = NULL;
