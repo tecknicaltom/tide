@@ -27,7 +27,7 @@
 class AnalyJavaDisassembler: public AnalyDisassembler {
 public:
 					AnalyJavaDisassembler() {};
-					AnalyJavaDisassembler(BuildCtorArg&);
+					AnalyJavaDisassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
 		void			init(Analyser *A, java_token_func token_func, void *context);
 	virtual	ObjectID		getObjectID() const;
 
