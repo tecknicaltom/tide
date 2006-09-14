@@ -300,10 +300,10 @@ void ht_format_group::handlemsg(htmsg *msg)
 			}
 			break;
 		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
+			const char *s=func(msg->data1.integer, 0);
 			if (s) {
 				msg->msg=msg_retval;
-				msg->data1.str=s;
+				msg->data1.cstr=s;
 			}
 			break;
 		}
@@ -454,10 +454,10 @@ void ht_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
+			const char *s=func(msg->data1.integer, 0);
 			if (s) {
 				msg->msg=msg_retval;
-				msg->data1.str=s;
+				msg->data1.cstr=s;
 			}
 			break;
 		}
@@ -793,7 +793,7 @@ bool ht_format_viewer::string_to_qword(char *string, uint64 *q)
 		*q = i.value;
 		return true;
 	} else {
-		char *s;
+		const char *s;
 		int p;
 		get_eval_error(&s, &p);
 		ht_snprintf(globalerror, GLOBAL_ERROR_SIZE, "%s at pos %d", s, p);
@@ -933,7 +933,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	dialog->init(&b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	ht_strinputfield *input;
-	char *label = "~Address";
+	const char *label = "~Address";
 
 	Bounds  b2;
 	b2.x = 3 + strlen(label);
@@ -2773,7 +2773,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						sendmsg(&m);
 					}
 				} else {
-					char *errmsg="?";
+					const char *errmsg="?";
 					int errpos=0;
 					get_eval_error(&errmsg, &errpos);
 					errorbox("eval error: %s at %d\n in '%s'", errmsg, errpos, buf);
@@ -2921,7 +2921,7 @@ vcp ht_uformat_viewer::get_tag_color_edit(FileOfs tag_offset, uint size, bool at
 	return tag_color;
 }
 
-void ht_uformat_viewer::render_tagstring_desc(char **string, int *length, vcp *tc, char *tag, uint size, bool bigendian, bool is_cursor)
+void ht_uformat_viewer::render_tagstring_desc(const char **string, int *length, vcp *tc, char *tag, uint size, bool bigendian, bool is_cursor)
 {
 	ID id;
 	vcp tag_color=getcolor_tag(palidx_tags_sel_tag);
@@ -2932,7 +2932,7 @@ void ht_uformat_viewer::render_tagstring_desc(char **string, int *length, vcp *t
 	if (tag_get_desc_id(tag, &id)) {
 		int_hash *tbl;
 		if ((tbl=(int_hash*)getAtomValue(id))) {
-			char *str;
+			const char *str;
 			uint64 q = 0;
 			FileOfs tag_offset = tag_get_offset(tag);
 			byte buf[8];
@@ -3229,7 +3229,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_BYTE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 1, true, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3237,7 +3237,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_WORD_LE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 2, false, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3245,7 +3245,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_DWORD_LE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 4, false, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3253,7 +3253,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_QWORD_LE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 8, false, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3261,7 +3261,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_WORD_BE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 2, true, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3269,7 +3269,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_DWORD_BE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 4, true, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3277,7 +3277,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_DESC_QWORD_BE: {
-					char *str;
+					const char *str;
 					int l;
 					render_tagstring_desc(&str, &l, &tag_color, n, 8, true, is_cursor);
 					c+=render_tagstring_single(chars, colors, maxlen, c, str, l, tag_color);
@@ -3312,7 +3312,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 	return c;
 }
 
-uint ht_uformat_viewer::render_tagstring_single(char *chars, vcp *colors, uint maxlen, uint offset, char *text, uint len, vcp color)
+uint ht_uformat_viewer::render_tagstring_single(char *chars, vcp *colors, uint maxlen, uint offset, const char *text, uint len, vcp color)
 {
 	if (chars) chars += offset;
 	if (colors) colors += offset;
@@ -4198,7 +4198,7 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 				return false;
 			}
 		} else {
-			char *str;
+			const char *str;
 			int pos;
 			get_eval_error(&str, &pos);
 			throw MsgfException("eval error at pos %d: %s", pos, str);
