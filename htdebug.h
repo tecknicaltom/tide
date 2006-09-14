@@ -29,10 +29,10 @@
 #define HTDEBUG
 /****************************************************************************/
 
-void ht_assert_failed(char *file, int line, char *assertion);
-void ht_error(char *file, int line, char *format,...);
-void ht_trace(char *file, int line, char *format,...);
-void ht_warn(char *file, int line, char *format,...);
+void ht_assert_failed(const char *file, int line, const char *assertion);
+void ht_error(const char *file, int line, const char *format,...);
+void ht_trace(const char *file, int line, const char *format,...);
+void ht_warn(const char *file, int line, const char *format,...);
 
 typedef uint64 timepoint;
 
