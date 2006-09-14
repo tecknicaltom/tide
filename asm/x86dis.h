@@ -103,7 +103,7 @@ protected:
 	virtual		void	filloffset(CPU_ADDR &addr, uint64 offset);
 public:
 				x86dis(X86OpSize opsize, X86AddrSize addrsize);
-				x86dis(BuildCtorArg&);
+				x86dis(BuildCtorArg&a): Disassembler(a) {};
 
 /* overwritten */
 	virtual	dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
@@ -125,7 +125,7 @@ class x86_64dis: public x86dis {
 	static x86opc_insn (*x86_64_group_insns)[X86_GROUPS][8];
 public:	
 				x86_64dis();
-				x86_64dis(BuildCtorArg&);
+				x86_64dis(BuildCtorArg&a): x86dis(a) {};
 	virtual	void		checkInfo(x86opc_insn *xinsn);
 	virtual	void		decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
 	virtual	void		prefixes();
@@ -141,7 +141,7 @@ class x86dis_vxd: public x86dis {
 protected:
 	virtual void str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
 public:
-				x86dis_vxd(BuildCtorArg&);
+				x86dis_vxd(BuildCtorArg&a): x86dis(a) {};
 				x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize);
 
 	virtual dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
