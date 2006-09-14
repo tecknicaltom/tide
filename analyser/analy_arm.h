@@ -7,7 +7,7 @@ class AnalyArmDisassembler: public AnalyDisassembler
 {
 public:
     AnalyArmDisassembler() {}
-    AnalyArmDisassembler(BuildCtorArg&);
+    AnalyArmDisassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
                 void                    init(Analyser *A);
     virtual	ObjectID		getObjectID() const;
     virtual	Address *		branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
