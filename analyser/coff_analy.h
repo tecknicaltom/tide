@@ -31,8 +31,8 @@ public:
 	File			*file;
 	Area			*validarea;
 
-				CoffAnalyser();
-				CoffAnalyser(BuildCtorArg&);
+				CoffAnalyser() {};
+				CoffAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_coff_shared_data *Coff_shared, File *File);
 		void 		load(ObjectStream &f);
 	virtual	void		done();
