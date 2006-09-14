@@ -80,7 +80,7 @@ inline HTMallocRes ht_malloc(size_t size)
 /**
  *	Macro for creating object build functions
  */
-#define BUILDER(reg, obj, parent) obj::obj(BuildCtorArg&a):parent(a) {} Object *build_##obj(){BuildCtorArg a;return new obj(a);}
+#define BUILDER(reg, obj, parent) Object *build_##obj(){BuildCtorArg a;return new obj(a);}
 #define BUILDER2(reg, obj) Object *build_##obj(){BuildCtorArg a;return new obj(a);}
 
 /**
@@ -610,7 +610,7 @@ private:
 		return elems+i;
 	}
 public:
-				Array(BuildCtorArg&);
+				Array(BuildCtorArg &a): List(a) {};
 				Array(bool own_objects, int prealloc = ARRAY_CONSTR_ALLOC_DEFAULT);
 	virtual			~Array();
 	/* extends Object */
@@ -660,7 +660,7 @@ public:
  */
 class Stack: public Array {
 public:
-				Stack(BuildCtorArg&);
+				Stack(BuildCtorArg &a): Array(a) {};
 				Stack(bool own_objects);
 	/* new */
 	virtual Object *	pop();
@@ -692,7 +692,7 @@ private:
 	inline	SLinkedListNode *handleToNative(ObjHandle h) const;
 	inline	ObjHandle	nativeToHandle(SLinkedListNode *n) const;
 public:
-				SLinkedList(BuildCtorArg&);
+				SLinkedList(BuildCtorArg&a): List(a) {};
 				SLinkedList(bool own_objects);
 	virtual			~SLinkedList();
 	/* extends Object */
@@ -728,7 +728,7 @@ public:
  */
 class Queue: public SLinkedList {
 public:
-				Queue(BuildCtorArg&);
+				Queue(BuildCtorArg&a): SLinkedList(a) {};
 				Queue(bool own_objects);
 /* new */
 
@@ -782,7 +782,7 @@ private:
 	inline	DLinkedListNode *handleToNative(ObjHandle h) const;
 	inline	ObjHandle	nativeToHandle(DLinkedListNode *n) const;
 public:
-				DLinkedList(BuildCtorArg&);
+				DLinkedList(BuildCtorArg&a): List(a) {};
 				DLinkedList(bool own_objects);
 	virtual			~DLinkedList();
 	/* extends Object */
@@ -819,6 +819,7 @@ public:
 struct BinTreeNode {
 	Object *key;
 	BinTreeNode *left, *right;
+	int unbalance;
 };
 
 /**
@@ -831,7 +832,7 @@ protected:
 	BinTreeNode *root;
 	Comparator compare;
 
-	virtual	BinTreeNode *	allocNode() const;
+		BinTreeNode *	allocNode() const;
 		void		cloneR(BinTreeNode *node);
 	virtual	void		deleteNode(BinTreeNode *node) const;
 		BinTreeNode *	findNode(BinTreeNode *node, const Object *obj) const;
@@ -855,7 +856,7 @@ protected:
 	inline	BinTreeNode *	handleToNative(ObjHandle h) const { return (BinTreeNode*)h; }
 	inline	ObjHandle	nativeToHandle(BinTreeNode *n) const { return (ObjHandle*)n; }
 public:
-				BinaryTree(BuildCtorArg&);
+				BinaryTree(BuildCtorArg&a): Container(a) {};
 				BinaryTree(bool own_objects, Comparator comparator = autoCompare);
 	virtual			~BinaryTree();
 	/* extends Object */
@@ -885,24 +886,17 @@ public:
 	virtual	Object *	remove(ObjHandle h);
 };
 
-/**
- *   AVLTree's node structure
- */
-struct AVLTreeNode: public BinTreeNode {
-	int unbalance;
-};
 
 /**
  *   A height-balanced binary tree (AVL)
  */
 class AVLTree: public BinaryTree {
 private:
-	virtual	AVLTreeNode *	allocNode() const;
-		void		cloneR(AVLTreeNode *node);
+		void		cloneR(BinTreeNode *node);
 		BinTreeNode *	removeR(Object *key, BinTreeNode *&root, int &change, int cmp);
 		int		loadR(ObjectStream &s, BinTreeNode *&n, int l, int r);
 public:
-				AVLTree(BuildCtorArg&);
+				AVLTree(BuildCtorArg&a): BinaryTree(a) {};
 				AVLTree(bool own_objects, Comparator comparator = autoCompare);
 
 		void		debugOut();
@@ -919,7 +913,7 @@ public:
 /**
  *   MRU Cache's node structure
  */
-struct MRUCacheNode: public AVLTreeNode {
+struct MRUCacheNode: public BinTreeNode {
 	MRUCacheNode	*moreRU, *lessRU;
 };
 
@@ -958,7 +952,7 @@ public:
  */
 class Set: public AVLTree {
 public:
-				Set(BuildCtorArg&);
+				Set(BuildCtorArg&a):AVLTree(a) {};
 				Set(bool own_objects);
 	/* new */
 			void	intersectWith(Set *b);
@@ -1013,8 +1007,8 @@ public:
 	Object		*mKey;
 	Object		*mValue;
 
-				KeyValue(BuildCtorArg&);
-				KeyValue(Object *aKey, Object *aValue);
+				KeyValue(BuildCtorArg&a): Object(a) {};
+				KeyValue(Object *aKey, Object *aValue): mKey(aKey), mValue(aValue) {};
 	virtual			~KeyValue();
 
 	virtual	KeyValue *	clone() const;
@@ -1032,8 +1026,8 @@ class SInt: public Object {
 public:
 	signed int value;
 
-				SInt(BuildCtorArg&);
-				SInt(signed int i);
+				SInt(BuildCtorArg&a): Object(a) {};
+				SInt(signed int i): value(i) {};
 	/* extends Object */
 	virtual	SInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
@@ -1052,8 +1046,8 @@ class SInt64: public Object {
 public:
 	sint64 value;
 
-				SInt64(BuildCtorArg&);
-				SInt64(sint64 i);
+				SInt64(BuildCtorArg&a): Object(a) {};
+				SInt64(sint64 i): value(i) {};
 	/* extends Object */
 	virtual	SInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
@@ -1070,8 +1064,8 @@ class UInt: public Object {
 public:
 	unsigned int value;
 
-				UInt(BuildCtorArg&);
-				UInt(unsigned int i);
+				UInt(BuildCtorArg&a): Object(a) {};
+				UInt(unsigned int i): value(i) {};
 	/* extends Object */
 	virtual	UInt *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
@@ -1088,8 +1082,8 @@ class UInt64: public Object {
 public:
 	uint64 value;
 
-				UInt64(BuildCtorArg&);
-				UInt64(uint64 i);
+				UInt64(BuildCtorArg&a): Object(a) {};
+				UInt64(uint64 i): value(i) {};
 	/* extends Object */
 	virtual UInt64 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
@@ -1106,8 +1100,8 @@ class Float: public Object {
 public:
 	double value;
 
-				Float(BuildCtorArg&);
-				Float(double d);
+				Float(BuildCtorArg&a): Object(a) {};
+				Float(double d): value(d) {};
 	/* extends Object */
 	virtual	Float *		clone() const;
 	virtual	int		compareTo(const Object *obj) const;
@@ -1124,7 +1118,7 @@ class Pointer: public Object {
 public:
 	void *value;
 
-	Pointer(void *p);
+	Pointer(void *p): value(p) {};
 };
 
 /**
@@ -1137,7 +1131,7 @@ public:
 	void *ptr;
 	uint size;
 
-				MemArea(BuildCtorArg&);
+				MemArea(BuildCtorArg&a): Object(a) {};
 				MemArea(const void *p, uint size, bool duplicate = false);
 				~MemArea();
 	/* extends Object */
