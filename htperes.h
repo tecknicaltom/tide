@@ -31,10 +31,10 @@ class ht_pe_resource_viewer: public ht_static_treeview {
 private:
 /* new */
 	virtual	Object *vstate_create();
-			bool vstate_save();
+		bool vstate_save();
 	virtual	void vstate_restore(Object *d);
 public:
-		void init(Bounds *b, char *desc);
+		void init(Bounds *b, const char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	void	handlemsg(htmsg *msg);
