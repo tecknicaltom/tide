@@ -195,7 +195,7 @@ void javadis::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_a
 	addr_align = 1;
 }
 
-char *javadis::getName()
+const char *javadis::getName()
 {
 	return "Java/Disassembler";
 }
@@ -294,13 +294,13 @@ void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_o
 	}
 }
 
-void javadis::str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print)
+void javadis::str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print)
 {
 	
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_symbol = get_cs(e_cs_symbol);
 
-	char *f=*format;
+	const char *f=*format;
 	char *s=*str;
 	while (*f) {
 		if (*f==stopchar) break;
@@ -311,30 +311,30 @@ void javadis::str_format(char **str, char **format, char *p, char *n, char *op[3
 			case DISASM_STRF_VAR:
 				f++;
 				if (print) {
-					char *t=0;
-					int tl=0;
+					const char *t = NULL;
+					int tl = 0;
 					switch (*f) {
-						case DISASM_STRF_PREFIX:
-							t=p;
-							break;
-						case DISASM_STRF_NAME:
-							t=n;
-							break;
-						case DISASM_STRF_FIRST:
-							t=op[0];
-							tl=oplen[0];
-							break;
-						case DISASM_STRF_SECOND:
-							t=op[1];
-							tl=oplen[1];
-							break;
-						case DISASM_STRF_THIRD:
-							t=op[2];
-							tl=oplen[2];
-							break;
+					case DISASM_STRF_PREFIX:
+						t=p;
+						break;
+					case DISASM_STRF_NAME:
+						t=n;
+						break;
+					case DISASM_STRF_FIRST:
+						t=op[0];
+						tl=oplen[0];
+						break;
+					case DISASM_STRF_SECOND:
+						t=op[1];
+						tl=oplen[1];
+						break;
+					case DISASM_STRF_THIRD:
+						t=op[2];
+						tl=oplen[2];
+						break;
 					}
 					if (tl) {
-						memmove(s, t, tl);
+						memcpy(s, t, tl);
 						s+=tl;
 						*s=0;
 					} else {
@@ -344,7 +344,7 @@ void javadis::str_format(char **str, char **format, char *p, char *n, char *op[3
 				}
 				break;
 			case DISASM_STRF_COND: {
-				char *t=0;
+				const char *t = NULL;
 				f++;
 				switch (*f) {
 					case DISASM_STRF_PREFIX:
@@ -386,12 +386,12 @@ void javadis::str_format(char **str, char **format, char *p, char *n, char *op[3
 	*str=s;
 }
 
-char *javadis::str(dis_insn *disasm_insn, int options)
+const char *javadis::str(dis_insn *disasm_insn, int options)
 {
 	return strf(disasm_insn, options, DISASM_STRF_DEFAULT_FORMAT);
 }
 
-char *javadis::strf(dis_insn *disasm_insn, int opt, char *format)
+const char *javadis::strf(dis_insn *disasm_insn, int opt, const char *format)
 {
 	javadis_insn *insn = (javadis_insn*)disasm_insn;
 	char prefix[64];
