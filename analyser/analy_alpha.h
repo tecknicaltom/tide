@@ -27,7 +27,7 @@
 class AnalyAlphaDisassembler: public AnalyDisassembler {
 public:
 					AnalyAlphaDisassembler();
-					AnalyAlphaDisassembler(BuildCtorArg &);
+					AnalyAlphaDisassembler(BuildCtorArg &a): AnalyDisassembler(a) {};
 		void			init(Analyser *A);
 		void			load(ObjectStream &f);
 	virtual void		     	done();
