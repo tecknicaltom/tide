@@ -1592,13 +1592,13 @@ dis_insn *x86dis_vxd::decode(byte *code, int maxlen, CPU_ADDR addr)
 		if (v) {
 			insn.op[0].type = X86_OPTYPE_USER;
 			insn.op[0].user[0].i = *(uint16*)(code+4);
-			insn.op[0].user[1].p = v->name;
-			char *vs = NULL;
+			insn.op[0].user[1].p = (void*)v->name;
+			const char *vs = NULL;
 			if (v->services) vs = find_vxd_service(v->services, *(uint16*)(code+2) & 0x7fff);
 			if (vs) {
 				insn.op[1].type = X86_OPTYPE_USER;
 				insn.op[1].user[0].i = *(uint16*)(code+2);
-				insn.op[1].user[1].p = vs;
+				insn.op[1].user[1].p = (void*)vs;
 			} else {
 				insn.op[1].type = X86_OPTYPE_IMM;
 				insn.op[1].size = 2;
