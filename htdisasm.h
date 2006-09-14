@@ -49,7 +49,7 @@ public:
 			void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
 	virtual 	void done();
 /* overwritten */
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 	virtual	int  get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
 	virtual	void handlemsg(htmsg *msg);
