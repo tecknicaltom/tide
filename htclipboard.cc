@@ -93,7 +93,7 @@ uint	ht_clipboard::write(const void *buf, uint size)
  *	CLASS ht_clipboard_viewer
  */
 
-void ht_clipboard_viewer::init(Bounds *b, char *desc, int caps, ht_clipboard *clipb, ht_format_group *format_group)
+void ht_clipboard_viewer::init(Bounds *b, const char *desc, int caps, ht_clipboard *clipb, ht_format_group *format_group)
 {
 	ht_uformat_viewer::init(b, desc, caps, clipboard, format_group);
 	
