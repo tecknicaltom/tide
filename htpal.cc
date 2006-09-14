@@ -42,7 +42,7 @@
 
 struct pal_layout {
 	int idx;
-	char *name;
+	const char *name;
 };
 
 /* palette layout: tags */
@@ -128,7 +128,7 @@ pal_layout pal_layout_analyser[] = {
 
 struct pal_class {
 	pal_layout *layout;
-	char *name;
+	const char *name;
 };
 
 pal_class pal_layouts[] =
@@ -150,7 +150,7 @@ vcp getcolorv(palette *pal, uint index)
 	return VCP(VC_WHITE, VC_RED);
 }
 
-pal_layout *find_pal_layout(pal_class *layouts, char *pal_class, int *lsize)
+pal_layout *find_pal_layout(pal_class *layouts, const char *pal_class, int *lsize)
 {
 	pal_layout *pl = NULL;
 	while (layouts->layout && layouts->name) {
@@ -286,7 +286,7 @@ void palette_entry::store(ObjectStream &f) const
 void palette_entry::strvalue(char *buf32bytes)
 {
 	char *p = buf32bytes;
-	char *text;
+	const char *text;
 	int fg = VCP_FOREGROUND(color);
 	int bg = VCP_BACKGROUND(color);
 	if (fg==VC_TRANSPARENT && bg==VC_TRANSPARENT) {
