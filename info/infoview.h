@@ -55,7 +55,7 @@ public:
 	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();
 	virtual	lexer_token geterrortoken();
-	virtual	char *getname();
+	virtual	const char *getname();
 	virtual	lexer_token gettoken(void *buf, uint buflen, text_pos p, bool start_of_line, lexer_state *ret_state, uint *ret_len);
 	virtual	vcp gettoken_color(lexer_token t);
 /* new */
@@ -101,7 +101,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 	virtual int get_pindicator_str(char *buf, int max_len);
 	virtual	void handlemsg(htmsg *msg);
 /* new */	
