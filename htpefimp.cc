@@ -186,7 +186,7 @@ ht_pef_import_function::~ht_pef_import_function()
  *	CLASS ht_pef_import_viewer
  */
 
-void ht_pef_import_viewer::init(Bounds *b, char *Desc, ht_format_group *fg)
+void ht_pef_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
 {
 	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
@@ -244,27 +244,27 @@ const char *ht_pef_import_viewer::func(uint i, bool execute)
 void ht_pef_import_viewer::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case msg_funcexec:
-			if (func(msg->data1.integer, 1)) {
-				clearmsg(msg);
-				return;
-			}
-			break;
-		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
-			if (s) {
-				msg->msg=msg_retval;
-				msg->data1.str=s;
-			}
-			break;
+	case msg_funcexec:
+		if (func(msg->data1.integer, 1)) {
+			clearmsg(msg);
+			return;
 		}
-		case msg_keypressed: {
-			if (msg->data1.integer == K_Return) {
-				select_entry(e_cursor);
-				clearmsg(msg);
-			}
-			break;
+		break;
+	case msg_funcquery: {
+		const char *s=func(msg->data1.integer, 0);
+		if (s) {
+			msg->msg=msg_retval;
+			msg->data1.cstr=s;
 		}
+		break;
+	}
+	case msg_keypressed: {
+		if (msg->data1.integer == K_Return) {
+			select_entry(e_cursor);
+			clearmsg(msg);
+		}
+		break;
+	}
 	}
 	ht_text_listbox::handlemsg(msg);
 }
