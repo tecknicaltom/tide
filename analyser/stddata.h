@@ -32,8 +32,8 @@ class Area: public Object {
 public:
 	area_s			*a;
 
-				Area();
-				Area(BuildCtorArg &);
+				Area() {};
+				Area(BuildCtorArg &a): Object(a) {};
 		void		init();
 	virtual	void		load(ObjectStream &s);
 	virtual	void 		done();
