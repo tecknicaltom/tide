@@ -110,7 +110,7 @@ void ht_ne_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_
 	file = File;
 }
 
-char *ht_ne_aviewer::func(uint i, bool execute)
+const char *ht_ne_aviewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 3: {
