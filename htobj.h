@@ -145,7 +145,7 @@ public:
 /*debug:*/const char *view_debug_name;
 
 				ht_view() {}
-				ht_view(BuildCtorArg&);
+				ht_view(BuildCtorArg&a): Object(a) {};
 
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
@@ -251,7 +251,7 @@ public:
 	void		*shared_data;
 
 		ht_group() {}
-		ht_group(BuildCtorArg&);
+		ht_group(BuildCtorArg&a): ht_view(a) {};
 
 		void init(Bounds *b, int options, const char *desc);
 	virtual	void done();
@@ -297,7 +297,7 @@ public:
 class ht_xgroup: public ht_group {
 public:
 		ht_xgroup() {}
-		ht_xgroup(BuildCtorArg&);
+		ht_xgroup(BuildCtorArg&a): ht_group(a) {};
 
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
@@ -324,7 +324,7 @@ protected:
 	bool isvertical;
 public:
 		ht_scrollbar() {}
-		ht_scrollbar(BuildCtorArg&);
+		ht_scrollbar(BuildCtorArg&a): ht_view(a) {};
 
 		void init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
@@ -347,7 +347,7 @@ class ht_text: public ht_view {
 public:
 /* new */
 		ht_text() {}
-		ht_text(BuildCtorArg&) {};
+		ht_text(BuildCtorArg&a): ht_view(a) {};
 	virtual	void settext(const char *text);
 };
 
@@ -378,7 +378,7 @@ protected:
 	virtual	vcp getcurcol_killer();
 public:
 				ht_frame() {}
-				ht_frame(BuildCtorArg&);
+				ht_frame(BuildCtorArg&a): ht_text(a) {};
 		void		init(Bounds *b, const char *desc, uint style, uint number=0);
 	virtual	void		done();
 /* overwritten */
@@ -416,7 +416,7 @@ protected:
 		bool next_action_state();
 public:
 		ht_window() {}
-		ht_window(BuildCtorArg&);
+		ht_window(BuildCtorArg&a): ht_group(a) {};
 
 		void init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
