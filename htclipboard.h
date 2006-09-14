@@ -37,9 +37,9 @@ public:
 		ht_clipboard();
 	virtual	~ht_clipboard();
 /* overwritten */
-	virtual	uint	write(const void *buf, uint size);
+	virtual	uint write(const void *buf, uint size);
 /* new */
-			void clear();
+		void clear();
 };
 
 /*
@@ -54,7 +54,7 @@ protected:
 		int get_pindicator_str(char *buf, int max_len);
 		void selection_changed();
 public:
-		void init(Bounds *b, char *desc, int caps, ht_clipboard *clipboard, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, int caps, ht_clipboard *clipboard, ht_format_group *format_group);
 /* overwritten */
 	virtual	void draw();
 	virtual void handlemsg(htmsg *msg);
