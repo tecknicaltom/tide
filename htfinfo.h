@@ -35,7 +35,7 @@ extern format_viewer_if htfinfo_if;
 class ht_finfo_text: public ht_statictext {
 protected:
 	File *file;
-	char *olddesc;
+	const char *olddesc;
 	
 public:
 		void	init(Bounds *b, File *file);
