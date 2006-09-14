@@ -257,7 +257,7 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	/* section headers */
 	
 	for (uint i=0; i<xbe_shared->sections.number_of_sections; i++) {
-		char *name;
+		const char *name;
 //		uint ofs;
 	
 		s=new ht_mask_sub();
@@ -293,7 +293,7 @@ format_viewer_if htxbeheader_if = {
  *	CLASS ht_pe_header_viewer
  */
 
-void ht_xbe_header_viewer::init(Bounds *b, char *desc, int caps, File *file, ht_format_group *group)
+void ht_xbe_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_xbe_header_viewer");
