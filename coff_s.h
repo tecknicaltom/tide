@@ -27,14 +27,14 @@
 typedef unsigned int RVA;
 
 struct COFF_HEADER {
-	uint16 machine PACKED;
-	uint16 section_count PACKED;
-	uint32 timestamp PACKED;
-	uint32 symbol_table_offset PACKED;
-	uint32 symbol_count PACKED;
-	uint16 optional_header_size PACKED;
-	uint16 characteristics PACKED;
-};
+	uint16 machine;
+	uint16 section_count;
+	uint32 timestamp;
+	uint32 symbol_table_offset;
+	uint32 symbol_count;
+	uint16 optional_header_size;
+	uint16 characteristics;
+} PACKED;
 
 #define COFF_RELOCS_STRIPPED		   	0x0001  // Relocation info stripped from file.
 #define COFF_EXECUTABLE_IMAGE		   	0x0002  // File is executable  (i.e. no unresolved externel references).
@@ -98,30 +98,30 @@ struct COFF_HEADER {
 #define COFF_OPTMAGIC_PE64			0x20b
 
 struct	COFF_OPTIONAL_HEADER32 {
-	uint16 magic PACKED;
-	byte major_linker_version PACKED;
-	byte minor_linker_version PACKED;
-	uint32 code_size PACKED;
-	uint32 data_size PACKED;
-	uint32 bss_size PACKED;
-	uint32 entrypoint_address PACKED;
-	uint32 code_base PACKED;
-	uint32 data_base PACKED;
-};
+	uint16 magic;
+	byte major_linker_version;
+	byte minor_linker_version;
+	uint32 code_size;
+	uint32 data_size;
+	uint32 bss_size;
+	uint32 entrypoint_address;
+	uint32 code_base;
+	uint32 data_base;
+} PACKED;
 
 /*
  *	same as COFF_OPTIONAL_HEADER32 but no data_base
  */
 struct	COFF_OPTIONAL_HEADER64 {
-	uint16 magic PACKED;
-	byte major_linker_version PACKED;
-	byte minor_linker_version PACKED;
-	uint32 code_size PACKED;
-	uint32 data_size PACKED;
-	uint32 bss_size PACKED;
-	uint32 entrypoint_address PACKED;
-	uint32 code_base PACKED;
-};
+	uint16 magic;
+	byte major_linker_version;
+	byte minor_linker_version;
+	uint32 code_size;
+	uint32 data_size;
+	uint32 bss_size;
+	uint32 entrypoint_address;
+	uint32 code_base;
+} PACKED;
 
 /*
  *	Section header
@@ -130,17 +130,17 @@ struct	COFF_OPTIONAL_HEADER64 {
 #define COFF_SIZEOF_SHORT_NAME			8
 
 struct COFF_SECTION_HEADER {
-	byte name[COFF_SIZEOF_SHORT_NAME] PACKED;
-	uint32 data_vsize PACKED;	// or data_phys_address !
-	uint32 data_address PACKED;
-	uint32 data_size PACKED;
-	uint32 data_offset PACKED;
-	uint32 relocation_offset PACKED;
-	uint32 linenumber_offset PACKED;
-	uint16 relocation_count PACKED;
-	uint16 linenumber_count PACKED;
-	uint32 characteristics PACKED;
-};
+	byte name[COFF_SIZEOF_SHORT_NAME];
+	uint32 data_vsize;	// or data_phys_address !
+	uint32 data_address;
+	uint32 data_size;
+	uint32 data_offset;
+	uint32 relocation_offset;
+	uint32 linenumber_offset;
+	uint16 relocation_count;
+	uint16 linenumber_count;
+	uint32 characteristics;
+} PACKED;
 
 #define COFF_SIZEOF_SECTION_HEADER		40
 
