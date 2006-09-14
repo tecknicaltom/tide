@@ -196,7 +196,7 @@ public:
 		bool find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks);
 		/* node type*/
 		ht_registry_node_type lookup_node_type(const char *identifier);
-		ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, char **identifier);
+		ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, const char **identifier);
 		ht_registry_node_type have_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
 		ht_registry_node_type register_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data);
 		/**/
@@ -215,8 +215,8 @@ public:
 			void debug_dump_i(FILE *f, Container *t, int ident);
 };
 
-uint32 get_config_dword(char *ident);
-char *get_config_string(char *ident);
+uint32 get_config_dword(const char *ident);
+char *get_config_string(const char *ident);
 
 extern ht_registry *registry;
 
