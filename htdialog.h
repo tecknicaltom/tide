@@ -59,7 +59,7 @@ protected:
 	Queue *msgqueue;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 			ht_queued_msg *dequeuemsg();
 public:
 			ht_dialog() {};
@@ -88,7 +88,7 @@ protected:
 			int scount;
 			ht_key shortcuts[32];
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 			void	init(Bounds *b, ht_string_list *strings);
 	virtual	void	done();
@@ -164,7 +164,7 @@ protected:
 			int insertbyte(byte *pos, byte b);
 			void select_add(byte *start, byte *end);
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 		void	init(Bounds *b, int maxtextlen, List *history = NULL);
 	virtual	void	done();
@@ -239,15 +239,15 @@ protected:
 	ht_key shortcut2;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 			void	init(Bounds *b, const char *text, int value);
 	virtual	void	done();
 /* overwritten */
-	virtual 	void draw();
-	virtual	void handlemsg(htmsg *msg);
+	virtual void 	draw();
+	virtual	void 	handlemsg(htmsg *msg);
 /* new */
-	virtual	void push();
+	virtual	void 	push();
 };
 
 
@@ -265,7 +265,7 @@ protected:
 	int cols;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 			void	init(Bounds *b);               
 	virtual	void	done();
@@ -313,41 +313,41 @@ public:
 	ht_listbox_title *title;
 
 public:
-		void	init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
-	virtual	void	done();
-		void	attachTitle(ht_listbox_title *title);
-		void	adjustPosHack();
-		void	adjustScrollbar();
-	virtual	int	calcCount() = 0;
-		void	clearQuickfind();
-	virtual	int	cursorAdjust();
-		int	cursorUp(int n);
-		int	cursorDown(int n);
-	virtual	int	datasize();
-	virtual	char *	defaultpalette();
-	virtual	void	draw();
-	virtual	int	estimateEntryPos(void *entry);
-	virtual	void	getdata(ObjectStream &s);
-	virtual	void *	getFirst() = 0;
-	virtual	void *	getLast() = 0;
-	virtual	void *	getNext(void *entry) = 0;
-	virtual	void *	getPrev(void *entry) = 0;
-	virtual	char *	getStr(int col, void *entry) = 0;
-		void	gotoItemByEntry(void *entry, bool clear_quickfind = true);
-	virtual	void	gotoItemByPosition(uint pos);
-	virtual	void	handlemsg(htmsg *msg);
-	virtual	int	numColumns();
-	virtual	void *	quickfind(const char *s) = 0;
-	virtual	char *	quickfindCompletition(const char *s);
-	virtual	void	redraw();
-	virtual	void	resize(int rw, int rh);
-	virtual	bool	selectEntry(void *entry);
-	virtual	void	setdata(ObjectStream &s);
-	virtual	void	stateChanged();
-	virtual	void	update();
-		void	updateCursor();
-	virtual	Object *vstate_create();
-		void	vstate_save();
+		void		init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
+	virtual	void		done();
+		void		attachTitle(ht_listbox_title *title);
+		void		adjustPosHack();
+		void		adjustScrollbar();
+	virtual	int		calcCount() = 0;
+		void		clearQuickfind();
+	virtual	int		cursorAdjust();
+		int		cursorUp(int n);
+		int		cursorDown(int n);
+	virtual	int		datasize();
+	virtual	const char *	defaultpalette();
+	virtual	void		draw();
+	virtual	int		estimateEntryPos(void *entry);
+	virtual	void		getdata(ObjectStream &s);
+	virtual	void *		getFirst() = 0;
+	virtual	void *		getLast() = 0;
+	virtual	void *		getNext(void *entry) = 0;
+	virtual	void *		getPrev(void *entry) = 0;
+	virtual	char *		getStr(int col, void *entry) = 0;
+		void		gotoItemByEntry(void *entry, bool clear_quickfind = true);
+	virtual	void		gotoItemByPosition(uint pos);
+	virtual	void		handlemsg(htmsg *msg);
+	virtual	int		numColumns();
+	virtual	void *		quickfind(const char *s) = 0;
+	virtual	char *		quickfindCompletition(const char *s);
+	virtual	void		redraw();
+	virtual	void		resize(int rw, int rh);
+	virtual	bool		selectEntry(void *entry);
+	virtual	void		setdata(ObjectStream &s);
+	virtual	void		stateChanged();
+	virtual	void		update();
+		void		updateCursor();
+	virtual	Object *	vstate_create();
+		void		vstate_save();
 protected:
 		void	rearrangeColumns();
 };
@@ -391,10 +391,10 @@ public:
 	virtual	void *	getNext(void *entry);
 	virtual	void *	getPrev(void *entry);
 	virtual	char *	getStr(int col, void *entry);
-		void	insert_str(int id, char *str, ...);
-		void	insert_str(int id, char **strs);
-		void	insert_str_extra(int id, void *extra_data, char *str, ...);
-		void	insert_str_extra(int id, void *extra_data, char **strs);
+		void	insert_str(int id, const char *str, ...);
+		void	insert_str(int id, const char **strs);
+		void	insert_str_extra(int id, void *extra_data, const char *str, ...);
+		void	insert_str_extra(int id, void *extra_data, const char **strs);
 	virtual	int	numColumns();
 	virtual	void *	quickfind(const char *s);
 	virtual	char *	quickfindCompletition(const char *s);
@@ -444,7 +444,7 @@ protected:
 	bool transparent;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 		void	init(Bounds *b, const char *text, statictext_align align, bool breaklines=true, bool transparent=false);
 	virtual	void	done();
@@ -473,10 +473,10 @@ public:
 		void init(Bounds *b, char *desc);
 	virtual	void done();
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 	virtual	int  datasize();
 	virtual	void getdata(ObjectStream &s);
-		void insertstring(char *string);
+		void insertstring(const char *string);
 	virtual	void setdata(ObjectStream &s);
 /* new */
 		void select_next();
@@ -506,7 +506,7 @@ public:
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void setdata(ObjectStream &s);
 /* new */
-		void	insertstring(char *string);
+		void	insertstring(const char *string);
 };
 
 /*
@@ -554,7 +554,7 @@ protected:
 	ht_key shortcut;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 		void	init(Bounds *b, const char *text, ht_view *connected);
 	virtual	void	done();
@@ -570,7 +570,7 @@ public:
 class ht_progress_indicator: public ht_window {
 protected:
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 	ht_statictext *text;
 	
@@ -597,7 +597,7 @@ protected:
 	int flags;
 
 /* overwritten */
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 public:
 			void	init(Bounds *b, int selected, int flags);
 	virtual	void	done();
