@@ -201,7 +201,7 @@ bool ht_format_group::focus(ht_view *view)
 	return r;
 }
 
-char *ht_format_group::func(uint i, bool execute)
+const char *ht_format_group::func(uint i, bool execute)
 {
 	return ht_format_viewer::func(i, execute);
 }
@@ -408,9 +408,9 @@ void ht_viewer::done()
 	ht_view::done();
 }
 
-char *ht_viewer::func(uint i, bool execute)
+const char *ht_viewer::func(uint i, bool execute)
 {
-	return 0;
+	return NULL;
 }
 
 void ht_viewer::handlemsg(htmsg *msg)
@@ -1990,7 +1990,7 @@ void ht_uformat_viewer::focus_cursor()
 	}
 }
 
-char *ht_uformat_viewer::func(uint i, bool execute)
+const char *ht_uformat_viewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 2:
