@@ -65,7 +65,7 @@ public:
 	virtual	bool idle();
 private:
 		void render();
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 };
 
 /*
@@ -79,7 +79,7 @@ public:
 /* overwritten */
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 };
 
 /*
@@ -92,7 +92,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
-	virtual	char *defaultpalette();
+	virtual	const char *defaultpalette();
 };
 
 /*
@@ -240,8 +240,8 @@ public:
 	virtual	char *	quickfindCompletition(const char *s);
 	virtual	bool	selectEntry(void *entry);
 /* new */
-			char *	func(uint i, bool execute);
-			void	set_project(ht_project *project);
+		const char *func(uint i, bool execute);
+		void	set_project(ht_project *project);
 };
 
 /*
@@ -318,8 +318,8 @@ protected:
 			
 			int popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *structure, int depth, int *currenti, ht_view *currentv);
 /* overwritten */
-	virtual	char *defaultpalette();
-	virtual	char *defaultpaletteclass();
+	virtual	const char *defaultpalette();
+	virtual	const char *defaultpaletteclass();
 public:
 	ht_view *menu;
 
@@ -332,7 +332,7 @@ public:
 /* overwritten */
 	virtual	void draw();
 	virtual	bool focus(ht_view *view);
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void load(ObjectStream &f);
 	virtual ObjectID getObjectID() const;
