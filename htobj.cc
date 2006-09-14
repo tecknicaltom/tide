@@ -460,7 +460,7 @@ uint ht_view::getnumber()
 	return 0;
 }
 
-char *ht_view::getpalette()
+const char *ht_view::getpalette()
 {
 	return pal_name;
 }
@@ -691,13 +691,13 @@ void ht_view::setoptions(int Options)
 	options = Options;
 }
 
-void ht_view::setpalette(char *Pal_name)
+void ht_view::setpalette(const char *Pal_name)
 {
 	pal_name = Pal_name;
 	reloadpalette();
 }
 
-void ht_view::setpalettefull(char *_pal_name, char *_pal_class)
+void ht_view::setpalettefull(const char *_pal_name, const char *_pal_class)
 {
 	pal_class=_pal_class;
 	setpalette(pal_name);
@@ -1192,7 +1192,7 @@ void ht_group::setdata(ObjectStream &s)
 	}
 }
 
-void ht_group::setpalette(char *pal_name)
+void ht_group::setpalette(const char *pal_name)
 {
 	ht_view *v=first;
 	while (v) {
@@ -1469,7 +1469,7 @@ void ht_frame::draw()
 		ns+=4;
 	}
 /* <title> */
-	char *d;
+	const char *d;
 	switch (framestate) {
 		case FST_MOVE:
 			d = (char*)((style & FS_RESIZE) ? "(moving) - hit space to resize" : "(moving)");
@@ -1482,7 +1482,7 @@ void ht_frame::draw()
 	}
 	int ks = (style & FS_KILLER) ? 4 : 0;
 	ns++;
-	if ((d) && (style & FS_TITLE)) {
+	if (d && (style & FS_TITLE)) {
 		int l = strlen(d), k = 0;
 		if (l > size.w-(5+ks+ns)) {
 			k = l-(size.w-(6+ks+ns+2));
