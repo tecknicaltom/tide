@@ -104,9 +104,9 @@
 
 
 struct ILOpcodeTabEntry {
-	char	*name;
-	byte	op;
-	byte	size;
+	const char	*name;
+	byte		op;
+	byte		size;
 };
 								
 extern ILOpcodeTabEntry il_opcode_table[MAX_IL_OPCODE];
