@@ -108,7 +108,7 @@ void ht_le_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_
 	file = File;
 }
 
-char *ht_le_aviewer::func(uint i, bool execute)
+const char *ht_le_aviewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 3: {
