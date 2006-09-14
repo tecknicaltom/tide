@@ -31,8 +31,8 @@ public:
 	File			*file;
 	Area			*validarea;
 
-				XBEAnalyser();
-				XBEAnalyser(BuildCtorArg&);
+				XBEAnalyser() {};
+				XBEAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_xbe_shared_data *XBE_shared, File *File);
 		void		load(ObjectStream &f);
 	virtual	void		done();
