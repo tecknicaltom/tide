@@ -145,19 +145,19 @@ void clear_eval_error()
 	eval_error=0;
 }
 
-int get_eval_error(char **str, int *pos)
+int get_eval_error(const char **str, int *pos)
 {
 	if (eval_error) {
-		if (str) *str=eval_errstr;
-		if (pos) *pos=eval_error_pos;
+		if (str) *str = eval_errstr;
+		if (pos) *pos = eval_error_pos;
 		return eval_error;
 	}
-	if (str) *str="?";
-	if (pos) *pos=0;
+	if (str) *str = "?";
+	if (pos) *pos = 0;
 	return 0;
 }
 
-void set_eval_error(char *format,...)
+void set_eval_error(const char *format,...)
 {
 	va_list vargs;
 	
@@ -168,7 +168,7 @@ void set_eval_error(char *format,...)
 	eval_error=1;
 }
 
-void set_eval_error_ex(int pos, char *format, ...)
+void set_eval_error_ex(int pos, const char *format, ...)
 {
 	va_list vargs;
 	
@@ -1008,10 +1008,10 @@ EVALFUNC_FMATH1(acosh)
 EVALFUNC_FMATH1(atanh)
 #endif
 
-void sprintf_puts(char **b, char *blimit, char *buf)
+void sprintf_puts(char **b, char *blimit, const char *buf)
 {
-	while ((*b<blimit) && (*buf)) {
-		**b=*(buf++);
+	while (*b < blimit && *buf) {
+		**b = *(buf++);
 		(*b)++;
 	}
 }
@@ -1321,7 +1321,7 @@ int exec_evalfunc(eval_scalar *r, eval_scalarlist *params, eval_func *proto)
 	void *pptrs[MAX_EVALFUNC_PARAMS];
 	int protoparams=0;
 	eval_scalarlist *sclist=0;
-	char *errmsg;
+	const char *errmsg;
 	int errpos;
 
 	for (j=0; j<MAX_EVALFUNC_PARAMS; j++) {
