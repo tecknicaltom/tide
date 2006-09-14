@@ -63,7 +63,7 @@ protected:
 			ht_queued_msg *dequeuemsg();
 public:
 			ht_dialog() {};
-			ht_dialog(BuildCtorArg&);
+			ht_dialog(BuildCtorArg&a): ht_window(a) {};
 		void	init(Bounds *b, const char *desc, uint framestyle);
 	virtual	void	done();
 /* overwritten */
