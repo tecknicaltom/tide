@@ -783,7 +783,7 @@ static bool format_viewer_symbol_handler(eval_scalar *result, char *name)
 	return viewer->symbol_handler(result, name);
 }
 
-bool ht_format_viewer::string_to_qword(char *string, uint64 *q)
+bool ht_format_viewer::string_to_qword(const char *string, uint64 *q)
 {
 	eval_scalar r;
 	if (eval(&r, string, format_viewer_func_handler, format_viewer_symbol_handler, this)) {
@@ -801,7 +801,7 @@ bool ht_format_viewer::string_to_qword(char *string, uint64 *q)
 	return false;
 }
 
-bool ht_format_viewer::string_to_pos(char *string, viewer_pos *pos)
+bool ht_format_viewer::string_to_pos(const char *string, viewer_pos *pos)
 {
 	uint64 q;
 	if (!string_to_qword(string, &q)) return false;
