@@ -30,7 +30,7 @@ extern format_viewer_if htxexheader_if;
  */
 class ht_xex_header_viewer: public ht_uformat_viewer {
 public:
-		void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *group);
+		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group);
 	/* overwritten */
 	virtual	bool ref_sel(LINE_ID *id);
 };
