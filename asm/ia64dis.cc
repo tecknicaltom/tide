@@ -478,17 +478,17 @@ byte IA64Disassembler::getSize(dis_insn *disasm_insn)
 	return ((IA64DisInsn*)disasm_insn)->size;
 }
 
-char *IA64Disassembler::getName()
+const char *IA64Disassembler::getName()
 {
 	return "IA64/Disassembler";
 }
 
-char *IA64Disassembler::str(dis_insn *disasm_insn, int style)
+const char *IA64Disassembler::str(dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, char *format)
+const char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 
@@ -580,7 +580,7 @@ char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, char *format)
 					break;
 				}
 				case IA64_OPERAND_REG_FILE: {
-					char *dbs[] = {"pmc", "pmd", "pkr", "rr", "ibr", "dbr", "itr", "dtr", "msr"};
+					const char *dbs[] = {"pmc", "pmd", "pkr", "rr", "ibr", "dbr", "itr", "dtr", "msr"};
 					is += ht_snprintf(is, 256, "%s%s[%sr%d%s]", dbs[slot->op[i].regfile.db], cs_symbol, cs_default, slot->op[i].regfile.idx, cs_symbol);
 				}
 				}
