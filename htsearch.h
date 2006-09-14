@@ -231,7 +231,7 @@ public:
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	/* new */
-			void insert_search_mode(int id, char *desc, ht_view *v);
+			void insert_search_mode(int id, const char *desc, ht_view *v);
 			void select_search_mode(int id);
 			ht_view *get_search_modeform();
 			int get_search_modeid();
@@ -260,7 +260,7 @@ public:
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	/* new */
-			void insert_replace_mode(int id, char *desc, ht_view *v);
+			void insert_replace_mode(int id, const char *desc, ht_view *v);
 			void select_replace_mode(int id);
 			ht_view *get_replace_modeform();
 			int get_replace_modeid();
