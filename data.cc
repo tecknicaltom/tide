@@ -1634,7 +1634,7 @@ AVLTree::AVLTree(bool aOwnObjects, Comparator aComparator)
 
 }
 
-void debugOutNode(FILE *f, AVLTreeNode *n, AVLTreeNode *p)
+void debugOutNode(FILE *f, BinTreeNode *n, BinTreeNode *p)
 {
 	if (n) {
 		char b[1024];
@@ -1644,8 +1644,8 @@ void debugOutNode(FILE *f, AVLTreeNode *n, AVLTreeNode *p)
 			ht_snprintf(b, sizeof b, "edge: { sourcename: \"%y\" targetname: \"%y\" }\n", p->key, n->key);
 			fputs(b, f);
 		}
-		debugOutNode(f, (AVLTreeNode *)n->right, n);
-		debugOutNode(f, (AVLTreeNode *)n->left, n);
+		debugOutNode(f, n->right, n);
+		debugOutNode(f, n->left, n);
 	}
 }
 
@@ -1653,7 +1653,7 @@ void AVLTree::debugOut()
 {
 	FILE *f = fopen("test.vcg", "wb");
 	fputs("graph: {\nlayoutalgorithm: tree\n", f);
-	debugOutNode(f, (AVLTreeNode *)root, NULL);
+	debugOutNode(f, root, NULL);
 	fputs("}\n", f);
 	fclose(f);
 }
@@ -1666,11 +1666,11 @@ bool AVLTree__expensiveCheck(BinTreeNode *n, int &height)
 		if (!AVLTree__expensiveCheck(n->right, right)) return false;
 		height = MAX(left, right)+1;
 		if (left < right) {
-			return ((AVLTreeNode *)n)->unbalance == 1;
+			return n->unbalance == 1;
 		} else if (left > right) {
-			return ((AVLTreeNode *)n)->unbalance == -1;
+			return n->unbalance == -1;
 		} else {
-			return ((AVLTreeNode *)n)->unbalance == 0;
+			return n->unbalance == 0;
 		}
 	} else {
 		height = 0;
@@ -1684,27 +1684,21 @@ bool AVLTree::expensiveCheck() const
 	return AVLTree__expensiveCheck(root, dummy);
 }
 
-AVLTreeNode *AVLTree::allocNode() const
-{
-	return new AVLTreeNode;
-}
-
-
-void AVLTree::cloneR(AVLTreeNode *node)
+void AVLTree::cloneR(BinTreeNode *node)
 {
 	if (!node) return;
 	Object *o = own_objects ? node->key->clone() : node->key;
 	// SB: nicht gut: (unnoetige compares)
 	insert(o);
 
-	cloneR((AVLTreeNode *)node->left);
-	cloneR((AVLTreeNode *)node->right);
+	cloneR(node->left);
+	cloneR(node->right);
 }
 
 AVLTree *AVLTree::clone() const
 {
 	AVLTree *c = new AVLTree(own_objects, compare);
-	c->cloneR((AVLTreeNode *)root);
+	c->cloneR(root);
 	return c;
 }
 
@@ -1724,11 +1718,11 @@ int AVLTree::loadR(ObjectStream &s, BinTreeNode *&n, int l, int r)
 	int R = loadR(s, n->right, m+1, r);
 
 	if (L < R) {
-		((AVLTreeNode *)n)->unbalance = +1;
+		n->unbalance = +1;
 	} else if (L > R) {
-		((AVLTreeNode *)n)->unbalance = -1;
+		n->unbalance = -1;
 	} else {
-		((AVLTreeNode *)n)->unbalance = 0;
+		n->unbalance = 0;
 	}
 	return MAX(L, R)+1;
 }
@@ -1758,16 +1752,16 @@ ObjectID AVLTree::getObjectID() const
 ObjHandle AVLTree::insert(Object *obj)
 {
 	/* t will point to the node where rebalancing may be necessary */
-	AVLTreeNode **t = (AVLTreeNode **)&root;
+	BinTreeNode **t = &root;
 	/* *pp will walk through the tree */
-	AVLTreeNode **pp = (AVLTreeNode **)&root;
+	BinTreeNode **pp = &root;
 	// Search
 	while (*pp) {
 		int c = compareObjects(obj, (*pp)->key);
 		if (c < 0) {
-			pp = (AVLTreeNode **)&(*pp)->left;
+			pp = &(*pp)->left;
 		} else if (c > 0) {
-			pp = (AVLTreeNode **)&(*pp)->right;
+			pp = &(*pp)->right;
 		} else {
 			// element found
 			return invObjHandle;
@@ -1778,11 +1772,11 @@ ObjHandle AVLTree::insert(Object *obj)
 	}
 
 	/* s points to the node where rebalancing may be necessary */
-	AVLTreeNode *s = *t;
+	BinTreeNode *s = *t;
 
 	// Insert
 	*pp = allocNode();
-	AVLTreeNode *retval = *pp;
+	BinTreeNode *retval = *pp;
 	retval->key = obj;
 	retval->left = retval->right = NULL;
 	retval->unbalance = 0;
@@ -1792,22 +1786,22 @@ ObjHandle AVLTree::insert(Object *obj)
 
 	// Rebalance
 	int a;
-	AVLTreeNode *r;
-	AVLTreeNode *p;
+	BinTreeNode *r;
+	BinTreeNode *p;
 	if (compareObjects(obj, s->key) < 0) {
 		a = -1;
-		r = p = (AVLTreeNode *)s->left;
+		r = p = s->left;
 	} else {
 		a = 1;
-		r = p = (AVLTreeNode *)s->right;
+		r = p = s->right;
 	}
 	while (p != retval) {
 		if (compareObjects(obj, p->key) < 0) {
 			p->unbalance = -1;
-			p = (AVLTreeNode *)p->left;
+			p = p->left;
 		} else {
 			p->unbalance = 1;
-			p = (AVLTreeNode *)p->right;
+			p = p->right;
 		}
 	}
 	if (!s->unbalance) {
@@ -1832,13 +1826,13 @@ ObjHandle AVLTree::insert(Object *obj)
 		} else {
 			// double rotation
 			if (a < 0) {
-				p = (AVLTreeNode *)r->right;
+				p = r->right;
 				r->right = p->left;
 				p->left = r;
 				s->left = p->right;
 				p->right = s;
 			} else {
-				p = (AVLTreeNode *)r->left;
+				p = r->left;
 				r->left = p->right;
 				p->right = r;
 				s->right = p->left;
@@ -1904,19 +1898,19 @@ BinTreeNode *AVLTree::removeR(Object *key, BinTreeNode *&node, int &change, int 
 		}
 	}
 
-	((AVLTreeNode *)node)->unbalance -= decrease;
+	node->unbalance -= decrease;
 
 	if (decrease) {
-		if (((AVLTreeNode *)node)->unbalance) {
+		if (node->unbalance) {
 			change = 0;
 			int a;
-			AVLTreeNode *r = NULL;
-			if (((AVLTreeNode *)node)->unbalance < -1) {
+			BinTreeNode *r = NULL;
+			if (node->unbalance < -1) {
 				a = -1;
-				r = (AVLTreeNode *)node->left;
-			} else if (((AVLTreeNode *)node)->unbalance > 1) {
+				r = node->left;
+			} else if (node->unbalance > 1) {
 				a = 1;
-				r = (AVLTreeNode *)node->right;
+				r = node->right;
 			} else {
 				a = 0;
 			}
@@ -1930,21 +1924,21 @@ BinTreeNode *AVLTree::removeR(Object *key, BinTreeNode *&node, int &change, int 
 					 *	double rotation.
 					 *	See insert
 					 */
-					AVLTreeNode *p;
+					BinTreeNode *p;
 					if (a > 0) {
-						p = (AVLTreeNode *)r->left;
+						p = r->left;
 						r->left = p->right;
 						p->right = r;
 						node->right = p->left;
 						p->left = node;
 					} else {
-						p = (AVLTreeNode *)r->right;
+						p = r->right;
 						r->right = p->left;
 						p->left = r;
 						node->left = p->right;
 						p->right = node;
 					}
-					((AVLTreeNode*)node)->unbalance = (p->unbalance == a) ? -a: 0;
+					node->unbalance = (p->unbalance == a) ? -a: 0;
 					r->unbalance = (p->unbalance == -a) ? a: 0;
 					p->unbalance = 0;
 					node = p;
@@ -1964,7 +1958,7 @@ BinTreeNode *AVLTree::removeR(Object *key, BinTreeNode *&node, int &change, int 
 						r->right = node;
 						r->unbalance++;
 					}
-					((AVLTreeNode *)node)->unbalance = - r->unbalance;
+					node->unbalance = - r->unbalance;
 					node = r;
 				}
 			}
@@ -2249,13 +2243,6 @@ void Set::unionWith(Set *b)
 /*
  *
  */
-
-KeyValue::KeyValue(Object *aKey, Object *aValue)
-{
-	mKey = aKey;
-	mValue = aValue;
-}
-
 KeyValue::~KeyValue()
 {
 	mKey->done();
@@ -2299,11 +2286,6 @@ void KeyValue::store(ObjectStream &s) const
 /*
  *	SInt
  */
-SInt::SInt(signed int i)
-{
-	value = i;
-}
-
 SInt *SInt::clone() const
 {
 	return new SInt(value);
@@ -2338,11 +2320,6 @@ void SInt::store(ObjectStream &s) const
 /*
  *	A signed Integer (64-bit)
  */
-SInt64::SInt64(sint64 i)
-{
-	value = i;
-}
-
 SInt64 *SInt64::clone() const
 {
 	return new SInt64(value);
@@ -2384,11 +2361,6 @@ void SInt64::store(ObjectStream &s) const
 /*
  *	UInt
  */
-UInt::UInt(unsigned int i)
-{
-	value = i;
-}
-
 UInt *UInt::clone() const
 {
 	return new UInt(value);
@@ -2430,11 +2402,6 @@ void UInt::store(ObjectStream &s) const
 /*
  *	A unsigned Integer (64-bit)
  */
-UInt64::UInt64(uint64 i)
-{
-	value = i;
-}
-
 UInt64 *UInt64::clone() const
 {
 	return new UInt64(value);
@@ -2476,12 +2443,6 @@ void UInt64::store(ObjectStream &s) const
 /*
  *	A floating-point number	(FIXME: no portable storage yet)
  */
-
-Float::Float(double d)
-{
-	value = d;
-}
-
 Float *Float::clone() const
 {
 	return new Float(value);
@@ -2509,14 +2470,6 @@ int Float::toString(char *buf, int buflen) const
 ObjectID Float::getObjectID() const
 {
 	return OBJID_FLOAT;
-}
-
-/*
- *	Pointer
- */
-Pointer::Pointer(void *p)
-{
-	value = p;
 }
 
 /**
