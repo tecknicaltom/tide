@@ -38,7 +38,7 @@ public:
 	
 		   void init(Bounds *b, char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_le_shared_data *le_shared);
 /* overwritten */
-	virtual char *func(uint i, bool execute);
+	virtual const char *func(uint i, bool execute);
 	virtual void setAnalyser(Analyser *a);
 	virtual bool get_current_real_offset(FileOfs *ofs);
 	virtual bool offset_to_pos(FileOfs ofs, viewer_pos *p);
