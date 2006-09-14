@@ -350,7 +350,7 @@ bool ht_disasm_viewer::symbol_handler(eval_scalar *result, char *name)
 	return ht_uformat_viewer::symbol_handler(result, name);
 }
 
-char *ht_disasm_viewer::func(uint i, bool execute)
+const char *ht_disasm_viewer::func(uint i, bool execute)
 {
 	switch (i) {
 // FIXME: wrong implementation
