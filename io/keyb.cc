@@ -138,7 +138,7 @@ void keyb_setkey(ht_key key, int rawkey)
 bool keyb_getkeydesc(char *buf, int bufsize, ht_key k)
 {
 	char b2[64];
-	char *b;
+	const char *b;
 	bool r = true;
 	switch (k) {
 		case K_Backspace: b = "Backspace"; break;
