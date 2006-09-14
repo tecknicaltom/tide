@@ -36,9 +36,9 @@
 //
 
 struct	PE_DATA_DIRECTORY {
-    uint32	  address PACKED;
-    uint32	  size PACKED;
-};
+    uint32	  address;
+    uint32	  size;
+} PACKED;
 
 #define PE_NUMBEROF_DIRECTORY_ENTRIES	  	16
 
@@ -48,55 +48,55 @@ struct	PE_DATA_DIRECTORY {
 
 struct	PE_OPTIONAL_HEADER32_NT {
 // NT additional fields.
-	uint32 image_base PACKED;
-	uint32 section_alignment PACKED;
-	uint32 file_alignment PACKED;
-	uint16 major_os_version	PACKED;
-	uint16 minor_os_version	PACKED;
-	uint16 major_image_version	PACKED;
-	uint16 minor_image_version	PACKED;
-	uint16 major_subsystem_version PACKED;
-	uint16 minor_subsystem_version PACKED;
-	uint32 win32_version PACKED;
-	uint32 image_size PACKED;
-	uint32 header_size PACKED;
-	uint32 checksum PACKED;
-	uint16 subsystem PACKED;
-	uint16 dll_characteristics PACKED;
-	uint32 stack_reserve_size PACKED;
-	uint32 stack_commit_size PACKED;
-	uint32 heap_reserve_size PACKED;
-	uint32 heap_commit_size PACKED;
-	uint32 loader_flags PACKED;
-	uint32 directory_count PACKED;
-	PE_DATA_DIRECTORY directory[PE_NUMBEROF_DIRECTORY_ENTRIES] PACKED;
-};
+	uint32 image_base;
+	uint32 section_alignment;
+	uint32 file_alignment;
+	uint16 major_os_version;
+	uint16 minor_os_version;
+	uint16 major_image_version;
+	uint16 minor_image_version;
+	uint16 major_subsystem_version;
+	uint16 minor_subsystem_version;
+	uint32 win32_version;
+	uint32 image_size;
+	uint32 header_size;
+	uint32 checksum;
+	uint16 subsystem;
+	uint16 dll_characteristics;
+	uint32 stack_reserve_size;
+	uint32 stack_commit_size;
+	uint32 heap_reserve_size;
+	uint32 heap_commit_size;
+	uint32 loader_flags;
+	uint32 directory_count;
+	PE_DATA_DIRECTORY directory[PE_NUMBEROF_DIRECTORY_ENTRIES];
+} PACKED;
 
 struct	PE_OPTIONAL_HEADER64_NT {
 // NT additional fields.
-	uint64 image_base PACKED;
-	uint32 section_alignment PACKED;
-	uint32 file_alignment PACKED;
-	uint16 major_os_version	PACKED;
-	uint16 minor_os_version	PACKED;
-	uint16 major_image_version	PACKED;
-	uint16 minor_image_version	PACKED;
-	uint16 major_subsystem_version PACKED;
-	uint16 minor_subsystem_version PACKED;
-	uint32 win32_version PACKED;
-	uint32 image_size PACKED;
-	uint32 header_size PACKED;
-	uint32 checksum PACKED;
-	uint16	subsystem PACKED;
-	uint16 dll_characteristics PACKED;
-	uint64 stack_reserve_size PACKED;
-	uint64 stack_commit_size PACKED;
-	uint64 heap_reserve_size PACKED;
-	uint64 heap_commit_size PACKED;
-	uint32 loader_flags PACKED;
-	uint32 directory_count PACKED;
-	PE_DATA_DIRECTORY directory[PE_NUMBEROF_DIRECTORY_ENTRIES] PACKED;
-};
+	uint64 image_base;
+	uint32 section_alignment;
+	uint32 file_alignment;
+	uint16 major_os_version;
+	uint16 minor_os_version;
+	uint16 major_image_version;
+	uint16 minor_image_version;
+	uint16 major_subsystem_version;
+	uint16 minor_subsystem_version;
+	uint32 win32_version;
+	uint32 image_size;
+	uint32 header_size;
+	uint32 checksum;
+	uint16	subsystem;
+	uint16 dll_characteristics;
+	uint64 stack_reserve_size;
+	uint64 stack_commit_size;
+	uint64 heap_reserve_size;
+	uint64 heap_commit_size;
+	uint32 loader_flags;
+	uint32 directory_count;
+	PE_DATA_DIRECTORY directory[PE_NUMBEROF_DIRECTORY_ENTRIES];
+} PACKED;
 
 // Subsystem Values
 
@@ -134,18 +134,18 @@ struct	PE_OPTIONAL_HEADER64_NT {
  */
 
 struct PE_EXPORT_DIRECTORY {
-	uint32 characteristics PACKED;
-	uint32 timestamp PACKED;
-	uint16 major_version PACKED;
-	uint16 minor_version PACKED;
-	uint32 name_address PACKED;
-	uint32 ordinal_base PACKED;
-	uint32 function_count PACKED;
-	uint32 name_count PACKED;
-	uint32 function_table_address PACKED;
-	uint32 name_table_address PACKED;
-	uint32 ordinal_table_address PACKED;
-};
+	uint32 characteristics;
+	uint32 timestamp;
+	uint16 major_version;
+	uint16 minor_version;
+	uint32 name_address;
+	uint32 ordinal_base;
+	uint32 function_count;
+	uint32 name_count;
+	uint32 function_table_address;
+	uint32 name_table_address;
+	uint32 ordinal_table_address;
+} PACKED;
 
 /*
  *	Import
@@ -153,91 +153,91 @@ struct PE_EXPORT_DIRECTORY {
 
 struct PE_THUNK_DATA {
 	union {
-		uint32 forwarder_string PACKED;
-		uint32 function_desc_address PACKED;
-		uint32 ordinal PACKED;
-		uint32 data_address PACKED;
+		uint32 forwarder_string;
+		uint32 function_desc_address;
+		uint32 ordinal;
+		uint32 data_address;
 	};
-};
+} PACKED;
 
 struct PE_THUNK_DATA_64 {
 	union {
-		uint64 forwarder_string PACKED;
-		uint64 function_desc_address PACKED;
-		uint64 ordinal PACKED;
-		uint64 data_address PACKED;
+		uint64 forwarder_string;
+		uint64 function_desc_address;
+		uint64 ordinal;
+		uint64 data_address;
 	};
-};
+} PACKED;
 
 struct PE_IMPORT_DESCRIPTOR {
 	union {
-		uint32 characteristics PACKED; 		// 0 for terminating null import descriptor
-		uint32 original_first_thunk PACKED;  	// rva to original unbound IAT
+		uint32 characteristics; 		// 0 for terminating null import descriptor
+		uint32 original_first_thunk;  	// rva to original unbound IAT
 	};
-	uint32 timestamp PACKED;		// 0 if not bound,
+	uint32 timestamp;		// 0 if not bound,
 											// -1 if bound, and real date\time stamp
 											//     in IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT (new BIND)
 											// O.W. date/time stamp of DLL bound to (Old BIND)
 
-	uint32 forwarder_chain PACKED;  	// -1 if no forwarders
-	uint32 name PACKED;
-	uint32 first_thunk PACKED; 		// rva to IAT (if bound this IAT has actual addresses)
-};
+	uint32 forwarder_chain;  	// -1 if no forwarders
+	uint32 name;
+	uint32 first_thunk; 		// rva to IAT (if bound this IAT has actual addresses)
+} PACKED;
 
 /*
  *	Delay Import
  */
 
 struct PE_DELAY_IMPORT_DESCRIPTOR {
-	uint32 attributes PACKED;
-	uint32 name PACKED;
-	uint32 module_handle PACKED;
-	uint32 delay_iat PACKED;
-	uint32 delay_int PACKED;
-	uint32 bound_delay_import_table PACKED;
-	uint32 unload_delay_import_table PACKED;
-	uint32 timestamp PACKED;
-};
+	uint32 attributes;
+	uint32 name;
+	uint32 module_handle;
+	uint32 delay_iat;
+	uint32 delay_int;
+	uint32 bound_delay_import_table;
+	uint32 unload_delay_import_table;
+	uint32 timestamp;
+} PACKED;
 
 /*
  *	Resource
  */
 
 struct PE_RESOURCE_DIRECTORY {
-	uint32 characteristics PACKED;
-	uint32 timedate_stamp PACKED;
-	uint16 major_version PACKED;
-	uint16 minor_version PACKED;
-	uint16 name_count PACKED;
-	uint16 id_count PACKED;
+	uint32 characteristics;
+	uint32 timedate_stamp;
+	uint16 major_version;
+	uint16 minor_version;
+	uint16 name_count;
+	uint16 id_count;
 //    PE_RESOURCE_DIRECTORY_ENTRY DirectoryEntries[];
-};
+} PACKED;
 
 #define PE_RESOURCE_NAME_IS_STRING			0x80000000
 #define PE_RESOURCE_DATA_IS_DIRECTORY		0x80000000
 
 struct PE_RESOURCE_DIRECTORY_ENTRY {
-	uint32   name PACKED;				// or id
-	uint32   offset_to_directory PACKED;	// or data
-};
+	uint32   name;				// or id
+	uint32   offset_to_directory;	// or data
+} PACKED;
 
 /* struct PE_RESOURCE_DIRECTORY_STRING {
     uint16    Length;
     CHAR    NameString[ 1 ];
-};
+} PACKED;
 
 
 struct PE_RESOURCE_DIR_STRING_U {
     uint16    Length;
     WCHAR   NameString[ 1 ];
-};*/
+} PACKED;*/
 
 struct PE_RESOURCE_DATA_ENTRY {
-    uint32	  offset_to_data PACKED;
-    uint32	  size PACKED;
-    uint32	  codepage PACKED;
-    uint32	  reserved PACKED;
-};
+    uint32	  offset_to_data;
+    uint32	  size;
+    uint32	  codepage;
+    uint32	  reserved;
+} PACKED;
 
 /*
  *   IL
@@ -247,13 +247,13 @@ struct PE_RESOURCE_DATA_ENTRY {
 #define PE_IL_DIRECTORY_ATTRIBUTES_INT64      0x2
 
 struct PE_IL_DIRECTORY {
-	uint32 size PACKED;
-	uint16 major_version PACKED;
-	uint16 minor_version PACKED;
-	uint32 metadata_section_rva PACKED;
-	uint32 metadata_section_size PACKED;
-	uint32 attributes PACKED;
-};
+	uint32 size;
+	uint16 major_version;
+	uint16 minor_version;
+	uint32 metadata_section_rva;
+	uint32 metadata_section_size;
+	uint32 attributes;
+} PACKED;
 
 extern byte PE_DATA_DIRECTORY_struct[];
 extern byte PE_OPTIONAL_HEADER32_NT_struct[];
