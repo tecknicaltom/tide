@@ -66,10 +66,10 @@ ObjectStream *create_object_stream(Stream &f, int object_stream_type)
 }
 
 struct config_header {
-	char magic[4] PACKED;
-	char version[4] PACKED;
-	char stream_type[2] PACKED;
-};
+	char magic[4];
+	char version[4];
+	char stream_type[2];
+} PACKED;
 
 /*
  *	system configs
