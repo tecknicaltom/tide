@@ -201,7 +201,7 @@ public:
 		void dataStringDialog();
 		void dataIntDialog(taddr_int_subtype subtype, int length);
 		void exportFileDialog();
-	virtual	char *func(uint i, bool execute);
+	virtual	const char *func(uint i, bool execute);
 		void generateOutputDialog();
 		bool getCurrentAddress(Address **a);
 	virtual	bool get_current_offset(FileOfs *ofs);
