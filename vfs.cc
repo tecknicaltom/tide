@@ -87,7 +87,7 @@ int LocalFs::deleteFile(const char *filename)
 void *LocalFs::enumFiletype(uint *type, char **name, void *handle)
 {
 	*type = 0;
-	*name = "file";
+	*name = (char*)"file";
 	return NULL;
 }
 
