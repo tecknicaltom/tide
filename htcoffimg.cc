@@ -46,7 +46,7 @@ static ht_view *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
 
 	c.y+=2;
 	c.h-=2;
-	ht_coff_aviewer *v=new ht_coff_aviewer();
+	ht_coff_aviewer *v = new ht_coff_aviewer();
 	v->init(&c, DESC_COFF_IMAGE, VC_EDIT | VC_GOTO | VC_SEARCH, file, group, p, coff_shared);
 
 	c.y-=2;
@@ -108,7 +108,7 @@ format_viewer_if htcoffimage_if = {
  *	CLASS ht_coff_aviewer
  */
 
-void ht_coff_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_coff_shared_data *Coff_shared)
+void ht_coff_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_coff_shared_data *Coff_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	coff_shared = Coff_shared;
