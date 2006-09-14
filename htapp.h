@@ -183,7 +183,7 @@ protected:
 	char *filename;
 public:
 	explicit ht_project(const char *filename);
-		ht_project(BuildCtorArg&);
+		ht_project(BuildCtorArg &a): AVLTree(a) {};
 	virtual ~ht_project();
 /* overwritten */
 	virtual void load(ObjectStream &s);
@@ -203,7 +203,7 @@ protected:
 	char *path;
 public:
 		ht_project_item(const char *filename, const char *path);
-		ht_project_item(BuildCtorArg&);
+		ht_project_item(BuildCtorArg &a): Object(a) {};
 	virtual ~ht_project_item();
 /* overwritten */
 	virtual void load(ObjectStream &s);
@@ -324,7 +324,7 @@ public:
 	ht_view *menu;
 
 		ht_app() {};
-		ht_app(BuildCtorArg &);
+		ht_app(BuildCtorArg &a): ht_dialog(a) {};
 		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, FileLayer *layer);
 
 		void init(Bounds *b);
