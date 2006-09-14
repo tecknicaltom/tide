@@ -64,8 +64,8 @@ protected:
 	/* new */
 		void dosort();
 public:
-		void	init(Bounds *b, char *desc, ht_format_group *fg);
-	virtual	void	done();
+		void init(Bounds *b, const char *desc, ht_format_group *fg);
+	virtual	void done();
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	virtual	bool select_entry(void *entry);
