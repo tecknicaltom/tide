@@ -32,7 +32,7 @@ public:
 	Area			*validarea;
 
 				PEAnalyser() {};
-				PEAnalyser(BuildCtorArg&);
+				PEAnalyser(BuildCtorArg&a): Analyser(a) {};
 		void		init(ht_pe_shared_data *Pe_shared, File *File);
 		void 		load(ObjectStream &f);
 		void		reinit(ht_pe_shared_data *Pe_shared, File *File);
