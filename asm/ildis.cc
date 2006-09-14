@@ -183,17 +183,17 @@ byte ILDisassembler::getSize(dis_insn *disasm_insn)
 	return ((ILDisInsn*)disasm_insn)->size;
 }
 
-char *ILDisassembler::getName()
+const char *ILDisassembler::getName()
 {
 	return "IL/Disassembler";
 }
 
-char *ILDisassembler::str(dis_insn *disasm_insn, int style)
+const char *ILDisassembler::str(dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-char *ILDisassembler::strf(dis_insn *disasm_insn, int style, char *format)
+const char *ILDisassembler::strf(dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 
