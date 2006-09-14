@@ -298,10 +298,10 @@ void ht_pe_export_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		case msg_funcquery: {
-			char *s=func(msg->data1.integer, 0);
+			const char *s=func(msg->data1.integer, 0);
 			if (s) {
 				msg->msg=msg_retval;
-				msg->data1.str=s;
+				msg->data1.cstr=s;
 			}
 			break;
 		}
