@@ -293,8 +293,8 @@ bool init_cfg()
 	strcpy(systemconfig_file, d);
 	strcat(systemconfig_file, b);
 #else
-	char *home = getenv("HOME");
-	char *b = "/"SYSTEM_CONFIG_FILE_NAME;
+	const char *home = getenv("HOME");
+	const char *b = "/"SYSTEM_CONFIG_FILE_NAME;
 	if (!home) home = "";
 	systemconfig_file = ht_malloc(strlen(home)+strlen(b)+1);
 	strcpy(systemconfig_file, home);
