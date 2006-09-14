@@ -101,7 +101,7 @@ format_viewer_if htleimage_if = {
  *	CLASS ht_le_aviewer
  */
 
-void ht_le_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_le_shared_data *LE_shared)
+void ht_le_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_le_shared_data *LE_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	le_shared = LE_shared;
