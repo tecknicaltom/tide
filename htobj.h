@@ -120,8 +120,8 @@ protected:
 		bool view_is_dirty;
 			
 		void cleanview();
-	virtual	char *defaultpalette();
-	virtual	char *defaultpaletteclass();
+	virtual	const char *defaultpalette();
+	virtual	const char *defaultpaletteclass();
 	virtual	void reloadpalette();
 public:
 	bool focused;
@@ -142,7 +142,7 @@ public:
 	char *pal_class;
 	char *pal_name;
 
-/*debug:*/char *view_debug_name;
+/*debug:*/const char *view_debug_name;
 
 				ht_view() {}
 				ht_view(BuildCtorArg&);
