@@ -43,10 +43,6 @@
 /*
  *
  */
-CoffAnalyser::CoffAnalyser()
-{
-}
-
 void	CoffAnalyser::init(ht_coff_shared_data *Coff_shared, File *File)
 {
 	coff_shared = Coff_shared;
