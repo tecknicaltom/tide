@@ -137,11 +137,6 @@ int InvalidAddress::stringSize() const
 /*
  *
  */
-AddressFlat32::AddressFlat32(uint32 a)
-{
-	addr = a;
-}
-
 bool AddressFlat32::add(int offset)
 {
 	// check for overflow
@@ -271,11 +266,6 @@ int AddressFlat32::stringSize() const
 /*
  *
  */
-AddressFlat64::AddressFlat64(uint64 a)
-{
-	addr = a;
-}
-
 bool AddressFlat64::add(int offset)
 {
 	// check for overflow
