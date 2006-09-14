@@ -79,7 +79,7 @@ static int vfslistbox_fncmp(const char *a, const char *b)
 #define VFSV_FORMAT_RATIME	20
 #define VFSV_FORMAT_RCTIME	21
 
-static char *format_property[VFSV_FORMAT_PROPERTIES]={
+static const char *format_property[VFSV_FORMAT_PROPERTIES]={
 	"name",		"size",
 	"bsize",	"type",
 	"mtime",	"atime",
@@ -368,7 +368,7 @@ void VfsListbox::reread()
 					int l = strlen(strs[z]);
 					renderEntry(strs[z]+l, VFSV_FORMAT_MAX_LENGTH-l, dfmt_prop[i], f.name, f.stat);
 				}
-				insert_str_extra(k++, make_vfs_extra(f.name, f.stat), strs);
+				insert_str_extra(k++, make_vfs_extra(f.name, f.stat), (const char**)strs);
 			}
 		} while (cvfs->findNext(&f));
 	}
@@ -540,7 +540,7 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 				tm c = *pc;
 				char *line = buf;
 									   
-				char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+				const char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 				if ((reltime) && ((uint)ct-q<=60*60*24*28)) {
 					if ((uint)ct-q<=60*60*24) {
 						line += ht_snprintf(line, bufsize-(line-buf), "now ");
