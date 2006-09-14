@@ -169,7 +169,7 @@ bool keyb_getevent(sys_event_t &event)
 	if (r == KEY_MOUSE) return keyb_getmouseevent(event);
 	ht_key k = K_INVALID;
 	int r2 = UNMETA_KEY(UNCTRL_KEY(UNSHIFT_KEY(r)));
-	if ((META_KEY(r) == r) && ((r2 == '[') || (r2 == 'O'))) {/* escape seq */
+	if ((META_KEY(r) == r) && (r2 == '[' || r2 == 'O')) {/* escape seq */
 		r2 = r;
 		if (keyb_keypressed()) {
 			r = keyb_getrawkey();
