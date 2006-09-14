@@ -143,7 +143,7 @@ int analy_raw_string::string_test(const byte *s, int testlen, int &foundlen)
 	return 0;
 }
 
-char *analy_raw_string::name()
+const char *analy_raw_string::name()
 {
 	return "raw";
 }
@@ -171,7 +171,7 @@ int analy_c_string::string_test(const byte *s, int testlen, int &foundlen)
 	return analy_string__raw_test(s, len-1);
 }
 
-char *analy_c_string::name()
+const char *analy_c_string::name()
 {
 	return "strz";
 }
@@ -202,7 +202,7 @@ int analy_unicode_string::string_test(const byte *s, int testlen, int &foundlen)
 	return res;
 }
 
-char *analy_unicode_string::name()
+const char *analy_unicode_string::name()
 {
 	return "strw";
 }
@@ -227,7 +227,7 @@ int analy_pascal_string::string_test(const byte *s, int testlen, int &foundlen)
 	return analy_string__raw_test(s+1, len);
 }
 
-char *analy_pascal_string::name()
+const char *analy_pascal_string::name()
 {
 	return "strp";
 }
