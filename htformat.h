@@ -62,7 +62,7 @@ public:
 	uint type;
 	uint flags;
 	
-			ht_search_request(uint search_class, uint type, uint flags);
+		ht_search_request(uint search_class, uint type, uint flags);
 	virtual ht_search_request *clone() const = 0;
 };
 
@@ -74,7 +74,7 @@ class ht_search_result: public Object {
 public:
 	uint search_class;
 
-			ht_search_result(uint search_class);
+		ht_search_result(uint search_class);
 };
 
 /*
@@ -86,7 +86,7 @@ public:
 	FileOfs offset;
 	uint size;
 	
-			ht_physical_search_result();
+		ht_physical_search_result();
 };
 
 /*
@@ -99,7 +99,7 @@ public:
 	uint xpos;
 	uint length;
 	
-			ht_visual_search_result();
+		ht_visual_search_result();
 };
 
 /*
@@ -108,7 +108,7 @@ public:
 
 class ht_format_loc: public Object {
 public:
-	char *name;
+	const char *name;
 	FileOfs start;
 	uint length;
 };
@@ -372,8 +372,8 @@ protected:
 	virtual bool ref_sel(LINE_ID *id);
 	virtual void reloadpalette();
 	uint render_tagstring(char *chars, vcp *colors, uint maxlen, char *tagstring, bool cursor_in_line);
-	void render_tagstring_desc(char **string, int *length, vcp *tag_color, char *tag, uint size, bool bigendian, bool is_cursor);
-	uint render_tagstring_single(char *chars, vcp *colors, uint maxlen, uint offset, char *text, uint len, vcp color);
+	void render_tagstring_desc(const char **string, int *length, vcp *tag_color, char *tag, uint size, bool bigendian, bool is_cursor);
+	uint render_tagstring_single(char *chars, vcp *colors, uint maxlen, uint offset, const char *text, uint len, vcp color);
 	void scroll_up(int n);
 	void scroll_down(int n);
 	void select_mode_off();
@@ -492,8 +492,8 @@ public:
  */
 
 struct ht_mask_ptable {
-	char *desc;
-	char *fields;
+	const char *desc;
+	const char *fields;
 };
  
 class ht_mask_sub: public ht_sub {
