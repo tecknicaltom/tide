@@ -168,7 +168,7 @@ public:
 	File	*file;
 
 		    ht_file_window();
-		void init(Bounds *b, char *desc, uint framestyle, uint number, File *file);
+		void init(Bounds *b, const char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -233,7 +233,7 @@ public:
 	virtual	void *	getLast();
 	virtual	void *	getNext(void *entry);
 	virtual	void *	getPrev(void *entry);
-	virtual	char *	getStr(int col, void *entry);
+	virtual	const char *getStr(int col, void *entry);
 	virtual	void	handlemsg(htmsg *msg);
 	virtual	int	numColumns();
 	virtual	void *	quickfind(const char *s);
@@ -255,7 +255,7 @@ protected:
 	char wtitle[128];
 public:
 
-			void	init(Bounds *b, char *desc, uint framestyle, uint number, ht_project **project);
+		void	init(Bounds *b, const char *desc, uint framestyle, uint number, ht_project **project);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -304,8 +304,8 @@ protected:
 	bool exit_program;
 
 /* new */
-			ht_window *create_window_file_bin(Bounds *b, FileLayer *file, char *title, bool isfile);
-			ht_window *create_window_file_text(Bounds *b, FileLayer *file, char *title, bool isfile);
+			ht_window *create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile);
+			ht_window *create_window_file_text(Bounds *b, FileLayer *file, const char *title, bool isfile);
 			
 			bool accept_close_all_windows();
 			uint find_free_window_number();
@@ -340,21 +340,21 @@ public:
 	virtual	void store(ObjectStream &f) const;
 /* new */
 			ht_window *create_window_clipboard();
-			ht_window *create_window_file(char *filename, uint mode, bool allow_duplicates);
-			ht_window *create_window_file_bin(char *filename, bool allow_duplicates);
-			ht_window *create_window_file_text(char *filename, bool allow_duplicates);
-			ht_window *create_window_help(char *file, char *node);
+			ht_window *create_window_file(const char *filename, uint mode, bool allow_duplicates);
+			ht_window *create_window_file_bin(const char *filename, bool allow_duplicates);
+			ht_window *create_window_file_text(const char *filename, bool allow_duplicates);
+			ht_window *create_window_help(const char *file, const char *node);
 			ht_window *create_window_log();
-			ht_window *create_window_ofm(char *url1, char *url2);
+			ht_window *create_window_ofm(const char *url1, const char *url2);
 			ht_window *create_window_project();
 			ht_window *create_window_term(const char *cmd);
 			void delete_window(ht_window *window);
-			ht_window *get_window_by_filename(char *filename);
+			ht_window *get_window_by_filename(const char *filename);
 			ht_window *get_window_by_number(uint number);
 			ht_window *get_window_by_type(uint type);
-			ht_view *popup_view_list(char *dialog_title);
-			ht_window *popup_window_list(char *dialog_title);
-			void project_opencreate(char *filename);
+			ht_view *popup_view_list(const char *dialog_title);
+			ht_window *popup_window_list(const char *dialog_title);
+			void project_opencreate(const char *filename);
 };
 
 extern ht_log *loglines;
