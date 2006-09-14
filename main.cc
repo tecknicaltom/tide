@@ -44,7 +44,7 @@
 #include "log.h"
 #include "stddata.h"
 
-char *htcopyrights[]=
+const char *htcopyrights[]=
 {
 	ht_name" "ht_version" (%s) "__TIME__" on "__DATE__,
 	ht_copyright1,
@@ -64,7 +64,7 @@ typedef void (*donefunc)();
 struct initdonefunc {
 	initfunc i;
 	donefunc d;
-	char *name;
+	const char *name;
 };
 
 #define INITDONE(name) { init_##name, done_##name, #name }
@@ -148,7 +148,7 @@ static void show_help()
 
 static void show_version()
 {
-	char **copyrights = htcopyrights;
+	const char **copyrights = htcopyrights;
 	while (*copyrights) {
 		printf(*copyrights, sys_get_name());
 		copyrights++;
@@ -300,7 +300,7 @@ int main(int argc, char *argv[])
 
 	((ht_app*)app)->sendmsg(msg_draw);
 
-	char **copyrights = htcopyrights;
+	const char **copyrights = htcopyrights;
 	while (*copyrights) {
 		LOG(*copyrights, sys_get_name());
 		copyrights++;
