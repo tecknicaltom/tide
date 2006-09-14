@@ -28,7 +28,7 @@
 // FIXME: auto-detect ?
 #define CPU_CLOCK 500000000
 
-void ht_assert_failed(char *file, int line, char *assertion)
+void ht_assert_failed(const char *file, int line, const char *assertion)
 {
 	fprintf(stderr, "in file %s, line %d: assertion failed: %s\n", file, line, assertion);
 #ifndef WIN32
@@ -40,7 +40,7 @@ void ht_assert_failed(char *file, int line, char *assertion)
 	exit(1);
 }
 
-void ht_error(char *file, int line, char *format,...)
+void ht_error(const char *file, int line, const char *format,...)
 {
 	va_list arg;
 	va_start(arg, format);
