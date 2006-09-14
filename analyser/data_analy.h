@@ -96,7 +96,7 @@ public:
 	Analyser		*analy;
 	
 				DataAnalyser();
-				DataAnalyser(BuildCtorArg&);
+				DataAnalyser(BuildCtorArg&a): Object(a) {};
 		void		init(Analyser *Analy);
 	virtual	void		load(ObjectStream &s);
 	virtual	void		done();
