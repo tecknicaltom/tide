@@ -94,7 +94,7 @@ bool execute_submenu(int x, int y, ht_context_menu *m)
  *	CLASS ht_context_menu
  */
 
-void ht_context_menu::init(char *Name)
+void ht_context_menu::init(const char *Name)
 {
 	name = ht_strdup(Name);
 	shortcut = shortcut_str(name);
@@ -251,12 +251,12 @@ void ht_menu::done()
 	ht_view::done();
 }
 
-char *ht_menu::defaultpalette()
+const char *ht_menu::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-char *ht_menu::defaultpaletteclass()
+const char *ht_menu::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
@@ -503,12 +503,12 @@ void ht_menu_frame::done()
 	ht_frame::done();
 }
 
-char *ht_menu_frame::defaultpalette()
+const char *ht_menu_frame::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-char *ht_menu_frame::defaultpaletteclass()
+const char *ht_menu_frame::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
@@ -540,12 +540,12 @@ void ht_context_menu_window_body::done()
 	ht_view::done();
 }
 
-char *ht_context_menu_window_body::defaultpalette()
+const char *ht_context_menu_window_body::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-char *ht_context_menu_window_body::defaultpaletteclass()
+const char *ht_context_menu_window_body::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
