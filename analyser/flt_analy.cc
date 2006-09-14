@@ -43,11 +43,6 @@
 /*
  *
  */
- 
-FLTAnalyser::FLTAnalyser()
-{
-}
-
 void FLTAnalyser::init(ht_flt_shared_data *Flt_shared, File *File)
 {
 	flt_shared = Flt_shared;
