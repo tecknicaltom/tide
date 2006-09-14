@@ -64,15 +64,15 @@ private:
 public:
 	int xpos, width; /* used externally */
 
-			void init(char *name);
+		void init(char *name);
 	virtual	void done();
 /* new */
 	virtual	int count();
-	virtual   ht_context_menu_entry *enum_entry_first();
-	virtual   ht_context_menu_entry *enum_entry_next();
+	virtual ht_context_menu_entry *enum_entry_first();
+	virtual ht_context_menu_entry *enum_entry_next();
 	virtual	ht_context_menu_entry *get_entry(int n);
-	virtual	char *get_name();
-	virtual	char *get_shortcut();
+	virtual	const char *get_name();
+	virtual	const char *get_shortcut();
 };
 
 /*
@@ -86,12 +86,12 @@ protected:
 
 public:
 
-			void init(char *name);
+		void init(const char *name);
 	virtual	void done();
 /* new */
-			void insert_entry(char *name, char *comment, int command, int key, bool active);
-			void insert_separator();
-			void insert_submenu(ht_context_menu *submenu);
+		void insert_entry(const char *name, const char *comment, int command, int key, bool active);
+		void insert_separator();
+		void insert_submenu(ht_context_menu *submenu);
 /* overwritten */
 	virtual	int count();
 	virtual   ht_context_menu_entry *enum_entry_first();
@@ -112,24 +112,24 @@ protected:
 	ht_context_menu *context_menu_hack;
 	ht_context_menu *last_context_menu_hack;
 
-			void execute_menu(int i);
-			ht_context_menu *get_context_menu(int i);
-			bool handle_key_context_menu(ht_context_menu *a, int k);
+		void execute_menu(int i);
+		ht_context_menu *get_context_menu(int i);
+		bool handle_key_context_menu(ht_context_menu *a, int k);
 /* overwritten */
-	virtual	char *defaultpalette();
-	virtual	char *defaultpaletteclass();
+	virtual	const char *defaultpalette();
+	virtual	const char *defaultpaletteclass();
 public:
-			void init(Bounds *b);
+		void init(Bounds *b);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
 /* new */
-			int count();
-			void insert_menu(ht_context_menu *m);
-			void insert_local_menu();
-			bool set_local_menu(ht_context_menu *m);
-			void delete_local_menu();
+		int count();
+		void insert_menu(ht_context_menu *m);
+		void insert_local_menu();
+		bool set_local_menu(ht_context_menu *m);
+		void delete_local_menu();
 };
 
 /*
@@ -145,10 +145,10 @@ protected:
 	int prev_selectable(int to);
 
 /* overwritten */
-	virtual	char *defaultpalette();
-	virtual	char *defaultpaletteclass();
+	virtual	const char *defaultpalette();
+	virtual	const char *defaultpaletteclass();
 public:
-			void init(Bounds *b, ht_context_menu *menu);
+		void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
@@ -172,7 +172,7 @@ protected:
 	ht_menu_window_body *body;
 	ht_context_menu *menu;
 public:
-			void init(Bounds *b, ht_context_menu *menu);
+		void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void getdata(ObjectStream &s);
@@ -186,7 +186,7 @@ public:
 
 class ht_menu_window_body: public ht_context_menu_window_body {
 public:
-			void init(Bounds *b, ht_context_menu *menu);
+		void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -202,11 +202,11 @@ protected:
 	virtual	int getcurcol_normal();
 	virtual	int getcurcol_killer();
 /* overwritten */
-	virtual	char *defaultpalette();
-	virtual	char *defaultpaletteclass();
+	virtual	const char *defaultpalette();
+	virtual	const char *defaultpaletteclass();
 public:
-			void init(Bounds *b, char *desc, uint style, uint number=0);
-	virtual 	void done();
+		void init(Bounds *b, const char *desc, uint style, uint number=0);
+	virtual void done();
 };
 
 /*
