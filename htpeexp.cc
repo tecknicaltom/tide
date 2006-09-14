@@ -259,7 +259,7 @@ void	ht_pe_export_viewer::done()
 	ht_text_listbox::done();
 }
 
-char *ht_pe_export_viewer::func(uint i, bool execute)
+const char *ht_pe_export_viewer::func(uint i, bool execute)
 {
 	ht_text_listbox_sort_order sortord;
 	switch (i) {
