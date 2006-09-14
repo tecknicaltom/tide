@@ -64,7 +64,7 @@ private:
 public:
 	int xpos, width; /* used externally */
 
-		void init(char *name);
+		void init(const char *name);
 	virtual	void done();
 /* new */
 	virtual	int count();
