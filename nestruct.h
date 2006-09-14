@@ -77,18 +77,18 @@ struct NE_HEADER {
 	uint16   psegrefbytes;             // offset to segment ref. bytes
 	uint16   swaparea;                 // Minimum code swap area size
 	uint16   expver;                   // Expected Windows version number
-};
+} PACKED;
 
 /*
  *	segment
  */
 
 struct NE_SEGMENT {
-	uint16 offset PACKED;
-	uint16 size PACKED;
-	uint16 flags PACKED;
-	uint16 minalloc PACKED;
-};
+	uint16 offset;
+	uint16 size;
+	uint16 flags;
+	uint16 minalloc;
+} PACKED;
 
 #define NE_DATA		0x0001
 
@@ -109,9 +109,9 @@ struct NE_SEGMENT {
  */
 
 struct NE_ENTRYPOINT_HEADER {
-	byte entry_count PACKED;
-	byte seg_index PACKED;
-};
+	byte entry_count;
+	byte seg_index;
+} PACKED;
 
 /*  00H	     1	       Entry point flags
 			  Bit(s)	  Significance
@@ -132,27 +132,27 @@ struct NE_ENTRYPOINT_HEADER {
 #define NE_ENT_FLAGS_PARAM_WORDS	0xf8
 
 struct NE_ENTRYPOINT_MOVABLE {
-	byte flags PACKED;
-	uint16 int3f PACKED;
-	byte seg PACKED;
-	uint16 offset PACKED;
-};
+	byte flags;
+	uint16 int3f;
+	byte seg;
+	uint16 offset;
+} PACKED;
 
 /*  00H	     1	       Entry point flags (See above)
     01H	     2	       Offset of entry point within segment*/
 
 struct NE_ENTRYPOINT_FIXED {
-	byte flags PACKED;
-	uint16 offset PACKED;
-};
+	byte flags;
+	uint16 offset;
+} PACKED;
 
 /* relocations */
 
 struct NE_RELOC_HEADER {
-	byte type PACKED;
-	byte flags PACKED;
-	uint16 src_ofs PACKED;
-};
+	byte type;
+	byte flags;
+	uint16 src_ofs;
+} PACKED;
 
 #define NE_RF_ADD			0x04		  /* Additive fixup */
 
