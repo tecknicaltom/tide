@@ -1184,10 +1184,10 @@ typedef struct char_set {
 
 struct int_hash {
 	int value;
-	char *desc;
+	const char *desc;
 };
 
-char *matchhash(int value, int_hash *hash_table);
+const char *matchhash(int value, int_hash *hash_table);
 
 #include "stream.h"			// load/store need ObjectStream
 
