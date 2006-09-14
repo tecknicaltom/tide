@@ -332,7 +332,7 @@ public:
 	virtual	void *		getLast() = 0;
 	virtual	void *		getNext(void *entry) = 0;
 	virtual	void *		getPrev(void *entry) = 0;
-	virtual	char *		getStr(int col, void *entry) = 0;
+	virtual	const char *	getStr(int col, void *entry) = 0;
 		void		gotoItemByEntry(void *entry, bool clear_quickfind = true);
 	virtual	void		gotoItemByPosition(uint pos);
 	virtual	void		handlemsg(htmsg *msg);
@@ -390,7 +390,7 @@ public:
 		void *	getExtra(void *entry);
 	virtual	void *	getNext(void *entry);
 	virtual	void *	getPrev(void *entry);
-	virtual	char *	getStr(int col, void *entry);
+	virtual	const char *getStr(int col, void *entry);
 		void	insert_str(int id, const char *str, ...);
 		void	insert_str(int id, const char **strs);
 		void	insert_str_extra(int id, void *extra_data, const char *str, ...);
@@ -470,7 +470,7 @@ protected:
 	ht_listbox *listbox;
 	virtual	void init_text_listbox(Bounds *b);
 public:
-		void init(Bounds *b, char *desc);
+		void init(Bounds *b, const char *desc);
 	virtual	void done();
 /* overwritten */
 	virtual	const char *defaultpalette();
@@ -522,7 +522,7 @@ public:
 	virtual void *getLast();
 	virtual void *getNext(void *entry);
 	virtual void *getPrev(void *entry);
-	virtual char *getStr(int col, void *entry);
+	virtual const char *getStr(int col, void *entry);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void *quickfind(const char *s);
 	virtual	char *quickfindCompletition(const char *s);
@@ -574,9 +574,9 @@ protected:
 public:
 	ht_statictext *text;
 	
-			void	init(Bounds *b, char *hint);
+		void init(Bounds *b, const char *hint);
 /* new */
-			void settext(const char *text);
+		void settext(const char *text);
 };
 
 /*
