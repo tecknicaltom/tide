@@ -67,7 +67,7 @@ protected:
 			void str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual	void str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_op *op);
 public:
-	javadis(BuildCtorArg&);
+	javadis(BuildCtorArg&a): Disassembler(a) {};
 	javadis(java_token_func token_func, void *context);
 
 /* overwritten */
