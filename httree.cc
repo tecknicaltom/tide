@@ -29,7 +29,7 @@
 #include "httree.h"
 #include "stream.h"
 
-void ht_treeview::init(Bounds *b, char *d)
+void ht_treeview::init(Bounds *b, const char *d)
 {
 	ht_view::init(b, VO_SELECTABLE | VO_BROWSABLE/* <- FIXME */ | VO_RESIZE, d);
 	VIEW_DEBUG_NAME("ht_treeview");
@@ -356,7 +356,7 @@ void	ht_treeview::update()
 
 /****************************************************************************/
 
-void ht_static_treeview::init(Bounds *b, char *desc)
+void ht_static_treeview::init(Bounds *b, const char *desc)
 {
 	ht_treeview::init(b, desc);
 	VIEW_DEBUG_NAME("ht_static_treeview");
@@ -384,7 +384,7 @@ void ht_static_treeview::done()
 	ht_treeview::done();
 }
 
-void *ht_static_treeview::add_child(void *node, char *text, Object *Data)
+void *ht_static_treeview::add_child(void *node, const char *text, Object *Data)
 {
 	if (node) {
 		return add_node(&((static_node *)node)->child, text, Data);
@@ -398,7 +398,7 @@ void *ht_static_treeview::add_child(void *node, char *text, Object *Data)
 	}
 }
 
-void	*ht_static_treeview::add_node(static_node **node, char *text, Object *Data)
+void	*ht_static_treeview::add_node(static_node **node, const char *text, Object *Data)
 {
 	static_node **p = node;
 	static_node *prev = NULL;
@@ -417,7 +417,7 @@ void	ht_static_treeview::adjust(void *node, bool expand)
 	((static_node *)node)->expanded = expand;
 }
 
-static_node *ht_static_treeview::create_node(char *text, static_node *prev, Object *Data)
+static_node *ht_static_treeview::create_node(const char *text, static_node *prev, Object *Data)
 {
 	static_node *node = ht_malloc(sizeof(static_node));
 	node->text = ht_strdup(text);
