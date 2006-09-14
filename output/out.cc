@@ -98,7 +98,7 @@ OutLine *OutAddr::getLine(int i)
 
 int OutAddr::compareTo(const Object *o) const
 {
-	uint oo = o->getObjectID();
+//	uint oo = o->getObjectID();
 	return addr->compareTo(((OutAddr*)o)->addr);
 }
 
@@ -338,7 +338,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 			bool s = true;
 			do {
 				if (s) {
-					char *x = analy->disasm->str(o, dis_style);
+					const char *x = analy->disasm->str(o, dis_style);
 					putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, x);
 				}
 				if (analy->mode & ANALY_EDIT_BYTES) {
