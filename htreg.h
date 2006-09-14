@@ -32,7 +32,7 @@ class ht_registry_data: public Object {
 public:
 /* new */
 		ht_registry_data() {};
-		ht_registry_data(BuildCtorArg&) {};
+		ht_registry_data(BuildCtorArg&a): Object(a) {};
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
 };
@@ -46,7 +46,7 @@ public:
 	Container *tree;
 
 			ht_registry_data_stree(AVLTree *aTree);
-			ht_registry_data_stree(BuildCtorArg&);
+			ht_registry_data_stree(BuildCtorArg&a): ht_registry_data(a) {};
 			~ht_registry_data_stree();
 /* overwritten */
 	virtual	void load(ObjectStream &f);
@@ -64,7 +64,7 @@ public:
 	uint32 value;
 
 		ht_registry_data_dword(uint32 value);
-		ht_registry_data_dword(BuildCtorArg&);
+		ht_registry_data_dword(BuildCtorArg&a): ht_registry_data(a) {};
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -83,7 +83,7 @@ public:
 	uint size;
 
 			ht_registry_data_raw(const void *value, uint size);
-			ht_registry_data_raw(BuildCtorArg&);
+			ht_registry_data_raw(BuildCtorArg&a): ht_registry_data(a) {};
 			~ht_registry_data_raw();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
@@ -102,7 +102,7 @@ public:
 	char *value;
 
 		ht_registry_data_string(const char *s);
-		ht_registry_data_string(BuildCtorArg&);
+		ht_registry_data_string(BuildCtorArg&a): ht_registry_data(a) {};
 		~ht_registry_data_string();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
@@ -127,7 +127,7 @@ public:
 	create_empty_registry_data_func create_empty_registry_data;
 	
 	ht_registry_node_type_desc(ht_registry_node_type t, const char *name, create_empty_registry_data_func c);
-	ht_registry_node_type_desc(BuildCtorArg&);
+	ht_registry_node_type_desc(BuildCtorArg&a): Object(a) {};
 	virtual ~ht_registry_node_type_desc();
 	virtual int compareTo(const Object *) const;
 	virtual	void load(ObjectStream &f);
@@ -153,7 +153,7 @@ public:
 	ht_registry_data *data;
 
 	ht_registry_node(ht_registry_node_type type, const char *name, ht_registry_data *data);
-	ht_registry_node(BuildCtorArg&);
+	ht_registry_node(BuildCtorArg&a): Object(a) {};
 	virtual ~ht_registry_node();
 /* overwritten */
 	virtual int compareTo(const Object *) const;
@@ -182,7 +182,7 @@ public:
 	Container *node_types;
 
 		ht_registry() {};
-		ht_registry(BuildCtorArg&);
+		ht_registry(BuildCtorArg&a): Object(a) {};
 		void init();
 	virtual	void done();
 /* new */
