@@ -130,12 +130,12 @@ ht_context_menu_entry *ht_context_menu::get_entry(int n)
 	return e;
 }
 
-char *ht_context_menu::get_name()
+const char *ht_context_menu::get_name()
 {
 	return name;
 }
 
-char *ht_context_menu::get_shortcut()
+const char *ht_context_menu::get_shortcut()
 {
 	return shortcut;
 }
@@ -144,10 +144,10 @@ char *ht_context_menu::get_shortcut()
  *	CLASS ht_static_context_menu
  */
 
-void ht_static_context_menu::init(char *name)
+void ht_static_context_menu::init(const char *name)
 {
 	ht_context_menu::init(name);
-	context_menu_entry=new Array(true);
+	context_menu_entry = new Array(true);
 }
 
 void ht_static_context_menu::done()
@@ -175,7 +175,7 @@ ht_context_menu_entry *ht_static_context_menu::enum_entry_next()
 	return e;
 }
 
-void ht_static_context_menu::insert_entry(char *Name, char *Comment, int cmd, int k, bool a)
+void ht_static_context_menu::insert_entry(const char *Name, const char *Comment, int cmd, int k, bool a)
 {
 	char *name=ht_strdup(Name), *comment, *shortcut=NULL;
 	if (Comment) comment = ht_strdup(Comment); else comment = NULL;
@@ -274,8 +274,8 @@ void ht_menu::draw()
 	int c = count();
 	for (int i=0; i<c; i++) {
 		ht_context_menu *c = get_context_menu(i);
-		char *n = c->get_name();
-		char *s = c->get_shortcut();
+		const char *n = c->get_name();
+		const char *s = c->get_shortcut();
 		if (i == curmenu) {
 			buf->printChar(c->xpos-1, 0, getcolor(palidx_generic_text_selected), ' ');
 			buf->print(c->xpos, 0, getcolor(palidx_generic_text_selected), n);
@@ -492,7 +492,7 @@ bool ht_menu::set_local_menu(ht_context_menu *m)
  *	CLASS ht_menu_frame
  */
 
-void ht_menu_frame::init(Bounds *b, char *desc, uint style, uint number)
+void ht_menu_frame::init(Bounds *b, const char *desc, uint style, uint number)
 {
 	ht_frame::init(b, desc, style, number);
 	VIEW_DEBUG_NAME("ht_menu_frame");
@@ -588,8 +588,8 @@ void ht_context_menu_window_body::draw()
 				fill(0, i, size.w, 1, getcolor(palidx_generic_text_focused), GC_1HLINE, CP_GRAPHICAL);
 				break;
 			case CME_SUBMENU: {
-				char *n = e->submenu->get_name();
-				char *s = e->submenu->get_shortcut();
+				const char *n = e->submenu->get_name();
+				const char *s = e->submenu->get_shortcut();
 				vcp c;
 				if (i == selected) {
 					c = getcolor(palidx_generic_text_selected);
@@ -643,7 +643,7 @@ void ht_context_menu_window_body::handlemsg(htmsg *msg)
 			int c=context_menu->count();
 			ht_context_menu_entry *e = context_menu->enum_entry_first();
 			for (int i=0; i < c; i++) {
-				char *shortcut = NULL;
+				const char *shortcut = NULL;
 				if (e->type == CME_ENTRY && e->entry.shortcut) {
 					shortcut = e->entry.shortcut;
 				} else if (e->type == CME_SUBMENU && e->submenu->get_shortcut()) {
