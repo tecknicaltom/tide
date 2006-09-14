@@ -42,35 +42,35 @@ public:
 	virtual void render_string(char *result, int maxlen) = 0;
 		void set_len(int Len);
 		int  length();
-	virtual char *name() = 0;
+	virtual const char *name() = 0;
 };
 
 class analy_raw_string: public analy_string {
 public:
 	virtual	void	render_string(char *result, int maxlen);
 	static	int	string_test(const byte *s, int testlen, int &foundlen);
-	virtual	char	*name();
+	virtual	const char *name();
 };
 
 class analy_c_string: public analy_string {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
-	virtual char *name();
+	virtual const char *name();
 };
 
 class analy_unicode_string: public analy_string {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
-	virtual char *name();
+	virtual const char *name();
 };
 
 class analy_pascal_string: public analy_string {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
-	virtual char *name();
+	virtual const char *name();
 };
 
 
