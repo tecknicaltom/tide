@@ -74,9 +74,9 @@ int bin2str(char *result, void *S, int len);
  */
 
 void clear_eval_error();
-int get_eval_error(char **str, int *pos);
-void set_eval_error(char *format,...);
-void set_eval_error_ex(int pos, char *format, ...);
+int get_eval_error(const char **str, int *pos);
+void set_eval_error(const char *format,...);
+void set_eval_error_ex(int pos, const char *format, ...);
 
 /*
  *
@@ -142,7 +142,7 @@ void scalar_negset(eval_scalar *xr, eval_scalar *xa);
 void scalar_notset(eval_scalar *xr, eval_scalar *xa);
 void scalar_lnotset(eval_scalar *xr, eval_scalar *xa);
 void scalar_miniif(eval_scalar *xr, eval_scalar *xa, eval_scalar *xb, eval_scalar *xc);
-void sprintf_puts(char **b, char *blimit, char *buf);
+void sprintf_puts(char **b, char *blimit, const char *buf);
 int sprintf_percent(char **fmt, int *fmtl, char **b, char *blimit, eval_scalar *s);
 int func_sprintf(eval_scalar *r, const eval_str *format, const eval_scalarlist *scalars);
 
