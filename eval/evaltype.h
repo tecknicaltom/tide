@@ -55,10 +55,10 @@ typedef struct {
 } eval_scalarlist;
 
 typedef struct {
-	char *name;
+	const char *name;
 	void *func;
 	eval_scalartype ptype[MAX_EVALFUNC_PARAMS];
-	char *desc;
+	const char *desc;
 } eval_func;
 
 typedef enum {
