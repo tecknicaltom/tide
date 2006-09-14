@@ -2764,7 +2764,7 @@ bool quickSort(List &l)
  *   matchhash
  */
 
-char *matchhash(int value, int_hash *hash_table)
+const char *matchhash(int value, int_hash *hash_table)
 {
 	if (hash_table) {
 		while (hash_table->desc) {
