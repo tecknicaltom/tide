@@ -1501,6 +1501,7 @@ cont:
 		 || str2int(token, v)) {
 			if (!sign) return false;
 			if (sign < 0) disp -= v; else disp += v;
+			sign = 0;
 			continue;
 		}
 		return false;
@@ -1696,7 +1697,7 @@ void x86asm::tok(const char **s, char *res, int reslen, const char *sep)
 	if (reslen <= 0) return;
 	whitespaces(*s);
 	if (strchr(sep, **s)) {
-		if (reslen > 0) *res++ = **s;	
+		if (reslen > 0) *res++ = *((*s)++);
 	} else {
 		while (reslen > 1) {
 			*res++ = *((*s)++);
