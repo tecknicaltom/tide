@@ -870,7 +870,7 @@ void ht_registry::load(ObjectStream &f)
 	GET_OBJECT(f, root);
 }
 
-ht_registry_node_type_desc *ht_registry::get_node_type_desc(ht_registry_node_type t, char **identifier)
+ht_registry_node_type_desc *ht_registry::get_node_type_desc(ht_registry_node_type t, const char **identifier)
 {
 	ht_registry_node_type_desc *data = NULL;
 	firstThat(ht_registry_node_type_desc, data, *node_types, t == data->type);
@@ -1026,7 +1026,7 @@ unsigned char valid_nodename_chars_first[256/8]=
 	0, 0, 0, 0
 };
 
-bool valid_char(unsigned char *bitmap, char c)
+static bool valid_char(unsigned char *bitmap, char c)
 {
 	int o=c/8;
 	int p=c%8;
@@ -1047,7 +1047,7 @@ bool ht_registry::valid_nodename(const char *nodename)
 	return true;
 }
 
-uint32 get_config_dword(char *ident)
+uint32 get_config_dword(const char *ident)
 {
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
@@ -1058,7 +1058,7 @@ uint32 get_config_dword(char *ident)
 			ht_registry_data_dword *s = (ht_registry_data_dword *)n->data;
 			return s->value;
 		} else {
-			char *q = "?";
+			const char *q = "?";
 			registry->get_node_type_desc(n->type, &q);
 			LOG_EX(LOG_ERROR, "registry key '%s' not of type %s, but: %s", e, "dword", q);
 		}
@@ -1066,7 +1066,7 @@ uint32 get_config_dword(char *ident)
 	return 0;
 }
 
-char *get_config_string(char *ident)
+char *get_config_string(const char *ident)
 {
 	char e[HT_NAME_MAX], *ee = e;
 	strcpy(ee, "/config/"); ee += strlen(ee);
@@ -1077,7 +1077,7 @@ char *get_config_string(char *ident)
 			ht_registry_data_string *s = (ht_registry_data_string *)n->data;
 			return ht_strdup(s->value);
 		} else {
-			char *q = "?";
+			const char *q = "?";
 			registry->get_node_type_desc(n->type, &q);
 			LOG_EX(LOG_ERROR, "registry key '%s' not of type %s, but: %s", e, "string", q);
 		}
