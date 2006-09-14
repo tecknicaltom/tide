@@ -87,7 +87,7 @@ void AnalyJavaDisassembler::examineOpcode(OPCODE *opcode)
 branch_enum_t AnalyJavaDisassembler::isBranch(OPCODE *opcode)
 {
 	javadis_insn *o = (javadis_insn*)opcode;
-	char *opcode_str = o->name;
+	const char *opcode_str = o->name;
 	if ((opcode_str[0]=='i') && (opcode_str[1]=='f')) {
 		return br_jXX;
 	} else if ((strcmp("tableswitch", opcode_str)==0)
