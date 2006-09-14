@@ -37,7 +37,7 @@ struct javadis_insn {
 	byte size;
 	int opcode;
 	bool wideopcode;
-	char *name;
+	const char *name;
 	java_insn_op op[JAVAINSN_MAX_PARAM_COUNT];
 };
 
@@ -64,7 +64,7 @@ protected:
 			uint16 getword();
 			uint32 getdword();
 			void invalidate();
-			void str_format(char **str, char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print);
+			void str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual	void str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_op *op);
 public:
 	javadis(BuildCtorArg&);
@@ -74,11 +74,11 @@ public:
 	virtual dis_insn *decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual dis_insn *duplicateInsn(dis_insn *disasm_insn);
 	virtual void getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
-	virtual char *getName();
+	virtual const char *getName();
 	virtual byte getSize(dis_insn *disasm_insn);
 	virtual ObjectID getObjectID() const;
-	virtual char *str(dis_insn *disasm_insn, int options);
-	virtual char *strf(dis_insn *disasm_insn, int options, char *format);
+	virtual const char *str(dis_insn *disasm_insn, int options);
+	virtual const char *strf(dis_insn *disasm_insn, int options, const char *format);
 	virtual bool validInsn(dis_insn *disasm_insn);
 };
 
