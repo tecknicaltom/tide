@@ -153,7 +153,7 @@ format_viewer_if htelfimage_if = {
 /*
  *	CLASS ht_elf_aviewer
  */
-void ht_elf_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_elf_shared_data *ELF_shared)
+void ht_elf_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_elf_shared_data *ELF_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	elf_shared = ELF_shared;
