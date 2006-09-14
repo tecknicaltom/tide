@@ -83,6 +83,7 @@ union htmsg_param {
 	uint64 q;
 	void *ptr;
 	char *str;
+	const char *cstr;
 };
 
 struct htmsg {
