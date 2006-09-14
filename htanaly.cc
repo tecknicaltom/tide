@@ -582,7 +582,7 @@ bool ht_aviewer::convertAddressToViewerPos(Address *a, viewer_pos *p)
 	}
 }
 
-char *ht_aviewer::func(uint i, bool execute)
+const char *ht_aviewer::func(uint i, bool execute)
 {
 	switch (i) {
 		case 8: {
@@ -594,7 +594,7 @@ char *ht_aviewer::func(uint i, bool execute)
 		default:
 			return ht_uformat_viewer::func(i, execute);
 	}
-	return 0;
+	return NULL;
 }
 
 static int aviewer_func_addr(eval_scalar *result, eval_str *str)
@@ -1057,7 +1057,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case msg_contextmenuquery: {
-		ht_static_context_menu *m=new ht_static_context_menu();
+		ht_static_context_menu *m = new ht_static_context_menu();
 		m->init("~Analyser");
 		m->insert_entry("~Assemble...", "Ctrl-A", cmd_analyser_call_assembler, K_Control_A, 1);
 		m->insert_separator();
