@@ -210,14 +210,14 @@
 #define __st6	TYPE_F, 6, 0, SIZE_T
 #define __st7	TYPE_F, 7, 0, SIZE_T
 
-char *x86_regs[4][8] = {
+const char *x86_regs[4][8] = {
 {"al",  "cl",  "dl",  "bl",  "ah",  "ch",  "dh",  "bh"},
 {"ax",  "cx",  "dx",  "bx",  "sp",  "bp",  "si",  "di"},
 {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi"},
 {"rax", "rcx", "rdx", "rbx", "rsp", "rbp", "rsi", "rdi"},
 };
 
-char *x86_64regs[4][16] = {
+const char *x86_64regs[4][16] = {
 {"al",  "cl",  "dl",   "bl",   "spl",  "bpl",  "sil",  "dil",
  "r8b", "r9b", "r10b", "r11b", "r12b", "r13b", "r14b", "r15b"},
 {"ax",  "cx",  "dx",   "bx",   "sp",   "bp",   "si",   "di",
@@ -228,11 +228,11 @@ char *x86_64regs[4][16] = {
  "r8",  "r9",  "r10",  "r11",  "r12",  "r13",  "r14",  "r15"},
 };
 
-char *x86_ipregs[4] = {
+const char *x86_ipregs[4] = {
  "", "ip", "eip", "rip",
 };
 
-char *x86_segs[8] = {
+const char *x86_segs[8] = {
 "es", "cs", "ss", "ds", "fs", "gs", 0, 0
 };
 
