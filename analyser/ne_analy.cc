@@ -105,8 +105,8 @@ void NEAnalyser::beginAnalysis()
 		// bound as family app (needs loader)
 		struct bla {
 		    NEAddress a;
-		    char *b;
-		    char *c;
+		    const char *b;
+		    const char *c;
 		};
 		bla blabla[] = {
 			{ NE_MAKE_ADDR(0x0001, 0x0004), "loader_ptr_1", "loader_entry_1"},
