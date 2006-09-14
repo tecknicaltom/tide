@@ -2555,7 +2555,7 @@ void ht_text_editor::show_protocol()
 	ht_text_listbox *list;
 	NEW_OBJECT(list, ht_text_listbox, &b, 2, 1);
 	uint cp = undo_list->get_current_position();
-	char *od;
+	const char *od;
 	if (undo_list->is_clean(0)) {
 		od = "disk";
 	} else {
