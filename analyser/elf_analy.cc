@@ -245,7 +245,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 				break;
 			}
 
-			char *bind;
+			const char *bind;
 			switch (ELF32_ST_BIND(sym.st_info)) {
 			case ELF_STB_LOCAL:
 				bind="local";
@@ -350,7 +350,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 			}
 			}
 
-			char *bind;
+			const char *bind;
 			switch (ELF64_ST_BIND(sym.st_info)) {
 			case ELF_STB_LOCAL:
 				bind="local";
