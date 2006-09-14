@@ -153,7 +153,7 @@ format_viewer_if htmachoimage_if = {
 /*
  *	CLASS ht_macho_aviewer
  */
-void ht_macho_aviewer::init(Bounds *b, char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_macho_shared_data *MACHO_shared)
+void ht_macho_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_macho_shared_data *MACHO_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	macho_shared = MACHO_shared;
