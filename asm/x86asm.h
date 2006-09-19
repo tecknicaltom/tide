@@ -69,6 +69,7 @@ protected:
 	bool addrsize_depend;
 	bool need_rex;
 	bool forbid_rex;
+	x86opc_insn (*x86_insns)[256];
 
 	void delete_nonsense();
 	bool delete_nonsense_insn(asm_code *c);
@@ -123,11 +124,13 @@ public:
 
 
 class x86_64asm: public x86asm {
+	static x86opc_insn (*x86_64_insns)[256];
 public:
 	
 		x86_64asm();
 	virtual bool opreg(x86_insn_op *op, const char *xop);
 	virtual bool opxmm(x86_insn_op *op, const char *xop);
+		void prepInsns();
 };
 
 
