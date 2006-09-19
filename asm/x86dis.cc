@@ -1547,7 +1547,7 @@ void x86_64dis::checkInfo(x86opc_insn *xinsn)
 {
 	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
 	&& (xinsn->op[0].info & 0x80)) {
-		// instruction has defaults to 64 bit opsize
+		// instruction defaults to 64 bit opsize
 		insn.eopsize = X86_OPSIZE64;
 	}
 }
