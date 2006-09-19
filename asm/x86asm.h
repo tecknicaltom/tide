@@ -30,6 +30,7 @@ struct x86asm_insn {
 	char repprefix;
 	char segprefix;
 	char opsizeprefix;
+	uint8 rexprefix;
 	char n[16];
 	char *name;
 	x86_insn_op op[3];
@@ -102,7 +103,7 @@ protected:
 	bool opfarptr(x86_insn_op *op, const char *xop);
 	bool opimm(x86_insn_op *op, const char *xop);
 	bool opplugimm(x86_insn_op *op, const char *xop);
-	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *xop);
+	bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *xop);
 	virtual bool opreg(x86_insn_op *op, const char *xop);
 	bool opmmx(x86_insn_op *op, const char *xop);
 	virtual bool opxmm(x86_insn_op *op, const char *xop);
@@ -120,13 +121,14 @@ public:
 	virtual	bool translate_str(asm_insn *asm_insn, const char *s);
 };
 
-/*
-class x86_64asm: public x86_asm {
+
+class x86_64asm: public x86asm {
+public:
+	
 		x86_64asm();
-	virtual bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop);
-	virtual bool opreg(x86_insn_op *op, char *xop);
-	virtual bool opxmm(x86_insn_op *op, char *xop);
+	virtual bool opreg(x86_insn_op *op, const char *xop);
+	virtual bool opxmm(x86_insn_op *op, const char *xop);
 };
-*/
+
 
 #endif /* __X86ASM_H__ */
