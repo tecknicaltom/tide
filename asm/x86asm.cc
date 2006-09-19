@@ -50,6 +50,11 @@
 #define X86ASM_ERRMSG_INVALID_OPERANDS	"invalid operand(s)"
 #define X86ASM_ERRMSG_INTERNAL		"internal error: "
 
+#define rexw 0x08
+#define rexr 0x04
+#define rexx 0x02
+#define rexb 0x01
+
 static const x86addrcoding modrm16[3][8] = {
 /* mod = 0 */
 {
@@ -322,24 +327,24 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 	}
 		
 	newcode();
-	namefound = 0;
+	namefound = false;
 	address = cur_address.addr32.offset;
 	esizes[0] = 0;
 	esizes[1] = 0;
 	esizes[2] = 0;
-	ambiguous = 0;
+	ambiguous = false;
+	need_rex = forbid_rex = false;
 	match_opcodes(x86_32_insns, insn, X86ASM_PREFIX_NO);
-	match_fopcodes(insn);
-//	if (!namefound) {
-		match_opcodes(x86_32_insns_ext, insn, X86ASM_PREFIX_0F);
-		match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F);
-		match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F);
-		match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38);
-		match_opcodes(x86_opc_group_insns[1], insn, X86ASM_PREFIX_0F3A);
-//		if (namefound && insn->repprefix != X86_PREFIX_NO) {
-//			set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
-//		}XXX
-//	}
+	if (!namefound && insn->repprefix != X86_PREFIX_NO) {
+		set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
+	} else {
+		match_fopcodes(insn);
+        	match_opcodes(x86_32_insns_ext, insn, X86ASM_PREFIX_0F);
+        	match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F);
+        	match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F);
+        	match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38);
+        	match_opcodes(x86_opc_group_insns[1], insn, X86ASM_PREFIX_0F3A);
+	}
 	if (error) {
 		free_asm_codes();
 	} else if (!codes) {
@@ -384,10 +389,31 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		}
 	}
 
-	if (eopsize != opsize || insn->opsizeprefix == X86_PREFIX_OPSIZE) {
-		emitbyte(0x66);
+	if (addrsize == X86_ADDRSIZE64) {		
+		if (eopsize == X86_ADDRSIZE64) {
+			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
+			if (1) { // XXX1
+				need_rex = true;
+				insn->rexprefix |= rexw;
+			}
+		} else if (eopsize == X86_ADDRSIZE32) {
+			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
+		} else if (eopsize == X86_ADDRSIZE16) {
+			emitbyte(0x66);
+		}
+		if (eaddrsize == X86_ADDRSIZE16) return false;
+		if (eaddrsize == X86_ADDRSIZE32) emitbyte(0x67);
+	} else {
+		if (eopsize != opsize || insn->opsizeprefix == X86_PREFIX_OPSIZE) {
+			emitbyte(0x66);
+		}
+		if (eaddrsize != addrsize) emitbyte(0x67);
 	}
-	if (eaddrsize != addrsize) emitbyte(0x67);
+	
+	if (need_rex && forbid_rex) {
+		clearcode();
+		return false;
+	}
 
 	/* write lock, rep and/or seg prefixes if needed */
 	switch (insn->lockprefix) {
@@ -406,48 +432,46 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	case X86_PREFIX_GS: emitbyte(0x65); break;
 	}
 
+	int rexpos = code.size;
+	if (need_rex) emitbyte(0xff); // dummy value
+	
 	/* write opcodeprefixes and opcode */
-	int i=0;
 	switch (prefix) {
+	case X86ASM_PREFIX_NO:
+		break;
 	case X86ASM_PREFIX_0F0F:
-		emitword(0x0f);
+		emitbyte(0x0f);
 	case X86ASM_PREFIX_0F:
 		emitbyte(0x0f);
-	case X86ASM_PREFIX_NO:
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F20F:
 		emitbyte(0xf2);
 		emitbyte(0x0f);
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_F30F:
 		emitbyte(0xf3);
 		emitbyte(0x0f);
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_0F38:
 		emitbyte(0x0f);
 		emitbyte(0x38);
-		emitbyte(opcodeb);
 		break;
 	case X86ASM_PREFIX_0F3A:
 		emitbyte(0x0f);
 		emitbyte(0x3a);
-		emitbyte(opcodeb);
 		break;
-	case X86ASM_PREFIX_DF: i++;
-	case X86ASM_PREFIX_DE: i++;
-	case X86ASM_PREFIX_DD: i++;
-	case X86ASM_PREFIX_DC: i++;
-	case X86ASM_PREFIX_DB: i++;
-	case X86ASM_PREFIX_DA: i++;
-	case X86ASM_PREFIX_D9: i++;
+	case X86ASM_PREFIX_DF:
+	case X86ASM_PREFIX_DE:
+	case X86ASM_PREFIX_DD:
+	case X86ASM_PREFIX_DC:
+	case X86ASM_PREFIX_DB:
+	case X86ASM_PREFIX_DA:
+	case X86ASM_PREFIX_D9:
 	case X86ASM_PREFIX_D8:
-		emitbyte(0xd8+i);
-		emitmodrm(opcodeb);
+		emitbyte(0xd8 + prefix - X86ASM_PREFIX_D8);
 		break;
 	}
+	emitbyte(opcodeb);
 
 	/* encode the ops */
 	for (int i=0; i<3; i++) {
@@ -492,6 +516,11 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		emitqword(imm);
 		break;
 	}
+	
+	if (need_rex) {
+		code.data[rexpos] = insn->rexprefix | 0x40;
+	}
+	
 	return true;
 }
 
@@ -1462,10 +1491,12 @@ cont:
 		}
 		/* test if reg */
 		for (int i=1; i < 4; i++) {
-			if (i == 3 && addrsize != X86_ADDRSIZE64) break;
 			for (int j=0; j < 16; j++) {
-				if (j > 7 && addrsize != X86_ADDRSIZE64) break;
 				if (x86_regs[i][j] && strcmp(token, x86_64regs[i][j])==0) {
+					if (j > 7 || i == 3) {
+						if (addrsize != X86_ADDRSIZE64) break;
+						need_rex = true;
+					}
 					if (sign < 0) return false;
 					static const byte sizer[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
 					int caddrsize = sizer[i-1];
@@ -1593,12 +1624,13 @@ bool x86asm::translate_str(asm_insn *asm_insn, const char *s)
 	opp[0]=op[0];
 	opp[1]=op[1];
 	opp[2]=op[2];
-	for (int i=0; i<3; i++) insn->op[i].type=X86_OPTYPE_EMPTY;
+	for (int i=0; i<3; i++) insn->op[i].type = X86_OPTYPE_EMPTY;
 
 	insn->lockprefix = X86_PREFIX_NO;
 	insn->repprefix = X86_PREFIX_NO;
 	insn->segprefix = X86_PREFIX_NO;
 	insn->opsizeprefix = X86_PREFIX_NO;
+	insn->rexprefix = 0;
 
 	const char *p = s, *a, *b;
 
@@ -1712,17 +1744,12 @@ void x86asm::tok(const char **s, char *res, int reslen, const char *sep)
 /************************************************************************
  *
  */
-#if 0
 x86_64asm::x86_64asm()
-	: x86asm(X86_OPSIZE32, X86_ADDRSIZE64);
+	: x86asm(X86_OPSIZE32, X86_ADDRSIZE64)
 {
 }
 
-bool x86_64asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, char *xop)
-{
-}
-
-bool x86_64asm::opreg(x86_insn_op *op, char *xop);
+bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 {
 	for (int i=0; i < 4; i++) {
 		for (int j=0; j < 16; j++) {
@@ -1738,7 +1765,7 @@ bool x86_64asm::opreg(x86_insn_op *op, char *xop);
 		}
 	}
 	// check for legacy ah, ch, dh, bh
-	for (int j=4; j < 8) {
+	for (int j=4; j < 8; j++) {
 		if (x86_regs[0][j] && strcmp(xop, x86_regs[0][j])==0) {
 			op->type = X86_OPTYPE_REG;
 			op->size = reg2size[0];
@@ -1750,7 +1777,7 @@ bool x86_64asm::opreg(x86_insn_op *op, char *xop);
 	return false;
 }
 
-bool x86_64asm::opxmm(x86_insn_op *op, char *xop);
+bool x86_64asm::opxmm(x86_insn_op *op, const char *xop)
 {
 	int slen = strlen(xop);
 	if ((slen == 4 || slen == 5) && xop[0] == 'x' && xop[1] == 'm' && xop[2] == 'm'
@@ -1771,4 +1798,3 @@ bool x86_64asm::opxmm(x86_insn_op *op, char *xop);
 		return false;
 	}
 }
-#endif
