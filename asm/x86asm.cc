@@ -1,4 +1,4 @@
-/*
+/*x
  *	HT Editor
  *	x86asm.cc
  *
@@ -202,6 +202,7 @@ x86asm::x86asm(int o, int a)
 {
 	opsize = o;
 	addrsize = a;
+	x86_insns = &x86_32_insns;
 }
 
 asm_insn *x86asm::alloc_insn()
@@ -334,7 +335,7 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 	esizes[2] = 0;
 	ambiguous = false;
 	need_rex = forbid_rex = false;
-	match_opcodes(x86_32_insns, insn, X86ASM_PREFIX_NO);
+	match_opcodes(*x86_insns, insn, X86ASM_PREFIX_NO);
 	if (!namefound && insn->repprefix != X86_PREFIX_NO) {
 		set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
 	} else {
@@ -392,11 +393,16 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	if (addrsize == X86_ADDRSIZE64) {		
 		if (eopsize == X86_ADDRSIZE64) {
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
-			if (1) { // XXX1
+			if (!(opcode->op[0].info & 0x80)) {
+				// instruction doesn't default to 64 bit opsize
 				need_rex = true;
 				insn->rexprefix |= rexw;
 			}
 		} else if (eopsize == X86_ADDRSIZE32) {
+			if (opcode->op[0].info & 0x80) {
+				// instruction defaults to 64 bit opsize
+				return false;
+			}
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
 		} else if (eopsize == X86_ADDRSIZE16) {
 			emitbyte(0x66);
@@ -972,7 +978,7 @@ const char *x86asm::lsz2hsz(int size, int opsize)
 		case 16:
 			return hsz128_32;
 		}
-	} /*else {
+	} else {
 		switch (size) {
 		case 1:
 			return hsz8_64;
@@ -987,7 +993,7 @@ const char *x86asm::lsz2hsz(int size, int opsize)
 		case 16:
 			return hsz128_64;
 		}
-	}*/
+	}
 	return 0;
 }
 
@@ -1022,8 +1028,8 @@ int x86asm::match_type(x86_insn_op *op, x86opc_insn_op *xop, int addrsize)
 			} else if (xop->type == TYPE_Fx) {
 				if (xop->extra == op->stx) return r;
 			} else if (op->type == X86_OPTYPE_MEM) {
-				if (op->mem.addrsize == addrsize) return r;
-				if (op->mem.addrsize == X86_ADDRSIZEUNKNOWN) return r;
+				if (op->mem.addrsize == addrsize
+				 || op->mem.addrsize == X86_ADDRSIZEUNKNOWN) return r;
 			} else return r;
 		}
 		hop++;
@@ -1150,19 +1156,50 @@ int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_nam
 #define OPSIZE_INV(opsize) (opsize==X86_OPSIZE16 ? X86_OPSIZE32 : X86_OPSIZE16)
 #define ADDRSIZE_INV(addrsize) (addrsize==X86_ADDRSIZE16 ? X86_ADDRSIZE32 : X86_ADDRSIZE16)
 
+static void swap(char &a, char &b)
+{
+	char tmp = a;
+	a = b; b = tmp;
+}
+
 void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode)
 {
 	int n = match_opcode_name(insn->name, opcode->name);
 	namefound |= n;
 	if (n != MATCHOPNAME_NOMATCH) {
 		insn->opsizeprefix = X86_PREFIX_NO;
-		if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE32) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE16)) {
-			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, addrsize, n) && !addrsize_depend) || error) return;
-			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsize, ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
+		char opsizes[] = {X86_OPSIZE16, X86_OPSIZE32, X86_OPSIZE64};
+		char addrsizes[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
+		
+		switch (addrsize) {
+		case X86_ADDRSIZE32: swap(addrsizes[0], addrsizes[1]); break;
+		case X86_ADDRSIZE64: swap(addrsizes[0], addrsizes[2]); break;
 		}
-		if ((opsize == X86_OPSIZE16 && n != MATCHOPNAME_MATCH_IF_OPSIZE16) || (opsize == X86_OPSIZE32 && n != MATCHOPNAME_MATCH_IF_OPSIZE32)) {
-			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), addrsize, n) && !addrsize_depend) || error) return;
-			if ((match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, OPSIZE_INV(opsize), ADDRSIZE_INV(addrsize), n) && !addrsize_depend) || error) return;
+		
+		bool done1 = false;
+		/*
+		 * check all permutations of opsize and addrsize
+		 * if possible and necessary
+		 */
+		for (int o=0; o < 3; o++) {
+			switch (n) {
+			case MATCHOPNAME_MATCH_IF_OPSIZE16: done1 = true; break;
+			case MATCHOPNAME_MATCH_IF_OPSIZE32: o = 1; done1 = true; break;
+			case MATCHOPNAME_MATCH_IF_OPSIZE64: o = 2; done1 = true; break;
+			}
+			if (o == 2 && addrsize != X86_ADDRSIZE64) break;
+			bool done2 = !addrsize_depend;
+			for (int a=0; a < 2; a++) {
+				char as = addrsizes[a];
+		    		switch (n) {
+				case MATCHOPNAME_MATCH_IF_ADDRSIZE16: as = X86_ADDRSIZE16; done2 = true; break;
+				case MATCHOPNAME_MATCH_IF_ADDRSIZE32: as = X86_ADDRSIZE32; done2 = true; break;
+		    		case MATCHOPNAME_MATCH_IF_ADDRSIZE64: as = X86_ADDRSIZE64; done2 = true; break;
+				}
+				match_opcode_final(opcode, insn, prefix, opcodebyte, additional_opcode, opsizes[o], as, n);
+				if (done2) break;
+			}
+			if (done1) break;
 		}
 	}
 }
@@ -1744,9 +1781,27 @@ void x86asm::tok(const char **s, char *res, int reslen, const char *sep)
 /************************************************************************
  *
  */
+x86opc_insn (*x86_64asm::x86_64_insns)[256];
+
 x86_64asm::x86_64asm()
 	: x86asm(X86_OPSIZE32, X86_ADDRSIZE64)
 {
+	prepInsns();
+}
+
+void x86_64asm::prepInsns()
+{
+	if (!x86_64_insns) {
+		x86_64_insns = ht_malloc(sizeof *x86_64_insns);
+		memcpy(x86_64_insns, x86_32_insns, sizeof x86_32_insns);
+	
+		int i = 0;
+		while (x86_64_insn_patches[i].opc != -1) {
+			(*x86_64_insns)[x86_64_insn_patches[i].opc] = x86_64_insn_patches[i].insn;
+			i++;
+		}
+	}
+	x86_insns = x86_64_insns;
 }
 
 bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
