@@ -515,11 +515,21 @@ Address *ElfAnalyser::createAddress64(uint64 addr)
  */
 Assembler *ElfAnalyser::createAssembler()
 {
-	switch (elf_shared->header32.e_machine) {
+	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
+	case ELFCLASS32:
+		switch (elf_shared->header32.e_machine) {
 		case ELF_EM_386:
 			Assembler *a = new x86asm(X86_OPSIZE32, X86_ADDRSIZE32);
 			a->init();
 			return a;
+		}
+	case ELFCLASS64:
+		switch (elf_shared->header64.e_machine) {
+		case ELF_EM_X86_64:
+			Assembler *a = new x86_64asm();
+			a->init();
+			return a;
+		}
 	}
 	return NULL;
 }
@@ -649,19 +659,6 @@ void ElfAnalyser::initUnasm()
 		DPRINTF("no apropriate disassembler for machine %04x\n", machine);
 		warnbox("No disassembler for unknown machine type %04x!", machine);
 	}
-}
-
-/*
- *
- */
-void ElfAnalyser::log(const char *msg)
-{
-	/*
-	 *	log() does to much traffic so dont log
-	 *   perhaps we reactivate this later
-	 *
-	 */
-/*	LOG(msg);*/
 }
 
 /*
