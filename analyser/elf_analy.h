@@ -53,7 +53,6 @@ public:
 		void		initInsertSymbols(int shidx);
 		void		initInsertFakeSymbols();
 	virtual	void 		initUnasm();
-	virtual	void 		log(const char *msg);
 	virtual	Address		*nextValid(Address *Addr);
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
