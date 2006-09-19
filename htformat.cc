@@ -1708,7 +1708,8 @@ bool ht_uformat_viewer::edit_input(byte b)
 				} else {
 					d=(buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
 				}
-				tm *ti = gmtime((time_t*)&d);
+				time_t tt = d;
+				tm *ti = gmtime(&tt);
 				tm q = *ti;
 				int k;
 				bool worked = false;
@@ -1823,7 +1824,8 @@ bool ht_uformat_viewer::edit_input(byte b)
 					struct tm *gtm = gmtime(&g);
 					g = mktime(gtm);
 					tz = (uint32)difftime(g, l);
-					*(time_t*)&d = mktime(&q);
+					time_t tt = mktime(&q);
+					d = tt;
 					d -= tz;
 					if (t[1] == HT_TAG_EDIT_TIME_LE) {
 						buf[0] = d>>0;
@@ -3153,7 +3155,8 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 						} else {
 							d = (buf[0]<<24) | (buf[1]<<16) | (buf[2]<<8) | buf[3];
 						}
-						tm *t=gmtime((time_t*)&d);
+						time_t tt = d;
+						tm *t = gmtime(&tt);
 						sprintf(str, "%02d:%02d:%02d %02d.%02d.%04d +1900", t->tm_hour, t->tm_min, t->tm_sec, t->tm_mday, t->tm_mon+1, t->tm_year);
 					} else {
 						strcpy(str, "?");
