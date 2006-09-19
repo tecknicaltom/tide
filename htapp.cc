@@ -506,11 +506,12 @@ void file_window_load_fcfg_func(ObjectStream &f, void *context)
 	if (newsize != oldsize || newtime != oldtime) {
 		char s_oldtime[64], s_newtime[64];
 		struct tm *t;
-
-		t = localtime((time_t*)&newtime);
+		time_t tt = newtime;
+		t = localtime(&tt);
 		strftime(s_newtime, sizeof s_newtime, "%X %d %b %Y", t);
 
-		t = localtime((time_t*)&oldtime);
+		tt = oldtime;
+		t = localtime(&tt);
 		strftime(s_oldtime, sizeof s_oldtime, "%X %d %b %Y", t);
 
 		String fn;
@@ -2026,7 +2027,9 @@ ht_window *ht_app::create_window_project()
 		get_stdbounds_tool(&b);
 
 		ht_project_window *project_window=new ht_project_window();
-		project_window->init(&b, "project window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, (ht_project**)&project);
+		ht_project *p = (ht_project *)project;
+		project_window->init(&b, "project window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, &p);
+		project = p;
 
 		Bounds k = b;
 		k.x = b.w-2;
