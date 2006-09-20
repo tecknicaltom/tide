@@ -50,10 +50,10 @@
 #define X86ASM_ERRMSG_INVALID_OPERANDS	"invalid operand(s)"
 #define X86ASM_ERRMSG_INTERNAL		"internal error: "
 
-#define rexw 0x08
-#define rexr 0x04
-#define rexx 0x02
-#define rexb 0x01
+#define rexw 0x48
+#define rexr 0x44
+#define rexx 0x42
+#define rexb 0x41
 
 static const x86addrcoding modrm16[3][8] = {
 /* mod = 0 */
@@ -191,7 +191,7 @@ static const char hsz48_64[] = { 0 };
 static const char hsz64_64[] = { SIZE_Q, SIZE_U, SIZE_V, SIZE_VV, SIZE_R, SIZE_Z, 0};
 static const char hsz128_64[] = { SIZE_O, SIZE_U, 0};
 
-static const int reg2size[4]= {1, 2, 4, 8};
+static const int reg2size[4] = {1, 2, 4, 8};
 
 /*
  *	CLASS x86asm
@@ -334,7 +334,6 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 	esizes[1] = 0;
 	esizes[2] = 0;
 	ambiguous = false;
-	need_rex = forbid_rex = false;
 	match_opcodes(*x86_insns, insn, X86ASM_PREFIX_NO);
 	if (!namefound && insn->repprefix != X86_PREFIX_NO) {
 		set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
@@ -363,6 +362,7 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int additional_opcode, int prefix, int eopsize, int eaddrsize)
 {
 	bool opsize_depend = false;
+	rexprefix = 0;
 	for (int i = 0; i < 3; i++) {
 		switch (opcode->op[i].size) {
 		case SIZE_BV:
@@ -395,12 +395,12 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
 			if (!(opcode->op[0].info & 0x80)) {
 				// instruction doesn't default to 64 bit opsize
-				need_rex = true;
-				insn->rexprefix |= rexw;
+				rexprefix |= rexw;
 			}
 		} else if (eopsize == X86_ADDRSIZE32) {
 			if (opcode->op[0].info & 0x80) {
 				// instruction defaults to 64 bit opsize
+				// it's not possible to switch to 32 bit
 				return false;
 			}
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
@@ -416,7 +416,8 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		if (eaddrsize != addrsize) emitbyte(0x67);
 	}
 	
-	if (need_rex && forbid_rex) {
+	if ((rexprefix & 0xc0) == 0xc0) {
+		// can't combine insns which simultaneously need REX and forbid REX
 		clearcode();
 		return false;
 	}
@@ -439,7 +440,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	}
 
 	int rexpos = code.size;
-	if (need_rex) emitbyte(0xff); // dummy value
+	if (rexprefix & 0x40) emitbyte(0xff); // dummy value
 	
 	/* write opcodeprefixes and opcode */
 	switch (prefix) {
@@ -522,21 +523,22 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		emitqword(imm);
 		break;
 	}
-	
-	if (need_rex) {
-		code.data[rexpos] = insn->rexprefix | 0x40;
+
+	if (rexprefix & 0x40) {
+		code.data[rexpos] = rexprefix;
 	}
 	
 	return true;
 }
 
-bool x86asm::encode_modrm(x86_insn_op *op, char size, int allow_reg, int allow_mem, int eopsize, int eaddrsize)
+bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, int eopsize, int eaddrsize)
 {
 	switch (op->type) {
 	case X86_OPTYPE_REG:
 		if (!allow_reg) return false;
 		emitmodrm_mod(3);
 		emitmodrm_rm(op->reg);
+		if (op->reg > 7) rexprefix |= rexb;
 		break;
 	case X86_OPTYPE_MEM: {
 		if (!allow_mem) return false;
@@ -629,14 +631,16 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 	case TYPE_C:
 		/* reg of ModR/M picks control register */
 		emitmodrm_reg(op->crx);
+		if (op->crx > 7) rexprefix |= rexr;
 		break;
 	case TYPE_D:
 		/* reg of ModR/M picks debug register */
 		emitmodrm_reg(op->drx);
+		if (op->drx > 7) rexprefix |= rexr;
 		break;
 	case TYPE_E:
 		/* ModR/M (general reg or memory) */
-		if (!encode_modrm(op, xop->size, 1, 1, eopsize, eaddrsize)) return false; //XXX
+		if (!encode_modrm(op, xop->size, true, true, eopsize, eaddrsize)) return false; //XXX
 		psize = esizeop(xop->size, eopsize); //XXX
 		break;
 	case TYPE_F:
@@ -649,6 +653,7 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 	case TYPE_G:
 		/* reg of ModR/M picks general register */
 		emitmodrm_reg(op->reg);
+		if (op->reg > 7) rexprefix |= rexr;		
 		break;
 	case TYPE_Is: {
 		/* signed immediate */
@@ -673,7 +678,7 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 	}
 	case TYPE_M:
 		/* ModR/M (memory only) */
-		if (!encode_modrm(op, xop->size, 0, 1, eopsize, eaddrsize)) return false; // XXX
+		if (!encode_modrm(op, xop->size, false, true, eopsize, eaddrsize)) return false; // XXX
 		psize = esizeop(xop->size, eopsize); //XXX
 		break;
 	case TYPE_O: {
@@ -705,30 +710,18 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 		break;
 	case TYPE_Q:
 		/* ModR/M (MMX reg or memory) */
-		if (!encode_modrm(op, xop->size, 1, 1, eopsize, eaddrsize)) return false; //XXX
-		psize = esizeop(xop->size, eopsize); //XXX
-		break;
-	case TYPE_V:
-		/* reg of ModR/M picks XMM register */
-		emitmodrm_reg(op->xmm);
-		break;
-	case TYPE_VR:
-		/* rm of ModR/M picks XMM register */
-		emitmodrm_mod(3);
-		emitmodrm_rm(op->xmm);
-		break;
-	case TYPE_W:
-		/* ModR/M (XMM reg or memory) */
-		if (!encode_modrm(op, xop->size, 1, 1, eopsize, eaddrsize)) return false; //XXX
+		if (!encode_modrm(op, xop->size, true, true, eopsize, eaddrsize)) return false; //XXX
 		psize = esizeop(xop->size, eopsize); //XXX
 		break;
 	case TYPE_R:
 		/* rm of ModR/M picks general register */
 		emitmodrm_rm(op->reg);
-		break;
+		// fall throu
 	case TYPE_Rx:
+		if (op->reg > 7) rexprefix |= rexb;
+		return true;
 	case TYPE_RXx:
-		/* extra picks register */
+		/* extra picks register, no REX */
 		return true;
 	case TYPE_S:
 		/* reg of ModR/M picks segment register */
@@ -740,6 +733,21 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 	case TYPE_T:
 		/* reg of ModR/M picks test register */
 		emitmodrm_reg(op->trx);
+		if (op->trx > 7) rexprefix |= rexr;
+		break;
+	case TYPE_VR:
+		/* rm of ModR/M picks XMM register */
+		emitmodrm_mod(3);
+		// fall throu
+	case TYPE_V:
+		/* reg of ModR/M picks XMM register */
+		emitmodrm_reg(op->xmm);
+		if (op->mmx > 7) rexprefix |= rexr;
+		break;
+	case TYPE_W:
+		/* ModR/M (XMM reg or memory) */
+		if (!encode_modrm(op, xop->size, true, true, eopsize, eaddrsize)) return false; //XXX
+		psize = esizeop(xop->size, eopsize); //XXX
 		break;
 	}
 	if (!psize) {
@@ -1532,7 +1540,7 @@ cont:
 				if (x86_regs[i][j] && strcmp(token, x86_64regs[i][j])==0) {
 					if (j > 7 || i == 3) {
 						if (addrsize != X86_ADDRSIZE64) break;
-						need_rex = true;
+						rexprefix |= 0x40;
 					}
 					if (sign < 0) return false;
 					static const byte sizer[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
@@ -1667,7 +1675,6 @@ bool x86asm::translate_str(asm_insn *asm_insn, const char *s)
 	insn->repprefix = X86_PREFIX_NO;
 	insn->segprefix = X86_PREFIX_NO;
 	insn->opsizeprefix = X86_PREFIX_NO;
-	insn->rexprefix = 0;
 
 	const char *p = s, *a, *b;
 
@@ -1813,7 +1820,7 @@ bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 				op->size = reg2size[i];
 				op->reg = j;
 				if (j > 7 || i == 3 || (i == 0 && j > 3)) {
-					need_rex = true;
+					rexprefix |= 0x40;
 				}
 				return true;
 			}
@@ -1825,7 +1832,7 @@ bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 			op->type = X86_OPTYPE_REG;
 			op->size = reg2size[0];
 			op->reg = j;
-			forbid_rex = true;
+			rexprefix |= 0x80; // forbid
 			return true;
 		}
 	}
@@ -1847,7 +1854,7 @@ bool x86_64asm::opxmm(x86_insn_op *op, const char *xop)
 		op->type = X86_OPTYPE_XMM;
 		op->size = 16;
 		op->xmm = x;
-		if (x > 7) need_rex = true;
+		if (x > 7) rexprefix |= 0x40;
 		return true;
 	} else {
 		return false;
