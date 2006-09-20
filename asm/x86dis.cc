@@ -539,34 +539,6 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		decode_modrm(op, xop->size, true, true, true, false);
 		break;
 	}
-	case TYPE_V: {
-		/* reg of ModR/M picks XMM register */
-		op->type = X86_OPTYPE_XMM;
-		op->size = 16;
-		op->xmm = mkreg(getmodrm());
-		break;
-	}
-	case TYPE_VR: {
-		/* rm of ModR/M picks XMM register */
-		if (mkmod(getmodrm()) == 3) {
-			op->type = X86_OPTYPE_XMM;
-			op->size = esizeop(xop->size);
-			op->xmm = mkrm(getmodrm());
-		} else {
-			invalidate();
-		}
-		break;
-	}
-	case TYPE_W: {
-		/* ModR/M (XMM reg or memory) */
-		if (xop->info == INFO_PREFIX_66 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
-			// HACK: some SSE3 opcodes require a 0x66 prefix
-			invalidate();
-		} else {
-			decode_modrm(op, xop->size, true, true, false, true);
-		}
-		break;
-	}
 	case TYPE_R: {
 		/* rm of ModR/M picks general register */
 		op->type = X86_OPTYPE_REG;
@@ -609,6 +581,34 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		op->type = X86_OPTYPE_TRX;
 		op->size = esizeop(xop->size);
 		op->trx = mkreg(getmodrm());
+		break;
+	}
+	case TYPE_V: {
+		/* reg of ModR/M picks XMM register */
+		op->type = X86_OPTYPE_XMM;
+		op->size = 16;
+		op->xmm = mkreg(getmodrm());
+		break;
+	}
+	case TYPE_VR: {
+		/* rm of ModR/M picks XMM register */
+		if (mkmod(getmodrm()) == 3) {
+			op->type = X86_OPTYPE_XMM;
+			op->size = esizeop(xop->size);
+			op->xmm = mkrm(getmodrm());
+		} else {
+			invalidate();
+		}
+		break;
+	}
+	case TYPE_W: {
+		/* ModR/M (XMM reg or memory) */
+		if (xop->info == INFO_PREFIX_66 && insn.opsizeprefix != X86_PREFIX_OPSIZE) {
+			// HACK: some SSE3 opcodes require a 0x66 prefix
+			invalidate();
+		} else {
+			decode_modrm(op, xop->size, true, true, false, true);
+		}
 		break;
 	}
 	}
