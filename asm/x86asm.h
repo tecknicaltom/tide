@@ -30,7 +30,6 @@ struct x86asm_insn {
 	char repprefix;
 	char segprefix;
 	char opsizeprefix;
-	uint8 rexprefix;
 	char n[16];
 	char *name;
 	x86_insn_op op[3];
@@ -63,12 +62,11 @@ protected:
 	uint64 imm;
 	int imm2;
 	int immsize;
+	uint8 rexprefix; // 0 = no, 0x80 = forbid, 0x40 = yes
 	uint64 address;
 	bool ambiguous;
 	bool namefound;
 	bool addrsize_depend;
-	bool need_rex;
-	bool forbid_rex;
 	x86opc_insn (*x86_insns)[256];
 
 	void delete_nonsense();
@@ -84,7 +82,7 @@ protected:
 	void emitsib_index(int index);
 	void emitsib_scale(int scale);
 	bool encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int additional_opcode, int prefix, int eopsize, int eaddrsize);
-	bool encode_modrm(x86_insn_op *op, char size, int allow_reg, int allow_mem, int eopsize, int eaddrsize);
+	bool encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, int eopsize, int eaddrsize);
 	bool encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op, int mindispsize, int *mod, int *rm, int *dispsize);
 	bool encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eopsize, int eaddrsize);
 	bool encode_sib_v(x86_insn_op *op, int mindispsize, int *ss, int *index, int *base, int *mod, int *dispsize, int *disp);
@@ -104,7 +102,7 @@ protected:
 	bool opfarptr(x86_insn_op *op, const char *xop);
 	bool opimm(x86_insn_op *op, const char *xop);
 	bool opplugimm(x86_insn_op *op, const char *xop);
-	bool opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *xop);
+	bool opmem(x86asm_insn *insn, x86_insn_op *op, const char *xop);
 	virtual bool opreg(x86_insn_op *op, const char *xop);
 	bool opmmx(x86_insn_op *op, const char *xop);
 	virtual bool opxmm(x86_insn_op *op, const char *xop);
