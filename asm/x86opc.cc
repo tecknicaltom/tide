@@ -123,7 +123,6 @@
 #define Qq	TYPE_Q, 0, 0, SIZE_Q
 #define Qu	TYPE_Q, 0, 0, SIZE_U
 #define Qz	TYPE_Q, 0, 0, SIZE_Z
-#define Rb	TYPE_R, 0, 0, SIZE_B
 #define Rw	TYPE_R, 0, 0, SIZE_W
 #define Rd	TYPE_R, 0, 0, SIZE_D
 #define Sw	TYPE_S, 0, 0, SIZE_W
@@ -508,7 +507,7 @@ x86opc_insn x86_32_insns[256] = {
 {"int", {{__3}}},
 {"int", {{Ib}}},
 {"into"},
-{"iret%c"},
+{"?iret|iretd|iretq"},
 /* D0 */
 {0, {{SPECIAL_TYPE_GROUP, GROUP_D0}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_D1}}},
@@ -577,7 +576,22 @@ x86_64_insn_patch x86_64_insn_patches[] = {
 {0x2f, {0}}, // das
 {0x37, {0}}, // aaa
 {0x3f, {0}}, // aas
-// 0x40 .. 0x4f  REX prefixes
+{0x40, {0}}, // REX prefixes
+{0x41, {0}},
+{0x42, {0}},
+{0x43, {0}},
+{0x44, {0}},
+{0x45, {0}},
+{0x46, {0}},
+{0x47, {0}},
+{0x48, {0}},
+{0x49, {0}},
+{0x4a, {0}},
+{0x4b, {0}},
+{0x4c, {0}},
+{0x4d, {0}},
+{0x4e, {0}},
+{0x4f, {0}}, // ..
 {0x60, {0}}, // pusha
 {0x61, {0}}, // popa
 {0x62, {0}}, // bound
