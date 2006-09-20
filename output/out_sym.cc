@@ -69,30 +69,30 @@
  */
 
 struct ImageSymHeader {
-	uint32 file_size PACKED;		// in 16-byte blocks
-	uint16 entry_seg PACKED;
-	uint16 u0 PACKED;				// 0000
-	uint16 u1 PACKED;				// 0015 (some flags ?, 0014 for 16-bit .SYM ?)
-	uint16 seg_count PACKED;
-	uint32 u2 PACKED;				// 04020002 (some flags ?)
-	byte	module_name[16] PACKED;
-};
+	uint32 file_size;		// in 16-byte blocks
+	uint16 entry_seg;
+	uint16 u0;				// 0000
+	uint16 u1;				// 0015 (some flags ?, 0014 for 16-bit .SYM ?)
+	uint16 seg_count;
+	uint32 u2;				// 04020002 (some flags ?)
+	byte	module_name[16];
+} PACKED;
 
 struct ImageSymSegHeader {
-	uint16 next_rec_ofs PACKED;		// in 16-byte blocks (ring list, last points to first)
-	uint16 sym_count PACKED;
-	uint16 sym_ptr_table_ptr PACKED;
-	uint16 seg_idx PACKED;
-	uint32 seg_start PACKED;
-	uint32 seg_size PACKED;
-};
+	uint16 next_rec_ofs;		// in 16-byte blocks (ring list, last points to first)
+	uint16 sym_count;
+	uint16 sym_ptr_table_ptr;
+	uint16 seg_idx;
+	uint32 seg_start;
+	uint32 seg_size;
+} PACKED;
 
 struct ImageSymDescriptor {
-	uint32 address PACKED;
-//	byte  name_len PACKED;
+	uint32 address;
+//	byte  name_len;
 //   name;
 //   ^^^^ pascal string
-};
+} PACKED;
 
 /*
  *
