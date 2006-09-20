@@ -41,7 +41,7 @@ struct x86dis_insn {
 	sint8 lockprefix;
 	sint8 repprefix;
 	sint8 segprefix;
-	uint8 rexprefix;
+	uint8 rexprefix;	
 	int size;
 	int opcode;
 	int opcodeclass;
