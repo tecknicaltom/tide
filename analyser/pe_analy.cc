@@ -363,15 +363,20 @@ Address *PEAnalyser::createAddress()
  */
 Assembler *PEAnalyser::createAssembler()
 {
+	Assembler *a = NULL;
 	switch (pe_shared->coffheader.machine) {
-		case COFF_MACHINE_I386:
-		case COFF_MACHINE_I486:
-		case COFF_MACHINE_I586:
-			Assembler *a = new x86asm(X86_OPSIZE32, X86_ADDRSIZE32);
-			a->init();
-			return a;
+	case COFF_MACHINE_I386:
+	case COFF_MACHINE_I486:
+	case COFF_MACHINE_I586:
+		a = new x86asm(X86_OPSIZE32, X86_ADDRSIZE32);
+		a->init();
+		return a;
+	case COFF_MACHINE_AMD64:
+		a = new x86_64asm();
+		a->init();
+		return a;
 	}
-	return NULL;
+	return a;
 }
 
 /*
