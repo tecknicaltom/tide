@@ -118,7 +118,7 @@ struct x86_insn_op {
 #define TYPE_M		10		/* ModR/M (memory only) */
 #define TYPE_O		11		/* direct memory without ModR/M */
 #define TYPE_P		12		/* reg of ModR/M picks MMX register */
-#define TYPE_PR		13		/* reg of ModR/M picks MMX register */
+#define TYPE_PR		13		/* rm of ModR/M picks MMX register */
 #define TYPE_Q		14		/* ModR/M (MMX reg or memory) */
 #define TYPE_R		15		/* rm of ModR/M picks general register */
 #define TYPE_Rx		16		/* extra picks register */
