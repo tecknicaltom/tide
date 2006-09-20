@@ -472,7 +472,7 @@ x86opc_insn x86_insns[256] = {
 {"int", {{__3}}},
 {"int", {{Ib}}},
 {"into"},
-{"iret%c"},
+{"?iret|iretd|iretq"},
 /* D0 */
 {0, {{SPECIAL_TYPE_GROUP, GROUP_D0}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_D1}}},
