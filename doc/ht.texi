@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-0.9.4
+0.9.5
 @end macro
 
 @macro hturl
