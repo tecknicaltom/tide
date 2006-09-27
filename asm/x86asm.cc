@@ -376,6 +376,16 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 
 	code.context = (void*)opsize_depend;
 	
+	/* test rex thingies */
+	for (int i=0; i<3; i++) {
+		if (insn->op[i].need_rex) {
+			rexprefix |= 0x40;
+		}
+		if (insn->op[i].forbid_rex) {
+			rexprefix |= 0x80;
+		}
+	}
+
 	modrmv = -1;
 	sibv = -1;
 	dispsize = 0;
@@ -839,6 +849,8 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 	*_ss = ss;
 	*_index = index;
 	*_base = base;
+	if (index > 7) rexprefix |= rexx;
+	if (base > 7) rexprefix |= rexb;
 	*_dispsize = dispsize;
 	return 1;
 }
@@ -1489,6 +1501,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 	uint64 disp = 0;
 	int addrsize = X86_ADDRSIZEUNKNOWN;
 	int lasttokenreg = X86_REG_NO;
+	bool need_rex = false;
 
 	int sign = 1;
 	while (1) {
@@ -1537,10 +1550,10 @@ cont:
 		/* test if reg */
 		for (int i=1; i < 4; i++) {
 			for (int j=0; j < 16; j++) {
-				if (x86_regs[i][j] && strcmp(token, x86_64regs[i][j])==0) {
+				if (x86_64regs[i][j] && strcmp(token, x86_64regs[i][j])==0) {
 					if (j > 7 || i == 3) {
-						if (addrsize != X86_ADDRSIZE64) break;
-						rexprefix |= 0x40;
+						if (this->addrsize != X86_ADDRSIZE64) break;
+						if (j > 7) need_rex = true;
 					}
 					if (sign < 0) return false;
 					static const byte sizer[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
@@ -1613,6 +1626,7 @@ cont:
 	op->mem.addrsize = addrsize;
 	op->mem.disp = disp;
 	op->mem.floatptr = floatptr;
+	op->need_rex = need_rex;
 //	int r = (addrsize==X86_ADDRSIZE16) ? 1 : 2;
 //	printf("%s.%d: opmem(): size=%d, base = %s, index = %s, scale = %d, disp=%08lx, addrsize = %d\n", __FILE__, __LINE__, opsize, (base==X86_REG_NO) ? "" : x86_regs[r][base], (index==X86_REG_NO) ? "" : x86_regs[r][index], scale, disp, addrsize);
 	return true;
@@ -1669,7 +1683,10 @@ bool x86asm::translate_str(asm_insn *asm_insn, const char *s)
 	opp[0]=op[0];
 	opp[1]=op[1];
 	opp[2]=op[2];
-	for (int i=0; i<3; i++) insn->op[i].type = X86_OPTYPE_EMPTY;
+	for (int i=0; i<3; i++) {
+		insn->op[i].need_rex = insn->op[i].forbid_rex = false;
+		insn->op[i].type = X86_OPTYPE_EMPTY;
+	}
 
 	insn->lockprefix = X86_PREFIX_NO;
 	insn->repprefix = X86_PREFIX_NO;
@@ -1820,7 +1837,7 @@ bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 				op->size = reg2size[i];
 				op->reg = j;
 				if (j > 7 || i == 3 || (i == 0 && j > 3)) {
-					rexprefix |= 0x40;
+					op->need_rex = true;
 				}
 				return true;
 			}
@@ -1832,7 +1849,7 @@ bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 			op->type = X86_OPTYPE_REG;
 			op->size = reg2size[0];
 			op->reg = j;
-			rexprefix |= 0x80; // forbid
+			op->forbid_rex = true;
 			return true;
 		}
 	}
@@ -1854,7 +1871,7 @@ bool x86_64asm::opxmm(x86_insn_op *op, const char *xop)
 		op->type = X86_OPTYPE_XMM;
 		op->size = 16;
 		op->xmm = x;
-		if (x > 7) rexprefix |= 0x40;
+		if (x > 7) op->need_rex = true;
 		return true;
 	} else {
 		return false;
