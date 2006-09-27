@@ -73,6 +73,8 @@ enum X86AddrSize {
 struct x86_insn_op {
 	int type;
 	int size;
+	bool need_rex;
+	bool forbid_rex;
 	union {
 		struct {
 			uint32 seg;
