@@ -449,25 +449,27 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	case X86_PREFIX_GS: emitbyte(0x65); break;
 	}
 
+	switch (prefix) {
+	case X86ASM_PREFIX_F20F:
+		emitbyte(0xf2);
+		break;
+	case X86ASM_PREFIX_F30F:
+		emitbyte(0xf3);
+		break;
+	}
+
 	int rexpos = code.size;
 	if (rexprefix & 0x40) emitbyte(0xff); // dummy value
 	
 	/* write opcodeprefixes and opcode */
 	switch (prefix) {
-	case X86ASM_PREFIX_NO:
-		break;
 	case X86ASM_PREFIX_0F0F:
 		emitbyte(0x0f);
+	case X86ASM_PREFIX_F20F:
+	case X86ASM_PREFIX_F30F:
 	case X86ASM_PREFIX_0F:
 		emitbyte(0x0f);
-		break;
-	case X86ASM_PREFIX_F20F:
-		emitbyte(0xf2);
-		emitbyte(0x0f);
-		break;
-	case X86ASM_PREFIX_F30F:
-		emitbyte(0xf3);
-		emitbyte(0x0f);
+	case X86ASM_PREFIX_NO:
 		break;
 	case X86ASM_PREFIX_0F38:
 		emitbyte(0x0f);
@@ -485,7 +487,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	case X86ASM_PREFIX_DA:
 	case X86ASM_PREFIX_D9:
 	case X86ASM_PREFIX_D8:
-		emitbyte(0xd8 + prefix - X86ASM_PREFIX_D8);
+		opcodeb = 0xd8 + prefix - X86ASM_PREFIX_D8;
 		break;
 	}
 	emitbyte(opcodeb);
@@ -1286,16 +1288,19 @@ void x86asm::match_fopcodes(x86asm_insn *insn)
 			int n = match_opcode_name(insn->name, x86_modfloat_group_insns[i][j].name);
 			namefound |= n;
 			if (n != MATCHOPNAME_NOMATCH) {
-				int addrsize = X86_ADDRSIZE16;
-				while (1) {
-					if (match_allops(insn, &x86_modfloat_group_insns[i][j], opsize, addrsize)) {
-						if (encode_insn(insn, &x86_modfloat_group_insns[i][j], j<<3, -1, X86ASM_PREFIX_D8+i, opsize, addrsize)) {
+				int eaddrsize = addrsize;
+				for (int k=0; k < 2; k++) {
+					if (match_allops(insn, &x86_modfloat_group_insns[i][j], opsize, eaddrsize)) {
+						if (encode_insn(insn, &x86_modfloat_group_insns[i][j], j<<3, -1, X86ASM_PREFIX_D8+i, opsize, eaddrsize)) {
 							pushcode();
 							newcode();
 						}
-						if (error) return;
 					}
-					if (addrsize==X86_ADDRSIZE16) addrsize=X86_ADDRSIZE32; else break;
+					switch (eaddrsize) {
+					case X86_ADDRSIZE64:
+					case X86_ADDRSIZE16: eaddrsize = X86_ADDRSIZE32; break;
+					case X86_ADDRSIZE32: eaddrsize = X86_ADDRSIZE16; break;
+					}
 				}
 			}
 		}
@@ -1321,16 +1326,19 @@ void x86asm::match_fopcodes(x86asm_insn *insn)
 					int n = match_opcode_name(insn->name, group[k].name);
 					namefound |= n;
 					if (n != MATCHOPNAME_NOMATCH) {
-						int addrsize=X86_ADDRSIZE16;
-						while (1) {
-							if (match_allops(insn, &group[k], opsize, addrsize)) {
-								if (encode_insn(insn, &group[k], 0xc0 | j<<3 | k, -1, X86ASM_PREFIX_D8+i, opsize, addrsize)) {
+						int eaddrsize = addrsize;
+						for (int l=0; l < 2; l++) {
+							if (match_allops(insn, &group[k], opsize, eaddrsize)) {
+								if (encode_insn(insn, &group[k], 0xc0 | j<<3 | k, -1, X86ASM_PREFIX_D8+i, opsize, eaddrsize)) {
 									pushcode();
 									newcode();
 								}
-								if (error) return;
 							}
-							if (addrsize==X86_ADDRSIZE16) addrsize=X86_ADDRSIZE32; else break;
+							switch (eaddrsize) {
+							case X86_ADDRSIZE64:
+							case X86_ADDRSIZE16: eaddrsize = X86_ADDRSIZE32; break;
+							case X86_ADDRSIZE32: eaddrsize = X86_ADDRSIZE16; break;
+							}
 						}
 					}
 				}
@@ -1468,8 +1476,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 	for (uint i=0; i < sizeof types / sizeof types[0]; i++) {
 		if (strcmp(token, types[i]) == 0) {
 			hsize = type_size[i];
-//			s += strlen(types[i]);
-			if (i >= 5) floatptr = true;
+			if (i >= 6) floatptr = true;
 			break;
 		}
 	}
@@ -1477,7 +1484,6 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 		tok(&s, token, sizeof token, sep);		
 		if (!(strcmp(token, "ptr") == 0)) return false;
 		opsize = hsize;
-//		s += 3;
 		tok(&s, token, sizeof token, sep);
 	}
 
