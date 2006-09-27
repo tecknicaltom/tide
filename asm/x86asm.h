@@ -59,6 +59,7 @@ protected:
 	int sibv;
 	uint64 disp;
 	int dispsize;
+	int disppos;
 	uint64 imm;
 	int imm2;
 	int immsize;
