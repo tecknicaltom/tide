@@ -329,7 +329,11 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 		
 	newcode();
 	namefound = false;
-	address = cur_address.addr32.offset;
+	if (addrsize == X86_ADDRSIZE64) {
+		address = cur_address.flat64.addr;
+	} else {
+		address = cur_address.addr32.offset;
+	}
 	esizes[0] = 0;
 	esizes[1] = 0;
 	esizes[2] = 0;
@@ -360,9 +364,11 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 }
 
 bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int additional_opcode, int prefix, int eopsize, int eaddrsize)
-{
-	bool opsize_depend = false;
+{	
 	rexprefix = 0;
+	disppos = 0;
+
+	bool opsize_depend = false;
 	for (int i = 0; i < 3; i++) {
 		switch (opcode->op[i].size) {
 		case SIZE_BV:
@@ -503,6 +509,16 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	/* write the rest */
 	if (modrmv != -1) emitbyte(modrmv);
 	if (sibv != -1) emitbyte(sibv);
+	
+	if (disppos && addrsize == X86_ADDRSIZE64) {
+		// fix ip-relative disp in PM64 mode
+		dispsize = 4;
+		disp -= address + code.size + dispsize + immsize;
+		if (simmsize(disp, 4) > 4) {
+			clearcode();
+			return false;
+		}
+	}
 	switch (dispsize) {
 	case 1:
 		emitbyte(disp);
@@ -536,6 +552,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		break;
 	}
 
+	// fix rex code
 	if (rexprefix & 0x40) {
 		code.data[rexpos] = rexprefix;
 	}
@@ -556,10 +573,13 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 		if (!allow_mem) return false;
 
 		int mindispsize = op->mem.disp ? simmsize(op->mem.disp, 4) : 0;
-		if (mindispsize > 4) return false;
 
 		int addrsize = op->mem.addrsize;
-		if (addrsize == X86_ADDRSIZEUNKNOWN) addrsize=eaddrsize;
+		if (addrsize == X86_ADDRSIZEUNKNOWN) {
+			addrsize=eaddrsize;
+		} else {
+			if (mindispsize > 4) return false;
+		}
 		if (addrsize == X86_ADDRSIZE16) {
 			int mod, rm, dispsize;
 			if (!encode_modrm_v(&modrm16, op, mindispsize, &mod, &rm, &dispsize)) return 0;
@@ -577,10 +597,11 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 					emitsib_index(index);
 					emitsib_base(base);
 					emitdisp(disp, dispsize);
-				} else return 0;
+				} else return false;
 			} else {
 				emitmodrm_mod(mod);
 				emitmodrm_rm(rm);
+				if (this->addrsize == X86_ADDRSIZE64) disppos = 1;
 				emitdisp(op->mem.disp, dispsize);
 			}
 		}
@@ -830,11 +851,12 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 		break;
 	case 2:
 	case 4:
+	case 8:
 		mod = 2;
 		dispsize = 4;
 		break;
 	default:
-		return 0;
+		return false;
 	}
 	if (base == X86_REG_BP && mod == 0) {
 		mod = 1;
@@ -846,6 +868,9 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 		mod = 0;
 		dispsize = 4;
 		if (!mindispsize) *disp = 0;
+		if (addrsize == X86_ADDRSIZE64) {
+			disppos = 1;
+		}
 	}
 	*_mod = mod;
 	*_ss = ss;
