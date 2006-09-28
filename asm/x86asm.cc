@@ -192,6 +192,7 @@ static const char hsz64_64[] = { SIZE_Q, SIZE_U, SIZE_V, SIZE_VV, SIZE_R, SIZE_Z
 static const char hsz128_64[] = { SIZE_O, SIZE_U, 0};
 
 static const int reg2size[4] = {1, 2, 4, 8};
+static const int addr2size[4] = {-1, 2, 4, 8};
 
 /*
  *	CLASS x86asm
@@ -571,13 +572,19 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 		break;
 	case X86_OPTYPE_MEM: {
 		if (!allow_mem) return false;
-
-		int mindispsize = op->mem.disp ? simmsize(op->mem.disp, 4) : 0;
-
 		int addrsize = op->mem.addrsize;
+		int mindispsize = addr2size[addrsize+1];
+
 		if (addrsize == X86_ADDRSIZEUNKNOWN) {
-			addrsize=eaddrsize;
+			addrsize = eaddrsize;
+			if (this->addrsize == X86_ADDRSIZE64) {
+				// ip-relative, we check this later
+				mindispsize = 4;
+			} else {
+				mindispsize = op->mem.disp ? simmsize(op->mem.disp, 8) : 0;
+			}
 		} else {
+			mindispsize = op->mem.disp ? simmsize(op->mem.disp, mindispsize) : 0;
 			if (mindispsize > 4) return false;
 		}
 		if (addrsize == X86_ADDRSIZE16) {
@@ -601,7 +608,6 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 			} else {
 				emitmodrm_mod(mod);
 				emitmodrm_rm(rm);
-				if (this->addrsize == X86_ADDRSIZE64) disppos = 1;
 				emitdisp(op->mem.disp, dispsize);
 			}
 		}
@@ -639,6 +645,11 @@ bool x86asm::encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op
 				*_mod=mod;
 				*_rm=rm;
 				*_dispsize=c->dispsize;
+				if (this->addrsize == X86_ADDRSIZE64
+				    && mod == 0 && rm == 5) {
+					// ip-relative addressing
+					disppos = 1;
+				}
 				return true;
 			}
 		}
@@ -721,9 +732,11 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 		psize = esizeop(xop->size, eopsize); // XXX
 		switch (eaddrsize) {
 		case X86_ADDRSIZE16:
+			if (op->mem.disp > 0xffff) return false;
 			emitdisp(op->mem.disp, 2);
 			break;
 		case X86_ADDRSIZE32:
+			if (op->mem.disp > 0xffffffff) return false;
 			emitdisp(op->mem.disp, 4);
 			break;
 		case X86_ADDRSIZE64:
@@ -868,9 +881,9 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 		mod = 0;
 		dispsize = 4;
 		if (!mindispsize) *disp = 0;
-		if (addrsize == X86_ADDRSIZE64) {
+/*		if (addrsize == X86_ADDRSIZE64) {
 			disppos = 1;
-		}
+		}*/
 	}
 	*_mod = mod;
 	*_ss = ss;
@@ -1103,9 +1116,10 @@ bool x86asm::match_size(x86_insn_op *op, x86opc_insn_op *xop, int opsize)
 		if (xop->type == TYPE_Is) {
 			hsz = immlsz2hsz(simmsize(op->imm, esizeop(xop->size, opsize)), opsize); //XXX
 		} else if (xop->type == TYPE_J) {
+			int ssize = esizeop_ex(xop->size, opsize);
 			int size = esizeop(xop->size, opsize);
 			// FIXME: ?!
-			hsz = immlsz2hsz(simmsize(uint32(op->imm - address - code.size - size - 1), 4), opsize);
+			hsz = immlsz2hsz(simmsize(op->imm - address - code.size - ssize, size), opsize);
 		} else {
 			hsz = immlsz2hsz(simmsize(op->imm, esizeop(xop->size, opsize)), opsize); //XXX
 //			hsz = immlsz2hsz(op->size, opsize);
@@ -1627,28 +1641,6 @@ cont:
 		return false;
 	}
 
-	if (base == X86_REG_NO && index == X86_REG_NO) {
-		/* unsigned disp */
-		if (addrsize != X86_ADDRSIZE64) {
-			if (disp > 0xffffffffUL) return false;
-			if (disp > 0xffff) {
-				if (addrsize == X86_ADDRSIZEUNKNOWN) {
-					addrsize = X86_ADDRSIZE32;
-				} else if (addrsize != X86_ADDRSIZE32) return false;
-			}
-		}
-	} else {
-		/* signed disp */
-		if (addrsize != X86_ADDRSIZE64) {
-			int s = simmsize(disp, 4);
-			if (s > 4) return false;
-			if (s > 2) {
-				if (addrsize == X86_ADDRSIZEUNKNOWN) {
-					addrsize = X86_ADDRSIZE32;
-				} else if (addrsize != X86_ADDRSIZE32) return false;
-			}
-		}		
-	}
 	op->type = X86_OPTYPE_MEM;
 	op->size = opsize;
 	op->mem.base = base;
@@ -1658,8 +1650,6 @@ cont:
 	op->mem.disp = disp;
 	op->mem.floatptr = floatptr;
 	op->need_rex = need_rex;
-//	int r = (addrsize==X86_ADDRSIZE16) ? 1 : 2;
-//	printf("%s.%d: opmem(): size=%d, base = %s, index = %s, scale = %d, disp=%08lx, addrsize = %d\n", __FILE__, __LINE__, opsize, (base==X86_REG_NO) ? "" : x86_regs[r][base], (index==X86_REG_NO) ? "" : x86_regs[r][index], scale, disp, addrsize);
 	return true;
 }
 
