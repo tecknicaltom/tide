@@ -900,14 +900,14 @@ ht_view *ht_group::getfirstchild()
 void ht_group::handlemsg(htmsg *msg)
 {
 	if (!enabled) return;
-	if (msg->type==mt_broadcast) {
+	if (msg->type == mt_broadcast) {
 		ht_view::handlemsg(msg);
 		ht_view *v=first;
 		while (v) {
 			v->handlemsg(msg);
 			v=v->next;
 		}
-	} else if (msg->type==mt_empty) {
+	} else if (msg->type == mt_empty) {
 		int msgtype=msg->type;
 		ht_view *v;
 
@@ -934,7 +934,7 @@ void ht_group::handlemsg(htmsg *msg)
 
 		msg->type=msgtype;
 		ht_view::handlemsg(msg);
-	} else if (msg->type==mt_preprocess) {
+	} else if (msg->type == mt_preprocess) {
 		ht_view *v;
 
 		v=first;
@@ -944,7 +944,7 @@ void ht_group::handlemsg(htmsg *msg)
 			}
 			v=v->next;
 		}
-	} else if (msg->type==mt_postprocess) {
+	} else if (msg->type == mt_postprocess) {
 		ht_view *v;
 
 		v=first;
@@ -956,26 +956,26 @@ void ht_group::handlemsg(htmsg *msg)
 		}
 	}
 
-	if (((msg->type==mt_empty) || (msg->type==mt_broadcast)) && (msg->msg==msg_keypressed)) {
+	if ((msg->type==mt_empty || msg->type==mt_broadcast) && (msg->msg == msg_keypressed)) {
 		switch (msg->data1.integer) {
-			case K_Left:
-			case K_Shift_Tab: {
-				if (focusprev()) {
-					clearmsg(msg);
-					dirtyview();
-					return;
-				}
-				break;
+		case K_Left:
+		case K_Shift_Tab: {
+			if (focusprev()) {
+				clearmsg(msg);
+				dirtyview();
+				return;
 			}
-			case K_Right:
-			case K_Tab: {
-				if (focusnext()) {
-					clearmsg(msg);
-					dirtyview();
-					return;
-				}
-				break;
+			break;
+		}
+		case K_Right:
+		case K_Tab: {
+			if (focusnext()) {
+				clearmsg(msg);
+				dirtyview();
+				return;
 			}
+			break;
+		}
 		}
 	}
 }
