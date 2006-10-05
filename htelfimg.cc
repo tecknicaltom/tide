@@ -39,65 +39,65 @@ static ht_view *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 	ElfAnalyser *p = new ElfAnalyser();
 	p->init(elf_shared, file);
 
-	Bounds c=*b;
-	ht_group *g=new ht_group();
+	Bounds c = *b;
+	ht_group *g = new ht_group();
 	g->init(&c, VO_RESIZE, DESC_ELF_IMAGE"-g");
 	AnalyInfoline *head;
 
-	c.y+=2;
-	c.h-=2;
-	ht_elf_aviewer *v=new ht_elf_aviewer();
+	c.y += 2;
+	c.h -= 2;
+	ht_elf_aviewer *v = new ht_elf_aviewer();
 	v->init(&c, DESC_ELF_IMAGE, VC_EDIT | VC_GOTO | VC_SEARCH, file, group, p, elf_shared);
 
-	c.y-=2;
-	c.h=2;
-	head=new AnalyInfoline();
+	c.y -= 2;
+	c.h = 2;
+	head = new AnalyInfoline();
 	head->init(&c, v, ANALY_STATUS_DEFAULT);
 
 	v->attachInfoline(head);
 
 	/* find lowest/highest address */
-	Address *low=NULL;
-	Address *high=NULL;
+	Address *low = NULL;
+	Address *high = NULL;
 	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
-		case ELFCLASS32: {
-			ELFAddress l, h;
-			l.a32 = (uint32)-1;
-			h.a32 = 0;
-			ELF_SECTION_HEADER32 *s = elf_shared->sheaders.sheaders32;
-			for (uint i=0; i<elf_shared->sheaders.count; i++) {
-				if (elf_valid_section((elf_section_header*)s, elf_shared->ident.e_ident[ELF_EI_CLASS])) {
-					if (s->sh_addr < l.a32) l.a32=s->sh_addr;
-					if ((s->sh_addr + s->sh_size > h.a32) && s->sh_size) h.a32=s->sh_addr + s->sh_size - 1;
-				}
-				s++;
+	case ELFCLASS32: {
+		ELFAddress l, h;
+		l.a32 = (uint32)-1;
+		h.a32 = 0;
+		ELF_SECTION_HEADER32 *s = elf_shared->sheaders.sheaders32;
+		for (uint i=0; i<elf_shared->sheaders.count; i++) {
+			if (elf_valid_section((elf_section_header*)s, elf_shared->ident.e_ident[ELF_EI_CLASS])) {
+				if (s->sh_addr < l.a32) l.a32=s->sh_addr;
+				if ((s->sh_addr + s->sh_size > h.a32) && s->sh_size) h.a32=s->sh_addr + s->sh_size - 1;
 			}
-			low = p->createAddress32(l.a32);
-			high = p->createAddress32(h.a32);
-			break;
+			s++;
 		}
-		case ELFCLASS64: {
-			ELFAddress l, h;
-			l.a64 = (uint64)-1;
-			h.a64 = 0;
-			ELF_SECTION_HEADER64 *s = elf_shared->sheaders.sheaders64;
-			for (uint i=0; i<elf_shared->sheaders.count; i++) {
-				if (elf_valid_section((elf_section_header*)s, elf_shared->ident.e_ident[ELF_EI_CLASS])) {
-					if (s->sh_addr < l.a64) l.a64 = s->sh_addr;
-					if ((s->sh_addr + s->sh_size > h.a64)
-					&& s->sh_size != 0) {
-						h.a64 = s->sh_addr + s->sh_size - 1;
-					}
+		low = p->createAddress32(l.a32);
+		high = p->createAddress32(h.a32);
+		break;
+	}
+	case ELFCLASS64: {
+		ELFAddress l, h;
+		l.a64 = (uint64)-1;
+		h.a64 = 0;
+		ELF_SECTION_HEADER64 *s = elf_shared->sheaders.sheaders64;
+		for (uint i=0; i<elf_shared->sheaders.count; i++) {
+			if (elf_valid_section((elf_section_header*)s, elf_shared->ident.e_ident[ELF_EI_CLASS])) {
+				if (s->sh_addr < l.a64) l.a64 = s->sh_addr;
+				if ((s->sh_addr + s->sh_size > h.a64)
+				&& s->sh_size != 0) {
+					h.a64 = s->sh_addr + s->sh_size - 1;
 				}
-				s++;
 			}
-			low = p->createAddress64(l.a64);
-			high = p->createAddress64(h.a64);
-			break;
+			s++;
 		}
+		low = p->createAddress64(l.a64);
+		high = p->createAddress64(h.a64);
+		break;
+	}
 	}
 
-	ht_analy_sub *analy=new ht_analy_sub();
+	ht_analy_sub *analy = new ht_analy_sub();
 
 	if (low->compareTo(high) < 0) {
 		analy->init(file, v, p, low, high);
