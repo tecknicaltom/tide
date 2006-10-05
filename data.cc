@@ -2245,9 +2245,9 @@ void Set::unionWith(Set *b)
  */
 KeyValue::~KeyValue()
 {
-	mKey->done();
+	if (mKey) mKey->done();
 	delete mKey;
-	mValue->done();
+	if (mValue) mValue->done();
 	delete mValue;
 }
 
