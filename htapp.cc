@@ -60,6 +60,7 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#include <exception>
 
 extern "C" {
 #include "regex.h"
@@ -2542,7 +2543,7 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case cmd_file_truncate: {
 			File *f = (File *)msg->data1.ptr;
-			FileOfs s = (uint)msg->data2.q;
+			FileOfs s = msg->data2.q;
 /*               ht_app_window_entry *e;
 			if ((e=windows->enum_first())) {
 				do {
@@ -2552,7 +2553,7 @@ void ht_app::handlemsg(htmsg *msg)
 				} while ((e=windows->enum_first()));
 			}*/
 			String fn;
-			if (confirmbox("really truncate %s at offset 0x%08qx/%qd?", &f->getFilename(fn), s, s) == button_ok) {
+			if (confirmbox("really truncate %y at offset 0x%08qx/%qd?", &f->getFilename(fn), s, s) == button_ok) {
 				f->truncate(s);
 			}
 			clearmsg(msg);
@@ -2978,19 +2979,28 @@ int ht_app::run(bool modal)
 {
 	sendmsg(msg_draw, 0);
 	while (!exit_program) {
-		if (keyb_keypressed()) {
-			ht_key k = keyb_getkey();
-			sendmsg(msg_keypressed, k);
-			sendmsg(msg_draw);
+		try {
+			if (keyb_keypressed()) {
+				ht_key k = keyb_getkey();
+				sendmsg(msg_keypressed, k);
+				sendmsg(msg_draw);
+			}
+			ht_queued_msg *q;
+			while ((q = dequeuemsg())) {
+				htmsg m = q->msg;
+				q->target->sendmsg(&m);
+				sendmsg(msg_draw);
+				delete q;
+			}
+			do_idle();
+		} catch (const Exception &x) {
+			String s;
+			errorbox("unhandled exception: %y", &x.reason(s));
+		} catch (const std::exception &x) {
+			errorbox("unhandled exception: %s", x.what());
+		} catch (...) {
+			errorbox("unhandled exception: unknown");
 		}
-		ht_queued_msg *q;
-		while ((q = dequeuemsg())) {
-			htmsg m = q->msg;
-			q->target->sendmsg(&m);
-			sendmsg(msg_draw);
-			delete q;
-		}
-		do_idle();
 	}
 	return 0;
 }
