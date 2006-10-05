@@ -93,7 +93,6 @@ protected:
 	Container *history;
 
 			int find_node(const char *infofile, const char *node);
-			Container *get_xrefs();
 			bool igotonode(const char *file, const char *node, bool add2hist);
 			uint readfile(char *fn, char **text);
 public:
