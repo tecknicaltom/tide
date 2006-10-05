@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <exception>
 
 #include "blockop.h"
 #include "cmds.h"
@@ -325,11 +326,20 @@ bool ht_format_group::init_if(format_viewer_if *i)
 	c.y=0;
 	c.w=1;*/
 	if (i->init) {
-		v=i->init(&b, file, this);
-		if (v) {
-			v->sendmsg(msg_complete_init, 0);
-			insert(v);
-			r=1;
+		try {
+			v=i->init(&b, file, this);
+			if (v) {
+				v->sendmsg(msg_complete_init, 0);
+				insert(v);
+				r=1;
+			}
+		} catch (const Exception &x) {
+			String s;
+			errorbox("unhandled exception: %y", &x.reason(s));
+		} catch (const std::exception &x) {
+			errorbox("unhandled exception: %s", x.what());
+		} catch (...) {
+			errorbox("unhandled exception: unknown");
 		}
 	}
 	ht_format_viewer_entry *e=new ht_format_viewer_entry();
@@ -622,7 +632,7 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 				loc_enum_start();
 				while (loc_enum_next(&loc)) {
 					if (o < loc.start+loc.length) {
-						if (confirmbox("truncating at %08x will destroy format '%s', continue ? \n(format ranges from %08x to %08x)", o, loc.name, loc.start, loc.start+loc.length) != button_yes) {
+						if (confirmbox("truncating at %08qx will destroy format '%s', continue ? \n(format ranges from %08qx to %08qx)", o, loc.name, loc.start, loc.start+loc.length) != button_yes) {
 							clearmsg(msg);
 							return;
 						}
@@ -2748,7 +2758,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (o < s) {
 						/* truncate */
 						htmsg m;
-			
+
 						m.msg = cmd_file_truncate;
 						m.type = mt_broadcast;
 						m.data1.ptr = file;
