@@ -110,7 +110,7 @@ class ht_format_loc: public Object {
 public:
 	const char *name;
 	FileOfs start;
-	uint length;
+	FileOfs length;
 };
 
 /*
