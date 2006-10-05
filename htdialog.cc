@@ -1317,12 +1317,12 @@ void ht_button::handlemsg(htmsg *msg)
 	} else if (msg->type == mt_empty) {
 		if (msg->msg == msg_keypressed) {
 			switch (msg->data1.integer) {
-				case K_Return:
-				case K_Space:
-					push();
-					dirtyview();
-					clearmsg(msg);
-					return;
+			case K_Return:
+			case K_Space:
+				push();
+				dirtyview();
+				clearmsg(msg);
+				return;
 			}
 		}
 	}
