@@ -78,12 +78,12 @@ bool ht_mz::loc_enum_next(ht_format_loc *loc)
 {
 	ht_mz_shared_data *sh=(ht_mz_shared_data*)shared_data;
 	if (loc_enum) {
-		loc->name="mz";
-		loc->start=0;
-		loc->length=sh->header.header_size*16+(sh->header.sizep-1)*512+
-		sh->header.sizelp;
+		loc->name = "mz";
+		loc->start = 0;
+		loc->length= sh->header.header_size*16+(sh->header.sizep-1)*512+
+			     sh->header.sizelp;
 
-		loc_enum=0;
+		loc_enum = 0;
 		return true;
 	}
 	return false;
