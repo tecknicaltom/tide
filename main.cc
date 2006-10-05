@@ -351,9 +351,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	params(argc, argv, true);
-
 	try {
+		params(argc, argv, true);
 		((ht_app*)app)->run(false);
 	} catch (const Exception &x) {
 		done();
