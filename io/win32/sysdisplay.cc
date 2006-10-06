@@ -19,7 +19,6 @@
  */
 
 #include "io/display.h"
-#include "io/sysexcept.h"
 #include "io/types.h"
 
 #include <cstdio>
