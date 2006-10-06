@@ -29,7 +29,6 @@
 
 #include "io/display.h"
 #include "io/types.h"
-#include "io/sysexcept.h"
 
 extern struct sigaction old_SIGTRAP;
 
