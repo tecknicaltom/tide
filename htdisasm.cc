@@ -40,7 +40,7 @@ extern "C" {
 ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
 {
 	int t1632;
-#if 0
+#if 1
 	Assembler *assembler=new x86asm(X86_OPSIZE32, X86_ADDRSIZE32);
 	x86dis *disassembler=new x86dis(X86_OPSIZE32, X86_ADDRSIZE32);
 #else
