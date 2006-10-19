@@ -871,7 +871,7 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 	default:
 		return false;
 	}
-	if (base == X86_REG_BP && mod == 0) {
+	if ((base & 7) == X86_REG_BP && mod == 0) {
 		mod = 1;
 		dispsize = 1;
 		if (!mindispsize) *disp = 0;
