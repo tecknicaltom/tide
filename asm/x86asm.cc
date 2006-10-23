@@ -1,4 +1,4 @@
-/*x
+/*
  *	HT Editor
  *	x86asm.cc
  *
@@ -599,7 +599,7 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 				int scale, index, base, disp=op->mem.disp;
 				if (encode_sib_v(op, mindispsize, &scale, &index, &base, &mod, &dispsize, &disp)) {
 					emitmodrm_mod(mod);
-					emitmodrm_rm(4);			/* SIB */
+					emitmodrm_rm(4);		/* SIB */
 					emitsib_scale(scale);
 					emitsib_index(index);
 					emitsib_base(base);
@@ -636,12 +636,12 @@ bool x86asm::encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op
 		for (int rm=0; rm < 8; rm++) {
 			const x86addrcoding *c=&(*modrmc)[mod][rm];
 			int r1=c->reg1, r2=c->reg2;
-			if (r2 == op->mem.base) {
+			if (r2 == (op->mem.base&~8)) {
 				int t = r1;
 				r1 = r2;
 				r2 = t;
 			}
-			if (r1==op->mem.base && r2==op->mem.index && c->dispsize>=mindispsize) {
+			if (r1==(op->mem.base&~8) && r2==(op->mem.index&~8) && c->dispsize>=mindispsize) {
 				*_mod=mod;
 				*_rm=rm;
 				*_dispsize=c->dispsize;
@@ -650,6 +650,7 @@ bool x86asm::encode_modrm_v(const x86addrcoding (*modrmc)[3][8], x86_insn_op *op
 					// ip-relative addressing
 					disppos = 1;
 				}
+				if (op->mem.base & 8) rexprefix |= rexb;
 				return true;
 			}
 		}
@@ -823,10 +824,10 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 			return false;
 		}
 	}
-	if ((index & 0x7) == X86_REG_SP) {
+	if (index == X86_REG_SP) {
 		if (scale > 1) return false;
 		if (scale == 1) {
-			if ((base & 0x7) == X86_REG_SP) return false;
+			if (base == X86_REG_SP) return false;
 			int temp = index;
 			index = base;
 			base = temp;
@@ -871,11 +872,6 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 	default:
 		return false;
 	}
-	if ((base & 7) == X86_REG_BP && mod == 0) {
-		mod = 1;
-		dispsize = 1;
-		if (!mindispsize) *disp = 0;
-	}
 	if (base == X86_REG_NO) {
 		base = 5;
 		mod = 0;
@@ -884,13 +880,19 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 /*		if (addrsize == X86_ADDRSIZE64) {
 			disppos = 1;
 		}*/
+	} else {
+		if ((base & 7) == X86_REG_BP && mod == 0) {
+			mod = 1;
+			dispsize = 1;
+			if (!mindispsize) *disp = 0;
+		}
 	}
 	*_mod = mod;
 	*_ss = ss;
 	*_index = index;
 	*_base = base;
-	if (index > 7) rexprefix |= rexx;
-	if (base > 7) rexprefix |= rexb;
+	if (index & 8) rexprefix |= rexx;
+	if (base & 8) rexprefix |= rexb;
 	*_dispsize = dispsize;
 	return 1;
 }
