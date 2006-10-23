@@ -195,7 +195,7 @@ struct x86opc_finsn {
 };
 
 #define X86_REG_INVALID		-2
-#define X86_REG_NO		-1
+#define X86_REG_NO		(-1 & ~8)
 #define X86_REG_AX		0
 #define X86_REG_CX		1
 #define X86_REG_DX		2
