@@ -638,11 +638,11 @@ void x86dis::decode_sib(x86_insn_op *op, int mod)
 		break;
 	case 1:
 		op->mem.hasdisp = true;
-		op->mem.disp = (sint8)getbyte();
+		op->mem.disp = sint64(sint8(getbyte()));
 		break;
 	case 2:
 		op->mem.hasdisp = true;
-		op->mem.disp = (sint32)getdword();
+		op->mem.disp = sint64(sint32(getdword()));
 		break;
 	}
 }
