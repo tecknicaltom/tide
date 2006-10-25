@@ -91,8 +91,31 @@ M    { 0x00000001, "hard disk"              },
 
 */
 
+static ht_tag_flags_s xex_media_flags[] =
+{
+	{-1, "XEX - media type mask"},
+	{ 24, "[00] hard disk"              },
+	{ 25, "[01] DVD-X2"                 },
+	{ 26, "[02] DVD/CD"                 },
+	{ 27, "[03] DVD-5"                  },
+	{ 28, "[04] DVD-9"                  },
+	{ 29, "[05] system flash"           },
+	{ 30, "[06] memory unit"            },
+	{ 31, "[07] mass storage device"    },
+	{ 16, "[08] SMB filesystem"         },
+	{ 17, "[09] direct-from-RAM"        },
+	{  0, "[24] insecure package"       },
+	{  1, "[25] save game package"      },
+	{  2, "[26] locally signed package" },
+	{  3, "[27] Live-signed package"    },
+	{  4, "[28] Xbox platform package"  }
+};
+
 #define ATOM_XEX_INFO_CLASS_MAGICS 0x58455801
 #define ATOM_XEX_INFO_CLASS_MAGICS_STR "58455801"
+
+#define ATOM_XEX_MEDIA_FLAGS			0x58455802
+#define ATOM_XEX_MEDIA_FLAGS_STR		 "58455802"
 
 static ht_mask_sub *prep_sub(File *file, const char *desc, uint32 type, int i, ht_collapsable_sub **cs)
 {
@@ -235,7 +258,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	s->add_staticmask("unknown              "STATICTAG_EDIT_DWORD_BE("00000160"), ofs, true);
 	s->add_staticmask(mkkey(str, "hash?                ", 0x164, 20) , ofs, true);
 	s->add_staticmask("game region          "STATICTAG_EDIT_DWORD_BE("00000178"), ofs, true);
-	s->add_staticmask("media type mask?     "STATICTAG_EDIT_DWORD_BE("0000017c"), ofs, true);
+	s->add_staticmask("media type mask      "STATICTAG_EDIT_DWORD_BE("0000017c")"   "STATICTAG_FLAGS("0000017c", ATOM_XEX_MEDIA_FLAGS_STR), ofs, true);
 	s->add_staticmask("", ofs, true);
 	s->add_staticmask("hash table entries   "STATICTAG_EDIT_DWORD_BE("00000180"), ofs, true);
 
@@ -264,6 +287,8 @@ static ht_view *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
 	ht_mask_sub *s;
 	ht_group_sub *gs;
 	ht_collapsable_sub *cs;
+
+	registerAtom(ATOM_XEX_MEDIA_FLAGS, xex_media_flags);
 	
 	s = new ht_mask_sub();
 	s->init(file, 0);
