@@ -39,6 +39,7 @@
 #include "macho_analy.h"
 #include "xbe_analy.h"
 #include "pef_analy.h"
+#include "xex_analy.h"
 
 #include "atom.h"
 
@@ -65,6 +66,7 @@ BUILDER(ATOM_MACHO_ANALYSER, MachoAnalyser, Analyser)
 BUILDER(ATOM_FLT_ANALYSER, FLTAnalyser, Analyser)
 BUILDER(ATOM_XBE_ANALYSER, XBEAnalyser, Analyser)
 BUILDER(ATOM_PEF_ANALYSER, PEFAnalyser, Analyser)
+BUILDER(ATOM_XEX_ANALYSER, XEXAnalyser, Analyser)
 
 BUILDER(ATOM_ADDRESS_INVALID, InvalidAddress, Address)
 BUILDER(ATOM_ADDRESS_FLAT_32, AddressFlat32, Address)
@@ -98,6 +100,7 @@ bool init_analyser()
 	REGISTER(ATOM_FLT_ANALYSER, FLTAnalyser)
 	REGISTER(ATOM_XBE_ANALYSER, XBEAnalyser)
 	REGISTER(ATOM_PEF_ANALYSER, PEFAnalyser)
+	REGISTER(ATOM_XEX_ANALYSER, XEXAnalyser)
 
 	REGISTER(ATOM_ADDRESS_INVALID, InvalidAddress)
 	REGISTER(ATOM_ADDRESS_FLAT_32, AddressFlat32)
@@ -133,6 +136,7 @@ void done_analyser()
 	UNREGISTER(ATOM_FLT_ANALYSER, FLTAnalyser)
 	UNREGISTER(ATOM_XBE_ANALYSER, XBEAnalyser)
 	UNREGISTER(ATOM_PEF_ANALYSER, PEFAnalyser)
+	UNREGISTER(ATOM_XEX_ANALYSER, XEXAnalyser)
 
 	UNREGISTER(ATOM_ADDRESS_INVALID, InvalidAddress)
 	UNREGISTER(ATOM_ADDRESS_FLAT_32, AddressFlat32)
