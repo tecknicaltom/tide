@@ -3427,7 +3427,7 @@ bool ht_uformat_viewer::ref()
 			case HT_TAG_SEL:
 				return ref_sel(&cursor_tag_id.id);
 			case HT_TAG_FLAGS:
-				return ref_flags(((ht_tag_flags*)e)->offset, ((ht_tag_flags*)e)->id);
+				return ref_flags(((ht_tag_flags*)e)->id, ((ht_tag_flags*)e)->offset);
 			case HT_TAG_DESC_BYTE:
 				return ref_desc(((ht_tag_desc_byte*)e)->id, ((ht_tag_desc_byte*)e)->offset, 1, true);
 			case HT_TAG_DESC_WORD_LE:
