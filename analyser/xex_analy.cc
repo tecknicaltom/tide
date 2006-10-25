@@ -236,16 +236,8 @@ FileOfs XEXAnalyser::addressToFileofs(Address *Addr)
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;
 		RVA r;
-		if (!convertAddressToRVA(Addr, &r)) {
-//		fprintf(stderr, "111111: %08x\n", r);
-//		assert(0);
-		return INVALID_FILE_OFS;
-		}
-		if (!xex_rva_to_ofs(xex_shared, r, ofs)) {
-//		fprintf(stderr, "222222: %08x\n", r);
-//		assert(0);
-		return INVALID_FILE_OFS;
-		}
+		if (!convertAddressToRVA(Addr, &r)) return INVALID_FILE_OFS;
+		if (!xex_rva_to_ofs(xex_shared, r, ofs)) return INVALID_FILE_OFS;
 		return ofs;
 	} else {
 		return INVALID_FILE_OFS;
