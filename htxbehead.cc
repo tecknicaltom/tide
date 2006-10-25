@@ -255,7 +255,7 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	}
 	
 	/* section headers */
-	
+
 	for (uint i=0; i<xbe_shared->sections.number_of_sections; i++) {
 		const char *name;
 //		uint ofs;
