@@ -126,7 +126,6 @@ static ht_mask_sub *prep_sub(File *file, const char *desc, uint32 type, int i, h
 	*cs = new ht_collapsable_sub();
 	(*cs)->init(file, s, true, title, true);
 	return s;
-	
 }
 
 static ht_sub *add_resmap(File *file, const char *desc, ht_xex_shared_data &xex_shared, int i, FileOfs ofs)
@@ -155,22 +154,37 @@ static ht_sub *add_loaderinfo(File *file, const char *desc, ht_xex_shared_data &
 	
 	ofs = xex_shared.info_table_cooked[i].start;
 
-	if (xex_shared.info_table_cooked[i].size >= 12) {
+	if (xex_shared.info_table_cooked[i].size >= 4) {
 		s->add_staticmask("crypted?           "STATICTAG_EDIT_WORD_BE("00000000"), ofs, true);
 		s->add_staticmask("type of loader     "STATICTAG_EDIT_WORD_BE("00000002"), ofs, true);
-		// FIXME: compressed vs. raw
 		s->add_staticmask(" ---", ofs, true);
-		s->add_staticmask("compression window "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
-		s->add_staticmask("size of loader     "STATICTAG_EDIT_DWORD_BE("00000008"), ofs, true);
-		if (xex_shared.info_table_cooked[i].size >= 32) {
-			String str("SHA1 hash loader   ");
-			for (int j=0; j < 20; j++) {
-				String str2;
-				str2.assignFormat(STATICTAG_EDIT_BYTE("%08x"), 12+j);
-				str.append(str2);
-    			}
-			s->add_staticmask(str.contentChar(), ofs, true);
+		switch (xex_shared.loader_info.type) {
+		case XEX_LOADER_RAW: {
+			int entries = (xex_shared.info_table_cooked[i].size-4)/8;
+			ofs += 4;
+			for (int i = 0; i < entries; i++) {
+				s->add_staticmask("raw bytes          "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
+				s->add_staticmask("pad                "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+				ofs += 8;
+			}
+			break;
 		}
+		case XEX_LOADER_COMPRESSED: {
+			s->add_staticmask("compression window "STATICTAG_EDIT_DWORD_BE("00000004"), ofs, true);
+			s->add_staticmask("size of loader     "STATICTAG_EDIT_DWORD_BE("00000008"), ofs, true);
+			if (xex_shared.info_table_cooked[i].size >= 32) {
+				String str("SHA1 hash loader   ");
+				for (int j=0; j < 20; j++) {
+					String str2;
+					str2.assignFormat(STATICTAG_EDIT_BYTE("%08x"), 12+j);
+					str.append(str2);
+	    			}
+				s->add_staticmask(str.contentChar(), ofs, true);
+			}
+			break;
+		}
+		}
+		// FIXME: compressed vs. raw
 	}
 	return cs;
 }
@@ -241,7 +255,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	cs->init(file, gs, true, desc, true);
 	gs->insertsub(s);
 
-	FileOfs ofs = xex_shared.file_header.offset;
+	FileOfs ofs = xex_shared.header.file_header_offset;
 
 	String str;
 	s->add_staticmask("file header size     "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
@@ -269,7 +283,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	gs->insertsub(cs2);
 
 	ofs += 0x184;
-	for (int i=0; i < xex_shared.file_header.hash_table_count; i++) {
+	for (int i=0; i < xex_shared.file_header.pages; i++) {
 		s->add_staticmask("flags?               "STATICTAG_EDIT_DWORD_BE("00000000"), ofs, true);
 		s->add_staticmask(mkkey(str, "hash?                ", 0x4, 20) , ofs, true);
 		ofs += 24;
@@ -422,15 +436,15 @@ bool ht_xex_header_viewer::ref_sel(LINE_ID *id)
 		switch (id->id2) {
 		case 0: {
 			vstate_save();
-			uint32 ofs = xex_shared->file_header.offset;
+			uint32 ofs = xex_shared->header.file_header_offset;
 			hexv->goto_offset(ofs, false);
-			hexv->pselect_set(ofs, ofs+xex_shared->file_header.size);
+			hexv->pselect_set(ofs, ofs+xex_shared->file_header.hdr_size);
 			app->focus(hexv);
 			return true;
 		}
 		case 1: {			
 			vstate_save();
-			uint32 ofs = xex_shared->file_header.key_ofs;
+			uint32 ofs = xex_shared->header.file_header_offset + 8;
 			hexv->goto_offset(ofs, false);
 			hexv->pselect_set(ofs, ofs+256);
 			app->focus(hexv);
