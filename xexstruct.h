@@ -35,7 +35,7 @@ typedef unsigned int RVA;
 struct XEX_IMAGE_HEADER {
 	byte	magic_id[XEX_MAGIC_LENGTH];
 	uint32	flags;
-	uint32	offset_unpack;
+	uint32	size;
 	uint32	res;
 	uint32	file_header_offset;
 	uint32	number_of_sections;
@@ -87,10 +87,45 @@ struct XEX_IMAGE_HEADER_INFO_ENTRY {
 	uint32	value;
 } PACKED;
 
-#define XEX_LOADER_RAW 1
-#define XEX_LOADER_COMPRESSED 2
+enum {
+	XEX_LOADER_NONE = 0,
+	XEX_LOADER_RAW = 1,
+	XEX_LOADER_COMPRESSED = 2,
+};
+
+struct XEX_LOADER_INFO_HEADER {
+	uint16 crypted;
+	uint16 type;
+} PACKED;
+
+struct XEX_RAW_LOADER_ENTRY {
+	uint32 raw;
+	uint32 pad;
+} PACKED;
+
+struct XEX_FILE_HEADER {
+	uint32 hdr_size;
+	uint32 image_size;
+	uint8  key[256];
+	uint32 unk1;
+	uint32 image_flags;
+	uint32 load_address;
+	uint8  hash1[20];
+	uint32 unk2;
+	uint8  hash2[20];
+	uint8  unk3[16];
+	uint8  loader_key[16];
+	uint32 unk4;
+	uint8  hash3[20];
+	uint32 region;
+	uint32 media_mask;
+	uint32 pages;
+} PACKED;
 
 extern byte XEX_IMAGE_HEADER_struct[];
 extern byte XEX_IMAGE_HEADER_INFO_ENTRY_struct[];
+extern byte XEX_LOADER_INFO_HEADER_struct[];
+extern byte XEX_RAW_LOADER_ENTRY_struct[];
+extern byte XEX_FILE_HEADER_struct[];
 
 #endif
