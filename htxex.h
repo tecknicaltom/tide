@@ -36,13 +36,6 @@ struct xex_info_entry {
 	uint32 type;
 };
 
-struct xex_file_header {
-	FileOfs offset;
-	FileOfs size;
-	uint32 hash_table_count;
-	FileOfs key_ofs;
-};
-
 struct xex_loader_info_raw {
 	Array *sections;
 };
@@ -73,14 +66,19 @@ struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
 	xex_info_entry *info_table_cooked;
 
-	xex_file_header file_header;
+	XEX_FILE_HEADER file_header;
 	xex_loader_info loader_info;
 	
 	uint32 original_base_address;
 	uint32 image_base;
-	uint32 entry_point;
+	uint32 image_size;
+	uint32 entrypoint;
+
+	MemoryFile *image;
 
 	ht_format_viewer *v_header;
+	ht_view *v_imports;
+	ht_format_viewer *v_image;	
 };
 
 /*
@@ -93,5 +91,8 @@ public:
 		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
 	virtual	void done();
 };
+
+bool xex_rva_to_ofs(ht_xex_shared_data *xex_shared, RVA rva, FileOfs &ofs);
+bool xex_ofs_to_rva(ht_xex_shared_data *xex_shared, FileOfs ofs, RVA &rva);
 
 #endif /* !__HTXEX_H__ */
