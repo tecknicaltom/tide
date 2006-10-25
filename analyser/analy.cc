@@ -1978,8 +1978,14 @@ void Analyser::pushAddress(Address *Addr, Address *func)
  */
 int	Analyser::queryConfig(int mode)
 {
-	// stub
-	return 0;
+	switch (mode) {
+	case Q_DO_ANALYSIS:
+	case Q_ENGAGE_CODE_ANALYSER:
+	case Q_ENGAGE_DATA_ANALYSER:
+		return true;
+	default:
+		return 0;
+	}
 }
 
 static void saveaddrs(ObjectStream &st, Location *addr)
