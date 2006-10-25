@@ -218,8 +218,6 @@ bool xex_rva_to_ofs(ht_xex_shared_data *xex_shared, RVA rva, FileOfs &ofs)
 		ofs = rva;
 		return true;
 	} else {
-		int a=1;
-		fprintf(stderr, "****** %08x %08x", rva, xex_shared->image_size);
 		return false;
 	}
 #endif
