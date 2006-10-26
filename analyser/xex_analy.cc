@@ -75,70 +75,47 @@ void XEXAnalyser::beginAnalysis()
 	Address *entry = createAddress32(xex_shared->entrypoint);
 	pushAddress(entry, entry);
 
-#if 0
-	// exports
-
-	int export_count=xex_shared->exports.funcs->count();
-	int *entropy = random_permutation(export_count);
-	for (int i=0; i<export_count; i++) {
-		ht_pe_export_function *f=(ht_pe_export_function *)(*xex_shared->exports.funcs)[entropy[i]];
-		Address *faddr;
-		if (pe32) {
-			faddr = createAddress32(f->address + xex_shared->pe32.header_nt.image_base);
-		} else {
-			faddr = createAddress64(f->address + xex_shared->pe64.header_nt.image_base);
-		}
-		if (validAddress(faddr, scvalid)) {
-			char *label;
-			if (f->byname) {
-				ht_snprintf(buffer, sizeof buffer, "; exported function %s, ordinal %04x", f->name, f->ordinal);
+	int lib_count=xex_shared->imports.lib_count;
+	for (int i=0; i < lib_count; i++) {
+		XexImportLib *lib = xex_shared->imports.libs + i;
+		for (int j = 0; j < lib->func_count; j++) {
+			XexImportFunc *func = lib->funcs + j;
+			uint32 ord = func->ord;
+			if (ord & 0xff000000) {
+				int libidx = (ord & 0x00ff0000) >> 16;
+				ord &= 0x7fff;
+				if (libidx != i) {
+					continue;
+				}
+				char s[200];
+				ht_snprintf(s, sizeof s, "wrapper_import_%s_%d", lib->name, ord);
+				Address *faddr = createAddress32(func->patch);
+				addComment(faddr, 0, "");
+				assignSymbol(faddr, s, label_func);
+				delete faddr;
+				faddr = createAddress32(func->patch+12);				
+				Address *faddr2 = createAddress32(func->ia);
+				addXRef(faddr2, faddr, xrefijump);
+				delete faddr;
+				delete faddr2;				
+//				printf("xref 0x%08x -> 0x%08x\n", ia, imports[i].func[j].patch + 12);
+				
 			} else {
-				ht_snprintf(buffer, sizeof buffer, "; unnamed exported function, ordinal %04x", f->ordinal);
+				char s[200];
+				ord &= 0x7fff;
+				ht_snprintf(s, sizeof s, "import_%s_%d", lib->name, ord);
+				Address *faddr = createAddress32(func->patch);
+				addComment(faddr, 0, "");
+				assignSymbol(faddr, s, label_func);
+				data->setIntAddressType(faddr, dst_idword, 4);
+				delete faddr;				
+//				printf("function_ptr 0x%08x name '%s'\n", imports[i].func[j].patch, s);
 			}
-			label = export_func_name((f->byname) ? f->name : NULL, f->ordinal);
-			addComment(faddr, 0, "");
-			addComment(faddr, 0, ";********************************************************");
-			addComment(faddr, 0, buffer);
-			addComment(faddr, 0, ";********************************************************");
-			pushAddress(faddr, faddr);
-			assignSymbol(faddr, label, label_func);
-			free(label);
+			
 		}
-		delete faddr;
 	}
-	if (entropy) free(entropy);
 
-	int import_count=xex_shared->imports.funcs->count();
-	entropy = random_permutation(import_count);
-	for (int i=0; i<import_count; i++) {
-		ht_pe_import_function *f = (ht_pe_import_function *)(*xex_shared->imports.funcs)[entropy[i]];
-		ht_pe_import_library *d = (ht_pe_import_library *)(*xex_shared->imports.libs)[f->libidx];
-		char *label;
-		label = import_func_name(d->name, (f->byname) ? f->name.name : NULL, f->ordinal);
-		Address *faddr;
-		if (pe32) {
-			faddr = createAddress32(f->address + xex_shared->pe32.header_nt.image_base);
-		} else {
-			faddr = createAddress64(f->address + xex_shared->pe64.header_nt.image_base);
-		}
-		addComment(faddr, 0, "");
-		if (!assignSymbol(faddr, label, label_func)) {
-			// multiple import of a function (duplicate labelname)
-			// -> mangle name a bit more
-			addComment(faddr, 0, "; duplicate import");
-			ht_snprintf(buffer, sizeof buffer, "%s_%x", label, f->address);
-			assignSymbol(faddr, buffer, label_func);
-		}
-		if (pe32) {
-			data->setIntAddressType(faddr, dst_idword, 4);
-		} else {
-			data->setIntAddressType(faddr, dst_iqword, 8);
-		}
-		free(label);
-		delete faddr;
-	}
-	if (entropy) free(entropy);
-
+#if 0
 	int dimport_count=xex_shared->dimports.funcs->count();
 	entropy = random_permutation(dimport_count);
 	for (int i=0; i<dimport_count; i++) {
@@ -265,7 +242,7 @@ String &XEXAnalyser::getName(String &s)
  */
 const char *XEXAnalyser::getType()
 {
-	return "XEx/Analyser";
+	return "XEX/Analyser";
 }
 
 /*
