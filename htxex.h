@@ -62,8 +62,9 @@ struct xex_loader_info {
 };
 
 struct XexImportFunc {
-	int ord;
+	uint32 ord;
 	uint32 patch;
+	uint32 ia;
 };
 
 struct XexImportLib {
