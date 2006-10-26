@@ -61,6 +61,23 @@ struct xex_loader_info {
 	};
 };
 
+struct XexImportFunc {
+	int ord;
+	uint32 patch;
+};
+
+struct XexImportLib {
+	const char *name;
+	int func_count;
+	XexImportFunc *funcs;
+};
+
+struct XexImports {
+	FileOfs ofs;
+	uint32	lib_count;
+	XexImportLib *libs;
+};
+
 struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER header;
 	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
@@ -68,6 +85,7 @@ struct ht_xex_shared_data {
 
 	XEX_FILE_HEADER file_header;
 	xex_loader_info loader_info;
+	XexImports imports;
 	
 	uint32 original_base_address;
 	uint32 image_base;
