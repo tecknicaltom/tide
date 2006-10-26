@@ -187,6 +187,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 						uint32 patch;
 						file->readx(&patch, 4);
 						libs[i].funcs[j].patch = createHostInt(&patch, 4, big_endian);
+						libs[i].funcs[j].ord = libs[i].funcs[j].ia = 0;
 					}
 				}				
 			}
@@ -258,11 +259,13 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base], lis_r11, 4, big_endian);
 				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base+4], lwz_r11, 4, big_endian);
 				
+				lib->funcs[j].ia = ia; 
 /*				char s[100];
 				snprintf(s, sizeof s, "wrapper_import_%s_%d", imports[i].lib, ord);
 				printf("function 0x%08x name '%s'\n", imports[i].func[j].patch, s);
 				
 				printf("xref 0x%08x -> 0x%08x\n", ia, imports[i].func[j].patch + 12);*/
+				
 			} else {
 /*				ord &= 0x7fff;
 				char s[100];
