@@ -297,5 +297,18 @@ bool XEXAnalyser::validAddress(Address *Addr, tsectype action)
 	if (!convertAddressToRVA(Addr, &r)) return false;
 //	if (!pe_rva_to_section(sections, r, &sec)) return false;
 	if (!xex_rva_to_ofs(xex_shared, r, ofs)) return false;
+	uint32 flags = xex_get_rva_flags(xex_shared, r);
+	switch (action) {
+	case scvalid:
+	case scinitialized:
+	case scread:
+		return true;
+		return true;
+	case scwrite:
+	case screadwrite:
+		return !(flags & 1);
+	case sccode:
+		return !(flags & 2);
+	}
 	return true;
 }
