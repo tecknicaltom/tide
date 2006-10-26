@@ -274,12 +274,12 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	s->add_staticmask("game region          "STATICTAG_EDIT_DWORD_BE("00000178"), ofs, true);
 	s->add_staticmask("media type mask      "STATICTAG_EDIT_DWORD_BE("0000017c")"   "STATICTAG_FLAGS("0000017c", ATOM_XEX_MEDIA_FLAGS_STR), ofs, true);
 	s->add_staticmask("", ofs, true);
-	s->add_staticmask("hash table entries   "STATICTAG_EDIT_DWORD_BE("00000180"), ofs, true);
+	s->add_staticmask("page table entries   "STATICTAG_EDIT_DWORD_BE("00000180"), ofs, true);
 
 	s = new ht_mask_sub();
 	ht_collapsable_sub *cs2 = new ht_collapsable_sub();
 	s->init(file, 3);
-	cs2->init(file, s, true, "--- hash table? ---", true);
+	cs2->init(file, s, true, "--- page table ---", true);
 	gs->insertsub(cs2);
 
 	ofs += 0x184;
