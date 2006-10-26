@@ -68,6 +68,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	xex_shared->v_header = NULL;
 	xex_shared->image = NULL;
 	xex_shared->loader_info.type = XEX_LOADER_NONE;
+	xex_shared->imports.ofs = 0;
 
 	/* read header */
 	file->seek(0);
@@ -123,6 +124,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 			break;
 		}
 		case XEX_HEADER_FIELD_IMPORT:
+			xex_shared->imports.ofs = xex_shared->info_table[i].value;
 			break;
 		case XEX_HEADER_FIELD_ENTRY:
 			xex_shared->entrypoint = xex_shared->info_table[i].value;
@@ -144,6 +146,55 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		xex_shared->image_base = 0;
 	}
 	
+	xex_shared->imports.lib_count = 0;
+	xex_shared->imports.libs = NULL;
+	try {
+		if (xex_shared->imports.ofs) {
+			file->seek(xex_shared->imports.ofs);
+			uint32 size, sizen, l;
+			file->readx(&size, 4);
+	    		file->readx(&sizen, 4);
+			file->readx(&l, 4);
+			size = createHostInt(&size, 4, big_endian);
+			sizen = createHostInt(&sizen, 4, big_endian);
+			l = createHostInt(&l, 4, big_endian);
+			FileOfs ofs = xex_shared->imports.ofs + 3*4 + sizen;
+			XexImportLib *libs = new XexImportLib[l];
+			if (l) {
+				String s;
+				for (uint i=0; i < l; i++) {
+					s.clear();
+					file->readStringz(s);
+					libs[i].name = strdup(s.contentChar());
+				}
+				
+				// patch table
+				for (uint i=0; i < l; i++) {				
+					file->seek(ofs);
+					file->readx(&sizen, 4);
+					sizen = createHostInt(&sizen, 4, big_endian);
+					ofs += sizen;
+					
+					file->seek(36 + file->tell()); // skip garbage
+					int count = (sizen - 40) / 4;
+					libs[i].func_count = count;
+					if (count) {
+						libs[i].funcs = new XexImportFunc[count];
+					} else {
+						libs[i].funcs = NULL;
+					}
+					for (int j=0; j < count; j++) {
+						uint32 patch;
+						file->readx(&patch, 4);
+						libs[i].funcs[j].patch = createHostInt(&patch, 4, big_endian);
+					}
+				}				
+			}
+			xex_shared->imports.libs = libs;
+			xex_shared->imports.lib_count = l;
+		}
+	} catch (...) {}
+	
 	xex_shared->image = new MemoryFile(0, xex_shared->image_size);
 
 	try {
@@ -158,6 +209,70 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		}
 	} catch (...) {}
 
+	uint32 *iat = new uint32[0x8000];
+	byte *image_ptr = xex_shared->image->getBufPtr();
+	for (int i=0; i < xex_shared->imports.lib_count; i++) {
+		memset(iat, 0, 4*0x8000);
+		// get import ordinals
+		XexImportLib *lib = xex_shared->imports.libs+i;
+		for (int j=0; j < lib->func_count; j++) {
+			uint32 ord;
+			ord = lib->funcs[j].ord = createHostInt(&image_ptr[lib->funcs[j].patch - xex_shared->image_base], 4, big_endian);
+			if ((ord & 0xff000000) == 0) {
+				ord &= 0x7fff;
+				if (iat[ord]) {
+//					fprintf(stderr, "%s: warning: duplicate import %d from library '%s'\n", infn, ord, imports[i].lib);
+				} else {
+					iat[ord] = lib->funcs[j].patch;
+				}
+			}
+		}
+
+//		printf("\n; Library '%s':\n", lib.name);
+		// resolve imports
+		for (int j=0; j < lib->func_count; j++) {
+			uint32 ord = lib->funcs[j].ord;
+			if (ord & 0xff000000) {
+				int libidx = (ord & 0x00ff0000) >> 16;
+				ord &= 0x7fff;
+				if (libidx != i) {
+/*					if (libidx < import_count) {
+						fprintf(stderr, "%s: import %d from library '%s', but in section of library '%s'\n", infn, ord, imports[libidx].lib, imports[i].lib);
+					} else {
+						fprintf(stderr, "%s: import %d from unknown library %d, but in section of library '%s'\n", infn, ord, libidx, imports[i].lib);
+					}
+					return 1;*/
+					continue;
+				}
+				if (!iat[ord]) {
+/*					fprintf(stderr, "%s: import %d from library '%s' need to be resolved but is not imported\n", infn, ord, imports[i].lib);
+					return 1;*/
+					continue;
+				}
+				uint32 ia = iat[ord];
+				
+				// patch it
+				uint32 lis_r11 = (0x3d600000 | (ia >> 16)) + !!(ia & 0x8000);
+				uint32 lwz_r11 = (0x816b0000 | (ia & 0xffff));
+				
+				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base], lis_r11, 4, big_endian);
+				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base+4], lwz_r11, 4, big_endian);
+				
+/*				char s[100];
+				snprintf(s, sizeof s, "wrapper_import_%s_%d", imports[i].lib, ord);
+				printf("function 0x%08x name '%s'\n", imports[i].func[j].patch, s);
+				
+				printf("xref 0x%08x -> 0x%08x\n", ia, imports[i].func[j].patch + 12);*/
+			} else {
+/*				ord &= 0x7fff;
+				char s[100];
+				snprintf(s, sizeof s, "import_%s_%d", imports[i].lib, ord);
+				printf("function_ptr 0x%08x name '%s'\n", imports[i].func[j].patch, s);*/
+			}
+		}
+	}
+	delete[] iat;
+	
 	ht_format_group::init_ifs(ifs);
 }
 
