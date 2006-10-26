@@ -79,6 +79,15 @@ struct XexImports {
 	XexImportLib *libs;
 };
 
+struct XexPage {
+	uint32 flags;
+};
+
+struct XexPages {
+	uint32 page_shift;
+	XexPage *page;	
+};
+
 struct ht_xex_shared_data {
 	XEX_IMAGE_HEADER header;
 	XEX_IMAGE_HEADER_INFO_ENTRY *info_table;
@@ -87,6 +96,7 @@ struct ht_xex_shared_data {
 	XEX_FILE_HEADER file_header;
 	xex_loader_info loader_info;
 	XexImports imports;
+	XexPages pages;
 	
 	uint32 original_base_address;
 	uint32 image_base;
@@ -113,5 +123,6 @@ public:
 
 bool xex_rva_to_ofs(ht_xex_shared_data *xex_shared, RVA rva, FileOfs &ofs);
 bool xex_ofs_to_rva(ht_xex_shared_data *xex_shared, FileOfs ofs, RVA &rva);
+uint32 xex_get_rva_flags(ht_xex_shared_data *xex_shared, RVA rva);
 
 #endif /* !__HTXEX_H__ */
