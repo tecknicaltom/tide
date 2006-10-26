@@ -140,6 +140,16 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		createHostStruct(&xex_shared->file_header, XEX_FILE_HEADER_struct, big_endian);
 		xex_shared->image_base = xex_shared->file_header.load_address;
 		xex_shared->image_size = xex_shared->file_header.image_size;
+		file->seek(xex_shared->header.file_header_offset+0x184);
+		xex_shared->pages.page = new XexPage[xex_shared->file_header.pages];
+		for (int i=0; i < xex_shared->file_header.pages; i++) {
+			uint32 flags;
+			file->read(&flags, 4);
+			flags = createHostInt(&flags, 4, big_endian);
+			xex_shared->pages.page[i].flags = flags;
+			file->seek(file->tell()+20);
+		}
+		xex_shared->pages.page_shift = 16; // FIXME: can also be 12
 	} else {
 		xex_shared->file_header.hdr_size = 0;
 		xex_shared->image_size = 0;
@@ -339,4 +349,11 @@ bool xex_rva_to_ofs(ht_xex_shared_data *xex_shared, RVA rva, FileOfs &ofs)
 		return false;
 	}
 #endif
+}
+
+uint32 xex_get_rva_flags(ht_xex_shared_data *xex_shared, RVA rva)
+{
+	uint pagen = rva >> xex_shared->pages.page_shift;
+	XexPage *p = xex_shared->pages.page + pagen;
+	return p->flags;
 }
