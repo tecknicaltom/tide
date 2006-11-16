@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <locale.h>
 
 #include "io/display.h"
 #include "io/types.h"
@@ -286,10 +287,10 @@ CursesSystemDisplay::~CursesSystemDisplay()
 void CursesSystemDisplay::term_off()
 {
 	if (!terminal) return;
-//	::erase();
-//	::refresh();
-	endwin();
-	delscreen(terminal);
+	::erase();
+	::refresh();
+	::endwin();
+	::delscreen(terminal);
 	terminal = NULL;
 }
 
@@ -300,24 +301,26 @@ void CursesSystemDisplay::term_on()
 
 	setCursor(0, 0, CURSOR_OFF);
 
-	terminal = newterm(NULL, stdout, stdin);
-//	win = initscr();
+	::setlocale(LC_ALL, "");
+
+	terminal = ::newterm(NULL, stdout, stdin);
+//	win = ::initscr();
 	win = stdscr;
 	use_colors = false;
 	use_high_colors = false;
-	if (has_colors()) {
+	if (::has_colors()) {
 		use_colors = true;
 		char *term = getenv("TERM");
 		bool bold_support = false;
 		attr_t attrs;
 		short cur_color = 1;
-		start_color();
+		::start_color();
 		/* FIXME: Does this work ???: test if the WA_BOLD attr can be set */
-		attr_on(WA_BOLD, 0);
+		::attr_on(WA_BOLD, 0);
 		attrs = WA_NORMAL;
 		attr_get(&attrs, &cur_color, 0);
 		bold_support = (attrs==WA_BOLD);
-		attr_off(WA_BOLD, 0);
+		::attr_off(WA_BOLD, 0);
 
 		is_xterm = (term && strcmp(term, "linux") && strcmp(term, "console"));
 		if (!is_xterm && !bold_support) {
@@ -331,21 +334,21 @@ void CursesSystemDisplay::term_on()
 		for (int fg=0; fg < 8; fg++) {
 			for (int bg=0; bg < 8; bg++) {
 				colormap[fg+bg*8] = fg+bg*8;
-				init_pair(fg+bg*8, colors[fg], colors[bg]);
+				::init_pair(fg+bg*8, colors[fg], colors[bg]);
 			}
 		}
 		colormap[7] = 0;
 		colormap[0] = 7;
-		init_pair(7, COLOR_BLACK, COLOR_BLACK);
+		::init_pair(7, COLOR_BLACK, COLOR_BLACK);
 	} else {
 		fprintf(stderr, "warning: terminal lacks color support !");
 	}
-	wtimeout(win, 1);
-	meta(win, 1);
-	keypad(win, 1);
-	nodelay(win, 1);
-	noecho();
-	cbreak();
+	::wtimeout(win, 1);
+	::meta(win, 1);
+	::keypad(win, 1);
+	::nodelay(win, 1);
+	::noecho();
+	::cbreak();
 	ESCDELAY = 500;
 
 	assign(0, 0, getmaxx(win), getmaxy(win));
