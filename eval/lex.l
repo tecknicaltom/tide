@@ -41,12 +41,12 @@ static int parse_float(eval_scalar *f, char *fpn)
 	char *end;
 	double d;
 	d=strtod(fpn, &end);
-	if (*end==0) {
-		f->type=SCALAR_FLOAT;
-		f->scalar.floatnum.value=d;
+	if (*end == 0) {
+        	f->type=SCALAR_FLOAT;
+        	f->scalar.floatnum.value=d;
 		return 1;
 	}
-	return 0;		
+	return 0;
 }
 
 static int parse_integer(eval_scalar *i, char *num, int base, int lenmod)
@@ -153,7 +153,7 @@ static int parse_pstring(eval_scalar *s, char *cstr, int len)
 	
 	s->type=SCALAR_STR;
 	s->scalar.str.value=(char*)malloc(alloclen);
-	memmove(s->scalar.str.value, cstr, len);
+	memcpy(s->scalar.str.value, cstr, len);
 	s->scalar.str.len=len;
 	return 1;
 }
