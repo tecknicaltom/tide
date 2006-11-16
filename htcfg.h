@@ -25,9 +25,9 @@
 #include "stream.h"
 
 #if defined(WIN32) || defined(__WIN32__) || defined(MSDOS) || defined(DJGPP)
-#define SYSTEM_CONFIG_FILE_NAME "ht_neu.cfg"
+#define SYSTEM_CONFIG_FILE_NAME "ht2.cfg"
 #else
-#define SYSTEM_CONFIG_FILE_NAME ".htcfg_neu"
+#define SYSTEM_CONFIG_FILE_NAME ".htcfg2"
 #endif
 
 enum loadstore_result {
@@ -46,7 +46,7 @@ enum loadstore_result {
  *	Version 3: HT 0.4.5
  *	Version 4: HT 0.5.0
  *	Version 5: HT 0.6.0
- *	Version 6: HT 1.0.0pre
+ *	Version 6: HT 2.0beta
  */
 
 #define ht_systemconfig_magic				"HTCP"
@@ -58,7 +58,7 @@ enum loadstore_result {
  *	Version 1: HT 0.5.0
  *	Version 2: HT 0.6.0
  *	Version 3: HT 0.7.0
- *	Version 4: HT 1.0.0pre
+ *	Version 4: HT 2.0beta
  */
 
 #define ht_fileconfig_magic				"HTCF"
@@ -68,7 +68,7 @@ enum loadstore_result {
 
 /*	PROJECT CONFIG FILE VERSION HISTORY
  *	Version 1: HT 0.7.0
- *	Version 2: HT 1.0.0pre
+ *	Version 2: HT 2.0beta
  */
 
 #define ht_projectconfig_magic				"HTPR"
