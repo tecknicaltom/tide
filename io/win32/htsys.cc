@@ -347,7 +347,7 @@ bool sys_write_data_to_native_clipboard(const void *data, int size)
 		return false;
 	}
 	void *mem = GlobalLock(h);
-	memmove(mem, data, size);
+	memcpy(mem, data, size);
 	GlobalUnlock(h);
 	SetClipboardData(CF_OEMTEXT, h);
 	CloseClipboard();
