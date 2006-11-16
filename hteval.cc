@@ -285,7 +285,8 @@ static void do_eval(ht_strinputfield *s, ht_statictext *t, char *b)
 				x+=sprintf(b, "val   %.20f\nnorm  %.20e", r.scalar.floatnum.value, r.scalar.floatnum.value);
 				// FIXME: endianess/hardware format
 				float ff = ((float)r.scalar.floatnum.value);
-				uint32 f = *(uint32*)&ff;
+				uint32 f;
+				memcpy(&f, &ff, 4);
 				x += sprintf(x, "\n-- IEEE-754, 32 bit --");
 				x += sprintf(x, "\nhex   %08x\nbin   ", f);
 				x += sprint_base2(x, f, true);
