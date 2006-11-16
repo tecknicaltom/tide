@@ -1167,7 +1167,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 		int slen;
 		char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : 0;
 		if (s) {
-			memmove(opstr, s, slen);
+			memcpy(opstr, s, slen);
 			opstr[slen]=0;
 			*opstrlen=slen;
 		} else {
@@ -1209,8 +1209,8 @@ void x86dis::str_format(char **str, const char **format, char *p, char *n, char 
 		case DISASM_STRF_VAR:
 			f++;
 			if (print) {
-				char *t=0;
-				int tl=0;
+				char *t = NULL;
+				int tl = 0;
 				switch (*f) {
 				case DISASM_STRF_PREFIX:
 					t=p;
@@ -1232,7 +1232,7 @@ void x86dis::str_format(char **str, const char **format, char *p, char *n, char 
 					break;
 				}
 				if (tl) {
-					memmove(s, t, tl);
+					memcpy(s, t, tl);
 					s+=tl;
 					*s=0;
 				} else {
