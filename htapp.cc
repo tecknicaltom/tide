@@ -2457,8 +2457,8 @@ void ht_app::handlemsg(htmsg *msg)
 				case K_Meta_R: {
 					const char *n = "ht.reg";
 					LocalFile f(n, IOAM_WRITE, FOM_CREATE);
-//					CompressedStream c(&f, false);
-					StreamLayer c(&f, false);
+					CompressedStream c(&f, false);
+//					StreamLayer c(&f, false);
 					ObjectStreamBin b(&c, false);
 
 					b.putObject(registry, NULL);
