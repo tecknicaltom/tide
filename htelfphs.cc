@@ -82,6 +82,8 @@ static ht_view *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group 
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
+	if (!elf_shared->pheaders.count) return NULL;
+
 	bool elf_bigendian = (elf_shared->ident.e_ident[ELF_EI_DATA] == ELFDATA2MSB);
 	ht_uformat_viewer *v = NULL;
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS32) {
