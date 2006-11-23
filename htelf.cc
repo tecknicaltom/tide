@@ -164,7 +164,10 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 
 		/* read program headers */
 		elf_shared->pheaders.count = elf_shared->header32.e_phnum;
-		if (!elf_shared->pheaders.count) throw MsgException("Zero count in program section headers");
+//		if (!elf_shared->pheaders.count) throw MsgException("Zero count in program section headers");
+		if (!elf_shared->pheaders.count) {
+		elf_shared->pheaders.pheaders32 = NULL;
+		} else {
 		elf_shared->pheaders.pheaders32 = ht_malloc(elf_shared->pheaders.count*sizeof *elf_shared->pheaders.pheaders32);
 		file->seek(header_ofs + elf_shared->header32.e_phoff);
 		file->readx(elf_shared->pheaders.pheaders32, elf_shared->pheaders.count*sizeof *elf_shared->pheaders.pheaders32);
@@ -189,6 +192,7 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 				errorbox("error while auto-relocating ELF symbols: %y", &x.reason(s));
 			}
 		}
+		}
 		break;
 	}
 	case ELFCLASS64: {
@@ -208,7 +212,10 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 
 			/* read program headers */
 			elf_shared->pheaders.count = elf_shared->header64.e_phnum;
-			if (!elf_shared->pheaders.count) throw MsgException("Zero count in program section headers");
+//			if (!elf_shared->pheaders.count) throw MsgException("Zero count in program section headers");
+		if (!elf_shared->pheaders.count) {
+		elf_shared->pheaders.pheaders64 = NULL;
+		} else {
 			elf_shared->pheaders.pheaders64 = ht_malloc(elf_shared->pheaders.count*sizeof *elf_shared->pheaders.pheaders64);
 			/* FIXME: 64-bit */
 			file->seek(header_ofs + elf_shared->header64.e_phoff);
@@ -222,6 +229,7 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 
 			/* create streamfile layer for relocations */
 //			auto_relocate();
+}
 			break;
 		}
 	}
