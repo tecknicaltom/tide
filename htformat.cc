@@ -65,9 +65,8 @@ void clear_line_id(LINE_ID *l)
 
 bool compeq_line_id(const LINE_ID &a, const LINE_ID &b)
 {
-	return ((a.id1 == b.id1) && (a.id2 == b.id2)
-		&& (a.id3 == b.id3) && (a.id4 == b.id4)
-		&& (a.id5 == b.id5));
+	return (a.id1 == b.id1 && a.id2 == b.id2
+	     && a.id3 == b.id3 && a.id4 == b.id4 && a.id5 == b.id5);
 }
 
 /*
@@ -96,38 +95,9 @@ public:
 
 ht_search_request::ht_search_request(uint _search_class, uint _type, uint _flags)
 {
-	search_class=_search_class;
-	type=_type;
-	flags=_flags;
-}
-
-/*
- *	CLASS ht_search_result
- */
- 
-ht_search_result::ht_search_result(uint _search_class)
-{
-	search_class=_search_class;
-}
-
-/*
- *	CLASS ht_physical_search_result
- */
- 
-
-ht_physical_search_result::ht_physical_search_result() :
-	ht_search_result(SC_PHYSICAL)
-{
-}
-
-/*
- *	CLASS ht_visual_search_result
- */
- 
-
-ht_visual_search_result::ht_visual_search_result() :
-	ht_search_result(SC_VISUAL)
-{
+	search_class = _search_class;
+	type = _type;
+	flags = _flags;
 }
 
 /*
@@ -139,11 +109,11 @@ void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bo
 	ht_format_viewer::init(b, desc, 0, f, format_group);
 	VIEW_DEBUG_NAME("ht_format_group");
 
-	xgroup=new ht_xgroup();
+	xgroup = new ht_xgroup();
 	xgroup->init(b, options, desc);
-	xgroup->group=group;
+	xgroup->group = group;
 
-	format_views=new Array(true);	// a list of ht_format_viewer_entrys
+	format_views = new Array(true);	// a list of ht_format_viewer_entrys
 
 	own_file=own_f;
 	editable_file=editable_f;
@@ -3995,11 +3965,6 @@ void ht_sub::init(File *f)
 	file=f;
 }
 
-void ht_sub::done()
-{
-	Object::done();
-}
-
 bool ht_sub::closest_line_id(LINE_ID *line_id)
 {
 	first_line_id(line_id);
@@ -4060,13 +4025,8 @@ ht_search_result *ht_sub::search(ht_search_request *search, FileOfs start, FileO
 void ht_linear_sub::init(File *f, FileOfs ofs, FileOfs size)
 {
 	ht_sub::init(f);
-	fofs=ofs;
-	fsize=size;
-}
-
-void ht_linear_sub::done()
-{
-	ht_sub::done();
+	fofs = ofs;
+	fsize = size;
 }
 
 void ht_linear_sub::handlemsg(htmsg *msg)
@@ -4082,7 +4042,7 @@ void ht_linear_sub::handlemsg(htmsg *msg)
 	}
 }
 
-int ht_linear_func_readbyte(eval_scalar *result, eval_int *offset)
+static int ht_linear_func_readbyte(eval_scalar *result, eval_int *offset)
 {
 	struct context_t {
 		ht_linear_sub *sub;
@@ -4099,7 +4059,7 @@ int ht_linear_func_readbyte(eval_scalar *result, eval_int *offset)
 	return 1;
 }
 
-int ht_linear_func_readstring(eval_scalar *result, eval_int *offset, eval_int *len)
+static int ht_linear_func_readstring(eval_scalar *result, eval_int *offset, eval_int *len)
 {
 	struct context_t {
 		ht_linear_sub *sub;
@@ -4129,13 +4089,13 @@ int ht_linear_func_readstring(eval_scalar *result, eval_int *offset, eval_int *l
 	return 0;
 }
 
-int ht_linear_func_entropy(eval_scalar *result, eval_str *buf)
+static int ht_linear_func_entropy(eval_scalar *result, eval_str *buf)
 {
 	scalar_create_int_c(result, calc_entropy2((byte *)buf->value, buf->len));
 	return 1;
 }
 
-int ht_linear_func_entropy2(eval_scalar *result, eval_str *buf)
+static int ht_linear_func_entropy2(eval_scalar *result, eval_str *buf)
 {
 	scalar_create_float_c(result, calc_entropy((byte *)buf->value, buf->len));
 	return 1;
@@ -4269,18 +4229,13 @@ ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start
  *	CLASS ht_hex_sub
  */
 
-void ht_hex_sub::init(File *f, FileOfs ofs, uint32 size, uint Line_length, uint u, uint32 vinc)
+void ht_hex_sub::init(File *f, FileOfs ofs, FileOfs size, uint Line_length, uint u, uint32 vinc)
 {
 	line_length = Line_length;
 	ht_linear_sub::init(f, ofs, size);
 	vaddrinc = vinc;
 	balign = ofs % line_length;
 	uid = u;
-}
-
-void ht_hex_sub::done()
-{
-	ht_linear_sub::done();
 }
 
 int ht_hex_sub::get_line_length()
@@ -4356,11 +4311,6 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 	*l++ = '|';
 	*l = 0;
 	return true;
-}
-
-void ht_hex_sub::handlemsg(htmsg *msg)
-{
-	ht_linear_sub::handlemsg(msg);
 }
 
 void ht_hex_sub::first_line_id(LINE_ID *line_id)
@@ -4545,8 +4495,8 @@ void ht_mask_sub::add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOf
 void ht_layer_sub::init(File *file, ht_sub *s, bool own_s)
 {
 	ht_sub::init(file);
-	sub=s;
-	own_sub=own_s;
+	sub = s;
+	own_sub = own_s;
 }
 
 void ht_layer_sub::done()
