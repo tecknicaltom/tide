@@ -301,11 +301,14 @@ void CursesSystemDisplay::term_on()
 
 	setCursor(0, 0, CURSOR_OFF);
 
-//	::setlocale(LC_ALL, "");
+	::setlocale(LC_ALL, "");
 
 	terminal = ::newterm(NULL, stdout, stdin);
 //	win = ::initscr();
 	win = stdscr;
+
+	::setlocale(LC_ALL, "C");
+
 	use_colors = false;
 	use_high_colors = false;
 	if (::has_colors()) {
