@@ -744,8 +744,8 @@ x86opc_insn x86_32_insns_ext[256] = {
 {"pcmpewd", {{Pu}, {Qu}}},
 {"emms"},
 /* 78 */
-{"vmread", {{Er}, {Gr}}},
-{"vmwrite", {{Gr}, {Er}}},
+{"vmread", {{Er}, {Gr}}},    // extrq
+{"vmwrite", {{Gr}, {Er}}},   // extrq
 {0},
 {0},
 {"haddpd", {{Vo}, {WO}}},
@@ -948,7 +948,7 @@ x86opc_insn x86_insns_ext_f2[256] = {
 {0},
 {0},
 {"cvtsi2sd", {{Vq}, {Er}}},
-{0},
+{"movntsd", {{Mq}, {Vq}}},
 {"cvttsd2si", {{Gr}, {Wq}}},
 {"cvtsd2si", {{Gr}, {Wq}}},
 {0},
@@ -1035,8 +1035,8 @@ x86opc_insn x86_insns_ext_f2[256] = {
 {0},
 {0},
 /* 78 */
-{0},
-{0},
+{0},  //{"insertq"}
+{0},  //{"insertq"}
 {0},
 {0},
 {"haddps", {{Vo}, {Wo}}},
@@ -1239,7 +1239,7 @@ x86opc_insn x86_insns_ext_f3[256] = {
 {0},
 {0},
 {"cvtsi2ss", {{Vq}, {Er}}},
-{0},
+{"movntss", {{Md}, {Vd}}},
 {"cvttss2si", {{Gr}, {Wd}}},
 {"cvtss2si", {{Gr}, {Wd}}},
 {0},
@@ -1398,12 +1398,12 @@ x86opc_insn x86_insns_ext_f3[256] = {
 {0},
 {0},
 /* b8 */
+{"popcnt", {{Gv}, {Ev}}},
 {0},
 {0},
 {0},
 {0},
-{0},
-{0},
+{"lzcnt", {{Gv}, {Ev}}},
 {0},
 {0},
 /* c0 */
