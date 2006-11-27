@@ -38,10 +38,6 @@ extern "C" {
  *	searching
  */
 
-// search classes
-#define SC_PHYSICAL			0    // search in underlying binary data
-#define SC_VISUAL			1    // search in displayed text
-
 // search types + flags
 #define ST_FXBIN		0		// search using fixed binary pattern
 	#define SF_FXBIN_CASEINSENSITIVE		1
