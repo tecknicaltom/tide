@@ -1,7 +1,11 @@
  HT ChangeLog
 ==============
 
-version 2.0:
+version 2.0beta2:
+	-
+	- better handling of ELFs without program headers
+
+version 2.0beta:
 	- new disassembler: (PE and ELF)
 		* x86_64
 		* ARM
