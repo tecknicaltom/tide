@@ -40,10 +40,10 @@ struct LINE_ID {
 };
 
 struct uformat_viewer_pos {
-/* which line ? */
+	/* which line ? */
 	ht_sub *sub;
 	LINE_ID line_id;
-/* which tag ? */
+	/* which tag ? */
 	int tag_group;
 	int tag_idx;
 };
@@ -51,6 +51,10 @@ struct uformat_viewer_pos {
 union viewer_pos {
 	uformat_viewer_pos u;
 };
+
+// search classes
+#define SC_PHYSICAL			0    // search in underlying binary data
+#define SC_VISUAL			1    // search in displayed text
 
 /*
  *	CLASS ht_search_request
@@ -74,7 +78,7 @@ class ht_search_result: public Object {
 public:
 	uint search_class;
 
-		ht_search_result(uint search_class);
+	ht_search_result(uint asearch_class): search_class(asearch_class) {}
 };
 
 /*
@@ -86,7 +90,7 @@ public:
 	FileOfs offset;
 	uint size;
 	
-		ht_physical_search_result();
+	ht_physical_search_result(): ht_search_result(SC_PHYSICAL) {}
 };
 
 /*
@@ -99,7 +103,7 @@ public:
 	uint xpos;
 	uint length;
 	
-		ht_visual_search_result();
+	ht_visual_search_result(): ht_search_result(SC_VISUAL) {}
 };
 
 /*
@@ -430,7 +434,6 @@ public:
 	ht_sub *prev, *next;
 
 		void init(File *file);
-	virtual	void done();
 /* new */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
 	virtual	bool convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset);
@@ -455,7 +458,6 @@ protected:
 	FileOfs fsize;
 public:
 		void init(File *file, FileOfs offset, FileOfs size);
-	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
@@ -472,8 +474,7 @@ protected:
 	uint32 line_length;
 	uint uid;
 public:
-		void init(File *file, FileOfs ofs, uint32 size, uint line_length, uint uid, uint32 vaddrinc=0);
-	virtual	void done();
+		void init(File *file, FileOfs ofs, FileOfs size, uint line_length, uint uid, uint32 vaddrinc=0);
 		int  get_line_length();
 		void set_line_length(int line_length);
 /* overwritten */
@@ -481,7 +482,6 @@ public:
 	virtual	bool convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset);
 	virtual	void first_line_id(LINE_ID *line_id);
 	virtual	bool getline(char *line, const LINE_ID line_id);
-	virtual	void handlemsg(htmsg *msg);
 	virtual	void last_line_id(LINE_ID *line_id);
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
