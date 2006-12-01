@@ -95,7 +95,7 @@ class ht_expr_search_request: public ht_search_request {
 public:
 	char *expr;
 
-			ht_expr_search_request(uint search_class, uint flags, char *Expr);
+		ht_expr_search_request(uint search_class, uint flags, char *Expr);
 	virtual	~ht_expr_search_request();
 	/* overwritten */
 	virtual	ht_expr_search_request *clone() const;
@@ -281,7 +281,7 @@ public:
 	uint flags;
 	
 	FileOfs ofs;
-	uint len;
+	FileOfs len;
 
 	byte *pat;
 	uint patlen;
