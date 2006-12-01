@@ -345,7 +345,7 @@ bool ht_disasm_viewer::symbol_handler(eval_scalar *result, char *name)
 	if (strcmp(name, "$") == 0) {
 		FileOfs ofs;
 		if (!pos_to_offset(*(viewer_pos*)&cursor, &ofs)) return 0;
-		scalar_create_int_c(result, ofs);
+		scalar_create_int_q(result, ofs);
 		return true;
 	}
 	return ht_uformat_viewer::symbol_handler(result, name);
