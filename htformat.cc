@@ -4104,7 +4104,7 @@ static int ht_linear_func_entropy2(eval_scalar *result, eval_str *buf)
 struct search_expr_eval_context_t {
 	ht_sub *sub;
 	ht_format_viewer *fv;
-	int i, o;
+	FileOfs i, o;
 };
 
 static bool ht_linear_sub_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
@@ -4124,10 +4124,10 @@ static bool ht_linear_sub_symbol_handler(eval_scalar *result, char *name)
 	search_expr_eval_context_t *context =
 		(search_expr_eval_context_t*)eval_get_context();
 	if (strcmp(name, "i")==0) {
-		scalar_create_int_c(result, context->i);
+		scalar_create_int_q(result, context->i);
 		return true;
 	} else if (strcmp(name, "o")==0) {
-		scalar_create_int_c(result, context->o);
+		scalar_create_int_q(result, context->o);
 		return true;
 	} else return false;
 }
@@ -4140,7 +4140,7 @@ public:
 	ht_format_viewer *fv;
 	FileOfs start;
 	FileOfs end;
-	int i;
+	FileOfs i;
 	FileOfs o;
 /* out */
 	ht_search_result **result;
@@ -4164,7 +4164,7 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 			eval_int i;
 			scalar_context_int(&r, &i);
 			if (i.value != 0) {
-				ht_physical_search_result *r=new ht_physical_search_result();
+				ht_physical_search_result *r = new ht_physical_search_result();
 				r->offset = c->o;
 				r->size = 1;
 				*c->result = r;
@@ -4196,19 +4196,19 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 
 ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize)
 {
-	if (start<fofs) start=fofs;
-	if (end>fofs+fsize) end=fofs+fsize;
+	if (start < fofs) start = fofs;
+	if (end > fofs+fsize) end = fofs+fsize;
 	if (fsize) {
 		ht_search_result *r=NULL;
 		ht_expr_search_pcontext c;
-		c.request=search;
-		c.sub=sub;
-		c.fv=ufv;
-		c.start=start;
-		c.end=end;
-		c.result=&r;
-		c.i=0;
-		c.o=start;
+		c.request = search;
+		c.sub = sub;
+		c.fv = ufv;
+		c.start = start;
+		c.end = end;
+		c.result = &r;
+		c.i = 0;
+		c.o = start;
 		if (execute_process(process_search_expr, &c)) return r;
 	}
 	return NULL;
@@ -4217,9 +4217,9 @@ ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, F
 ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
 {
 	ht_search_result *r = NULL;
-	if ((search->search_class==SC_PHYSICAL) && (search->type==ST_EXPR)) {
+	if (search->search_class==SC_PHYSICAL && search->type==ST_EXPR) {
 		r = linear_expr_search(search, start, end, this, uformat_viewer, fofs, fsize);
-	} else if ((search->search_class==SC_PHYSICAL) && (search->type==ST_FXBIN)) {
+	} else if (search->search_class==SC_PHYSICAL && search->type==ST_FXBIN) {
 		r = linear_bin_search(search, start, end, file, fofs, fsize);
 	}
 	return r;
@@ -4267,17 +4267,17 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 
 bool ht_hex_sub::convert_id_to_ofs(const LINE_ID line_id, FileOfs *ofs)
 {
-	*ofs = line_id.id2 + (uint64(line_id.id1) << 32);
+	*ofs = (uint64(line_id.id1) << 32) + line_id.id2;
 	return true;
 }
 
 bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id3 != uid) return false;
-	FileOfs ofs = line_id.id2 + (uint64(line_id.id1) << 32);
-	uint c = MIN(line_length, (fofs+fsize-ofs));
+	FileOfs ofs = (uint64(line_id.id1) << 32) + line_id.id2;
+	uint c = MIN(uint64(line_length), (fofs+fsize-ofs));
 	if (c <= 0) return false;
-	c = MIN(line_length, c + ofs%line_length);
+	c = MIN(uint64(line_length), c + ofs%line_length);
 	char *l = line;
 	l += ht_snprintf(l, 17, "%08qx", ofs + vaddrinc);
 	*l++ = ' ';
@@ -4316,7 +4316,7 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 void ht_hex_sub::first_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
-	line_id->id1 = fofs << 32;
+	line_id->id1 = fofs >> 32;
 	line_id->id2 = fofs;
 	line_id->id3 = uid;
 }
@@ -4326,10 +4326,10 @@ void ht_hex_sub::last_line_id(LINE_ID *line_id)
 	clear_line_id(line_id);
 	if (fsize) {
 		FileOfs k = fsize + (fofs % line_length);
-		line_id->id1 = (k - k%line_length) + (fofs - fofs%line_length) << 32;
+		line_id->id1 = ((fofs - fofs%line_length) >> 32) + (k - k%line_length);
 		line_id->id2 = ((k - k%line_length) + (fofs - fofs%line_length));
 	} else {
-		line_id->id1 = fofs << 32;
+		line_id->id1 = fofs >> 32;
 		line_id->id2 = fofs;
 	}
 	line_id->id3 = uid;
@@ -4351,7 +4351,7 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 				o -= line_length;
 			}
 		}
-		line_id->id1 = o << 32;
+		line_id->id1 = o >> 32;
 		line_id->id2 = o;
 		c++;
 	}
@@ -4371,7 +4371,7 @@ int ht_hex_sub::next_line_id(LINE_ID *line_id, int n)
 			if (o + line_length >= fofs + fsize) break;
 			o += line_length;
 		}
-		line_id->id1 = o << 32;
+		line_id->id1 = o >> 32;
 		line_id->id2 = o;
 		c++;
 	}
