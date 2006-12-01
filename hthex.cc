@@ -148,7 +148,7 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 
 bool ht_hex_viewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
 {
-	*ofs = p.u.line_id.id2 + (uint64(p.u.line_id.id1) << 32) + p.u.tag_idx;
+	*ofs = (uint64(p.u.line_id.id1) << 32) + p.u.line_id.id2 + p.u.tag_idx;
 	return true;
 }
 
@@ -178,8 +178,10 @@ bool ht_hex_viewer::symbol_handler(eval_scalar *result, char *name)
 {
 	if (strcmp(name, "$") == 0) {
 		FileOfs ofs;
-		if (!pos_to_offset(*(viewer_pos*)&cursor, &ofs)) return 0;
-		scalar_create_int_c(result, ofs);
+		viewer_pos vp;
+		vp.u = cursor;
+		if (!pos_to_offset(vp, &ofs)) return false;
+		scalar_create_int_q(result, ofs);
 		return true;
 	}
 	return ht_uformat_viewer::symbol_handler(result, name);
