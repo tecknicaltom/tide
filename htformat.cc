@@ -4140,7 +4140,7 @@ public:
 	ht_format_viewer *fv;
 	FileOfs start;
 	FileOfs end;
-	FileOfs i;
+	int i;
 	FileOfs o;
 /* out */
 	ht_search_result **result;
@@ -4155,7 +4155,7 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 	search_expr_eval_context_t context;
 	context.sub = c->sub;
 	context.fv = c->fv;
-	int w=PROCESS_EXPR_SEARCH_BYTES_PER_CALL;
+	int w = PROCESS_EXPR_SEARCH_BYTES_PER_CALL;
 	while (c->o < c->end) {
 		eval_scalar r;
 		context.i = c->i;
@@ -4164,7 +4164,7 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 			eval_int i;
 			scalar_context_int(&r, &i);
 			if (i.value != 0) {
-				ht_physical_search_result *r = new ht_physical_search_result();
+				ht_physical_search_result *r=new ht_physical_search_result();
 				r->offset = c->o;
 				r->size = 1;
 				*c->result = r;
@@ -4196,19 +4196,19 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 
 ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize)
 {
-	if (start < fofs) start = fofs;
-	if (end > fofs+fsize) end = fofs+fsize;
+	if (start<fofs) start=fofs;
+	if (end>fofs+fsize) end=fofs+fsize;
 	if (fsize) {
 		ht_search_result *r=NULL;
 		ht_expr_search_pcontext c;
-		c.request = search;
-		c.sub = sub;
-		c.fv = ufv;
-		c.start = start;
-		c.end = end;
-		c.result = &r;
-		c.i = 0;
-		c.o = start;
+		c.request=search;
+		c.sub=sub;
+		c.fv=ufv;
+		c.start=start;
+		c.end=end;
+		c.result=&r;
+		c.i=0;
+		c.o=start;
 		if (execute_process(process_search_expr, &c)) return r;
 	}
 	return NULL;
@@ -4217,9 +4217,9 @@ ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, F
 ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
 {
 	ht_search_result *r = NULL;
-	if (search->search_class==SC_PHYSICAL && search->type==ST_EXPR) {
+	if ((search->search_class==SC_PHYSICAL) && (search->type==ST_EXPR)) {
 		r = linear_expr_search(search, start, end, this, uformat_viewer, fofs, fsize);
-	} else if (search->search_class==SC_PHYSICAL && search->type==ST_FXBIN) {
+	} else if ((search->search_class==SC_PHYSICAL) && (search->type==ST_FXBIN)) {
 		r = linear_bin_search(search, start, end, file, fofs, fsize);
 	}
 	return r;
