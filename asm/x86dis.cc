@@ -55,8 +55,6 @@ x86dis::x86dis(X86OpSize aOpsize, X86AddrSize aAddrsize)
 	addrsize = aAddrsize;
 	insn.invalid = true;
 	x86_insns = &x86_32_insns;
-	x86_insns_ext = &x86_32_insns_ext;
-	x86_group_insns = &x86_32_group_insns;
 }
 
 void x86dis::checkInfo(x86opc_insn *xinsn)
@@ -255,8 +253,13 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 						}
 						break;
 					default:
-						insn.opcodeclass = X86DIS_OPCODE_CLASS_EXT;
-						decode_insn(&(*x86_insns_ext)[insn.opcode]);
+						if (insn.opsizeprefix == X86_PREFIX_NO) {
+							insn.opcodeclass = X86DIS_OPCODE_CLASS_EXT;
+							decode_insn(&x86_insns_ext[insn.opcode]);
+						} else {
+							insn.opcodeclass = X86DIS_OPCODE_CLASS_EXT_66;
+							decode_insn(&x86_insns_ext_66[insn.opcode]);
+						}
 					}
 					break;
 				}
@@ -274,7 +277,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		}
 		case SPECIAL_TYPE_GROUP: {
 			int m = mkreg(getmodrm()) & 0x7;
-			decode_insn(&(*x86_group_insns)[(int)special.data][m]);
+			decode_insn(&x86_group_insns[(int)special.data][m]);
 			break;
 		}
 		case SPECIAL_TYPE_SGROUP: {
@@ -829,8 +832,6 @@ void x86dis::load(ObjectStream &f)
 	opsize = (X86OpSize)GETX_INT32(f, "opsize");
 	addrsize = (X86AddrSize)GETX_INT32(f, "addrsize");
 	x86_insns = &x86_32_insns;
-	x86_insns_ext = &x86_32_insns_ext;
-	x86_group_insns = &x86_32_group_insns;
 	Disassembler::load(f);
 }
 
@@ -1126,10 +1127,10 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 					q = sint32(sint16(op->mem.disp));
 					if (!first) {
 						strcpy(d, cs_symbol); d += strlen(cs_symbol);
-						if (op->mem.disp&0x8000) {
-							*(d++)='-';
-							q=-q;
-						} else *(d++)='+';
+						if (op->mem.disp & 0x8000) {
+							*(d++) = '-';
+							q = -q;
+						} else *(d++) = '+';
 					}
 					strcpy(d, cs_number); d += strlen(cs_number);
 					hexd(&d, 4, options, q);
@@ -1140,7 +1141,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 					q = op->mem.disp;
 					if (!first) {
 						strcpy(d, cs_symbol); d += strlen(cs_symbol);
-						if (op->mem.disp&0x80000000) {
+						if (op->mem.disp & 0x80000000) {
 							*(d++)='-';
 							q=-q;
 						} else *(d++)='+';
@@ -1408,11 +1409,7 @@ void x86_64dis::prepInsns()
 {
 	if (!x86_64_insns) {
 		x86_64_insns = ht_malloc(sizeof *x86_64_insns);
-		x86_64_insns_ext = ht_malloc(sizeof *x86_64_insns_ext);
-		x86_64_group_insns = ht_malloc(sizeof *x86_64_group_insns);
 		memcpy(x86_64_insns, x86_32_insns, sizeof x86_32_insns);
-		memcpy(x86_64_insns_ext, x86_32_insns_ext, sizeof x86_32_insns_ext);
-		memcpy(x86_64_group_insns, x86_32_group_insns, sizeof x86_32_group_insns);
 	
 		int i = 0;
 		while (x86_64_insn_patches[i].opc != -1) {
@@ -1421,8 +1418,6 @@ void x86_64dis::prepInsns()
 		}
 	}
 	x86_insns = x86_64_insns;
-	x86_insns_ext = x86_64_insns_ext;
-	x86_group_insns = x86_64_group_insns;
 }
 
 void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm)
@@ -1546,7 +1541,7 @@ void x86_64dis::prefixes()
 void x86_64dis::checkInfo(x86opc_insn *xinsn)
 {
 	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
-	&& (xinsn->op[0].info & 0x80)) {
+	&& (xinsn->op[0].info & INFO_DEFAULT_64)) {
 		// instruction defaults to 64 bit opsize
 		insn.eopsize = X86_OPSIZE64;
 	}
