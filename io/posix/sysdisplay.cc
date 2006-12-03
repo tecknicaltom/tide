@@ -286,11 +286,11 @@ CursesSystemDisplay::~CursesSystemDisplay()
 
 void CursesSystemDisplay::term_off()
 {
-	if (!terminal) return;
+//	if (!terminal) return;
 	::erase();
 	::refresh();
 	::endwin();
-	::delscreen(terminal);
+//	::delscreen(terminal);
 	terminal = NULL;
 }
 
@@ -301,13 +301,13 @@ void CursesSystemDisplay::term_on()
 
 	setCursor(0, 0, CURSOR_OFF);
 
-	::setlocale(LC_ALL, "");
+//	::setlocale(LC_ALL, "");
 
-	terminal = ::newterm(NULL, stdout, stdin);
-//	win = ::initscr();
-	win = stdscr;
+//	terminal = ::newterm(NULL, stdout, stdin);
+	win = ::initscr();
+//	win = stdscr;
 
-	::setlocale(LC_ALL, "C");
+//	::setlocale(LC_ALL, "C");
 
 	use_colors = false;
 	use_high_colors = false;
@@ -486,21 +486,21 @@ void CursesSystemDisplay::show()
 		}
 	}
 
-	curs_set(0);
+	::curs_set(0);
 
-	refresh();
+	::refresh();
 
 	::move(cursory, cursorx);
 	switch (cursor_mode) {
 	case CURSOR_OFF:
-		curs_set(0); break;
+		::curs_set(0); break;
 	case CURSOR_NORMAL:
-		curs_set(1); break;
+		::curs_set(1); break;
 	case CURSOR_BOLD:
-		if (curs_set(2) == ERR) curs_set(1); 
+		if (::curs_set(2) == ERR) ::curs_set(1); 
 		break;
 	}
-	refresh();
+	::refresh();
 }
 
 void CursesSystemDisplay::doShowCursor()
