@@ -787,8 +787,8 @@ int FileModificator::vcntl(uint cmd, va_list vargs)
 			cleardirtybyte(o+i);
 			i++;
 		}
-		return 0;
 */
+		return 0;
 	}
 	case FCNTL_MODS_IS_DIRTY: {
 		// const FileOfs offset, const FileOfs range, bool &isdirty
