@@ -27,9 +27,10 @@
 
 #define X86DIS_OPCODE_CLASS_STD		0		/* no prefix */
 #define X86DIS_OPCODE_CLASS_EXT		1		/* 0F */
-#define X86DIS_OPCODE_CLASS_EXT_F2	2		/* F2 0F */
-#define X86DIS_OPCODE_CLASS_EXT_F3	3		/* F3 0F */
-#define X86DIS_OPCODE_CLASS_EXTEXT	4		/* 0F 0F */
+#define X86DIS_OPCODE_CLASS_EXT_66	2		/* 66 0F */
+#define X86DIS_OPCODE_CLASS_EXT_F2	3		/* F2 0F */
+#define X86DIS_OPCODE_CLASS_EXT_F3	4		/* F3 0F */
+#define X86DIS_OPCODE_CLASS_EXTEXT	5		/* 0F 0F */
 
 /* x86-specific styles */
 #define X86DIS_STYLE_EXPLICIT_MEMSIZE	0x00000001	/* IF SET: mov word ptr [0000], ax 	ELSE: mov [0000], ax */
@@ -61,8 +62,6 @@ public:
 	X86AddrSize addrsize;
 
 	x86opc_insn (*x86_insns)[256];
-	x86opc_insn (*x86_insns_ext)[256];
-	x86opc_insn (*x86_group_insns)[X86_GROUPS][8];
 
 protected:
 	x86dis_insn insn;
