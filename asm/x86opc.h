@@ -129,7 +129,7 @@ struct x86_insn_op {
 #define TYPE_Sx		19		/* extra picks segment register */
 #define TYPE_T		20		/* reg of ModR/M picks test register */
 #define TYPE_V		21		/* reg of ModR/M picks XMM register */
-#define TYPE_VR		22		/* reg of ModR/M picks XMM register */
+#define TYPE_VR		22		/* rm of ModR/M picks XMM register */
 #define TYPE_W		23		/* ModR/M (XMM reg or memory) */
 #define TYPE_F		24		/* r/m of ModR/M picks a fpu register */
 #define TYPE_Fx		25		/* extra picks a fpu register */
@@ -215,7 +215,7 @@ struct x86opc_finsn {
 #define X86_REG_IP		66
 
 #define X86_OPC_GROUPS		2
-#define X86_GROUPS		26
+#define X86_GROUPS		27
 #define X86_SPECIAL_GROUPS	7
 
 extern const char *x86_regs[4][8];
@@ -224,11 +224,12 @@ extern const char *x86_ipregs[4];
 extern const char *x86_segs[8];
 extern x86opc_insn x86_32_insns[256];
 extern x86_64_insn_patch x86_64_insn_patches[];
-extern x86opc_insn x86_32_insns_ext[256];
+extern x86opc_insn x86_insns_ext[256];
+extern x86opc_insn x86_insns_ext_66[256];
 extern x86opc_insn x86_insns_ext_f2[256];
 extern x86opc_insn x86_insns_ext_f3[256];
 extern x86opc_insn x86_opc_group_insns[X86_OPC_GROUPS][256];
-extern x86opc_insn x86_32_group_insns[X86_GROUPS][8];
+extern x86opc_insn x86_group_insns[X86_GROUPS][8];
 extern x86opc_insn x86_special_group_insns[X86_SPECIAL_GROUPS][9];
 
 extern x86opc_insn x86_modfloat_group_insns[8][8];
