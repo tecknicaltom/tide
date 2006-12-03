@@ -344,7 +344,7 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 		set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
 	} else {
 		match_fopcodes(insn);
-        	match_opcodes(x86_32_insns_ext, insn, X86ASM_PREFIX_0F);
+        	match_opcodes(x86_insns_ext, insn, X86ASM_PREFIX_0F);
         	match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F);
         	match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F);
         	match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38);
@@ -1299,7 +1299,7 @@ void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix)
 		if (!opcodes[i].name) {
 			x86opc_insn_op_special *special = ((x86opc_insn_op_special*)(&opcodes[i].op[0]));
 			if (special->type == SPECIAL_TYPE_GROUP) {
-				x86opc_insn *group = x86_32_group_insns[special->data];
+				x86opc_insn *group = x86_group_insns[special->data];
 				for (int g=0; g < 8; g++) {
 					if (!group[g].name) {
 						x86opc_insn_op_special *special2 = ((x86opc_insn_op_special*)(&group[g].op[0]));
