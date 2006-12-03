@@ -2,7 +2,8 @@
 ==============
 
 version 2.0beta2:
-	-
+	- should now really support file sizes > 4 GiB
+	- some ncurses wuerg-arounds
 	- better handling of ELFs without program headers
 
 version 2.0beta:
