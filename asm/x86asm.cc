@@ -315,6 +315,17 @@ void x86asm::emitsib_scale(int scale)
 	sibv = (sibv & ~(3<<6)) | ((scale & 3)<<6);
 }
 
+#define MATCHOPNAME_NOMATCH		0
+#define MATCHOPNAME_MATCH		1
+#define MATCHOPNAME_MATCH_IF_OPSIZE16	2
+#define MATCHOPNAME_MATCH_IF_OPSIZE32	3
+#define MATCHOPNAME_MATCH_IF_OPSIZE64	4
+#define MATCHOPNAME_MATCH_IF_ADDRSIZE16	5
+#define MATCHOPNAME_MATCH_IF_ADDRSIZE32	6
+#define MATCHOPNAME_MATCH_IF_ADDRSIZE64	7
+#define MATCHOPNAME_MATCH_IF_OPPREFIX	8
+#define MATCHOPNAME_MATCH_IF_NOOPPREFIX	9
+
 asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 {
 	Assembler::encode(asm_insn, options, cur_address);
@@ -339,16 +350,17 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 	esizes[1] = 0;
 	esizes[2] = 0;
 	ambiguous = false;
-	match_opcodes(*x86_insns, insn, X86ASM_PREFIX_NO);
+	match_opcodes(*x86_insns, insn, X86ASM_PREFIX_NO, MATCHOPNAME_MATCH);
 	if (!namefound && insn->repprefix != X86_PREFIX_NO) {
 		set_error_msg(X86ASM_ERRMSG_INVALID_PREFIX);
 	} else {
 		match_fopcodes(insn);
-        	match_opcodes(x86_insns_ext, insn, X86ASM_PREFIX_0F);
-        	match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F);
-        	match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F);
-        	match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38);
-        	match_opcodes(x86_opc_group_insns[1], insn, X86ASM_PREFIX_0F3A);
+        	match_opcodes(x86_insns_ext, insn, X86ASM_PREFIX_0F, MATCHOPNAME_MATCH_IF_NOOPPREFIX);
+        	match_opcodes(x86_insns_ext_66, insn, X86ASM_PREFIX_0F, MATCHOPNAME_MATCH_IF_OPPREFIX);
+        	match_opcodes(x86_insns_ext_f2, insn, X86ASM_PREFIX_F20F, MATCHOPNAME_MATCH_IF_NOOPPREFIX);
+        	match_opcodes(x86_insns_ext_f3, insn, X86ASM_PREFIX_F30F, MATCHOPNAME_MATCH_IF_NOOPPREFIX);
+        	match_opcodes(x86_opc_group_insns[0], insn, X86ASM_PREFIX_0F38, MATCHOPNAME_MATCH);
+        	match_opcodes(x86_opc_group_insns[1], insn, X86ASM_PREFIX_0F3A, MATCHOPNAME_MATCH);
 	}
 	if (error) {
 		free_asm_codes();
@@ -1157,17 +1169,6 @@ int x86asm::match_allops(x86asm_insn *insn, x86opc_insn *xinsn, int opsize, int 
 	return m;
 }
 
-#define MATCHOPNAME_NOMATCH		0
-#define MATCHOPNAME_MATCH		1
-#define MATCHOPNAME_MATCH_IF_OPSIZE16	2
-#define MATCHOPNAME_MATCH_IF_OPSIZE32	3
-#define MATCHOPNAME_MATCH_IF_OPSIZE64	4
-#define MATCHOPNAME_MATCH_IF_ADDRSIZE16	5
-#define MATCHOPNAME_MATCH_IF_ADDRSIZE32	6
-#define MATCHOPNAME_MATCH_IF_ADDRSIZE64	7
-#define MATCHOPNAME_MATCH_IF_OPPREFIX	8
-#define MATCHOPNAME_MATCH_IF_NOOPPREFIX	9
-
 static void pickname(char *result, const char *name, int n)
 {
 	const char *s = name;
@@ -1182,7 +1183,7 @@ static void pickname(char *result, const char *name, int n)
 	ht_strlcpy(result, name, s-name+1);
 }
 
-int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_name)
+int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_name, int def_match)
 {
 	if (opcodelist_name) {
 		char n1[32], n2[32], n3[32];
@@ -1191,9 +1192,9 @@ int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_nam
 		pickname(n3, opcodelist_name, 2);
 		switch (opcodelist_name[0]) {
 		case '|':
-			if (strcmp(n1, input_name)==0) return MATCHOPNAME_MATCH;
-			if (strcmp(n2, input_name)==0) return MATCHOPNAME_MATCH;
-			if (strcmp(n3, input_name)==0) return MATCHOPNAME_MATCH;
+			if (strcmp(n1, input_name)==0) return def_match;
+			if (strcmp(n2, input_name)==0) return def_match;
+			if (strcmp(n3, input_name)==0) return def_match;
 			break;
 		case '?':
 			if (strcmp(n1, input_name)==0) return MATCHOPNAME_MATCH_IF_OPSIZE16;
@@ -1210,7 +1211,7 @@ int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_nam
 			if (strcmp(n2, input_name)==0) return MATCHOPNAME_MATCH_IF_OPPREFIX;
 			break;
 		default:
-			if (strcmp(opcodelist_name, input_name)==0) return MATCHOPNAME_MATCH;
+			if (strcmp(opcodelist_name, input_name)==0) return def_match;
 		}
 	}
 	return MATCHOPNAME_NOMATCH;
@@ -1225,9 +1226,9 @@ static void swap(char &a, char &b)
 	a = b; b = tmp;
 }
 
-void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode)
+void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode, int def_match)
 {
-	int n = match_opcode_name(insn->name, opcode->name);
+	int n = match_opcode_name(insn->name, opcode->name, def_match);
 	namefound |= n;
 	if (n != MATCHOPNAME_NOMATCH) {
 		insn->opsizeprefix = X86_PREFIX_NO;
@@ -1293,7 +1294,7 @@ int x86asm::match_opcode_final(x86opc_insn *opcode, x86asm_insn *insn, int prefi
 	return true;
 }
 
-void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix)
+void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix, int def_match)
 {
 	for (int i=0; i < 256; i++) {
 		if (!opcodes[i].name) {
@@ -1306,17 +1307,17 @@ void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix)
 						if (special2->type == SPECIAL_TYPE_SGROUP) {
 							x86opc_insn *group = x86_special_group_insns[special2->data];
 							for (int h=0; h < 8; h++) {
-								match_opcode(&group[h], insn, prefix, i, (h<<3) + g + 0x800);
+								match_opcode(&group[h], insn, prefix, i, (h<<3) + g + 0x800, def_match);
 							}
-							match_opcode(&group[8], insn, prefix, i, -1);
+							match_opcode(&group[8], insn, prefix, i, -1, def_match);
 						}
 					} else {
-						match_opcode(&group[g], insn, prefix, i, g);
+						match_opcode(&group[g], insn, prefix, i, g, def_match);
 					}
 				}
 			}
 		} else {
-			match_opcode(&opcodes[i], insn, prefix, i, -1);
+			match_opcode(&opcodes[i], insn, prefix, i, -1, def_match);
 		}
 	}
 }
@@ -1326,7 +1327,7 @@ void x86asm::match_fopcodes(x86asm_insn *insn)
 	/* try modrm fopcodes */
 	for (int i=0; i < 8; i++) {
 		for (int j=0; j < 8; j++) {
-			int n = match_opcode_name(insn->name, x86_modfloat_group_insns[i][j].name);
+			int n = match_opcode_name(insn->name, x86_modfloat_group_insns[i][j].name, MATCHOPNAME_MATCH);
 			namefound |= n;
 			if (n != MATCHOPNAME_NOMATCH) {
 				int eaddrsize = addrsize;
@@ -1350,7 +1351,7 @@ void x86asm::match_fopcodes(x86asm_insn *insn)
 	for (int i=0; i<8; i++) {
 		for (int j=0; j<8; j++) {
 			if (x86_float_group_insns[i][j].group==0) {
-				int n=match_opcode_name(insn->name, x86_float_group_insns[i][j].insn.name);
+				int n=match_opcode_name(insn->name, x86_float_group_insns[i][j].insn.name, MATCHOPNAME_MATCH);
 				namefound |= n;
 				if (n != MATCHOPNAME_NOMATCH) {
 					if (match_allops(insn, &x86_float_group_insns[i][j].insn, opsize, addrsize)) {
@@ -1364,7 +1365,7 @@ void x86asm::match_fopcodes(x86asm_insn *insn)
 			} else {
 				x86opc_insn *group=x86_float_group_insns[i][j].group;
 				for (int k=0; k<8; k++) {
-					int n = match_opcode_name(insn->name, group[k].name);
+					int n = match_opcode_name(insn->name, group[k].name, MATCHOPNAME_MATCH);
 					namefound |= n;
 					if (n != MATCHOPNAME_NOMATCH) {
 						int eaddrsize = addrsize;
@@ -1859,7 +1860,7 @@ bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
 				op->type = X86_OPTYPE_REG;
 				op->size = reg2size[i];
 				op->reg = j;
-				if (j > 7 || i == 3 || (i == 0 && j > 3)) {
+				if (j > 7 /*|| i == 3*/ || (i == 0 && j > 3)) {
 					op->need_rex = true;
 				}
 				return true;
