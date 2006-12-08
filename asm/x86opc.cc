@@ -668,8 +668,8 @@ x86opc_insn x86_insns_ext[256] = {
 {"movaps", {{Wo}, {Vo}}},
 {"cvtpi2ps", {{Vu}, {Qq}}},
 {"movntps", {{Mo}, {Vo}}},
-{"cvttps2pi", {{Pq}, {Wo}}},
-{"cvtps2pi", {{Pq}, {Wo}}},
+{"cvttps2pi", {{Pq}, {Wq}}},
+{"cvtps2pi", {{Pq}, {Wq}}},
 {"ucomiss", {{Vz}, {Wz}}},
 {"comiss", {{Vz}, {Wz}}},
 /* 30 */
@@ -720,7 +720,7 @@ x86opc_insn x86_insns_ext[256] = {
 /* 58 */
 {"addps", {{Vo}, {Wo}}},
 {"mulps", {{Vo}, {Wo}}},
-{"cvtps2pd", {{Vo}, {Wo}}},  // XXX
+{"cvtps2pd", {{Vo}, {Wq}}},
 {"cvtdq2ps", {{Vo}, {Wo}}},
 {"subps", {{Vo}, {Wo}}},
 {"minps", {{Vo}, {Wo}}},
@@ -859,8 +859,8 @@ x86opc_insn x86_insns_ext[256] = {
 {"psrlq", {{Pu}, {Qu}}},
 {"paddq", {{Pu}, {Qu}}},
 {"pmullw", {{Pu}, {Qu}}},
-{"movq", {{WQ}, {Vq}}},
-{"pmovmskb", {{Gr}, {PRu}}},
+{0},
+{"pmovmskb", {{Gd}, {PRu}}},
 /* D8 */
 {"psubusb", {{Pu}, {Qu}}},
 {"psubusw", {{Pu}, {Qu}}},
@@ -1011,7 +1011,7 @@ x86opc_insn x86_insns_ext_66[256] = {
 /* 58 */
 {"addpd", {{Vo}, {Wo}}},
 {"mulpd", {{Vo}, {Wo}}},
-{"cvtpd2ps", {{Vo}, {Wo}}},  // XXX
+{"cvtpd2ps", {{Vo}, {Wo}}},
 {"cvtps2dq", {{Vo}, {Wo}}},
 {"subpd", {{Vo}, {Wo}}},
 {"minpd", {{Vo}, {Wo}}},
@@ -1045,8 +1045,8 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"pcmpewd", {{Pu}, {Qu}}},
 {0},
 /* 78 */
-{"extrq"}, // XXX
-{"extrq"}, // XXX
+{"extrq", {{VRo}, {Ib}, {Ib}}},
+{"extrq", {{Vo}, {VRo}}},
 {0},
 {0},
 {"haddpd", {{Vo}, {WO}}},
@@ -1302,7 +1302,7 @@ x86opc_insn x86_insns_ext_f2[256] = {
 /* 58 */
 {"addsd", {{Vq}, {Wq}}},
 {"mulsd", {{Vq}, {Wq}}},
-{"cvtsd2ss", {{Vq}, {Wq}}},
+{"cvtsd2ss", {{Vd}, {Wq}}},
 {0},
 {"subsd", {{Vq}, {Wq}}},
 {"minsd", {{Vq}, {Wq}}},
@@ -1336,8 +1336,8 @@ x86opc_insn x86_insns_ext_f2[256] = {
 {0},
 {0},
 /* 78 */
-{"insertq"},
-{"insertq"},
+{"insertq", {{Vo}, {VRo}, {Iw}}},
+{"insertq", {{Vo}, {VRo}}},
 {0},
 {0},
 {"haddps", {{Vo}, {Wo}}},
@@ -1539,7 +1539,7 @@ x86opc_insn x86_insns_ext_f3[256] = {
 /* 28 */
 {0},
 {0},
-{"cvtsi2ss", {{Vq}, {Er}}},
+{"cvtsi2ss", {{Vd}, {Er}}},
 {"movntss", {{Md}, {Vd}}},
 {"cvttss2si", {{Gr}, {Wd}}},
 {"cvtss2si", {{Gr}, {Wd}}},
