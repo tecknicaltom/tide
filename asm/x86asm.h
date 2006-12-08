@@ -94,10 +94,10 @@ protected:
 	const char *lsz2hsz(int size, int opsize);
 	int match_allops(x86asm_insn *insn, x86opc_insn *xinsn, int opsize, int addrsize);
 	void match_fopcodes(x86asm_insn *insn);
-	void match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode);
-	int match_opcode_name(const char *input_name, const char *opcodelist_name);
+	void match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode, int def_match);
+	int match_opcode_name(const char *input_name, const char *opcodelist_name, int def_match);
 	int match_opcode_final(x86opc_insn *opcode, x86asm_insn *insn, int prefix, byte opcodebyte, int additional_opcode, int opsize, int addrsize, int match);
-	void match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix);
+	void match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix, int def_match);
 	bool match_size(x86_insn_op *op, x86opc_insn_op *xop, int opsize);
 	int match_type(x86_insn_op *op, x86opc_insn_op *xop, int addrsize);
 	bool opfarptr(x86_insn_op *op, const char *xop);
