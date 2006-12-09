@@ -39,6 +39,7 @@
 #define X86_PREFIX_REPZ		1	/* f3 */
 
 #define X86_PREFIX_OPSIZE	0	/* 66 */
+#define X86_PREFIX_NOOPSIZE	1	/* no 66 allowed */
 
 enum X86OpSize {
 	X86_OPSIZEUNKNOWN = -1,
