@@ -217,32 +217,38 @@ restart:
 	asm_code *c=codes;
 	while (c) {
 		if (delete_nonsense_insn(c)) goto restart;
-		c=c->next;
+		c = c->next;
 	}
+}
+
+static void skip_prefixes(byte **p, int &sizep, int addrsize)
+{
+	while (sizep > 0) {
+		if (**p == 0x66 || **p == 0x67 || **p == 0xf2 || **p == 0xf3
+		|| (addrsize == X86_ADDRSIZE64 && (**p & 0xf0) == 0x40)) {
+			sizep--; (*p)++;
+		} else {
+			break;
+		}
+	}
+}
+
+static bool cmp_insn_normal(byte *p, int sizep, byte *q, int sizeq, int addrsize)
+{
+	skip_prefixes(&p, sizep, addrsize);
+	skip_prefixes(&q, sizeq, addrsize);
+	if (sizep != sizeq) return false;
+	return memcmp(p, q, sizep) == 0;
 }
 
 bool x86asm::delete_nonsense_insn(asm_code *code)
 {
-	byte *d = code->data;
-	int size = code->size;
-	while (*d==0x66 || *d==0x67) {
-		d++;
-		size--;
-	}
 	asm_code *c = codes;
 	while (c) {
-		if ((bool)c->context == 0) {
-			byte *cd = c->data;
-			int csize = c->size;
-			while (*cd == 0x66 || *cd == 0x67) {
-				cd++;
-				csize--;
-			}
-			if (c->size < code->size && size == csize) {
-				if (memcmp(d, cd, size) == 0) {
-					deletecode(code);
-					return true;
-				}
+		if (c != code && code->size <= c->size) {
+			if (cmp_insn_normal(c->data, c->size, code->data, code->size, addrsize)) {
+				deletecode(c);
+				return true;
 			}
 		}
 		c = c->next;
@@ -419,7 +425,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		}
 	}
 
-	if (addrsize == X86_ADDRSIZE64) {		
+	if (addrsize == X86_ADDRSIZE64) {
 		if (eopsize == X86_ADDRSIZE64) {
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
 			if (!(opcode->op[0].info & 0x80)) {
@@ -434,12 +440,14 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 			}
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
 		} else if (eopsize == X86_ADDRSIZE16) {
+			if (insn->opsizeprefix == X86_PREFIX_NOOPSIZE) return false;
 			emitbyte(0x66);
 		}
 		if (eaddrsize == X86_ADDRSIZE16) return false;
 		if (eaddrsize == X86_ADDRSIZE32) emitbyte(0x67);
 	} else {
 		if (eopsize != opsize || insn->opsizeprefix == X86_PREFIX_OPSIZE) {
+			if (insn->opsizeprefix == X86_PREFIX_NOOPSIZE) return false;
 			emitbyte(0x66);
 		}
 		if (eaddrsize != addrsize) emitbyte(0x67);
@@ -1276,10 +1284,13 @@ int x86asm::match_opcode_final(x86opc_insn *opcode, x86asm_insn *insn, int prefi
 	case MATCHTYPE_MATCH:
 		if (match == MATCHOPNAME_MATCH_IF_OPPREFIX) {
 			insn->opsizeprefix = X86_PREFIX_OPSIZE;
+		} else if (match == MATCHOPNAME_MATCH_IF_NOOPPREFIX) {
+			insn->opsizeprefix = X86_PREFIX_NOOPSIZE;
 		}
 		break;
 	case MATCHTYPE_NOOPPREFIX:
 		if (match == MATCHOPNAME_MATCH_IF_OPPREFIX) return false;
+		insn->opsizeprefix = X86_PREFIX_NOOPSIZE;
 		break;
 	case MATCHTYPE_OPPREFIX:
 		if (match == MATCHOPNAME_MATCH_IF_NOOPPREFIX) return false;
