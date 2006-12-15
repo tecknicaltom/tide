@@ -471,7 +471,6 @@ protected:
 	virtual	void init_text_listbox(Bounds *b);
 public:
 		void init(Bounds *b, const char *desc);
-	virtual	void done();
 /* overwritten */
 	virtual	const char *defaultpalette();
 	virtual	int  datasize();
@@ -587,8 +586,8 @@ struct ht_color_block_data {
 	DDECL_UINT(color);
 };
 
-#define cf_light		1
-#define cf_transparent   2
+#define cf_light	1
+#define cf_transparent	2
 
 class ht_color_block: public ht_view {
 protected:
@@ -599,7 +598,7 @@ protected:
 /* overwritten */
 	virtual	const char *defaultpalette();
 public:
-			void	init(Bounds *b, int selected, int flags);
+		void	init(Bounds *b, int selected, int flags);
 	virtual	void	done();
 /* overwritten */
 	virtual	int datasize();
@@ -617,11 +616,12 @@ class ht_listbox_ptr: public Object {
 public:
 	ht_listbox *listbox;
 
-	ht_listbox_ptr(ht_listbox *listbox);
-	~ht_listbox_ptr();
+	ht_listbox_ptr(ht_listbox *aListbox)
+		: listbox(aListbox)
+	{
+	}
 };
 
 void center_bounds(Bounds *b);
 
 #endif /* !__HTDIALOG_H__ */
-
