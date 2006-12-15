@@ -2506,12 +2506,7 @@ void ht_listpopup_dialog::init(Bounds *b, const char *desc)
 	init_text_listbox(&c);
 }
 
-void ht_listpopup_dialog::done()
-{
-	ht_dialog::done();
-}
-
-int	ht_listpopup_dialog::datasize()
+int ht_listpopup_dialog::datasize()
 {
 	return sizeof (ht_listpopup_dialog_data);
 }
@@ -2562,7 +2557,7 @@ void ht_listpopup_dialog::select_prev()
 void ht_listpopup_dialog::setdata(ObjectStream &s)
 {
 	int cursor_id = GETX_INT32D(s, NULL);
-	free(GETX_STRING(s, NULL));	/* ignored */
+//	free(GETX_STRING(s, NULL));	/* ignored */
 
 	listbox->gotoItemByPosition(cursor_id);
 }
@@ -2580,7 +2575,7 @@ void	ht_listpopup::init(Bounds *b)
 	Bounds c=*b;
 	c.x=0;
 	c.y=0;
-	c.h=8;
+	c.h=5;
 	
 	listpopup = new ht_listpopup_dialog();
 	listpopup->init(&c, 0);
@@ -2627,26 +2622,26 @@ void ht_listpopup::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
-			case K_Up: {
-				int r;
-				ht_listpopup_dialog_data d;
-				ViewDataBuf vdb(listpopup, &d, sizeof d);
-				listpopup->select_prev();
-				r = run_listpopup();
-				clearmsg(msg);
-				if (!r) listpopup->databuf_set(&d, sizeof d);
-				return;
-			}
-			case K_Down: {
-				int r;
-				ht_listpopup_dialog_data d;
-				ViewDataBuf vdb(listpopup, &d, sizeof d);
-				listpopup->select_next();
-				r = run_listpopup();
-				clearmsg(msg);
-				if (!r) listpopup->databuf_set(&d, sizeof d);
-				return;
-			}				
+		case K_Up: {
+			int r;
+			ht_listpopup_dialog_data d;
+			ViewDataBuf vdb(listpopup, &d, sizeof d);
+			listpopup->select_prev();
+			r = run_listpopup();
+			clearmsg(msg);
+			if (!r) listpopup->databuf_set(&d, sizeof d);
+			return;
+		}
+		case K_Down: {
+			int r;
+			ht_listpopup_dialog_data d;
+			ViewDataBuf vdb(listpopup, &d, sizeof d);
+			listpopup->select_next();
+			r = run_listpopup();
+			clearmsg(msg);
+			if (!r) listpopup->databuf_set(&d, sizeof d);
+			return;
+		}				
 		}
 	}
 	ht_statictext::handlemsg(msg);
@@ -2669,19 +2664,6 @@ void ht_listpopup::insertstring(const char *string)
 void ht_listpopup::setdata(ObjectStream &s)
 {
 	listpopup->setdata(s);
-}
-
-/*
- *	CLASS ht_listbox_ptr
- */
-
-ht_listbox_ptr::ht_listbox_ptr(ht_listbox *aListbox)
-{
-	listbox = aListbox;
-}
-
-ht_listbox_ptr::~ht_listbox_ptr()
-{
 }
 
 /*
@@ -2891,5 +2873,3 @@ void center_bounds(Bounds *b)
 	b->x = (c.w - b->w) / 2;
 	b->y = (c.h - b->h) / 2;     
 }
-
-BUILDER(ATOM_HT_DIALOG, ht_dialog, ht_window);
