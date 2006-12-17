@@ -51,7 +51,7 @@ be registered in certain jurisdictions.
 @titlepage
 
 @title{HT Manual}
-@subtitle{Edition 2.0beta2, November 2006}
+@subtitle{Edition 2.0beta3, December 2006}
 
 @author{Stefan Weyergraf, Sebastian Biallas}
 @c The following two commands start the copyright page.
@@ -78,7 +78,7 @@ be registered in certain jurisdictions.
 @c
 
 @macro htversion
-2.0beta2
+2.0beta3
 @end macro
 
 @macro hturl
@@ -559,7 +559,7 @@ one please let us know!
 @tab
 
 @tab
-thread all additional parameters as file names
+treat all additional parameters as file names
 
 @item 
 @code{-v}
@@ -575,6 +575,27 @@ show version and copyright on console
 @tab
 show help
 
+@item
+@code{-t}
+@tab
+@code{--text}
+@tab
+load file(s) in text editor mode
+
+@item
+@code{-b}
+@tab
+@code{--bin}
+@tab
+load file(s) in hex editor mode
+
+
+@item
+@code{-a}
+@tab
+@code{--auto}
+@tab
+try to guess file type
 @end multitable
 
 @node Where to download?, , Top, Top
