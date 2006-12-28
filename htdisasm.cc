@@ -421,9 +421,9 @@ static char *diasm_addr_sym_func(CPU_ADDR Addr, int *symstrlen, void *context)
 bool ht_disasm_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (line_id.id2) return false;
-	uint32 ofs = line_id.id1;
-	byte buf[15];
-	int c = MIN(16, (int)(fofs+fsize-ofs));
+	uint64 ofs = line_id.id1;
+	byte buf[16];
+	int c = MIN(16, sint64(fofs+fsize-ofs));
 	if (c <= 0) return false;
 	file->seek(ofs);
 	c = file->read(buf, c);
