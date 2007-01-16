@@ -108,22 +108,3 @@ void ht_class_aviewer::setAnalyser(Analyser *a)
 	analy_sub->setAnalyser(a);
 }
 
-#if 0
-static ht_view *
-class_image(Bounds *b, File *file, ht_format_group *group)
-{
-  classfile *clazz;
-
-  clazz = ((ht_class_shared_data *)group->get_shared_data())->file;
-  if (clazz) {
-
-    ht_uformat_viewer *v = new ht_uformat_viewer();
-    v->init(b, DESC_JAVA_IMAGE, VC_EDIT, file, group);
-    /* need to insert more code here */
-    return v;
-  } else {
-    return NULL;
-  }
-}
-#endif
-
