@@ -458,14 +458,13 @@ void ht_format_viewer::init(Bounds *b, const char *desc, uint caps, File *f, ht_
 	format_group = fg;
 
 	last_search_request = NULL;
-
 /*	vs_history = new ht_stack();
 	vs_history->init();*/
 }
 
 void ht_format_viewer::done()
 {
-	if (last_search_request) delete last_search_request;
+	delete last_search_request;
 
 	ht_view::done();
 }
