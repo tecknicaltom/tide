@@ -3,6 +3,7 @@
 
 version 2.0beta3:
 	- fixed crash in drop-down widget
+	- fixed loading of class files
 
 version 2.0beta2:
 	- should now really support file sizes > 4 GiB
