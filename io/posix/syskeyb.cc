@@ -169,7 +169,7 @@ bool keyb_getevent(sys_event_t &event)
 	if (r == KEY_MOUSE) return keyb_getmouseevent(event);
 	ht_key k = K_INVALID;
 	int r2 = UNMETA_KEY(UNCTRL_KEY(UNSHIFT_KEY(r)));
-	if ((META_KEY(r) == r) && (r2 == '[' || r2 == 'O')) {/* escape seq */
+	if (META_KEY(r) == r && (r2 == '[' || r2 == 'O')) {/* escape seq */
 		r2 = r;
 		if (keyb_keypressed()) {
 			r = keyb_getrawkey();
@@ -183,7 +183,11 @@ bool keyb_getevent(sys_event_t &event)
 	k = keyb_rawkey2key(r);
 	if ((k == K_INVALID) && ((unsigned int)r <= 255)) k = (ht_key)r;
 	event.type = SYSEV_KEYPRESSED;
-	event.key = k;
+/*	if (k == 'a') {
+		event.key = K_Control_PageDown;
+	} else {*/
+		event.key = k;
+//	}
 	return true;
 }
 
@@ -192,7 +196,7 @@ ht_key keyb_getkey()
 	int r = keyb_getrawkey();
 	ht_key k = K_INVALID;
 	int r2 = UNMETA_KEY(UNCTRL_KEY(UNSHIFT_KEY(r)));
-	if ((META_KEY(r) == r) && ((r2 == '[') || (r2 == 'O'))) {/* escape seq */
+	if (META_KEY(r) == r && ((r2 == '[') || (r2 == 'O'))) {/* escape seq */
 		r2 = r;
 		if (keyb_keypressed()) {
 			r = keyb_getrawkey();
@@ -204,7 +208,12 @@ ht_key keyb_getkey()
 		}
 	}
 	k = keyb_rawkey2key(r);
-	if ((k == K_INVALID) && ((unsigned int)r <= 255)) return (ht_key)r;
+	if ((k == K_INVALID) && ((unsigned int)r <= 255)) {
+/*	if (r == 'a') {
+		return K_Control_PageDown;
+	}*/
+		return (ht_key)r;
+	}
 //debug:	if (k == K_INVALID) return (ht_key)r;
 	return k;
 }
