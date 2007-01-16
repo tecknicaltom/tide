@@ -1525,11 +1525,6 @@ uint ht_frame::getstyle()
 	return style;
 }
 
-void ht_frame::load(ObjectStream &s)
-{
-	ht_view::load(s);
-}
-
 ObjectID ht_frame::getObjectID() const
 {
 	return ATOM_HT_FRAME;
@@ -1557,11 +1552,6 @@ void ht_frame::settext(const char *text)
 	free(desc);
 	desc = ht_strdup(text);
 	dirtyview();
-}
-
-void ht_frame::store(ObjectStream &s) const
-{
-	ht_view::store(s);
 }
 
 /*
