@@ -353,7 +353,8 @@ int main(int argc, char *argv[])
 
 	try {
 		params(argc, argv, true);
-		((ht_app*)app)->run(false);
+		ht_app *a = ((ht_app*)app);
+		a->run(false);
 	} catch (const Exception &x) {
 		done();
 		String s;
