@@ -1112,7 +1112,6 @@ LocalFile::LocalFile(const String &aFilename, IOAccessMode am, FileOpenMode om)
 LocalFile::LocalFile(SYS_FILE *f, bool own_f, IOAccessMode am)
  : File()
 {
-	mFilename = NULL;
 	file = f;
 	own_file = own_f;
 	int e = LocalFile::setAccessMode(am);
