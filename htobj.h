@@ -384,11 +384,9 @@ public:
 /* overwritten */
 	virtual	void		draw();
 	virtual	uint		getnumber();
-	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		setnumber(uint number);
 	virtual	void		settext(const char *text);
-	virtual	void		store(ObjectStream &s) const;
 /* new */
 		uint		getstyle();
 		void		setframestate(uint framestate);
