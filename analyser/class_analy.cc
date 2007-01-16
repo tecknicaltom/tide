@@ -103,10 +103,7 @@ void ClassAnalyser::beginAnalysis()
 	addComment(a, 0, ";********************************************************");
 	delete a;
 	if (class_shared->methods) {
-		foreach (KeyValue, kv, *class_shared->methods, {
-			ClassMethod *cm = (ClassMethod*)kv->mKey;
-			Object *value = kv->mValue;
-		
+		foreach (ClassMethod, cm, *class_shared->methods, {
 			Address *a = createAddress32(cm->start);
 			char buffer2[1024];
 			java_demangle(buffer2, class_shared->classinfo.thisclass, cm->name, cm->type, cm->flags);
