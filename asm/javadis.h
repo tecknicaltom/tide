@@ -30,7 +30,7 @@
 /*#define X86DIS_STYLE_USE16			0x00000004
 #define X86DIS_STYLE_USE32			0x00000008*/
 
-#define JAVAINSN_MAX_PARAM_COUNT	2
+#define JAVAINSN_MAX_PARAM_COUNT	3
 
 struct javadis_insn {
 	bool invalid;
