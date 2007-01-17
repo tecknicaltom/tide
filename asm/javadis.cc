@@ -366,7 +366,7 @@ void javadis::str_format(char **str, const char **format, const char *p, const c
 						break;
 				}
 				f+=2;
-				if ((t) && (t[0])) {
+				if (t && t[0]) {
 					str_format(&s, &f, p, n, op, oplen, *(f-1), 1);
 				} else {
 					str_format(&s, &f, p, n, op, oplen, *(f-1), 0);
@@ -406,7 +406,7 @@ const char *javadis::strf(dis_insn *disasm_insn, int opt, const char *format)
 	int oplen[3];
 
 	if (options & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	for (int i=0; i<3; i++) {
+	for (int i=0; i<JAVAINSN_MAX_PARAM_COUNT; i++) {
 		op[i]=(char*)&ops[i];
 		str_op(op[i], &oplen[i], insn, &insn->op[i]);
 	}
