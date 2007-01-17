@@ -96,13 +96,13 @@ static cp_info *read_cpool_entry (Stream *htio, classfile *clazz)
 	cp_info *cp;
 	u2 idx;
 
-	cp         = (cp_info *)malloc (sizeof (*cp));
+	cp         = ht_malloc (sizeof (*cp));
 	cp->offset = offset;
 	cp->tag    = READ1();
 	switch (cp->tag) {
 		case CONSTANT_Utf8:
 			idx = READ2();
-			cp->value.string = (char *)malloc (idx+1);
+			cp->value.string = ht_malloc (idx+1);
 			cls_read (cp->value.string, idx, 1, htio);
 			cp->value.string[idx] = 0;
 			break;
@@ -212,11 +212,11 @@ ht_class_shared_data *class_read(File *htio)
 	u2 count;
 	u2 cpcount, index;
 
-	clazz = (classfile *)malloc(sizeof (*clazz));
+	clazz = ht_malloc(sizeof (*clazz));
 	if (!clazz) {
 		return NULL;
 	}
-	shared = (ht_class_shared_data *)malloc(sizeof (ht_class_shared_data));
+	shared = ht_malloc(sizeof (ht_class_shared_data));
 	shared->file = clazz;
 	shared->methods = new AVLTree(true);
 	shared->valid = new Area();
@@ -347,10 +347,13 @@ void class_unread(ht_class_shared_data *shared)
 	classfile *clazz = shared->file;
 
 	if (!clazz) return;
-	for (uint i=1; i<clazz->cpool_count; i++) {
+	for (uint i = 1; i < clazz->cpool_count; i++) {
 		tag = clazz->cpool[i]->tag;
-		free (clazz->cpool[i]);
-		if ((tag == CONSTANT_Long) || (tag == CONSTANT_Double)) {
+		if (tag == CONSTANT_Utf8) {
+			free(clazz->cpool[i]->value.string);
+		}
+		free(clazz->cpool[i]);
+		if (tag == CONSTANT_Long || tag == CONSTANT_Double) {
 			i++;
 		}
 	}
@@ -386,6 +389,8 @@ void class_unread(ht_class_shared_data *shared)
 		shared->initialized->done();
 		delete shared->initialized;
 	}*/
+	delete shared->methods;
+	free(shared->file);
 	free(shared);
 }
 
