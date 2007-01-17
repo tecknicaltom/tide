@@ -750,7 +750,7 @@ void ht_aviewer::generateOutputDialog()
 
 	b.assign(29, 2, 15, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
-	((ht_listpopup*)v1)->insertstring("HTML");
+//	((ht_listpopup*)v1)->insertstring("HTML");
 	((ht_listpopup*)v1)->insertstring("plain text");
 	dialog->insert(v1);
 	b.assign(29, 1, 15, 1);
@@ -772,7 +772,7 @@ void ht_aviewer::generateOutputDialog()
 	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
 	dialog->insert(v1);
 	b.assign(2, 7, 35, 1);
-	NEW_OBJECT(v2, ht_label, &b, "~end address (or #numberoflines):", v1);
+	NEW_OBJECT(v2, ht_label, &b, "~end address:", v1);
 	dialog->insert(v2);
 //	setdatastr(v1, "#1000");
 	if (get_current_pos(&cur)) {
@@ -801,16 +801,16 @@ void ht_aviewer::generateOutputDialog()
 			errorbox(globalerror);
 			continue;
 		}
-		uint64 end_by_lines;
+/*		uint64 end_by_lines;
 		if ((by_lines = end_str[0]=='#')) {
 			char *pend = &end_str[1];
 			parseIntStr(pend, end_by_lines, 10);
-		} else {
+		} else {*/
 			if (!string_to_pos(end_str, &end)) {
 				errorbox(globalerror);
 				continue;
 			}
-		}
+//		}
 		Address *start_addr, *end_addr;
 		if (!convertViewerPosToAddress(start, &start_addr) || !convertViewerPosToAddress(end, &end_addr)) {
 			errorbox("invalid address");
@@ -1066,7 +1066,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		sub->insert_entry("~Information...", 0, cmd_analyser_info, 0, 1);
 		sub->insert_separator();
 		sub->insert_entry("~Save state", 0, cmd_analyser_save, 0, 1);
-		sub->insert_entry("~Export to file...", NULL, cmd_analyser_export_file, 0, 1);
+		sub->insert_entry("~Export to file...", NULL, cmd_analyser_generate_output, 0, 1);
 		sub->insert_separator();
 		sub->insert_entry("~Continue at address", "c", cmd_analyser_continue, 0, 1);
 		sub->insert_entry("~Pause / resume", "p", cmd_analyser_pause_resume, 0, 1);
