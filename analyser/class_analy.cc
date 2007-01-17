@@ -79,27 +79,30 @@ void	ClassAnalyser::done()
 void ClassAnalyser::beginAnalysis()
 {
 	char buffer[1024];
-	char *b = buffer;
 	
-	*(b++) = ';';  *(b++) = ' ';
-	b = java_demangle_flags(b, class_shared->flags);
-	b += ht_snprintf(b, 1024, "%s %s", (class_shared->flags & jACC_INTERFACE)?"interface":"class", class_shared->classinfo.thisclass);
+	String b;
+	*java_demangle_flags(buffer, class_shared->flags) = 0;
+	b.assignFormat("; %s%s %s", buffer, (class_shared->flags & jACC_INTERFACE)?"interface":"class", class_shared->classinfo.thisclass);
 	if (class_shared->classinfo.superclass) {
-		b += ht_snprintf(b, 1024, " extends %s", class_shared->classinfo.superclass);
+		String b2;
+		b2.assignFormat(" extends %s", class_shared->classinfo.superclass);
+		b += b2;
 	}
 	if (class_shared->classinfo.interfaces) {
-		b += ht_snprintf(b, 1024, " implements");
+		b += " implements";
 		int count = class_shared->classinfo.interfaces->count();
 		for (int i=0; i<count; i++) {
-			b += ht_snprintf(b, 1024, " %y%c", (*class_shared->classinfo.interfaces)[i], (i+1<count)?',':' ');
+			String b2;
+			b2.assignFormat("%y%c", (*class_shared->classinfo.interfaces)[i], (i+1<count)?',':' ');
+			b += b2;
 		}
 	}
-	b += ht_snprintf(b, 1024, " {");
+	b += " {";
 
 	Address *a = createAddress32(0);
 	addComment(a, 0, "");
 	addComment(a, 0, ";********************************************************");
-	addComment(a, 0, buffer);
+	addComment(a, 0, b.contentChar());
 	addComment(a, 0, ";********************************************************");
 	delete a;
 	if (class_shared->methods) {
