@@ -365,7 +365,7 @@ ObjHandle FileModificator::findArea(FileOfs o)
 String &FileModificator::getDesc(String &result) const
 {
 	mFile->getDesc(result);
-	result.prepend("in-memory modifiled ");
+	if (isModified()) result.prepend("in-memory modified ");
 	return result;
 }
 
@@ -732,7 +732,7 @@ void FileModificator::invalidateMods()
 	mcount = inv_mcount;
 }
 
-bool FileModificator::isModified()
+bool FileModificator::isModified() const
 {
 	if (newsize != mFile->getSize()) return true;
 	foreach(FileArea, fa, mods,
