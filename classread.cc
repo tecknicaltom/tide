@@ -139,7 +139,7 @@ attrib_info *attribute_read(Stream *htio, classfile *clazz)
 	u4 len;
 	char *aname;
 
-	a = (attrib_info *)malloc(sizeof (*a));
+	a = ht_malloc(sizeof (*a));
 	if (!a) {
 		return NULL;
 	}
@@ -193,7 +193,7 @@ static mf_info *read_fieldmethod (Stream *htio, ht_class_shared_data *shared)
 	m->desc = get_string(htio, clazz, READ2());
 	m->attribs_count = idx = READ2();
 	if (idx) {
-		m->attribs = (attrib_info **)malloc(idx * sizeof (*(m->attribs)));
+		m->attribs = ht_malloc(idx * sizeof (*(m->attribs)));
 		if (!m->attribs) {
 			return NULL;
 		}
@@ -231,7 +231,7 @@ ht_class_shared_data *class_read(File *htio)
 	clazz->minor_version = READ2();
 	clazz->major_version = READ2();
 	count = clazz->cpool_count = READ2();
-	clazz->cpool = (cp_info **)malloc((count+1) * sizeof (*(clazz->cpool)));
+	clazz->cpool = ht_malloc((count+1) * sizeof (*(clazz->cpool)));
 	if (!clazz->cpool) {
 		return NULL;
 	}
@@ -257,7 +257,7 @@ ht_class_shared_data *class_read(File *htio)
 	shared->classinfo.superclass = get_class_name(htio, clazz, clazz->super_class);
 	if (strcmp(shared->classinfo.superclass, "?") == 0) return NULL;
 	if (count) {
-		clazz->interfaces = (u2 *)malloc(count * sizeof (*(clazz->interfaces)));
+		clazz->interfaces = ht_malloc(count * sizeof (*(clazz->interfaces)));
 		if (!clazz->interfaces) {
 			return NULL;
 		}
@@ -273,7 +273,7 @@ ht_class_shared_data *class_read(File *htio)
 	clazz->foffset = offset;
 	count = clazz->fields_count = READ2();
 	if (count) {
-		clazz->fields = (mf_info **)malloc(count * sizeof (*(clazz->fields)));
+		clazz->fields = ht_malloc(count * sizeof (*(clazz->fields)));
 		if (!clazz->fields) {
 			return NULL;
 		}
@@ -286,7 +286,7 @@ ht_class_shared_data *class_read(File *htio)
 	clazz->moffset = offset;
 	count = clazz->methods_count = READ2();
 	if (count) {
-		clazz->methods = (mf_info **)malloc(count * sizeof (*(clazz->methods)));
+		clazz->methods = ht_malloc(count * sizeof (*(clazz->methods)));
 		if (!clazz->methods) {
 			return NULL;
 		}
@@ -325,7 +325,7 @@ ht_class_shared_data *class_read(File *htio)
 	clazz->aoffset = offset;
 	count = clazz->attribs_count = READ2();
 	if (count) {
-		clazz->attribs = (attrib_info **)malloc (count*sizeof (*(clazz->attribs)));
+		clazz->attribs = ht_malloc (count*sizeof (*(clazz->attribs)));
 		if (!clazz->attribs) {
 			return NULL;
 		}
