@@ -443,14 +443,14 @@ char *java_demangle_flags(char *result, int flags)
 	if (flags & jACC_PROTECTED) result += sprintf(result, "protected ");
 	if (flags & jACC_STATIC) result += sprintf(result, "static ");
 	if (flags & jACC_FINAL) result += sprintf(result, "final ");
-//     if (flags & jACC_SUPER)
-//     if (flags & jACC_SYNCHRONIZED)
-//     if (flags & jACC_VOLATILE)
-//     if (flags & jACC_TRANSIENT)
+	if (flags & jACC_SUPER) result += sprintf(result, "super ");
+	if (flags & jACC_SYNCHRONIZED) result += sprintf(result, "synchronized ");
+	if (flags & jACC_VOLATILE) result += sprintf(result, "volatile ");
+	if (flags & jACC_TRANSIENT) result += sprintf(result, "transient ");
 	if (flags & jACC_NATIVE) result += sprintf(result, "native ");
-//     if (flags & jACC_INTERFACE)
+	if (flags & jACC_INTERFACE) result += sprintf(result, "interface ");
 	if (flags & jACC_ABSTRACT) result += sprintf(result, "abstract ");
-//     if (flags & jACC_STRICT)
+	if (flags & jACC_STRICT) result += sprintf(result, "strict ");
 	return result;
 }
 
@@ -504,10 +504,16 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 	strcpy(type, "?");
 	if (token < clazz->cpool_count)
 	switch (clazz->cpool[token]->tag) {
-		case CONSTANT_Class:
+		case CONSTANT_Class: {
 			strcpy(tag, "Class");
-			strcpy(data, java_strip_path(get_class_name(NULL, clazz, token)));
+			char *cl = get_class_name(NULL, clazz, token);
+			if (cl[0] == '[') {
+				java_demangle_type(data, &cl);
+			} else {
+				strcpy(data, java_strip_path(cl));
+			}
 			break;
+		}
 		case CONSTANT_Double:
 			strcpy(tag, "Double");
 			sprintf(data, "double");
