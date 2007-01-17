@@ -41,7 +41,7 @@ static void areaload(ObjectStream &st, area_s *&p, int level, int &left)
 		p = NULL;
 		return;
 	}
-	p = ht_malloc(sizeof (area_s));
+	p = new area_s;
 	if (level <= 1 || left <= 1) {
 		p->start = st.getObject("start");
 		p->end = st.getObject("end");
@@ -68,7 +68,7 @@ void Area::done()
 	freeRecursive(a);
 }
 
-ObjectID	Area::getObjectID() const
+ObjectID Area::getObjectID() const
 {
 	return ATOM_AREA;
 }
@@ -90,7 +90,7 @@ area_s *Area::getArea(Object *at)
 static void areaadd(area_s *&p, Object *Start, Object *End)
 {
 	if (p) {
-		if ((Start->compareTo(p->start) >= 0) && (Start->compareTo(p->end)<=0)) {
+		if (Start->compareTo(p->start) >= 0 && Start->compareTo(p->end)<=0) {
 			if (p->end->compareTo(End) < 0) {
 				delete p->end;
 				p->end = End->clone();
@@ -103,7 +103,7 @@ static void areaadd(area_s *&p, Object *Start, Object *End)
 			}
 			return;
 		}
-		if ((End->compareTo(p->start) >= 0) && (End->compareTo(p->end) <= 0)) {
+		if (End->compareTo(p->start) >= 0 && End->compareTo(p->end) <= 0) {
 			if (p->start->compareTo(Start) > 0) {
 				delete p->start;
 				p->start = Start->clone();
@@ -114,7 +114,7 @@ static void areaadd(area_s *&p, Object *Start, Object *End)
 					  else  areaadd(p->left, Start, End);
 	} else {
 		// new p
-		area_s *tmp = ht_malloc(sizeof(area_s));
+		area_s *tmp = new area_s;
 		p = tmp;
 		p->start = Start->clone();
 		p->end = End->clone();
@@ -187,7 +187,7 @@ void Area::freeRecursive(area_s *p)
 		freeRecursive(p->right);
 		delete p->start;
 		delete p->end;
-		free(p);
+		delete p;
 	}
 }
 
@@ -248,10 +248,6 @@ void Area::dump()
 	areadump(1, a);
 }
 #endif
-
-/*
- *  BUILDER etc.
- */
 
 BUILDER(ATOM_AREA, Area, Object)
 
