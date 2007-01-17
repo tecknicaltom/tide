@@ -151,7 +151,7 @@ protected:
 		ObjHandle	findArea(FileOfs o);
 		void		flushMods();
 		void		invalidateMods();
-		bool		isModified();
+		bool		isModified() const;
 		bool		isModifiedByte(FileOfs o);
 		void 		makeAreaModified(ObjHandle h, FileOfs rstart, FileOfs size);
 		void		read1(FileArea *a, FileOfs rstart, byte *buf, uint count);
