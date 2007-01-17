@@ -38,7 +38,6 @@ javadis::javadis(java_token_func tf, void *c)
 dis_insn *javadis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 {
 	ocodep = code;
-/* initialize */
 	codep = ocodep;
 	maxlen = Maxlen;
 	addr = Addr.addr32.offset;
@@ -83,25 +82,30 @@ void javadis::decode_op(int optype, bool wideopc, java_insn_op *op)
 {
 	bool widesize = wideopc || (JOPC_SIZE(optype) == JOPC_SIZE_WIDE);
 	switch (JOPC_TYPE(optype)) {
-		case JOPC_TYPE_CHAR:
-			op->type = JAVA_OPTYPE_IMM;
-			op->size = 2;
-			op->imm = getword();
-			break;
 		case JOPC_TYPE_BYTE:
 			op->type = JAVA_OPTYPE_IMM;
 			op->size = 1;
 			op->imm = getbyte();
 			break;
+		case JOPC_TYPE_CHAR:
+			op->type = JAVA_OPTYPE_IMM;
+			op->size = 1;
+			op->imm = sint8(getbyte());
+			break;
 		case JOPC_TYPE_SHORT:
 			op->type = JAVA_OPTYPE_IMM;
 			op->size = 2;
-			op->imm = getword();
+			op->imm = sint16(getword());
 			break;
-		case JOPC_TYPE_INT:
+		case JOPC_TYPE_SIMM:
 			op->type = JAVA_OPTYPE_IMM;
-			op->size = 4;
-			op->imm = getdword();
+			if (widesize) {
+				op->size = 2;
+				op->imm = sint16(getword());
+			} else {
+				op->size = 1;
+				op->imm = sint8(getbyte());
+			}
 			break;
 		case JOPC_TYPE_CONST:
 			op->type = JAVA_OPTYPE_CONST;
@@ -127,12 +131,10 @@ void javadis::decode_op(int optype, bool wideopc, java_insn_op *op)
 			op->type = JAVA_OPTYPE_LABEL;
 			if (widesize) {
 				op->size = 4;
-				// FIXME: sint32
-				op->label = addr + (int)getdword() - op->size - 1;
+				op->label = addr + sint32(getdword()) - op->size - 1;
 			} else {
 				op->size = 2;
-				// FIXME: sint16
-				op->label = addr + (short)getword() - op->size - 1;
+				op->label = addr + sint16(getword()) - op->size - 1;
 			}
 			break;
 		default:
