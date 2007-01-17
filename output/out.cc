@@ -510,22 +510,21 @@ int	AnalyserOutput::generateFile(Address *from, Address *to)
 	if (!out) return OUTPUT_GENERATE_ERR_INVAL;
 	header();
 	int line = 0;
+	int len;
 	while (from->compareTo(to) <= 0) {
 		char buffer[1024];
 		if (getLineString(buffer, sizeof buffer, from, line)) {
-			// write buffer
 			// FIXME: remove strlen
 			uint wr = strlen(buffer);
 			if (out->write(buffer, wr) != wr) return OUTPUT_GENERATE_ERR_STREAM;
 			
-			// update address
-			int len;
+			int tmplen;
 			if (getLineByteLength(len, from, line)) {
-				from->add(len);
+				len += tmplen;
 			}
-			// update line
 			line++;
 		} else {
+			from->add(len);
 			line = 0;
 		}
 	}
