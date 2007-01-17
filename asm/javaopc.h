@@ -34,7 +34,7 @@
 #define JOPC_TYPE_EMPTY		0
 #define JOPC_TYPE_BYTE		1
 #define JOPC_TYPE_SHORT		2
-#define JOPC_TYPE_INT		3
+#define JOPC_TYPE_SIMM		3
 #define JOPC_TYPE_CHAR		4
 #define JOPC_TYPE_CONST		5
 #define JOPC_TYPE_LOCAL		6
