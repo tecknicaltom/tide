@@ -90,7 +90,7 @@ char *html_addr_sym_func(CPU_ADDR Addr, int *symstrlen)
 int generate_html_output(Analyser *analy, Stream *stream, Address *from, Address *to)
 {
 #if 0
-	if ((!analy) || (!stream)) return HTML_OUTPUT_ERR_GENERIC;
+	if (!analy || !stream) return HTML_OUTPUT_ERR_GENERIC;
 	if (analy->active) return HTML_OUTPUT_ERR_ANALY_NOT_FINISHED;
 
 	write_str(stream, header);
