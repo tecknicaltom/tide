@@ -792,14 +792,18 @@ int FileModificator::vcntl(uint cmd, va_list vargs)
 	}
 	case FCNTL_MODS_IS_DIRTY: {
 		// const FileOfs offset, const FileOfs range, bool &isdirty
-		const FileOfs o = va_arg(vargs, FileOfs);
-		const FileOfs s = va_arg(vargs, FileOfs);
+		FileOfs o = va_arg(vargs, FileOfs);
+		FileOfs s = va_arg(vargs, FileOfs);
 		bool &b = (bool&)*va_arg(vargs, bool*);
 		if (o == 0 && s == newsize) {
 			b = isModified();
-		} else if (s == 1) {
+		} else if (s <= 16) {
 			try {
-				b = isModifiedByte(o);
+				bool bb = false;
+				while (s--) {
+					bb |= isModifiedByte(o++);
+				}
+				b = bb;
 			} catch (const IOException &x) {
 				return EIO;
 			}
