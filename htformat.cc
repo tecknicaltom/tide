@@ -2355,7 +2355,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					focus_cursor();
 					FileOfs s, e;
 					uint32 ts;
-					if (cursor_tag_class==tag_class_edit)
+					if (cursor_tag_class == tag_class_edit)
 						s = cursor_tag_offset;
 					else
 						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
@@ -2380,7 +2380,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class == tag_class_edit)
 						s = cursor_tag_offset;
 					else
-						s = (sel_end>sel_start) ? sel_end : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
 					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					cursor_down(1);
 					if (s!=0xffffffff) {
@@ -2403,9 +2403,9 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						s = cursor_tag_offset;
 					else
 						s = sel_end > sel_start ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					int r;
-					if (edit()) r = cursormicro_backward(); else r=cursor_left();
+					if (edit()) r = cursormicro_backward(); else r = cursor_left();
 					if (s != 0xffffffff & r) {
 						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
@@ -2585,7 +2585,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			}
 			break;
 		case cmd_edit_copy:
-			if (sel_end>sel_start) {
+			if (sel_end > sel_start) {
 				char dsc[1024];
 				String fn;
 				ht_snprintf(dsc, sizeof dsc, "%y::%s", &file->getFilename(fn), desc);
