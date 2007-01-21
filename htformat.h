@@ -309,12 +309,12 @@ protected:
 	int cursor_visual_length;
 /* misc info */
 	int cursor_tag_class;
-	union {
+//	union {
 		FileOfs cursor_tag_offset;
 		struct {
 			LINE_ID id;
 		} cursor_tag_id;
-	};
+//	};
 	char cursor_line[1024];	/* FIXME: possible buffer overflow ! */
 /* tag palettes */
 	palette tagpal;
