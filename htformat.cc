@@ -695,8 +695,12 @@ bool ht_format_viewer::vstate_save()
 
 uint ht_format_viewer::pread(FileOfs ofs, void *buf, uint size)
 {
-	file->seek(ofs);
-	return file->read(buf, size);
+	try {
+		file->seek(ofs);
+		return file->read(buf, size);
+	} catch (const IOException &e) {
+		return 0;
+	}
 }
 
 ht_search_result *ht_format_viewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
@@ -1511,17 +1515,19 @@ restart:
 		fflush(stdout);*/
 /**/
 // FIXME: revision
-		if ((cursor_state == cursor_state_visible) && (p.sub == cursor.sub)
-		&& compeq_line_id(p.line_id, cursor.line_id)) {
-			cursor_found=y;
+		if (cursor_state == cursor_state_visible && p.sub == cursor.sub
+		 && compeq_line_id(p.line_id, cursor.line_id)) {
+			cursor_found = y;
 			cursorline_dirty();
 			update_misc_info();
-			int c=tag_count_selectable_tags_in_group(line, cursor.tag_group);
-			if (cursor.tag_idx>=c) cursor.tag_idx = c-1;
-			if ((cursor_tag_class==tag_class_edit) && (edit())) {
-				char *t=tag_get_selectable_tag(line, cursor.tag_idx, cursor.tag_group);
-				int x=cursor_visual_xpos+tag_get_micropos(t, cursor_tag_micropos)-xscroll;
-				if (focused) if (x>=0) setcursor(x, y);
+			int c = tag_count_selectable_tags_in_group(line, cursor.tag_group);
+			if (cursor.tag_idx >= c) cursor.tag_idx = c-1;
+			if (cursor_tag_class == tag_class_edit && edit()) {
+				char *t = tag_get_selectable_tag(line, cursor.tag_idx, cursor.tag_group);
+				if (t) {
+					int x = cursor_visual_xpos + tag_get_micropos(t, cursor_tag_micropos) - xscroll;
+					if (focused && x >= 0) setcursor(x, y);
+				}
 			}
 			cursor_in_line = true;
 		} else cursor_in_line = false;
@@ -1529,7 +1535,7 @@ restart:
 		if (xscroll > 0) buf->printChar(0, y, VCP(VC_GREEN, VC_TRANSPARENT), '<');
 		if (!next_line(&p, 1)) break;
 	}
-	if ((cursor_state==cursor_state_visible) && (cursor_found==-1)) {
+	if (cursor_state == cursor_state_visible && cursor_found == -1) {
 #if 1
 		if (!sp.sub) sp = top;
 		cursor = sp;
@@ -1538,8 +1544,8 @@ restart:
 #endif
 		cursorline_dirty();
 		update_misc_info();
-		int c=tag_count_selectable_tags_in_group(line, cursor.tag_group);
-		if (cursor.tag_idx>c-1) cursor.tag_idx=c-1;
+		int c = tag_count_selectable_tags_in_group(line, cursor.tag_group);
+		if (cursor.tag_idx > c-1) cursor.tag_idx=c-1;
 
 		if (sdown_count++ > 0) goto restart;
 	}
@@ -1553,7 +1559,7 @@ restart:
 //	buf_printf(20, 7, 7, "size.x=%2d, size.y=%2d, size.w=%2d, size.h=%2d", group->group->size.x, group->group->size.y, group->group->size.w, group->group->size.h);
 //	buf_printf(20, 8, 7, "vsize.x=%2d, vsize.y=%2d, vsize.w=%2d, vsize.h=%2d", group->group->vsize.x, group->group->vsize.y, group->group->vsize.w, group->group->vsize.h);
 //	buf_printf(0, 7, 7, "vx=%2d, vl=%2d, ypos=%2d", cursor_visual_xpos, cursor_visual_length, cursor_ypos);
-//	buf_printf(0, 2, 7, "cursor_micropos=%d", cursor_tag_micropos);
+//	buf->printf(0, 2, 7, CP_DEVICE, "cursor_micropos=%d", cursor_tag_micropos);
 //	buf_printf(0, 2, 7, "%x, %x, %x, %x, %x, c_tagidx", cursor.line_id.id1, cursor.line_id.id2, cursor.line_id.id3, cursor.line_id.id4, cursor.line_id.id5, cursor.tag_idx);
 //	buf_printf(0, 3, 7, "(%c)", "vid"[cursor_state]);
 //	buf_printf(0, 6, 7, "cursor.tag_idx=%d", cursor.tag_idx);
@@ -1599,7 +1605,7 @@ bool ht_uformat_viewer::edit_end()
 bool ht_uformat_viewer::edit_input(byte b)
 {
 	cursorline_get();
-	char *t=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+	char *t = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
 	switch (t[1]) {
 		case HT_TAG_EDIT_BYTE:
 		case HT_TAG_EDIT_WORD_LE:
@@ -1608,41 +1614,42 @@ bool ht_uformat_viewer::edit_input(byte b)
 		case HT_TAG_EDIT_WORD_BE:
 		case HT_TAG_EDIT_DWORD_BE:
 		case HT_TAG_EDIT_QWORD_BE: {
-			int nibval=edit_input_c2h(b);
-			if (nibval==-1) break;
+			int nibval = edit_input_c2h(b);
+			if (nibval == -1) break;
 			
-			int size=0;
+			int size = 0;
 			bool bigendian = true;
 			switch (t[1]) {
-				case HT_TAG_EDIT_BYTE: size=1; break;
-				case HT_TAG_EDIT_WORD_LE: size=2; bigendian=false; break;
-				case HT_TAG_EDIT_DWORD_LE: size=4; bigendian=false; break;
-				case HT_TAG_EDIT_QWORD_LE: size=8; bigendian=false; break;
-				case HT_TAG_EDIT_WORD_BE: size=2; bigendian=true; break;
-				case HT_TAG_EDIT_DWORD_BE: size=4; bigendian=true; break;
-				case HT_TAG_EDIT_QWORD_BE: size=8; bigendian=true; break;
+				case HT_TAG_EDIT_BYTE: size = 1; break;
+				case HT_TAG_EDIT_WORD_LE: size = 2; bigendian=false; break;
+				case HT_TAG_EDIT_DWORD_LE: size = 4; bigendian=false; break;
+				case HT_TAG_EDIT_QWORD_LE: size = 8; bigendian=false; break;
+				case HT_TAG_EDIT_WORD_BE: size = 2; bigendian=true; break;
+				case HT_TAG_EDIT_DWORD_BE: size = 4; bigendian=true; break;
+				case HT_TAG_EDIT_QWORD_BE: size = 8; bigendian=true; break;
 			}
 			
-			int shift=4-(cursor_tag_micropos&1)*4;
-			int m=~(0xf<<shift), o=nibval<<shift;
+			uint shift = 4 - (cursor_tag_micropos&1)*4;
+			uint m = ~(0xf << shift);
+			uint o = nibval << shift;
 
 			int b;
-			if (bigendian)  {
-				b=(cursor_tag_micropos)/2;
+			if (bigendian) {
+				b = cursor_tag_micropos/2;
 			} else {
-				b=size-(cursor_tag_micropos)/2-1;
+				b = size - cursor_tag_micropos/2 - 1;
 			}
 			
 			byte buf;
-			pread(cursor_tag_offset+b, &buf, 1);
-			buf&=m;
-			buf|=o;
-			pwrite(cursor_tag_offset+b, &buf, 1);
+			pread(cursor_tag_offset + b, &buf, 1);
+			buf &= m;
+			buf |= o;
+			pwrite(cursor_tag_offset + b, &buf, 1);
 			cursormicroedit_forward();
 			return true;
 		}
 		case HT_TAG_EDIT_CHAR: {
-			if ((char)b >= 32) {
+			if (b >= 32 && b < 128) {
 				pwrite(cursor_tag_offset, &b, 1);
 				cursormicroedit_forward();
 				return true;
@@ -1681,7 +1688,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 			int h = edit_input_c2d(b);
 					
 			byte buf[4];
-			if ((pread(cursor_tag_offset, &buf, 4)==4) && (h!=-1)) {
+			if (pread(cursor_tag_offset, &buf, 4)==4 && h!=-1) {
 				if (t[1] == HT_TAG_EDIT_TIME_LE) {
 					d=(buf[3]<<24) | (buf[2]<<16) | (buf[1]<<8) | buf[0];
 				} else {
@@ -2090,8 +2097,8 @@ vcp ht_uformat_viewer::getcolor_tag(uint pal_index)
 
 bool ht_uformat_viewer::get_current_offset(FileOfs *offset)
 {
-	if ((cursor_state!=cursor_state_disabled) && (cursor_tag_class==tag_class_edit)) {
-		*offset=cursor_tag_offset;
+	if (cursor_state != cursor_state_disabled && cursor_tag_class == tag_class_edit) {
+		*offset = cursor_tag_offset;
 		return true;
 	}
 	return false;
@@ -2329,7 +2336,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						if (find_first_tag(&p, 1)) {
 							set_cursor(p);
 						} else {
-							cursor_ypos=0x7fffffff;
+							cursor_ypos = 0x7fffffff;
 							update_misc_info();
 							update_visual_info();
 							check_cursor_visibility();
@@ -2349,15 +2356,16 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					FileOfs s, e;
 					uint32 ts;
 					if (cursor_tag_class==tag_class_edit)
-						s=cursor_tag_offset;
+						s = cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
+					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					cursor_up(1);
-					if (s!=0xffffffff) {
+					if (s != 0xffffffff) {
 						if (cursor_tag_class==tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel 
+						       && e != 0xffffffff) {
 							pselect_add(s, e);
 						}
 					}
@@ -2369,16 +2377,17 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					focus_cursor();
 					FileOfs s, e;
 					uint32 ts;
-					if (cursor_tag_class==tag_class_edit)
-						s=cursor_tag_offset;
+					if (cursor_tag_class == tag_class_edit)
+						s = cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end>sel_start) ? sel_end : 0xffffffff;
+					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					cursor_down(1);
 					if (s!=0xffffffff) {
-						if (cursor_tag_class==tag_class_edit) {
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel
+						        && e != 0xffffffff) {
 							pselect_add(s, e);
 						}
 					}
@@ -2391,16 +2400,16 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					FileOfs s, e;
 					uint32 ts;
 					if (cursor_tag_class==tag_class_edit)
-						s=cursor_tag_offset;
+						s = cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
+						s = sel_end > sel_start ? sel_end : 0xffffffff;
 					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					int r;
-					if (edit()) r=cursormicro_backward(); else r=cursor_left();
-					if ((s!=0xffffffff) & (r)) {
-						if (cursor_tag_class==tag_class_edit) {
+					if (edit()) r = cursormicro_backward(); else r=cursor_left();
+					if (s != 0xffffffff & r) {
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel && e != 0xffffffff) {
 							pselect_add(s, e);
 						}
 					}
@@ -2413,9 +2422,9 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					FileOfs s, e;
 					uint32 ts;
 					if (cursor_tag_class==tag_class_edit)
-						s=cursor_tag_offset;
+						s = cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
 					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
 					int r;
 					if (edit()) r=cursormicro_forward(); else r=cursor_right();
@@ -3013,7 +3022,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					tag_color=get_tag_color_edit(tag_offset, 2, (g==cursor.tag_group), is_cursor);
 					
 					byte buf[2];
-					if (pread(tag_offset, &buf, 2)==2) {
+					if (pread(tag_offset, &buf, 2) == 2) {
 						/* little endian */
 						d=(buf[1] << 8) | buf[0];
 						ht_snprintf(str, sizeof str, "%04x", d);
@@ -3047,21 +3056,21 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				case HT_TAG_EDIT_QWORD_LE: {
 					uint64 q;
 					
-					tag_offset=tag_get_offset(n);
-					tag_color=get_tag_color_edit(tag_offset, 8, (g==cursor.tag_group), is_cursor);
+					tag_offset = tag_get_offset(n);
+					tag_color = get_tag_color_edit(tag_offset, 8, (g==cursor.tag_group), is_cursor);
 					
 					byte buf[8];
 					if (pread(tag_offset, &buf, 8)==8) {
 						/* little endian */
 						q = ((uint64)buf[7] << 56) | ((uint64)buf[6] << 48) | ((uint64)buf[5] << 40) | ((uint64)buf[4] << 32)
 						  | ((uint64)buf[3] << 24) | ((uint64)buf[2] << 16) | ((uint64)buf[1] << 8) | (uint64)buf[0];
-						ht_snprintf(str, sizeof str, "%016x", q);
+						ht_snprintf(str, sizeof str, "%016qx", q);
 					} else {
 						strcpy(str, "????????????????");
 					}
 
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, 16, tag_color);
-					n+=HT_TAG_EDIT_QWORD_LE_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, str, 16, tag_color);
+					n += HT_TAG_EDIT_QWORD_LE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_WORD_BE: {
@@ -3097,27 +3106,27 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					} else {
 						strcpy(str, "????????");
 					}
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, 8, tag_color);
-					n+=HT_TAG_EDIT_DWORD_BE_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, str, 8, tag_color);
+					n += HT_TAG_EDIT_DWORD_BE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_QWORD_BE: {
 					uint64 q;
 					
-					tag_offset=tag_get_offset(n);
-					tag_color=get_tag_color_edit(tag_offset, 8, (g==cursor.tag_group), is_cursor);
+					tag_offset = tag_get_offset(n);
+					tag_color = get_tag_color_edit(tag_offset, 8, (g==cursor.tag_group), is_cursor);
 					
 					byte buf[8];
-					if (pread(tag_offset, &buf, 8)==8) {
+					if (pread(tag_offset, &buf, 8) == 8) {
 						/* big endian */
 						q = ((uint64)buf[0] << 56) | ((uint64)buf[1] << 48) | ((uint64)buf[2] << 40) | ((uint64)buf[3] << 32)
 						  | ((uint64)buf[4] << 24) | ((uint64)buf[5] << 16) | ((uint64)buf[6] << 8) | (uint64)buf[7];
-						ht_snprintf(str, sizeof str, "%016x", q);
+						ht_snprintf(str, sizeof str, "%016qx", q);
 					} else {
 						strcpy(str, "????????????????");
 					}
-					c+=render_tagstring_single(chars, colors, maxlen, c, str, 16, tag_color);
-					n+=HT_TAG_EDIT_QWORD_BE_LEN;
+					c += render_tagstring_single(chars, colors, maxlen, c, str, 16, tag_color);
+					n += HT_TAG_EDIT_QWORD_BE_LEN;
 					break;
 				}
 				case HT_TAG_EDIT_TIME_LE:
@@ -3388,9 +3397,9 @@ uint ht_uformat_viewer::pwrite(FileOfs ofs, void *buf, uint size)
 bool ht_uformat_viewer::ref()
 {
 	cursorline_get();
-	char *e=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+	char *e = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
 	if (!e) return false;
-	if (tag_get_class(e)==tag_class_sel) {
+	if (tag_get_class(e) == tag_class_sel) {
 		if (!cursor.sub->ref(&cursor_tag_id.id)) {
 			switch (e[1]) {
 			case HT_TAG_SEL:
@@ -3860,17 +3869,17 @@ void ht_uformat_viewer::update_micropos()
 void ht_uformat_viewer::update_misc_info()
 {
 	cursorline_get();
-	char *e=tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
+	char *e = tag_get_selectable_tag(cursor_line, cursor.tag_idx, cursor.tag_group);
 	if (e) {
-		cursor_tag_class=tag_get_class(e);
+		cursor_tag_class = tag_get_class(e);
 		switch (cursor_tag_class) {
-			case tag_class_edit:
-				cursor_tag_offset=tag_get_offset(e);
-				break;
-			case tag_class_sel:
-				clear_line_id(&cursor_tag_id.id);
-				tag_get_id(e, &cursor_tag_id.id.id1, &cursor_tag_id.id.id2, &cursor_tag_id.id.id3, &cursor_tag_id.id.id4);
-				break;
+		case tag_class_edit:
+			cursor_tag_offset = tag_get_offset(e);
+			break;
+		case tag_class_sel:
+			clear_line_id(&cursor_tag_id.id);
+			tag_get_id(e, &cursor_tag_id.id.id1, &cursor_tag_id.id.id2, &cursor_tag_id.id.id3, &cursor_tag_id.id.id4);
+			break;
 		}
 	}
 }
@@ -4325,8 +4334,9 @@ void ht_hex_sub::last_line_id(LINE_ID *line_id)
 	clear_line_id(line_id);
 	if (fsize) {
 		FileOfs k = fsize + (fofs % line_length);
-		line_id->id1 = ((fofs - fofs%line_length) >> 32) + (k - k%line_length);
-		line_id->id2 = ((k - k%line_length) + (fofs - fofs%line_length));
+		FileOfs ofs = (k - k%line_length) + (fofs - fofs%line_length);
+		line_id->id1 = ofs >> 32;
+		line_id->id2 = ofs;
 	} else {
 		line_id->id1 = fofs >> 32;
 		line_id->id2 = fofs;
