@@ -28,8 +28,8 @@
 #define msg_command					0x80000000
 #define HT_COMMAND(c)				(msg_command+(c))
 
-#define cmd_quit					HT_COMMAND(100)
-#define cmd_about					HT_COMMAND(101)
+#define cmd_quit				HT_COMMAND(100)
+#define cmd_about				HT_COMMAND(101)
 
 #define cmd_file_open				HT_COMMAND(102)
 #define cmd_file_new				HT_COMMAND(103)
@@ -41,21 +41,22 @@
 #define cmd_edit_delete				HT_COMMAND(121)
 #define cmd_edit_copy				HT_COMMAND(122)
 #define cmd_edit_paste				HT_COMMAND(123)
-#define cmd_edit_show_clipboard		HT_COMMAND(124)
+#define cmd_edit_show_clipboard			HT_COMMAND(124)
 #define cmd_edit_clear_clipboard		HT_COMMAND(125)
-#define cmd_edit_copy_from_file		HT_COMMAND(126)
+#define cmd_edit_copy_from_file			HT_COMMAND(126)
 #define cmd_edit_paste_into_file		HT_COMMAND(127)
 #define cmd_edit_copy_native			HT_COMMAND(128)
 #define cmd_edit_paste_native			HT_COMMAND(129)
 
 #define cmd_window_resizemove			HT_COMMAND(140)
-#define cmd_window_switch_resizemove	HT_COMMAND(141)
-#define cmd_window_close				HT_COMMAND(142)
+#define cmd_window_switch_resizemove		HT_COMMAND(141)
+#define cmd_window_close			HT_COMMAND(142)
+#define cmd_window_tile				HT_COMMAND(143)
 
-#define cmd_project_open				HT_COMMAND(160)
+#define cmd_project_open			HT_COMMAND(160)
 #define cmd_project_close			HT_COMMAND(161)
 #define cmd_project_add_item			HT_COMMAND(162)
-#define cmd_project_remove_item		HT_COMMAND(163)
+#define cmd_project_remove_item			HT_COMMAND(163)
 #define cmd_project_edit_item			HT_COMMAND(164)
 
 #define cmd_popup_dialog_eval			HT_COMMAND(180)
