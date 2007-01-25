@@ -47,7 +47,7 @@
 #define DEFAULT_VIEW_MIN_WIDTH 	25
 #define DEFAULT_VIEW_MIN_HEIGHT	6
 
-void bounds_and(Bounds *a, Bounds *b)
+static void bounds_and(Bounds *a, Bounds *b)
 {
 	if (b->x > a->x) {
 		a->w -= b->x-a->x;
@@ -61,14 +61,6 @@ void bounds_and(Bounds *a, Bounds *b)
 	if (a->y + a->h > b->y+b->h) a->h -= a->y + a->h - b->y - b->h;
 	if (a->w < 0) a->w = 0;
 	if (a->h < 0) a->h = 0;
-}
-
-void put_bounds(ObjectStream &s, Bounds *b)
-{
-	PUTX_INT32D(s, b->x, "x");
-	PUTX_INT32D(s, b->y, "y");
-	PUTX_INT32D(s, b->w, "w");
-	PUTX_INT32D(s, b->h, "h");
 }
 
 void clearmsg(htmsg *msg)
@@ -318,7 +310,7 @@ void ht_view::enable_buffering()
 	}
 }
 
-bool view_line_exposed(ht_view *v, int y, int x1, int x2)
+static bool view_line_exposed(ht_view *v, int y, int x1, int x2)
 {
 	ht_group *g=v->group;
 	while (g) {
