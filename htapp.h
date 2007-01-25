@@ -355,6 +355,7 @@ public:
 		ht_view *popup_view_list(const char *dialog_title);
 		ht_window *popup_window_list(const char *dialog_title);
 		void project_opencreate(const char *filename);
+		void tile(bool vertical);
 };
 
 extern ht_log *loglines;
