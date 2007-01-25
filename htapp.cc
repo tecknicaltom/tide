@@ -1482,6 +1482,7 @@ void ht_app::init(Bounds *pq)
 	windows->insert_entry("~Close", "Alt+F3", cmd_window_close, K_Meta_F3, 1);
 	windows->insert_entry("~Close (alt)", "Ctrl+W", cmd_window_close, K_Control_W, 1);
 	windows->insert_entry("~List", "Alt+0", cmd_popup_dialog_window_list, K_Meta_0, 1);
+	windows->insert_entry("~Tile", NULL, cmd_window_tile, 0, 1);
 	windows->insert_separator();
 	windows->insert_entry("Lo~g window", NULL, cmd_popup_window_log, 0, 1);
 	windows->insert_entry("~Options", NULL, cmd_popup_window_options, 0, 1);
@@ -2700,6 +2701,10 @@ void ht_app::handlemsg(htmsg *msg)
 			if (battlefield->current) sendmsg(msg_kill, battlefield->current);
 			clearmsg(msg);
 			return;
+		case cmd_window_tile:
+			tile(true);
+			clearmsg(msg);
+			return;
 		case cmd_popup_dialog_eval: {
 			eval_dialog();
 			clearmsg(msg);
@@ -2974,6 +2979,98 @@ void ht_app::project_opencreate(const char *filename)
 		sendmsg(&m);
 		create_window_project();
 	}
+}
+
+static uint isqr(uint u)
+{
+	uint a = 2;
+	uint b = u/a;
+	while (abs(a - b) > 1) {
+		a = (a+b)/2;
+		b = u/a;
+        }
+	return MIN(a, b);
+}
+
+static void mostEqualDivisors(int n, int &x, int &y)
+{
+	int i;
+
+	i = isqr(n);
+	if (n%i && n%(i+1)==0) {
+		i++;
+	}
+	if (i < (n/i)) {
+		i = n/i;
+	}
+	x = n/i;
+	y = i;
+}
+
+static int dividerLoc(int lo, int hi, int num, int pos)
+{
+	return int(long(hi-lo)*pos/long(num)+lo);
+}
+
+static void calcTileRect(int pos, int numRows, int numCols, int leftOver, const Bounds &b, Bounds &nB)
+{
+	int x, y;
+
+	int d = (numCols - leftOver) * numRows;
+	if (pos <  d) {
+		x = pos / numRows;
+		y = pos % numRows;
+	} else {
+		x = (pos-d)/(numRows+1) + (numCols-leftOver);
+		y = (pos-d)%(numRows+1);
+	}
+	nB.x = dividerLoc(b.x, b.x+b.w, numCols, x);
+	nB.w = dividerLoc(b.x, b.x+b.w, numCols, x+1) - nB.x;
+	if (pos >= d) {
+		nB.y = dividerLoc(b.y, b.y+b.h, numRows+1, y);
+		nB.h = dividerLoc(b.y, b.y+b.h, numRows+1, y+1) - nB.y;
+	} else {
+		nB.y = dividerLoc(b.y, b.y+b.h, numRows, y);
+		nB.h = dividerLoc(b.y, b.y+b.h, numRows, y+1) - nB.y;
+	}
+}
+
+void ht_app::tile(bool vertical)
+{
+	Bounds b, bf;
+	get_stdbounds_file(&b);
+	battlefield->getbounds(&bf);
+	int numTileable = 0;
+	foreach(ht_app_window_entry, e, *windows, {
+		if (e->isfile) numTileable++;
+	});
+	// count
+	if (numTileable > 0) {
+		int numRows, numCols;
+		if (vertical) {
+			mostEqualDivisors(numTileable, numRows, numCols);
+		} else {
+			mostEqualDivisors(numTileable, numCols, numRows);
+		}
+		if (b.w/numCols==0 || b.h/numRows==0) {
+			return;
+		} else {
+			int leftOver = numTileable % numCols;
+			int tileNum = numTileable - 1;
+			
+			foreachbwd(ht_app_window_entry, e, *windows, {
+				if (e->isfile) {
+					Bounds nb, ob;
+					calcTileRect(tileNum, numRows, numCols, leftOver, b, nb);
+					e->window->getbounds(&ob);
+					e->window->move(nb.x-(ob.x-bf.x), nb.y-(ob.y-bf.y));
+					e->window->resize(nb.w-ob.w, nb.h-ob.h);
+					tileNum--;
+				}
+			});
+		}
+	}
+	sendmsg(msg_dirtyview);
 }
 
 int ht_app::run(bool modal)
