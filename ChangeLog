@@ -5,6 +5,7 @@ version 2.0beta3:
 	- fixed crash in drop-down widget
 	- fixed loading of class files
 	- fixed generating text output files of analyser
+	- implemented automatic window tiling
 
 version 2.0beta2:
 	- should now really support file sizes > 4 GiB
