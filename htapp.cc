@@ -1482,7 +1482,11 @@ void ht_app::init(Bounds *pq)
 	windows->insert_entry("~Close", "Alt+F3", cmd_window_close, K_Meta_F3, 1);
 	windows->insert_entry("~Close (alt)", "Ctrl+W", cmd_window_close, K_Control_W, 1);
 	windows->insert_entry("~List", "Alt+0", cmd_popup_dialog_window_list, K_Meta_0, 1);
-	windows->insert_entry("~Tile", NULL, cmd_window_tile, 0, 1);
+	ht_static_context_menu *tile=new ht_static_context_menu();
+	tile->init("~Tile");
+	tile->insert_entry("~Vertically", NULL, cmd_window_tile_vertical, 0, 1);
+	tile->insert_entry("~Horizontally", NULL, cmd_window_tile_horizontal, 0, 1);
+	windows->insert_submenu(tile);
 	windows->insert_separator();
 	windows->insert_entry("Lo~g window", NULL, cmd_popup_window_log, 0, 1);
 	windows->insert_entry("~Options", NULL, cmd_popup_window_options, 0, 1);
@@ -2701,8 +2705,12 @@ void ht_app::handlemsg(htmsg *msg)
 			if (battlefield->current) sendmsg(msg_kill, battlefield->current);
 			clearmsg(msg);
 			return;
-		case cmd_window_tile:
+		case cmd_window_tile_vertical:
 			tile(true);
+			clearmsg(msg);
+			return;
+		case cmd_window_tile_horizontal:
+			tile(false);
 			clearmsg(msg);
 			return;
 		case cmd_popup_dialog_eval: {
