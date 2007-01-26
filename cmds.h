@@ -25,7 +25,7 @@
 
 #define CMD	uint32
 
-#define msg_command					0x80000000
+#define msg_command				0x80000000
 #define HT_COMMAND(c)				(msg_command+(c))
 
 #define cmd_quit				HT_COMMAND(100)
@@ -51,7 +51,8 @@
 #define cmd_window_resizemove			HT_COMMAND(140)
 #define cmd_window_switch_resizemove		HT_COMMAND(141)
 #define cmd_window_close			HT_COMMAND(142)
-#define cmd_window_tile				HT_COMMAND(143)
+#define cmd_window_tile_vertical		HT_COMMAND(143)
+#define cmd_window_tile_horizontal		HT_COMMAND(144)
 
 #define cmd_project_open			HT_COMMAND(160)
 #define cmd_project_close			HT_COMMAND(161)
@@ -61,12 +62,12 @@
 
 #define cmd_popup_dialog_eval			HT_COMMAND(180)
 #define cmd_popup_dialog_view_list		HT_COMMAND(181)
-#define cmd_popup_dialog_window_list	HT_COMMAND(182)
+#define cmd_popup_dialog_window_list		HT_COMMAND(182)
 #define cmd_popup_window_log			HT_COMMAND(183)
 #define cmd_popup_window_help			HT_COMMAND(184)
 #define cmd_popup_window_options		HT_COMMAND(185)
 #define cmd_popup_window_project		HT_COMMAND(186)
-#define cmd_popup_dialog_info_loader	HT_COMMAND(187)
+#define cmd_popup_dialog_info_loader		HT_COMMAND(187)
 
 #define cmd_vstate_restore			HT_COMMAND(190)
 
