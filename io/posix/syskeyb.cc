@@ -209,9 +209,9 @@ ht_key keyb_getkey()
 	}
 	k = keyb_rawkey2key(r);
 	if (k == K_INVALID && (unsigned int)r <= 255) {
-	if (r == 'a') {
-		return K_Control_PageDown;
-	}
+//	if (r == 'a') {
+//		return K_Control_PageDown;
+//	}
 		return (ht_key)r;
 	}
 //debug:	if (k == K_INVALID) return (ht_key)r;
