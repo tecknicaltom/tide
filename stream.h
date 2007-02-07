@@ -89,7 +89,7 @@ public:
 	virtual uint			write(const void *buf, uint size);
 	/* new */
 		Stream *		getLayered() const;
-		void			setLayered(Stream *newLayered, bool ownNewLayered);
+	virtual	void			setLayered(Stream *newLayered, bool ownNewLayered);
 };
 
 
