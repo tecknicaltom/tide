@@ -2167,24 +2167,23 @@ void ht_text_editor::delete_lines(uint line, uint count)
 const char *ht_text_editor::func(uint i, bool execute)
 {
 	switch (i) {
-		case 2:
-			if (execute) {
-				String fn;
-				if (!textfile->getFilename(fn).isEmpty()) {
-					sendmsg(cmd_file_save);
-				} else {
-					// FIXME: !! call undolist->mark_clean() !!
-					app->sendmsg(cmd_file_saveas);
-					bool dirty = true;
-					FileOfs start = 0;
-					FileOfs end = 0x7fffffff;
-					textfile->cntl(FCNTL_MODS_IS_DIRTY, start, end, &dirty);
-					if (undo_list && !dirty) {
-						undo_list->mark_clean();
-					}
+	case 2:
+		if (execute) {
+			String fn;
+			if (!textfile->getFilename(fn).isEmpty()) {
+				sendmsg(cmd_file_save);
+			} else {
+				app->sendmsg(cmd_file_saveas);
+				bool dirty = true;
+				FileOfs start = 0;
+				FileOfs end = 0x7fffffff;
+				textfile->cntl(FCNTL_MODS_IS_DIRTY, start, end, &dirty);
+				if (undo_list && !dirty) {
+					undo_list->mark_clean();
 				}
 			}
-			return "save";
+		}
+		return "save";
 
 	}
 	return ht_text_viewer::func(i, execute);
@@ -2499,13 +2498,16 @@ void ht_text_editor::insert_lines(uint line, uint count)
 
 bool ht_text_editor::save()
 {
+//	asm(".byte 0xcc");
 	String oldname;
 	if (textfile->getFilename(oldname).isEmpty()) return false;
 	dirtyview();
 
 	TempFile temp(IOAM_READ | IOAM_WRITE);
 
-	File *old = textfile->getLayered();
+	ht_ltextfile *old = dynamic_cast<ht_ltextfile *>(textfile->getLayered());
+	String blub;
+	old->getDesc(blub);
 
 	old->seek(0);
 	old->copyAllTo(&temp);
@@ -2518,17 +2520,18 @@ bool ht_text_editor::save()
 		return false;
 	}
 
-	textfile->set_layered_assume(&temp, false, false);
 
 	old->setAccessMode(IOAM_WRITE);
-	old->truncate(0);
-
-	textfile->seek(0);
-	textfile->copyAllTo(old);
+	
+	File *f = old->getLayered();
+	f->truncate(0);
+	temp.seek(0);
+	temp.copyAllTo(f);
 
 	old->setAccessMode(IOAM_READ);
+	old->reread();
 
-	textfile->set_layered_assume(old, true, true);
+//	textfile->set_layered_assume(old, true, true);
 
 	if (undo_list) {
 		undo_list->mark_clean();
