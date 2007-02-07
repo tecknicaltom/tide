@@ -443,7 +443,7 @@ bool ht_disasm_sub::getline(char *line, const LINE_ID line_id)
 		s = "db ?";
 		c = 0;
 	}
-	l += sprintf(l, "%08x", ofs);
+	l += sprintf(l, "%08qx", ofs);
 	*l++=' ';
 	for (int i=0; i<15; i++) {
 		if (i<c) {
