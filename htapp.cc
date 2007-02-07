@@ -2363,11 +2363,19 @@ void ht_app::handlemsg(htmsg *msg)
 							delete f;
 							return;
 						}
+//						asm(".byte 0xcc");
 
 						File *old = e->layer->getLayered();
 
 						if (f->setAccessMode(old->getAccessMode()) == 0) {
-							e->layer->setLayered(f, true);
+							FileLayer *l;
+							// FIXME: UGLY hack
+							if (dynamic_cast<ht_ltextfile *>(old)) {
+								l = new ht_ltextfile(f, true, NULL);
+							} else {
+								l = new FileModificator(f, true);
+							}
+							e->layer->setLayered(l, true);
 							e->isfile = true;
 
 							delete old;
@@ -2375,7 +2383,7 @@ void ht_app::handlemsg(htmsg *msg)
 							char *fullfn;
 							if (sys_canonicalize(&fullfn, fn)==0) {
 								e->window->settitle(fullfn);
-								free(fullfn);							
+								free(fullfn);
 							} else {
 								e->window->settitle(fn);
 							}
@@ -2592,25 +2600,25 @@ void ht_app::handlemsg(htmsg *msg)
 			if (file_new_dialog(&mode)) {
 				MemoryFile *mfile = new MemoryFile();
 				switch (mode) {
-					case FOM_TEXT: {
-						ht_syntax_lexer *lexer = NULL;
-			
-						ht_ltextfile *tfile = new ht_ltextfile(mfile, true, lexer);			
-						ht_layer_textfile *file = new ht_layer_textfile(tfile, true);
-				
-						create_window_file_text(&b, file, "Untitled", false/* because mem_file is underlying, not ht_file, etc.*/);
-						break;
-					}
-					case FOM_BIN: {
-						FileModificator *modfile = new FileModificator(mfile, true);
-						FileLayer *file = new FileLayer(modfile, true);
+				case FOM_TEXT: {
+					ht_syntax_lexer *lexer = NULL;
 
-						ht_window *w = create_window_file_bin(&b, file, "Untitled", false);
-						htmsg m;
-						m.msg = cmd_file_resize;
-						m.type = mt_empty;
-						w->sendmsg(&m);
-					}
+					ht_ltextfile *tfile = new ht_ltextfile(mfile, true, lexer);
+					ht_layer_textfile *file = new ht_layer_textfile(tfile, true);
+
+					create_window_file_text(&b, file, "Untitled", false/* because mem_file is underlying, not ht_file, etc.*/);
+					break;
+				}
+				case FOM_BIN: {
+					FileModificator *modfile = new FileModificator(mfile, true);
+					FileLayer *file = new FileLayer(modfile, true);
+
+					ht_window *w = create_window_file_bin(&b, file, "Untitled", false);
+					htmsg m;
+					m.msg = cmd_file_resize;
+					m.type = mt_empty;
+					w->sendmsg(&m);
+				}
 				}
 			}
 			clearmsg(msg);
