@@ -9,16 +9,19 @@ COMIO_DIR	= io
 IO_DIR		= io/@IO_DIR@
 OUTPUT_DIR	= output
 EVAL_DIR	= eval
-MINILZO_DIR	= minilzo
 #SRT_DIR		= srt
-
 EXTRA_DIST	= TODO ChangeLog README KNOWNBUGS INSTALL COPYING AUTHORS
-SUBDIRS		= tools analyser asm doc info io output eval minilzo
+SUBDIRS		= tools analyser asm doc info io output eval
 
-INCLUDES	= -I$(srcdir)/$(ANALYSER_DIR) -I$(srcdir)/$(ASM_DIR) -I$(srcdir)/$(INFO_DIR) -I$(srcdir)/$(IO_DIR) -I$(srcdir)/$(COMIO_DIR) -I$(srcdir)/$(OUTPUT_DIR) -I$(srcdir)/$(EVAL_DIR) -I$(srcdir)/$(MINILZO_DIR) -I$(srcdir)
+INCLUDES	= -I$(srcdir)/$(ANALYSER_DIR) -I$(srcdir)/$(ASM_DIR) -I$(srcdir)/$(INFO_DIR) -I$(srcdir)/$(IO_DIR) -I$(srcdir)/$(COMIO_DIR) -I$(srcdir)/$(OUTPUT_DIR) -I$(srcdir)/$(EVAL_DIR) -I$(srcdir)
 
-ht_LDADD	= $(ANALYSER_DIR)/libanalyser.a $(ASM_DIR)/libasm.a $(INFO_DIR)/libinfo.a $(IO_DIR)/libhtio.a $(OUTPUT_DIR)/liboutput.a $(COMIO_DIR)/libcomio.a $(EVAL_DIR)/libhteval.a $(MINILZO_DIR)/liblzo.a @HT_LIBS@
+ht_LDADD	= $(ANALYSER_DIR)/libanalyser.a $(ASM_DIR)/libasm.a $(INFO_DIR)/libinfo.a $(IO_DIR)/libhtio.a $(OUTPUT_DIR)/liboutput.a $(COMIO_DIR)/libcomio.a $(EVAL_DIR)/libhteval.a @HT_LIBS@ @LZO_LIBS@
 ht_LDFLAGS	= @HT_LDFLAGS@
+
+if ENABLE_INCLUDED_LZO
+SUBDIRS += minilzo
+ht_LDADD += minilzo/liblzo.a
+endif
 
 ht_SOURCES	= atom.cc atom.h except.cc except.h data.cc data.h \
 str.cc str.h strtools.cc strtools.h endianess.h endianess.cc \
