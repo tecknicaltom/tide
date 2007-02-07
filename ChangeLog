@@ -6,6 +6,7 @@ version 2.0beta3:
 	- fixed loading of class files
 	- fixed generating text output files of analyser
 	- implemented automatic window tiling
+	- fixed saving of text files
 
 version 2.0beta2:
 	- should now really support file sizes > 4 GiB
