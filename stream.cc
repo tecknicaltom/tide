@@ -991,9 +991,9 @@ int LocalFileFD::setAccessModeInternal(IOAccessMode am)
 	if (getAccessMode() == am) return 0;
 	if (fd >= 0) {
 		// must own fd to change its access mode cause we can't
-		// reopen a fd. right ?
+		// reopen a fd. right?
 		if (!own_fd) throw NotImplementedException(HERE);
-		// FIXME: race condition here, how to reopen a fd atomically ?
+		// FIXME: race condition here, how to reopen a fd atomically?
 		close(fd);
 		fd = -1;
 	}
@@ -1008,14 +1008,14 @@ int LocalFileFD::setAccessModeInternal(IOAccessMode am)
 //	mode |= O_BINARY;
 
 	switch (mOpenMode) {
-		case FOM_APPEND:
-			mode |= O_APPEND;
-			break;
-		case FOM_CREATE:
-			mode |= O_CREAT | O_TRUNC;
-			break;
-		case FOM_EXISTS:
-			;
+	case FOM_APPEND:
+		mode |= O_APPEND;
+		break;
+	case FOM_CREATE:
+		mode |= O_CREAT | O_TRUNC;
+		break;
+	case FOM_EXISTS:
+		;
 	}
 
 	int e = 0;
@@ -1114,8 +1114,7 @@ LocalFile::LocalFile(SYS_FILE *f, bool own_f, IOAccessMode am)
 {
 	file = f;
 	own_file = own_f;
-	int e = LocalFile::setAccessMode(am);
-	if (e) throw IOException(e);
+	File::setAccessMode(am);
 }
 
 LocalFile::~LocalFile()
@@ -1146,7 +1145,7 @@ FileOfs LocalFile::getSize() const
 
 void LocalFile::pstat(pstat_t &s) const
 {
-	sys_pstat(s, mFilename.contentChar());
+	sys_pstat_file(s, file);
 }
 
 uint LocalFile::read(void *buf, uint size)
