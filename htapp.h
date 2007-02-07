@@ -267,11 +267,11 @@ public:
 
 #define AWT_LOG		0
 #define AWT_CLIPBOARD	1
-#define AWT_HELP		2
-#define AWT_FILE		3
+#define AWT_HELP	2
+#define AWT_FILE	3
 #define AWT_OFM		4
-#define AWT_PROJECT		5
-#define AWT_TERM		6
+#define AWT_PROJECT	5
+#define AWT_TERM	6
 
 class ht_app_window_entry: public Object {
 public:
