@@ -125,8 +125,8 @@ protected:
 			void split_line(uint a, uint pos, void *line_end, int line_end_len);
 			void update_nofs(uint line) const;
 			void update_parse(uint line);
-			void reread();
 public:
+			void reread();
 			ht_ltextfile(File *file, bool own_file, ht_syntax_lexer *lexer);
 	virtual		~ht_ltextfile();
 /* overwritten (streamfile) */
