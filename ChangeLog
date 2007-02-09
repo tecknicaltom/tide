@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 2.0beta4:
+	- fixed crash in cp-demangle
+
 version 2.0beta3:
 	- fixed crash in drop-down widget
 	- fixed loading of class files
