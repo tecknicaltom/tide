@@ -240,7 +240,7 @@ int sys_deletefile(const char *filename)
 
 void sys_suspend()
 {
-	Sleep(0);
+	Sleep(42);
 }
 
 static const char *openmode2mode(FileOpenMode om, IOAccessMode am)
