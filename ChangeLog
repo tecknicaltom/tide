@@ -3,6 +3,7 @@
 
 version 2.0beta4:
 	- fixed crash in cp-demangle
+	- [Win32] Relax CPU
 
 version 2.0beta3:
 	- fixed crash in drop-down widget
