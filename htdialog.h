@@ -149,20 +149,20 @@ struct ht_inputfield_data {
 
 class ht_inputfield: public ht_view {
 protected:
-			byte **text, *textv;
-			byte **curchar, *curcharv;
-			byte **selstart, *selstartv;
-			byte **selend, *selendv;
-			int *textlen, textlenv;
-			int *maxtextlen, maxtextlenv;
-			int insert;
-			int ofs;
-			ht_inputfield *attachedto;
-			List *history;
+	byte **text, *textv;
+	byte **curchar, *curcharv;
+	byte **selstart, *selstartv;
+	byte **selend, *selendv;
+	int *textlen, textlenv;
+	int *maxtextlen, maxtextlenv;
+	int insert;
+	int ofs;
+	ht_inputfield *attachedto;
+	List *history;
 
-			void freebuf();
-			int insertbyte(byte *pos, byte b);
-			void select_add(byte *start, byte *end);
+		void freebuf();
+		int insertbyte(byte *pos, byte b);
+		void select_add(byte *start, byte *end);
 /* overwritten */
 	virtual	const char *defaultpalette();
 public:
@@ -173,9 +173,9 @@ public:
 	virtual	void getdata(ObjectStream &s);
 	virtual	void setdata(ObjectStream &s);
 /* new */
-			void attach(ht_inputfield *inputfield);
-			void query(byte ***curchar, byte ***text, byte ***selstart, byte ***selend, int **textlen, int **maxtextlen);
-			void isetcursor(uint pos);
+		void attach(ht_inputfield *inputfield);
+		void query(byte ***curchar, byte ***text, byte ***selstart, byte ***selend, int **textlen, int **maxtextlen);
+		void isetcursor(uint pos);
 };
 
 /*
@@ -190,10 +190,10 @@ protected:
 	bool selectmode;
 	
 /* new */
-			void correct_viewpoint();
-			void history_dialog();
-			bool inputbyte(byte a);
-			bool setbyte(byte a);
+		void correct_viewpoint();
+		void history_dialog();
+		bool inputbyte(byte a);
+		bool setbyte(byte a);
 public:
 		void	init(Bounds *b, int maxtextlen, List *history = NULL);
 	virtual	void	done();
@@ -211,11 +211,11 @@ public:
 
 class ht_hexinputfield: public ht_inputfield {
 protected:
-			int nib;
+	int nib;
 
-			void correct_viewpoint();
+		void correct_viewpoint();
 public:
-			void	init(Bounds *b, int maxtextlen);
+		void	init(Bounds *b, int maxtextlen);
 	virtual	void	done();
 /* overwritten */
 	virtual 	void draw();
@@ -241,7 +241,7 @@ protected:
 /* overwritten */
 	virtual	const char *defaultpalette();
 public:
-			void	init(Bounds *b, const char *text, int value);
+		void	init(Bounds *b, const char *text, int value);
 	virtual	void	done();
 /* overwritten */
 	virtual void 	draw();
@@ -267,15 +267,15 @@ protected:
 /* overwritten */
 	virtual	const char *defaultpalette();
 public:
-			void	init(Bounds *b);               
-	virtual	void	done();
+		void init(Bounds *b);               
+	virtual	void done();
 /* overwritten */
-	virtual 	void draw();
+	virtual	void draw();
 /* new */
 	virtual	vcp getTextColor();
-			void setText(int cols, ...);
-			void setTextv(int cols, va_list arguments);
-			void update();
+		void setText(int cols, ...);
+		void setTextv(int cols, va_list arguments);
+		void update();
 };
 
 /*
@@ -297,19 +297,19 @@ struct ht_listbox_data {
 class ht_listbox: public ht_view {
 protected:
 public:
-	int		cursor, pos, cached_count;
-	int		visible_height;
-	void		*e_top, *e_cursor;
-	int		x;
-	char		quickfinder[100];
-	char		*qpos;
-	uint		listboxcaps;
+	int	cursor, pos, cached_count;
+	int	visible_height;
+	void	*e_top, *e_cursor;
+	int	x;
+	char	quickfinder[100];
+	char	*qpos;
+	uint	listboxcaps;
 
-	int		cols;
-	int		*widths;
+	int	cols;
+	int	*widths;
 	
 	ht_scrollbar *scrollbar;
-	bool		mScrollbarEnabled;
+	bool	mScrollbarEnabled;
 	ht_listbox_title *title;
 
 public:
