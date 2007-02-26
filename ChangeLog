@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 2.0beta5:
+	- [Win32] messed up file-saving code
+
 version 2.0beta4:
 	- fixed crash in cp-demangle
 	- [Win32] Relax CPU
