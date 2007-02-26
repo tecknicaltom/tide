@@ -1201,8 +1201,10 @@ int LocalFile::setAccessModeInternal(IOAccessMode am)
 			}
 		}
 	} else {
-		sys_fclose(file);
-		file = NULL;
+		if (file) {
+			sys_fclose(file);
+			file = NULL;
+		}
 	}
 	return e ? e : File::setAccessMode(am);
 }
