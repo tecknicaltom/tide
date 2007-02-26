@@ -45,6 +45,8 @@
 #define JOPC_SIZE_SMALL		0x40
 #define JOPC_SIZE_WIDE		0x80
 
+#define JAVAINSN_MAX_PARAM_COUNT	3
+
 struct java_insn_op {
 	int type;
 	int size;
@@ -58,7 +60,7 @@ struct java_insn_op {
 
 struct javaopc_insn {
 	const char *name;
-	int optype[2];
+	int optype[JAVAINSN_MAX_PARAM_COUNT];
 };
 
 #define JAVA_WIDE_OPCODE 0xc4
