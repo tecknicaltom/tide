@@ -108,7 +108,7 @@ public:
  */
 struct ht_hexascii_search_form_data {
 	ht_strinputfield_data str;
-	ht_hexinputfield_data hex;
+//	ht_hexinputfield_data hex; // is attached to |str|
 	ht_strinputfield_data start;
 	ht_strinputfield_data end;
 	ht_checkboxes_data options;
