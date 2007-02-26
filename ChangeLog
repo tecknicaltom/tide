@@ -3,8 +3,9 @@
 
 version 2.0beta6:
 	- fixed crash when opening read only files in obscure situations
-	- [ELF] fixed binary search in image view
+	- [ELF & java] fixed binary search in image view
 	- [ELF64] some cosmetic fixes
+	- [java] off by one
 	
 version 2.0beta5:
 	- [Win32] messed up file-saving code
