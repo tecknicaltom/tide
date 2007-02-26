@@ -41,7 +41,7 @@ dis_insn *javadis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 	codep = ocodep;
 	maxlen = Maxlen;
 	addr = Addr.addr32.offset;
-	memset(&insn, 0, sizeof(insn));
+	memset(&insn, 0, sizeof insn);
 	insn.invalid = false;
 
 	insn.opcode = getbyte();
