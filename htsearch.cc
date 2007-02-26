@@ -993,29 +993,33 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 			}
 			/* create request */
 			switch (s->search_class) {
-				case SC_PHYSICAL:
-					if (!format->pos_to_offset(*start, &sstart.offset)
-						|| !format->pos_to_offset(*end, &send.offset)) {
-						throw MsgfException("Internal error: can't convert viewer_pos to offset");
-					}
-					break;
-				case SC_VISUAL:
-					sstart.pos = *start;
-					send.pos = *end;
-					break;
+			case SC_PHYSICAL:
+				if (!format->pos_to_offset(*start, &sstart.offset)) {
+					throw MsgfException("Internal error: can't convert viewer_pos to offset");
+				}
+				if (!format->pos_to_offset(*end, &send.offset)) {
+					send.offset = -1;
+				}
+				break;
+			case SC_VISUAL:
+				sstart.pos = *start;
+				send.pos = *end;
+				break;
 			}
 			result = s->create_request(&sstart, &send, form, format, s->search_class);
 			switch (s->search_class) {
-				case SC_PHYSICAL:
-					if (!format->offset_to_pos(sstart.offset, start)
-					|| !format->offset_to_pos(send.offset, end)) {
-						throw MsgfException("Internal error: can't convert offset to viewer_pos");
-					}
-					break;
-				case SC_VISUAL:
-					*start = sstart.pos;
-					*end = send.pos;
-					break;
+			case SC_PHYSICAL:
+				if (!format->offset_to_pos(sstart.offset, start)) {
+					throw MsgfException("Internal error: can't convert offset to viewer_pos");
+				}
+				if (!format->pos_to_offset(*end, &send.offset)) {
+					send.offset = -1;
+				}
+				break;
+			case SC_VISUAL:
+				*start = sstart.pos;
+				*end = send.pos;
+				break;
 			}
 		} catch (const Exception &e) {
 			String s;
