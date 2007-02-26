@@ -109,10 +109,18 @@ void ElfAnalyser::beginAnalysis()
 			addComment(secaddr, 0, "");
 			addComment(secaddr, 0, ";******************************************************************");
 			addComment(secaddr, 0, blub);
-			ht_snprintf(blub, sizeof blub, ";  virtual address  %08x  virtual size   %08x", s32->sh_addr, s32->sh_size);
+			if (c32) {
+				ht_snprintf(blub, sizeof blub, ";  virtual address  %08x  virtual size   %08x", s32->sh_addr, s32->sh_size);
+			} else {
+				ht_snprintf(blub, sizeof blub, ";  virtual address  %08qx  virtual size   %08qx", s64->sh_addr, s64->sh_size);
+			}
 			addComment(secaddr, 0, blub);
 			if (validAddress(secaddr, scinitialized)) {
-				ht_snprintf(blub, sizeof blub, ";  file offset      %08x  file size      %08x", s32->sh_offset, s32->sh_size);
+				if (c32) {
+					ht_snprintf(blub, sizeof blub, ";  file offset      %08x  file size      %08x", s32->sh_offset, s32->sh_size);
+				} else {
+					ht_snprintf(blub, sizeof blub, ";  file offset      %08qx  file size      %08qx", s64->sh_offset, s64->sh_size);
+				}
 			} else {
 				ht_snprintf(blub, sizeof blub, ";  section is not in file");
 			}
@@ -134,7 +142,13 @@ void ElfAnalyser::beginAnalysis()
 			addComment(secend_addr, 0, ";******************************************************************");
 
 			validarea->add(secaddr, secend_addr);
-
+			
+			Address *seciniaddr = secaddr->clone();
+			seciniaddr->add(c32 ? s32->sh_size : s64->sh_size);
+			if (validAddress(secaddr, scinitialized) && validAddress(seciniaddr, scinitialized)) {
+				initialized->add(secaddr, seciniaddr);
+			}
+			delete seciniaddr;
 			delete secend_addr;
 		}
 		delete secaddr;
