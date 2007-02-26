@@ -306,8 +306,8 @@ void FileBrowser::setstate(int state, int return_val)
 		ViewDataBuf vdb(name_input, &i, sizeof i);
 		pstat_t s;
 		String fn(i.text, i.textlen);
-		sys_pstat(s, fn.contentChar());
-		if ((s.caps & pstat_mode_type) && (s.mode & HT_S_IFDIR)) {
+		int e = sys_pstat(s, fn.contentChar());
+		if (e == 0 && (s.caps & pstat_mode_type) && (s.mode & HT_S_IFDIR)) {
 			fn.prepend("local:");
 			listbox->changeURL(fn.contentChar());
 			return;
