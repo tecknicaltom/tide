@@ -117,6 +117,11 @@ void ClassAnalyser::beginAnalysis()
 			addComment(a, 0, ";----------------------------------------------");
 			addAddressSymbol(a, cm->name, label_func);
 			pushAddress(a, a);
+			if (cm->length) {
+				Address *b = createAddress32(cm->start + cm->length - 1);
+				initialized->add(a, b);
+				delete b;
+			}
 			delete a;
 		});
 	}
