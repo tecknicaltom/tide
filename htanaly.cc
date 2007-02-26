@@ -170,16 +170,16 @@ const char *SymbolBox::getStr(int col, void *entry)
 	if (!entry) return NULL;
 	Symbol *l = ((Symbol *)entry);
 	switch (col) {
-		case 0:
-			global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_WHITESPACE;
-			ht_snprintf(str, 1024, "%y", l->location->addr);
-			break;
-		case 1:
-			ht_snprintf(str, 1024, "%s", label_type_short(l->type));
-			break;
-		case 2:
-			ht_snprintf(str, 1024, "%s", l->name);
-			break;
+	case 0:
+		global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_WHITESPACE;
+		ht_snprintf(str, 1024, "%y", l->location->addr);
+		break;
+	case 1:
+		ht_snprintf(str, 1024, "%s", label_type_short(l->type));
+		break;
+	case 2:
+		ht_snprintf(str, 1024, "%s", l->name);
+		break;
 	}
 	return str;
 }
@@ -197,7 +197,7 @@ bool SymbolBox::idle()
 	return 0;
 }
 
-int	SymbolBox::numColumns()
+int SymbolBox::numColumns()
 {
 	return 3;
 }
@@ -219,7 +219,7 @@ void *SymbolBox::quickfind(const char *s)
 }
 
 
-char	*SymbolBox::quickfindCompletition(const char *s)
+char *SymbolBox::quickfindCompletition(const char *s)
 {
 	if (analy->getSymbolByName(s)) {
 		return ht_strdup(s);
@@ -532,7 +532,7 @@ bool ht_aviewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
 		if (!convertViewerPosToAddress(p, &addr)) return false;
 		FileOfs o=analy->addressToFileofs(addr);
 		delete addr;
-		if (o!=INVALID_FILE_OFS) {
+		if (o != INVALID_FILE_OFS) {
 			*ofs=o;
 			return true;
 		}
@@ -585,14 +585,13 @@ bool ht_aviewer::convertAddressToViewerPos(Address *a, viewer_pos *p)
 const char *ht_aviewer::func(uint i, bool execute)
 {
 	switch (i) {
-		case 8: {
-			if (execute) {
-				sendmsg(cmd_analyser_symbols);
-			}
-			return "symbols";
+	case 8:
+		if (execute) {
+			sendmsg(cmd_analyser_symbols);
 		}
-		default:
-			return ht_uformat_viewer::func(i, execute);
+		return "symbols";
+	default:
+		return ht_uformat_viewer::func(i, execute);
 	}
 	return NULL;
 }
@@ -2107,7 +2106,7 @@ ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start,
 		if (!s) break;
 		st = (Address *)s->end;
 		FileOfs fstart, fend;
-		uint32 fsize;
+		FileOfs fsize;
 		viewer_pos vp_start, vp_end;
 		aviewer->convertAddressToViewerPos((Address *)s->start, &vp_start);
 		if (!aviewer->pos_to_offset(vp_start, &fstart)) assert(0);
@@ -2116,10 +2115,10 @@ ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start,
 		aviewer->convertAddressToViewerPos(send, &vp_end);
 		delete send;
 		if (!aviewer->pos_to_offset(vp_end, &fend)) assert(0);
-		fsize = fend-fstart;
-		if ((search->search_class==SC_PHYSICAL) && (search->type==ST_EXPR)) {
+		fsize = fend - fstart;
+		if (search->search_class == SC_PHYSICAL && search->type == ST_EXPR) {
 			r = linear_expr_search(search, start, end, this, uformat_viewer, fstart, fsize);
-		} else if ((search->search_class==SC_PHYSICAL) && (search->type==ST_FXBIN)) {
+		} else if (search->search_class == SC_PHYSICAL && search->type == ST_FXBIN) {
 			r = linear_bin_search(search, start, end, file, fstart, fsize);
 		}
 	}
