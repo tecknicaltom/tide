@@ -2652,8 +2652,10 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					case SC_PHYSICAL: {
 						try {
 							FileOfs start, end;
-							if (pos_to_offset(start_pos, &start)
-							&& pos_to_offset(end_pos, &end)) {
+							if (pos_to_offset(start_pos, &start)) {
+								if (!pos_to_offset(end_pos, &end)) {
+									end = -1;
+								}
 								result = psearch(request, start, end);
 							}
 						} catch (const Exception &e) {
@@ -3604,7 +3606,7 @@ bool ht_uformat_viewer::ref_sel(LINE_ID *id)
 ht_search_result *ht_uformat_viewer::psearch(ht_search_request *request, FileOfs start, FileOfs end)
 {
 	if (request != last_search_request) {
-		if (last_search_request) delete last_search_request;
+		delete last_search_request;
 		last_search_request = request->clone();
 	}
 	last_search_physical = true;
