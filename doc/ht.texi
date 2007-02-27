@@ -100,8 +100,7 @@ be registered in certain jurisdictions.
 
 @noindent
 This is HT @htversion{};
-please note that this is a beta version of the program.
-Therefore HT is incomplete and sometimes buggy. Enjoy anyway@dots{}
+Have fun@dots{}
 
 @menu
 * About::
@@ -247,8 +246,8 @@ instead of Control or something...
 @node Features, , Top, Top
 @unnumberedsec Features
 
-HT is beta software and should not always regarded as stable, but
-nevertheless contains some very advanced and useful features:
+HT contains some very advanced and useful features, which you
+should carefully inspect:
 
 @menu
 * General features::
