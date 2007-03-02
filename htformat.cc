@@ -41,7 +41,7 @@
 #include "httag.h"
 #include "textedit.h"
 #include "textfile.h"
-#include "process.h"
+#include "htprocess.h"
 #include "snprintf.h"
 #include "tools.h"
 
@@ -639,7 +639,7 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 					sendmsg(&m);
 				} catch (const IOException &e) {
 					String fn, s;
-					 errorbox("can't (re)open file %y in read mode! (%y)", &file->getFilename(fn), &e.reason(s));
+					errorbox("can't (re)open file %y in read mode! (%y)", &file->getFilename(fn), &e.reason(s));
 				}
 				if (size != file->getSize()) {
 					htmsg m;
@@ -2654,7 +2654,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 							FileOfs start, end;
 							if (pos_to_offset(start_pos, &start)) {
 								if (!pos_to_offset(end_pos, &end)) {
-									end = -1;
+									end = FileOfs(-1);
 								}
 								result = psearch(request, start, end);
 							}
@@ -4204,21 +4204,21 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 	return false;
 }
 
-ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize)
+ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, FileOfs fsize)
 {
-	if (start<fofs) start=fofs;
-	if (end>fofs+fsize) end=fofs+fsize;
+	if (start < fofs) start = fofs;
+	if (end>fofs + fsize) end = fofs+fsize;
 	if (fsize) {
-		ht_search_result *r=NULL;
+		ht_search_result *r = NULL;
 		ht_expr_search_pcontext c;
-		c.request=search;
-		c.sub=sub;
-		c.fv=ufv;
-		c.start=start;
-		c.end=end;
-		c.result=&r;
-		c.i=0;
-		c.o=start;
+		c.request = search;
+		c.sub = sub;
+		c.fv  =ufv;
+		c.start = start;
+		c.end = end;
+		c.result = &r;
+		c.i = 0;
+		c.o = start;
 		if (execute_process(process_search_expr, &c)) return r;
 	}
 	return NULL;
