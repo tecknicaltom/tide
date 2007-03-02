@@ -301,13 +301,11 @@ public:
 // flags
 #define SFBIN_CASEINSENSITIVE	1
 
-Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, uint *return_ofs, bool *return_success);
+Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success);
 bool search_bin_process(Object *context, ht_text *progress_indicator);
 
 ht_view* create_form_hexascii(Bounds *b, uint histid);
 void create_desc_hexascii(char *buf, int buflen, ht_view *f);
-
-ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, uint32 fsize);
 
 /*
  *
@@ -317,21 +315,21 @@ public:
 	File *file;
 
 	FileOfs ofs;
-	uint len;
+	FileOfs len;
 	
-	uint repllen;
+	FileOfs repllen;
 	byte *repl;
 
 	FileOfs o;
-	uint z;
+	FileOfs z;
 	byte *buf;
 	
-	uint *return_repllen;
+	FileOfs *return_repllen;
 
 	~ht_replace_bin_context();
 };
  
-Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen);
+Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, byte *repl, FileOfs repllen, FileOfs *return_repllen);
 bool replace_bin_process(Object *context, ht_text *progress_indicator);
 
 #endif /* __HTSEARCH_H__ */
