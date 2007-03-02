@@ -272,7 +272,7 @@ FileOfs FileModificator::copyTo(Stream *stream, FileOfs count)
 	return result;
 }
 
-void FileModificator::cut(uint size)
+void FileModificator::cut(FileOfs size)
 {
 	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 
@@ -292,7 +292,7 @@ void FileModificator::cut(uint size)
 		ObjHandle hnext = mods.findNext(h);
 		bool deleted = cut1(h, s, z);
 
-		if (!deleted && (o == a->start))
+		if (!deleted && o == a->start)
 			a->start -= ssize-size;// see NOTE 1 above
 		o += z;
 		size -= z;
@@ -374,7 +374,7 @@ FileOfs FileModificator::getSize() const
 	return newsize;
 }
 
-void FileModificator::insert(const void *buf, uint size)
+void FileModificator::insert(const void *buf, FileOfs size)
 {
 	if (!(getAccessMode() & IOAM_WRITE)) throw IOException(EACCES);
 
@@ -618,6 +618,9 @@ uint FileModificator::read(void *buf, uint size)
 	if (!(getAccessMode() & IOAM_READ)) throw IOException(EACCES);
 
 	FileOfs t = tell();
+	if (t == 0x00000000ULL) {
+		int a = 1;
+	}
 	FileOfs o = t;
 	ObjHandle h = findArea(o);
 	byte *b = (byte*)buf;
@@ -625,7 +628,7 @@ uint FileModificator::read(void *buf, uint size)
 	while (size && (h != invObjHandle)) {
 		FileArea *a = (FileArea*)mods.get(h);
 		FileOfs s = o - a->start;
-		uint z = a->size - s;
+		FileOfs z = a->size - s;
 		if (z > size) z = size;
 		h = mods.findNext(h);
 		read1(a, s, b, z);
