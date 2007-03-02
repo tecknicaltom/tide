@@ -165,7 +165,7 @@ public:
 	/* extends FileLayer */
 	virtual	FileOfs		copyAllTo(Stream *stream);
 	virtual	FileOfs		copyTo(Stream *stream, FileOfs count);
-	virtual	void		cut(uint size);
+	virtual	void		cut(FileOfs size);
 	virtual	void		extend(FileOfs newsize);
 	virtual String &	getDesc(String &result) const;
 	virtual	FileOfs		getSize() const;
@@ -175,7 +175,7 @@ public:
 	virtual	void		truncate(FileOfs newsize);
 	virtual	int		vcntl(uint cmd, va_list vargs);
 	virtual	uint		write(const void *buf, uint size);
-	virtual	void		insert(const void *buf, uint size);
+	virtual	void		insert(const void *buf, FileOfs size);
 };
 
 #endif /* __MFILE_H__ */
