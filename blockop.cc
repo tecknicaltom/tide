@@ -32,7 +32,7 @@
 #include "htiobox.h"
 #include "keyb.h"
 #include "strtools.h"
-#include "process.h"
+#include "htprocess.h"
 #include "snprintf.h"
 
 #include "evalx.h"
