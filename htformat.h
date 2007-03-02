@@ -593,8 +593,8 @@ public:
 		void insertsub(ht_sub *sub);
 };
 
-ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, uint32 fsize);
-ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, uint32 fsize);
+ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, FileOfs fsize);
+ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize);
 
 void clear_line_id(LINE_ID *l);
 bool compeq_line_id(const LINE_ID &a, const LINE_ID &b);
