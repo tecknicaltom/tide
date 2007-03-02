@@ -26,7 +26,7 @@
 #include "keyb.h"
 #include "htsearch.h"
 #include "strtools.h"
-#include "process.h"
+#include "htprocess.h"
 #include "snprintf.h"
 
 extern "C" {
@@ -39,12 +39,12 @@ union search_pos {
 };
 
 /* FIXME: get rid of global vars */
-uint lastsearchmodeid=0;
-uint lastreplacemodeid=0;
+uint lastsearchmodeid = 0;
+uint lastreplacemodeid = 0;
 
 typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, ht_view *form, ht_format_viewer *format, uint search_class);
 
-typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen);
+typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, FileOfs len, ht_view *form, FileOfs *return_repllen);
 
 struct ht_search_method {
 	const char *name;
@@ -472,7 +472,7 @@ ht_search_bin_context::~ht_search_bin_context()
 	free(pat);
 }
 
-Object* create_search_bin_context(File *file, FileOfs ofs, uint len, byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success)
+Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success)
 {
 	if (patlen > SEARCH_BUF_SIZE) return NULL;
 	
@@ -874,7 +874,7 @@ ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
 	return form;
 }
 
-Object* create_replace_hexascii_context(File *file, FileOfs ofs, uint len, ht_view *form, uint *return_repllen)
+Object* create_replace_hexascii_context(File *file, FileOfs ofs, FileOfs len, ht_view *form, FileOfs *return_repllen)
 {
 	ht_replace_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
@@ -1130,7 +1130,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 			try {
 				bool replace_all = false;
 				while ((result = (ht_physical_search_result*)format->psearch(request, so, eo))) {
-					uint irepllen = 0;
+					FileOfs irepllen = 0;
 					bool do_replace = false;
 
 					if (!replace_all) {
@@ -1189,7 +1189,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 }
 
 #define REPLACE_COPY_BUF_SIZE	64*1024
-Object* create_replace_bin_context(File *file, FileOfs ofs, uint len, byte *repl, uint repllen, uint *return_repllen)
+Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, byte *repl, FileOfs repllen, FileOfs *return_repllen)
 {
 	ht_replace_bin_context *ctx = new ht_replace_bin_context();
 	ctx->file = file;
@@ -1494,14 +1494,14 @@ void ht_replace_dialog::select_replace_mode_bymodeidx()
  *
  */
  
-ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, uint32 fsize)
+ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize)
 {
-	ht_fxbin_search_request *s=(ht_fxbin_search_request*)search;
+	ht_fxbin_search_request *s = (ht_fxbin_search_request*)search;
 		
-	int fl=(search->flags & SFBIN_CASEINSENSITIVE) ? SFBIN_CASEINSENSITIVE : 0;
-	if (start<fofs) start=fofs;
-	if (end>fofs+fsize) end=fofs+fsize;
-	if ((fsize) && (start<end)) {
+	int fl = (search->flags & SFBIN_CASEINSENSITIVE) ? SFBIN_CASEINSENSITIVE : 0;
+	if (start < fofs) start = fofs;
+	if (end > fofs+fsize) end = fofs+fsize;
+	if (fsize && start < end) {
 		/* create result */
 		bool search_success = false;
 		FileOfs search_ofs;
