@@ -292,11 +292,11 @@ public:
 		File();
 	/* new */
 		int			cntl(uint cmd, ...);
-	virtual void			cut(uint size);
+	virtual void			cut(FileOfs size);
 	virtual void			extend(FileOfs newsize);
 	virtual String &		getFilename(String &result) const;
 	virtual FileOfs			getSize() const;
-	virtual void			insert(const void *buf, uint size);
+	virtual void			insert(const void *buf, FileOfs size);
 	virtual void			pstat(pstat_t &s) const;
 	virtual void			seek(FileOfs offset);
 	virtual FileOfs			tell() const;
@@ -318,13 +318,13 @@ public:
 					FileLayer(File *file, bool own_file);
 	virtual 			~FileLayer();
 	/* extends File */
-	virtual void			cut(uint size);
+	virtual void			cut(FileOfs size);
 	virtual void			extend(FileOfs newsize);
 	virtual IOAccessMode		getAccessMode() const;
 	virtual String &		getDesc(String &result) const;
 	virtual String &		getFilename(String &result) const;
 	virtual FileOfs			getSize() const;
-	virtual void			insert(const void *buf, uint size);
+	virtual void			insert(const void *buf, FileOfs size);
 	virtual void			pstat(pstat_t &s) const;
 	virtual uint			read(void *buf, uint size);
 	virtual void			seek(FileOfs offset);
