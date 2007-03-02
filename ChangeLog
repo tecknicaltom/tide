@@ -1,6 +1,11 @@
  HT ChangeLog
 ==============
 
+version 2.0:
+	- renamed process.h to htprocess.h because of some stupid
+	  cygwin build problems
+	- fixed some problem with file sizes > 4 GiB
+
 version 2.0beta6:
 	- fixed crash when opening read only files in obscure situations
 	- [ELF & java] fixed binary search in image view
