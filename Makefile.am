@@ -13,7 +13,7 @@ EVAL_DIR	= eval
 EXTRA_DIST	= TODO ChangeLog README KNOWNBUGS INSTALL COPYING AUTHORS
 SUBDIRS		= tools analyser asm doc info io output eval
 
-INCLUDES	= -I$(srcdir)/$(ANALYSER_DIR) -I$(srcdir)/$(ASM_DIR) -I$(srcdir)/$(INFO_DIR) -I$(srcdir)/$(IO_DIR) -I$(srcdir)/$(COMIO_DIR) -I$(srcdir)/$(OUTPUT_DIR) -I$(srcdir)/$(EVAL_DIR) -I$(srcdir)
+INCLUDES	= -iquote$(srcdir)/$(ANALYSER_DIR) -iquote$(srcdir)/$(ASM_DIR) -iquote$(srcdir)/$(INFO_DIR) -iquote$(srcdir)/$(IO_DIR) -iquote$(srcdir)/$(COMIO_DIR) -iquote$(srcdir)/$(OUTPUT_DIR) -iquote$(srcdir)/$(EVAL_DIR) -iquote$(srcdir)
 
 ht_LDADD	= $(ANALYSER_DIR)/libanalyser.a $(ASM_DIR)/libasm.a $(INFO_DIR)/libinfo.a $(IO_DIR)/libhtio.a $(OUTPUT_DIR)/liboutput.a $(COMIO_DIR)/libcomio.a $(EVAL_DIR)/libhteval.a @HT_LIBS@ @LZO_LIBS@
 ht_LDFLAGS	= @HT_LDFLAGS@
@@ -49,7 +49,7 @@ store.cc store.h stream.cc stream.h tools.cc tools.h vxd.cc vxd.h \
 vxdserv.cc vxdserv.h cplus-dem.c demangle.h regex.c regex.h \
 syntax.cc syntax.h textfile.cc textfile.h textedit.cc textedit.h \
 classread.cc classview.cc class.h httext.cc httext.h hteval.cc hteval.h \
-relfile.cc relfile.h process.cc process.h mfile.cc mfile.h elfstruc.cc \
+relfile.cc relfile.h htprocess.cc htprocess.h mfile.cc mfile.h elfstruc.cc \
 pestruct.cc coff_s.cc mzstruct.cc defreg.h defreg.c htdisasm.cc htdisasm.h \
 htcoffimg.cc htcoffimg.h nestruct.cc htneimg.cc htneimg.h htneimp.cc htneimp.h \
 cmds.cc cmds.h snprintf.cc snprintf.h htpeil.cc htpeil.h \
