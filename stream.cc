@@ -612,7 +612,7 @@ void File::move(FileOfs src, FileOfs dest, FileOfs size)
  *	@param size number of bytes to delete
  *	@throws IOException
  */
-void File::cut(uint size)
+void File::cut(FileOfs size)
 {
 	FileOfs t = tell();
 	FileOfs o = t+size;
@@ -700,7 +700,7 @@ FileOfs File::getSize() const
  *	@param size number of bytes to insert
  *	@throws IOException
  */
-void File::insert(const void *buf, uint size)
+void File::insert(const void *buf, FileOfs size)
 {
 	FileOfs t = tell();
 	FileOfs s = getSize()-t;
@@ -807,7 +807,7 @@ FileLayer::~FileLayer()
 	if (mOwnFile) delete mFile;
 }
 
-void FileLayer::cut(uint size)
+void FileLayer::cut(FileOfs size)
 {
 	return mFile->cut(size);
 }
@@ -837,7 +837,7 @@ FileOfs FileLayer::getSize() const
 	return mFile->getSize();
 }
 
-void FileLayer::insert(const void *buf, uint size)
+void FileLayer::insert(const void *buf, FileOfs size)
 {
 	return mFile->insert(buf, size);
 }
