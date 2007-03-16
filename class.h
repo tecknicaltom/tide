@@ -80,6 +80,13 @@ static const u2 ATTRIB_LineNumberTable    =  7;
 static const u2 ATTRIB_LocalVariableTable =  8;
 static const u2 ATTRIB_Deprecated         =  9;
 
+struct exception_info {
+	u2 start_pc;
+	u2 end_pc;
+	u2 handler_pc;
+	u2 catch_type;
+};
+
 struct attrib_info {
 	u4 offset;
 	u2 tag;
@@ -91,6 +98,8 @@ struct attrib_info {
 			u2 max_locals;
 			u4 len;
 			u4 start;
+			u2 exctbl_len;
+			exception_info *exctbl;
 		} code;
 	};
 };
@@ -151,7 +160,7 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 void java_demangle(char *result, char *classname, char *name, char *type, int flags);
 char *java_demangle_flags(char *result, int flags);
 
-class cview : public ht_format_group {
+class cview: public ht_format_group {
 public:
 	void init(Bounds *, File *, format_viewer_if **, ht_format_group *, FileOfs, void *shared);
 	virtual void done();
@@ -166,7 +175,11 @@ public:
 	ClassAddress start;
 	uint length;
 	int flags;
-			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags);
+	int exctbl_len;
+	exception_info *exctbl;
+
+			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags,
+				int exctbl_len, exception_info *exctbl);
 	virtual		~ClassMethod();
 	virtual int	compareTo(const Object *obj) const;
 };
