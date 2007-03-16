@@ -56,23 +56,6 @@ void	ClassAnalyser::init(ht_class_shared_data *Class_shared, File *File)
 	setSymbolTreeOptimizeThreshold(100);
 }
 
-
-/*
- *
- */
-void	ClassAnalyser::load(ObjectStream &f)
-{
-	Analyser::load(f);
-}
-
-/*
- *
- */
-void	ClassAnalyser::done()
-{
-	Analyser::done();
-}
-
 /*
  *
  */
@@ -91,7 +74,7 @@ void ClassAnalyser::beginAnalysis()
 	if (class_shared->classinfo.interfaces) {
 		b += " implements";
 		int count = class_shared->classinfo.interfaces->count();
-		for (int i=0; i<count; i++) {
+		for (int i=0; i < count; i++) {
 			String b2;
 			b2.assignFormat("%y%c", (*class_shared->classinfo.interfaces)[i], (i+1<count)?',':' ');
 			b += b2;
@@ -123,6 +106,22 @@ void ClassAnalyser::beginAnalysis()
 				delete b;
 			}
 			delete a;
+			for (int i=0; i < cm->exctbl_len; i++) {
+				exception_info *ei = cm->exctbl + i;
+				Address *b = createAddress32(cm->start + ei->start_pc);
+				addComment(b, 0, "try {");
+				delete b;
+				b = createAddress32(cm->start + ei->end_pc+1);
+				addComment(b, 0, "}");
+				delete b;
+
+				token_translate(buffer2, sizeof buffer2, ei->catch_type, class_shared);
+				b = createAddress32(cm->start + ei->handler_pc);
+				ht_snprintf(buffer, sizeof buffer, "catch (%s):", buffer2);
+				addComment(b, 0, buffer);
+				pushAddress(b, b);
+				delete b;
+			}
 		});
 	}
 	setLocationTreeOptimizeThreshold(1000);
@@ -134,7 +133,7 @@ void ClassAnalyser::beginAnalysis()
 /*
  *
  */
-ObjectID	ClassAnalyser::getObjectID() const
+ObjectID ClassAnalyser::getObjectID() const
 {
 	return ATOM_CLASS_ANALYSER;
 }
