@@ -251,7 +251,7 @@ void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_o
 			int slen;
 			char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
 			if (s) {
-				memmove(opstr, s, slen);
+				memcpy(opstr, s, slen);
 				opstr[slen]=0;
 				*opstrlen=slen;
 			} else {
