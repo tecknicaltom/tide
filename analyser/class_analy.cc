@@ -111,12 +111,15 @@ void ClassAnalyser::beginAnalysis()
 				Address *b = createAddress32(cm->start + ei->start_pc);
 				addComment(b, 0, "try {");
 				delete b;
-				b = createAddress32(cm->start + ei->end_pc+1);
+				b = createAddress32(cm->start + ei->end_pc);
 				addComment(b, 0, "}");
 				delete b;
-
-				token_translate(buffer2, sizeof buffer2, ei->catch_type, class_shared);
-				b = createAddress32(cm->start + ei->handler_pc);
+				if (ei->catch_type) {
+					token_translate(buffer2, sizeof buffer2, ei->catch_type, class_shared);
+					b = createAddress32(cm->start + ei->handler_pc);
+				} else {
+					ht_strlcpy(buffer, "...", sizeof buffer);
+				}
 				ht_snprintf(buffer, sizeof buffer, "catch (%s):", buffer2);
 				addComment(b, 0, buffer);
 				pushAddress(b, b);
