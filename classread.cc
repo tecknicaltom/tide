@@ -48,13 +48,16 @@ static u4 offset;
 #define READN(inb, n) cls_read (inb, n, 1, htio)
 #define SKIPN(n) {u1 b; for (u4 i=0; i<n; i++) {cls_read(&b, 1, 1, htio);}}
 
-ClassMethod::ClassMethod(char *n, char *d, ClassAddress s, uint l, int f)
+ClassMethod::ClassMethod(char *n, char *d, ClassAddress s, uint l, int f,
+			int e_len, exception_info *e)
 {
 	name = ht_strdup(n);
 	start = s;
 	type = d;
 	length = l;
 	flags = f;
+	exctbl_len = e_len;
+	exctbl = e;
 }
 
 ClassMethod::~ClassMethod()
@@ -96,38 +99,38 @@ static cp_info *read_cpool_entry (Stream *htio, classfile *clazz)
 	cp_info *cp;
 	u2 idx;
 
-	cp         = ht_malloc (sizeof (*cp));
+	cp         = ht_malloc(sizeof (*cp));
 	cp->offset = offset;
 	cp->tag    = READ1();
 	switch (cp->tag) {
-		case CONSTANT_Utf8:
-			idx = READ2();
-			cp->value.string = ht_malloc (idx+1);
-			cls_read (cp->value.string, idx, 1, htio);
-			cp->value.string[idx] = 0;
-			break;
-		case CONSTANT_Integer:
-		case CONSTANT_Float:
-			cp->value.fval = READ4();
-			break;
-		case CONSTANT_Long:
-		case CONSTANT_Double:
-			cp->value.llval[0] = READ4();
-			cp->value.llval[1] = READ4();
-			break;
-		case CONSTANT_Class:
-		case CONSTANT_String:
-			cp->value.llval[0] = READ2();
-			break;
-		case CONSTANT_Fieldref:
-		case CONSTANT_Methodref:
-		case CONSTANT_InterfaceMethodref:
-		case CONSTANT_NameAndType:
-			cp->value.llval[0] = READ2();
-			cp->value.llval[1] = READ2();
-			break;
-		default:
-			return NULL;
+	case CONSTANT_Utf8:
+		idx = READ2();
+		cp->value.string = ht_malloc(idx+1);
+		cls_read(cp->value.string, idx, 1, htio);
+		cp->value.string[idx] = 0;
+		break;
+	case CONSTANT_Integer:
+	case CONSTANT_Float:
+		cp->value.fval = READ4();
+		break;
+	case CONSTANT_Long:
+	case CONSTANT_Double:
+		cp->value.llval[0] = READ4();
+		cp->value.llval[1] = READ4();
+		break;
+	case CONSTANT_Class:
+	case CONSTANT_String:
+		cp->value.llval[0] = READ2();
+		break;
+	case CONSTANT_Fieldref:
+	case CONSTANT_Methodref:
+	case CONSTANT_InterfaceMethodref:
+	case CONSTANT_NameAndType:
+		cp->value.llval[0] = READ2();
+		cp->value.llval[1] = READ2();
+		break;
+	default:
+		return NULL;
 	}
 	return (cp);
 }
@@ -156,7 +159,19 @@ attrib_info *attribute_read(Stream *htio, classfile *clazz)
 		a->code.max_locals = READ2();
 		a->code.len = READ4();
 		a->code.start = offset;
-		len -= 2+2+4;
+		len -= 2+2+4+a->code.len;
+		SKIPN(a->code.len);
+		a->code.exctbl_len = READ2();
+		if (a->code.exctbl_len) {
+			a->code.exctbl = ht_malloc(a->code.exctbl_len * sizeof(exception_info));
+			for (uint i=0; i < a->code.exctbl_len; i++) {
+				a->code.exctbl[i].start_pc = READ2();
+				a->code.exctbl[i].end_pc = READ2();
+				a->code.exctbl[i].handler_pc = READ2();
+				a->code.exctbl[i].catch_type = READ2();
+			}
+		}
+		len -= 2 + 8*a->code.exctbl_len;
 	} else if (!strcmp(aname, "Exceptions")) {
 		a->tag = ATTRIB_Exceptions;
 	} else if (!strcmp(aname, "InnerClasses")) {
@@ -197,7 +212,7 @@ static mf_info *read_fieldmethod (Stream *htio, ht_class_shared_data *shared)
 		if (!m->attribs) {
 			return NULL;
 		}
-		for (int i=0; i<(int)idx; i++) {
+		for (int i=0; i < (int)idx; i++) {
 			m->attribs[i] = attribute_read(htio, clazz);
 		}
 	}
@@ -290,27 +305,28 @@ ht_class_shared_data *class_read(File *htio)
 		if (!clazz->methods) {
 			return NULL;
 		}
-		for (int i=0; i<(int)count; i++) {
-			clazz->methods[i] = read_fieldmethod(htio, shared);
-			int acount = clazz->methods[i]->attribs_count;
+		for (int i=0; i < (int)count; i++) {
+			mf_info *m = read_fieldmethod(htio, shared);
+			clazz->methods[i] = m;
+			int acount = m->attribs_count;
 			bool ok = false;
 			for (int j=0; j < acount; j++) {
-				attrib_info *ai = clazz->methods[i]->attribs[j];
+				attrib_info *ai = m->attribs[j];
 				if (ai->tag == ATTRIB_Code) {
-					ClassMethod *cm = new ClassMethod(clazz->methods[i]->name, clazz->methods[i]->desc, ai->code.start, ai->code.len, clazz->methods[i]->flags);
+					ClassMethod *cm = new ClassMethod(m->name, m->desc, 
+						ai->code.start, ai->code.len, m->flags, 
+						ai->code.exctbl_len, ai->code.exctbl);
 					shared->methods->insert(cm);
-					Address *a1 = new AddressFlat32(ai->code.start);
-					Address *a2 = new AddressFlat32(ai->code.start+ai->code.len);
-					shared->initialized->add(a1, a2);
-					shared->valid->add(a1, a2);
-					delete a1;
-					delete a2;
+					AddressFlat32 a1(ai->code.start);
+					AddressFlat32 a2(ai->code.start+ai->code.len);
+					shared->initialized->add(&a1, &a2);
+					shared->valid->add(&a1, &a2);
 					ok = true;
 				}
 			}
 			if (!ok) {
 				// fake abstract method
-				ClassMethod *cm = new ClassMethod(clazz->methods[i]->name, clazz->methods[i]->desc, offset, 1, clazz->methods[i]->flags);
+				ClassMethod *cm = new ClassMethod(m->name, m->desc, offset, 1, m->flags, 0, NULL);
 				shared->methods->insert(cm);
 				Address *a1 = new AddressFlat32(offset);
 				Address *a2 = new AddressFlat32(offset+1);
@@ -325,7 +341,7 @@ ht_class_shared_data *class_read(File *htio)
 	clazz->aoffset = offset;
 	count = clazz->attribs_count = READ2();
 	if (count) {
-		clazz->attribs = ht_malloc (count*sizeof (*(clazz->attribs)));
+		clazz->attribs = ht_malloc(count*sizeof (*(clazz->attribs)));
 		if (!clazz->attribs) {
 			return NULL;
 		}
