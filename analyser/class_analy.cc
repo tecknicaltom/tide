@@ -108,20 +108,23 @@ void ClassAnalyser::beginAnalysis()
 			delete a;
 			for (int i=0; i < cm->exctbl_len; i++) {
 				exception_info *ei = cm->exctbl + i;
-				Address *b = createAddress32(cm->start + ei->start_pc);
-				addComment(b, 0, "try {");
-				delete b;
-				b = createAddress32(cm->start + ei->end_pc);
-				addComment(b, 0, "}");
-				delete b;
 				if (ei->catch_type) {
 					token_translate(buffer2, sizeof buffer2, ei->catch_type, class_shared);
-					b = createAddress32(cm->start + ei->handler_pc);
 				} else {
-					ht_strlcpy(buffer, "...", sizeof buffer);
+					ht_strlcpy(buffer2, "...", sizeof buffer2);
 				}
-				ht_snprintf(buffer, sizeof buffer, "catch (%s):", buffer2);
-				addComment(b, 0, buffer);
+				ht_snprintf(buffer, sizeof buffer, "catch (%s)", buffer2);
+				Address *b = createAddress32(cm->start + ei->start_pc);
+				ht_snprintf(buffer2, sizeof buffer2, "try { // %s", buffer);
+				addComment(b, 0, buffer2);
+				delete b;
+				b = createAddress32(cm->start + ei->end_pc);
+				ht_snprintf(buffer2, sizeof buffer2, "} // %s", buffer);
+				addComment(b, 0, buffer2);
+				delete b;
+				b = createAddress32(cm->start + ei->handler_pc);
+				ht_snprintf(buffer2, sizeof buffer2, "%s:", buffer);				
+				addComment(b, 0, buffer2);
 				pushAddress(b, b);
 				delete b;
 			}
