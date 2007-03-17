@@ -26,11 +26,10 @@
 
 class AnalyILDisassembler: public AnalyDisassembler {
 public:
-					AnalyILDisassembler();
+					AnalyILDisassembler() {};
 					AnalyILDisassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
 
 		void			init(Analyser *A, char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context);
-	virtual void		     	done();
 	virtual	ObjectID		getObjectID() const;
 
 	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
