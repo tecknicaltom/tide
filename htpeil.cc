@@ -47,6 +47,18 @@ static ht_mask_ptable il_directory[] = {
 	{"metadata rva",   STATICTAG_EDIT_DWORD_LE("00000008")},
 	{"metadata size",  STATICTAG_EDIT_DWORD_LE("0000000c")},
 	{"attributes",     STATICTAG_EDIT_DWORD_LE("00000010")},
+	{"entrypoint token",STATICTAG_EDIT_DWORD_LE("00000014")},
+	{"resources rva",   STATICTAG_EDIT_DWORD_LE("00000018")},
+	{"resources size",  STATICTAG_EDIT_DWORD_LE("0000001c")},
+	{"strong name sig",  STATICTAG_EDIT_DWORD_LE("00000020")},
+	{"strong name sig",  STATICTAG_EDIT_DWORD_LE("00000024")},
+	{"code manager rva",   STATICTAG_EDIT_DWORD_LE("00000028")},
+	{"code manager size",  STATICTAG_EDIT_DWORD_LE("0000002c")},
+	{"vtable fixups rva",   STATICTAG_EDIT_DWORD_LE("00000030")},
+	{"vtable fixups size",   STATICTAG_EDIT_DWORD_LE("00000034")},
+	{"export address table",  STATICTAG_EDIT_DWORD_LE("00000038")},
+	{"export address table",  STATICTAG_EDIT_DWORD_LE("0000003c")},
+	{"managed native header", STATICTAG_EDIT_DWORD_LE("00000040")},
 	{0, 0}
 };
 
