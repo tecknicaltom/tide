@@ -32,8 +32,9 @@
 
 struct javadis_insn {
 	bool invalid;
-	byte size;
+	int size;
 	int opcode;
+	uint32 addr;
 	bool wideopcode;
 	const char *name;
 	java_insn_op op[JAVAINSN_MAX_PARAM_COUNT];
@@ -49,26 +50,27 @@ class javadis: public Disassembler {
 protected:
 	javadis_insn insn;
 	char insnstr[1024];
-/* initme! */
+	/* initme! */
 	unsigned char *codep, *ocodep;
-	int addr;
 	int maxlen;
 	java_token_func token_func;
 	void *context;
-/* new */
-			void decode_insn(javaopc_insn *insn);
-			void decode_op(int optype, bool wideopc, java_insn_op *op);
-			byte getbyte();
-			uint16 getword();
-			uint32 getdword();
-			void invalidate();
-			void str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print);
+	uint32 addr;
+	/* new */
+
+		void decode_insn(javaopc_insn *insn);
+		void decode_op(int optype, bool wideopc, java_insn_op *op);
+		byte getbyte();
+		uint16 getword();
+		uint32 getdword();
+		void invalidate();
+		void str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual	void str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_op *op);
 public:
 	javadis(BuildCtorArg&a): Disassembler(a) {};
 	javadis(java_token_func token_func, void *context);
 
-/* overwritten */
+	/* overwritten */
 	virtual dis_insn *decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual dis_insn *duplicateInsn(dis_insn *disasm_insn);
 	virtual void getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
