@@ -464,29 +464,29 @@ static char *token_func(uint32 token, void *context)
 	static char tokenstr[1024];
 //	ht_pe_shared_data *pe = (ht_pe_shared_data*)context;
 	switch (token & IL_META_TOKEN_MASK) {
-		case IL_META_TOKEN_TYPE_REF:
-		case IL_META_TOKEN_TYPE_DEF: {
-			sprintf(tokenstr, "typedef");
-			break;
-		}
-		case IL_META_TOKEN_FIELD_DEF: {
-			sprintf(tokenstr, "fielddef");
-			break;
-		}
-		case IL_META_TOKEN_METHOD_DEF: {
-			sprintf(tokenstr, "methoddef");
-			break;
-		}
-		case IL_META_TOKEN_MEMBER_REF: {
-			sprintf(tokenstr, "memberref");
-			break;
-		}
-		case IL_META_TOKEN_TYPE_SPEC: {
-			sprintf(tokenstr, "typespec");
-			break;
-		}
-		default:
-			return NULL;
+	case IL_META_TOKEN_TYPE_REF:
+	case IL_META_TOKEN_TYPE_DEF: {
+		sprintf(tokenstr, "typedef");
+		break;
+	}
+	case IL_META_TOKEN_FIELD_DEF: {
+		sprintf(tokenstr, "fielddef");
+		break;
+	}
+	case IL_META_TOKEN_METHOD_DEF: {
+		sprintf(tokenstr, "methoddef");
+		break;
+	}
+	case IL_META_TOKEN_MEMBER_REF: {
+		sprintf(tokenstr, "memberref");
+		break;
+	}
+	case IL_META_TOKEN_TYPE_SPEC: {
+		sprintf(tokenstr, "typespec");
+		break;
+	}
+	default:
+		return NULL;
 	}
 	return tokenstr;
 }
