@@ -1455,11 +1455,11 @@ Location *Analyser::getFunctionByAddress(Address *Addr)
 {
 	Location *loc = getLocationByAddress(Addr);
 	if (!loc) loc = enumLocationsReverse(Addr);
-	while ((loc) && (!(loc->flags & AF_FUNCTION_SET))) {
+	while (loc && !(loc->flags & AF_FUNCTION_SET)) {
 		if (loc->flags & AF_FUNCTION_END) return NULL;
 		loc = enumLocationsReverse(loc->addr);
 	}
-	return (loc) ? loc->thisfunc : NULL;
+	return loc ? loc->thisfunc : NULL;
 }
 
 /*
@@ -1469,11 +1469,11 @@ Location *Analyser::getPreviousSymbolByAddress(Address *Addr)
 {
 	Location *loc = getLocationByAddress(Addr);
 	if (!loc) loc = enumLocationsReverse(Addr);
-	while ((loc) && (!loc->label)) {
+	while (loc && !loc->label) {
 		if (loc->flags & AF_FUNCTION_END) return NULL;
 		loc = enumLocationsReverse(loc->addr);
 	}
-	return (loc) ? loc : NULL;
+	return loc ? loc : NULL;
 }
 
 /*
@@ -1482,7 +1482,7 @@ Location *Analyser::getPreviousSymbolByAddress(Address *Addr)
 static Symbol *analyserfindlabel(Symbol *labels, const char *label)
 {
 	if (labels) {
-		int i=strcmp(label, labels->name);
+		int i = strcmp(label, labels->name);
 		if (i < 0) return analyserfindlabel(labels->left, label);
 		if (i > 0) return analyserfindlabel(labels->right, label);
 		return labels->location ? labels : NULL;
@@ -1500,12 +1500,12 @@ Symbol *Analyser::getSymbolByName(const char *label)
 
 const char *Analyser::getSymbolNameByLocation(Location *loc)
 {
-	return (loc) ? ((loc->label) ? loc->label->name : NULL): NULL;
+	return loc ? (loc->label ? loc->label->name : NULL): NULL;
 }
 
 
 /**
- *	converts |FileOfs fileaddr| to |Address|
+ *	converts |FileOfs fileofs| to |Address|
  */
 Address *Analyser::fileofsToAddress(FileOfs fileaddr)
 {
@@ -1566,7 +1566,7 @@ void Analyser::freeComments(Location *aAddr)
 void Analyser::freeSymbol(Symbol *label)
 {
 	if (label) {
-		if (label->name) free(label->name);
+		free(label->name);
 		delete label;
 	}
 }
@@ -1602,7 +1602,7 @@ static char *analy_addr_sym_func2(CPU_ADDR Addr, int *symstrlen, void *analy)
 	a->getFromCPUAddress(&Addr);
 	Location *loc = ((Analyser*)analy)->getLocationByAddress(a);
 	delete a;
-	if ((loc) && (loc->label)) {
+	if (loc && loc->label) {
 		if (symstrlen) *symstrlen = strlen(loc->label->name);
 		return loc->label->name;
 	}
@@ -2132,7 +2132,7 @@ void Analyser::setDisasm(Disassembler *d)
 
 /*
  *	sets addr_threshold. after threshold addr_tree ops the tree will
- *   be optimized
+ *	be optimized
  */
 void Analyser::setLocationTreeOptimizeThreshold(int threshold)
 {
