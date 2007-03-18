@@ -18,12 +18,13 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <stdio.h>
+#include <string.h>
+
 #include "stream.h"
 #include "tools.h"
 #include "javadis.h"
-
-#include <stdio.h>
-#include <string.h>
+#include "strtools.h"
 
 /*
  *	CLASS javadis
@@ -60,9 +61,9 @@ dis_insn *javadis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 		insn.op[0].type = JAVA_OPTYPE_IMM;
 		insn.op[0].size = 1;
 		insn.op[0].imm = *code;
-		for (int i=1; i<JAVAINSN_MAX_PARAM_COUNT; i++) insn.op[i].type=JAVA_OPTYPE_EMPTY;
+		for (int i=1; i < JAVAINSN_MAX_PARAM_COUNT; i++) insn.op[i].type=JAVA_OPTYPE_EMPTY;
 	} else {
-		insn.size=codep-ocodep;
+		insn.size = codep-ocodep;
 	}
 	return &insn;
 }
@@ -137,6 +138,11 @@ void javadis::decode_op(int optype, bool wideopc, java_insn_op *op)
 				op->size = 2;
 				op->label = addr + sint16(getword()) - op->size - 1;
 			}
+			break;
+		case JOPC_TYPE_ATYPE:
+			op->type = JAVA_OPTYPE_ATYPE;
+			op->size = 1;
+			op->imm = getbyte();
 			break;
 		default:
 			op->type = JAVA_OPTYPE_EMPTY;
@@ -225,168 +231,174 @@ void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_o
 //	const char *cs_symbol = get_cs(e_cs_symbol);
 	const char *cs_comment = get_cs(e_cs_comment);
 
-	*opstrlen=0;
+	char *opstrold = opstr;
 	switch (op->type) {
-		case JAVA_OPTYPE_CONST: {
-			char *g=opstr;
-			strcpy(g, cs_comment); g += strlen(cs_comment);
-			g += token_func(g, 1024, op->imm, context);
-			*(g++) = ' ';
-			strcpy(g, cs_number); g += strlen(cs_number);
-			switch (op->size) {
-				case 1:
-					hexd(&g, 2, options, op->imm);
-					break;
-				case 2:
-					hexd(&g, 4, options, op->imm);
-					break;
-				case 4:
-					hexd(&g, 8, options, op->imm);
-					break;
-			}
+	case JAVA_OPTYPE_CONST: {
+		strcpy(opstr, cs_comment); opstr += strlen(cs_comment);
+		opstr += token_func(opstr, 1024, op->imm, context);
+		*opstr++ = ' ';
+		strcpy(opstr, cs_number); opstr += strlen(cs_number);
+		switch (op->size) {
+		case 1:
+			hexd(&opstr, 2, options, op->imm);
+			break;
+		case 2:
+			hexd(&opstr, 4, options, op->imm);
+			break;
+		case 4:
+			hexd(&opstr, 8, options, op->imm);
 			break;
 		}
-		case JAVA_OPTYPE_LABEL: {
-			CPU_ADDR a;
-			a.addr32.offset=op->imm;
-			int slen;
-			char *s=(addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
-			if (s) {
-				memcpy(opstr, s, slen);
-				opstr[slen]=0;
-				*opstrlen=slen;
-			} else {
-				char *g=opstr;
-				strcpy(g, cs_number); g += strlen(cs_number);
-				switch (op->size) {
-					case 1:
-						hexd(&g, 2, options, op->imm);
-						break;
-					case 2:
-						hexd(&g, 4, options, op->imm);
-						break;
-					case 4:
-						hexd(&g, 8, options, op->imm);
-						break;
-				}
-				strcpy(g, cs_default); g += strlen(cs_default);
-			}
-			break;
-		}
-		case JAVA_OPTYPE_IMM: {
-			CPU_ADDR a;
-			a.addr32.offset=op->imm;
-			char *g=opstr;
-			strcpy(g, cs_number); g += strlen(cs_number);
-			switch (op->size) {
-				case 1:
-					hexd(&g, 2, options, op->imm);
-					break;
-				case 2:
-					hexd(&g, 4, options, op->imm);
-					break;
-				case 4:
-					hexd(&g, 8, options, op->imm);
-					break;
-			}
-			strcpy(g, cs_default); g += strlen(cs_default);
-			break;
-		}
-		default:
-			opstr[0]=0;
+		break;
 	}
+	case JAVA_OPTYPE_LABEL: {
+		CPU_ADDR a;
+		a.addr32.offset = op->imm;
+		int slen;
+		char *s = (addr_sym_func) ? addr_sym_func(a, &slen, addr_sym_func_context) : NULL;
+		if (s) {
+			memcpy(opstr, s, slen);
+			opstr[slen]=0;
+			opstr += slen;
+		} else {
+			strcpy(opstr, cs_number); opstr += strlen(cs_number);
+			switch (op->size) {
+			case 1:
+				hexd(&opstr, 2, options, op->imm);
+				break;
+			case 2:
+				hexd(&opstr, 4, options, op->imm);
+				break;
+			case 4:
+				hexd(&opstr, 8, options, op->imm);
+				break;
+			}
+			strcpy(opstr, cs_default); opstr += strlen(cs_default);
+		}
+		break;
+	}
+	case JAVA_OPTYPE_IMM: {
+		CPU_ADDR a;
+		a.addr32.offset=op->imm;
+		strcpy(opstr, cs_number); opstr += strlen(cs_number);
+		switch (op->size) {
+		case 1:
+			hexd(&opstr, 2, options, op->imm);
+			break;
+		case 2:
+			hexd(&opstr, 4, options, op->imm);
+			break;
+		case 4:
+			hexd(&opstr, 8, options, op->imm);
+			break;
+		}
+		strcpy(opstr, cs_default); opstr += strlen(cs_default);
+		break;
+	}
+	case JAVA_OPTYPE_ATYPE: {
+		const char *atypes[] = {"boolean", "char", "float", "double", "byte", "short", "int", "long"};
+		strcpy(opstr, cs_comment); opstr += strlen(cs_comment);
+		if (op->imm >= 4 && op->imm <= 11) {
+			*(opstr++) = '<'; 
+			opstr += ht_strlcpy(opstr, atypes[op->imm - 4], 8);
+			*(opstr++) = '>'; 
+			*(opstr++) = 0; 
+		} else {
+			strcpy(opstr, "<?>");
+		}
+		break;
+	}
+	default:
+		opstr[0]=0;
+	}
+	*opstrlen = opstr - opstrold;
 }
 
 void javadis::str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print)
-{
-	
+{	
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_symbol = get_cs(e_cs_symbol);
 
-	const char *f=*format;
-	char *s=*str;
+	const char *f = *format;
+	char *s = *str;
 	while (*f) {
-		if (*f==stopchar) break;
+		if (*f == stopchar) break;
 		switch (*f) {
-			case '\t':
-				if (print) do *(s++)=' '; while ((s-insnstr) % 16);
-				break;
-			case DISASM_STRF_VAR:
-				f++;
-				if (print) {
-					const char *t = NULL;
-					int tl = 0;
-					switch (*f) {
-					case DISASM_STRF_PREFIX:
-						t=p;
-						break;
-					case DISASM_STRF_NAME:
-						t=n;
-						break;
-					case DISASM_STRF_FIRST:
-						t=op[0];
-						tl=oplen[0];
-						break;
-					case DISASM_STRF_SECOND:
-						t=op[1];
-						tl=oplen[1];
-						break;
-					case DISASM_STRF_THIRD:
-						t=op[2];
-						tl=oplen[2];
-						break;
-					}
-					if (tl) {
-						memcpy(s, t, tl);
-						s+=tl;
-						*s=0;
-					} else {
-						strcpy(s, t);
-						s += strlen(s);
-					}
-				}
-				break;
-			case DISASM_STRF_COND: {
+		case '\t':
+			if (print) do *s++ = ' '; while ((s-insnstr) % 16);
+			break;
+		case DISASM_STRF_VAR:
+			f++;
+			if (print) {
 				const char *t = NULL;
-				f++;
+				int tl = 0;
 				switch (*f) {
-					case DISASM_STRF_PREFIX:
-						t=p;
-						break;
-					case DISASM_STRF_NAME:
-						t=n;
-						break;
-					case DISASM_STRF_FIRST:
-						t=op[0];
-						break;
-					case DISASM_STRF_SECOND:
-						t=op[1];
-						break;
-					case DISASM_STRF_THIRD:
-						t=op[2];
-						break;
+				case DISASM_STRF_PREFIX:
+					t=p;
+					break;
+				case DISASM_STRF_NAME:
+					t=n;
+					break;
+				case DISASM_STRF_FIRST:
+					t=op[0];
+					tl=oplen[0];
+					break;
+				case DISASM_STRF_SECOND:
+					t=op[1];
+					tl=oplen[1];
+					break;
+				case DISASM_STRF_THIRD:
+					t=op[2];
+					tl=oplen[2];
+					break;
 				}
-				f+=2;
-				if (t && t[0]) {
-					str_format(&s, &f, p, n, op, oplen, *(f-1), 1);
+				if (tl) {
+					memcpy(s, t, tl);
+					s += tl;
+					*s = 0;
 				} else {
-					str_format(&s, &f, p, n, op, oplen, *(f-1), 0);
+					strcpy(s, t);
+					s += strlen(s);
 				}
+			}
+			break;
+		case DISASM_STRF_COND: {
+			const char *t = NULL;
+			f++;
+			switch (*f) {
+			case DISASM_STRF_PREFIX:
+				t=p;
+				break;
+			case DISASM_STRF_NAME:
+				t=n;
+				break;
+			case DISASM_STRF_FIRST:
+				t=op[0];
+				break;
+			case DISASM_STRF_SECOND:
+				t=op[1];
+				break;
+			case DISASM_STRF_THIRD:
+				t=op[2];
 				break;
 			}
-			default:
-				if (print) {
-					bool x = (strchr(",.-=+-*/[]()", *f) != NULL) && *f;
-					if (x) { strcpy(s, cs_symbol); s += strlen(cs_symbol); }
-					*(s++) = *f;
-					if (x) { strcpy(s, cs_default); s += strlen(cs_default); }
-				}
+			f += 2;
+			str_format(&s, &f, p, n, op, oplen, *(f-1), t && t[0]);
+			break;
+		}
+		default:
+			if (print) {
+				bool x = (strchr(",.-=+-*/[]()", *f) != NULL) && *f;
+				if (x) { strcpy(s, cs_symbol); s += strlen(cs_symbol); }
+				*(s++) = *f;
+				if (x) { strcpy(s, cs_default); s += strlen(cs_default); }
+			}
 		}
 		f++;
 	}
-	*s=0;
-	*format=f;
-	*str=s;
+	*s = 0;
+	*format = f;
+	*str = s;
 }
 
 const char *javadis::str(dis_insn *disasm_insn, int options)
@@ -407,11 +419,11 @@ const char *javadis::strf(dis_insn *disasm_insn, int opt, const char *format)
 	int oplen[3];
 
 	if (options & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	for (int i=0; i<JAVAINSN_MAX_PARAM_COUNT; i++) {
-		op[i]=(char*)&ops[i];
+	for (int i=0; i < JAVAINSN_MAX_PARAM_COUNT; i++) {
+		op[i] = ops[i];
 		str_op(op[i], &oplen[i], insn, &insn->op[i]);
 	}
-	char *s=insnstr;
+	char *s = insnstr;
 	str_format(&s, &format, prefix, insn->name, op, oplen, 0, 1);
 	disable_highlighting();
 	return insnstr;
