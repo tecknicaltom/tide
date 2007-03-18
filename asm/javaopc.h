@@ -29,8 +29,9 @@
 #define JAVA_OPTYPE_REF		3
 #define JAVA_OPTYPE_LABEL	4
 #define JAVA_OPTYPE_CONST	5
+#define JAVA_OPTYPE_ATYPE	6
 
-#define JOPC_TYPE(t)		((t) & 0x0f)
+#define JOPC_TYPE(t)		((t) & 0x1f)
 #define JOPC_TYPE_EMPTY		0
 #define JOPC_TYPE_BYTE		1
 #define JOPC_TYPE_SHORT		2
@@ -39,8 +40,9 @@
 #define JOPC_TYPE_CONST		5
 #define JOPC_TYPE_LOCAL		6
 #define JOPC_TYPE_LABEL		7
+#define JOPC_TYPE_ATYPE		8
 
-#define JOPC_SIZE(t)		((t) & 0xf0)
+#define JOPC_SIZE(t)		((t) & 0xe0)
 #define JOPC_SIZE_VAR		0x00
 #define JOPC_SIZE_SMALL		0x40
 #define JOPC_SIZE_WIDE		0x80
