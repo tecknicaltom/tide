@@ -64,9 +64,8 @@ struct cp_info {
 		char   *string;
 		double dval;
 		float  fval;
-		long   lval;
-		int    ival;
-		long   llval[2];
+		sint32 ival;
+		uint32 llval[2];
 	} value;
 };
 
