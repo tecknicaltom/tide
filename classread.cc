@@ -111,7 +111,7 @@ static cp_info *read_cpool_entry (Stream *htio, classfile *clazz)
 		break;
 	case CONSTANT_Integer:
 	case CONSTANT_Float:
-		cp->value.fval = READ4();
+		cp->value.ival = READ4();
 		break;
 	case CONSTANT_Long:
 	case CONSTANT_Double:
@@ -525,65 +525,68 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 	strcpy(type, "?");
 	if (token < clazz->cpool_count)
 	switch (clazz->cpool[token]->tag) {
-		case CONSTANT_Class: {
-			strcpy(tag, "Class");
-			char *cl = get_class_name(NULL, clazz, token);
-			if (cl[0] == '[') {
-				java_demangle_type(data, &cl);
-			} else {
-				strcpy(data, java_strip_path(cl));
-			}
-			break;
+	case CONSTANT_Class: {
+		strcpy(tag, "Class");
+		char *cl = get_class_name(NULL, clazz, token);
+		if (cl[0] == '[') {
+			java_demangle_type(data, &cl);
+		} else {
+			strcpy(data, java_strip_path(cl));
 		}
-		case CONSTANT_Double:
-			strcpy(tag, "Double");
-			sprintf(data, "double");
-			break;
-		case CONSTANT_Float:
-			strcpy(tag, "Float");
-			sprintf(data, "%f", (float)clazz->cpool[token]->value.llval[0]);
-			break;
-		case CONSTANT_Integer:
-			strcpy(tag, "Int");
-			sprintf(data, "0x%lx", clazz->cpool[token]->value.llval[0]);
-			break;
-		case CONSTANT_Long:
-			strcpy(tag, "Long");
-			sprintf(data, "long");
-			break;
-		case CONSTANT_String: {
-			strcpy(tag, "String");
-			char *d = data;
-			*(d++) = '\"';
-			// FIXME: add "..." on too long strings
-			d += escape_special_str(d, 256, get_string(NULL, clazz, clazz->cpool[token]->value.llval[0]), "\"", false);
-			*(d++) = '\"';
-			*d = 0;
-			break;
-		}
-		case CONSTANT_Fieldref: {
-			strcpy(tag, "Field");
-			get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
-			char dtype[1024];
-			char *ttype=type;
-			java_demangle_type(dtype, &ttype);
-			ht_snprintf(data, sizeof data, "%s %s", dtype, name);
-			break;
-		}
-		case CONSTANT_Methodref:
-			strcpy(tag, "Method");
-			strcpy(classname, get_class_name(NULL, clazz, clazz->cpool[token]->value.llval[0]));
-			get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
-			java_demangle(data, classname, name, type, 0);
-			break;
-		case CONSTANT_InterfaceMethodref:
-			strcpy(tag, "InterfaceMethod");
-			strcpy(classname, get_class_name(NULL, clazz, clazz->cpool[token]->value.llval[0]));
-			get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
-			java_demangle(data, classname, name, type, 0);
-			break;
+		break;
 	}
-//     return ht_snprintf(buf, maxlen, "<%s %s>", tag, data);
+	case CONSTANT_Double:
+		strcpy(tag, "Double");
+		sprintf(data, "double (%f)", clazz->cpool[token]->value.dval);
+		break;
+	case CONSTANT_Float:
+		strcpy(tag, "Float");
+		sprintf(data, "float (%f)", clazz->cpool[token]->value.fval);
+		break;
+	case CONSTANT_Integer:
+		strcpy(tag, "Int");
+		ht_snprintf(data, "int (%d)", clazz->cpool[token]->value.ival);
+		break;
+	case CONSTANT_Long: {
+		strcpy(tag, "Long");
+		uint64 v = (uint64(clazz->cpool[token]->value.llval[0]) << 32)
+		                 | clazz->cpool[token]->value.llval[1];
+		ht_snprintf(data, sizeof data, "long (%qd)", v);
+		break;
+	}
+	case CONSTANT_String: {
+		strcpy(tag, "String");
+		char *d = data;
+		*(d++) = '\"';
+		// FIXME: add "..." on too long strings
+		d += escape_special_str(d, 256, get_string(NULL, clazz, clazz->cpool[token]->value.llval[0]), "\"", false);
+		*(d++) = '\"';
+		*d = 0;
+		break;
+	}
+	case CONSTANT_Fieldref: {
+		strcpy(tag, "Field");
+		get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
+		char dtype[1024];
+		char *ttype=type;
+		java_demangle_type(dtype, &ttype);
+		ht_snprintf(data, sizeof data, "%s %s", dtype, name);
+		break;
+	}
+	case CONSTANT_Methodref:
+		strcpy(tag, "Method");
+		strcpy(classname, get_class_name(NULL, clazz, clazz->cpool[token]->value.llval[0]));
+		get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
+		java_demangle(data, classname, name, type, 0);
+		break;
+	case CONSTANT_InterfaceMethodref:
+		strcpy(tag, "InterfaceMethod");
+		strcpy(classname, get_class_name(NULL, clazz, clazz->cpool[token]->value.llval[0]));
+		get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
+		java_demangle(data, classname, name, type, 0);
+		break;
+	}
+//	return ht_snprintf(buf, maxlen, "<%s %s>", tag, data);
 	return ht_snprintf(buf, maxlen, "<%s>", data);
 }
 
