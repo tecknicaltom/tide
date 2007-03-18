@@ -22,6 +22,7 @@
 
 #include <stdio.h>
 
+#define A	JOPC_TYPE_ATYPE | JOPC_SIZE_SMALL
 #define B	JOPC_TYPE_CHAR  | JOPC_SIZE_SMALL
 #define U	JOPC_TYPE_BYTE  | JOPC_SIZE_SMALL
 #define S	JOPC_TYPE_SHORT | JOPC_SIZE_SMALL
@@ -233,12 +234,12 @@ javaopc_insn java_insns[256] = {
 {"invokeinterface", {Cw, B}},
 {"xxxunusedxxx"},
 {"new", {Cw}},
-{"newarray"},
-{"anewarray"},
+{"newarray", {A}},
+{"anewarray", {Cw}},
 {"arraylength"},
 {"athrow"},
 // 0xc0-0xcf
-{"checkcast"},
+{"checkcast", {Cw}},
 {"instanceof", {Cw}},
 {"monitorenter"},
 {"monitorexit"},
