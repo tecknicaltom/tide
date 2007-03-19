@@ -76,19 +76,19 @@ uint mapToGraphical(char chr)
 uint mapCharToSystemCP(char chr, Codepage codepage)
 {
 	switch (codepage) {
-		case CP_WINDOWS: 
-		case CP_UNICODE: return chr;
-		case CP_DEVICE: 
-			if (((byte)chr) > 127)  {
-				char in[2] = {chr, 0};
-				WCHAR out[2];
-				OemToCharW(in, out);
-				return out[0];
-			} else {
-				return chr;
-			}
-		case CP_GRAPHICAL: return mapToGraphical(chr);
-		case CP_INVALID: return '?';
+	case CP_WINDOWS: 
+	case CP_UNICODE: return chr;
+	case CP_DEVICE: 
+		if (byte(chr) > 127)  {
+			char in[2] = {chr, 0};
+			WCHAR out[2];
+			OemToCharW(in, out);
+			return out[0];
+		} else {
+			return chr;
+		}
+	case CP_GRAPHICAL: return mapToGraphical(chr);
+	case CP_INVALID: return '?';
 	}
 	return chr;
 }
@@ -108,10 +108,10 @@ protected:
 	int cursorx, cursory;
 	int dx, dy;
 
-			void 		cursorBold();
-			void 		cursorHide();
-			void 		cursorNormal();
-			bool		initConsole();
+		void 			cursorBold();
+		void 			cursorHide();
+		void 			cursorNormal();
+		bool			initConsole();
 public:
 					Win32SystemDisplay(const char *title);
 	virtual				~Win32SystemDisplay();
