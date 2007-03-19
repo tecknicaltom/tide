@@ -2,6 +2,8 @@
 ==============
 
 version 2.0.1:
+	- [Java] annotate exception handlers in byte code
+	- [Java] some byte code improvements (lookupswitch, tableswitch)
 
 version 2.0:
 	- renamed process.h to htprocess.h because of some stupid
