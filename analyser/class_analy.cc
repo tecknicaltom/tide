@@ -115,15 +115,15 @@ void ClassAnalyser::beginAnalysis()
 				}
 				ht_snprintf(buffer, sizeof buffer, "catch (%s)", buffer2);
 				Address *b = createAddress32(cm->start + ei->start_pc);
-				ht_snprintf(buffer2, sizeof buffer2, "try { // %s", buffer);
+				ht_snprintf(buffer2, sizeof buffer2, "[%d] try { // %s", i, buffer);
 				addComment(b, 0, buffer2);
 				delete b;
 				b = createAddress32(cm->start + ei->end_pc);
-				ht_snprintf(buffer2, sizeof buffer2, "} // %s", buffer);
+				ht_snprintf(buffer2, sizeof buffer2, "[%d] } // %s", i, buffer);
 				addComment(b, 0, buffer2);
 				delete b;
 				b = createAddress32(cm->start + ei->handler_pc);
-				ht_snprintf(buffer2, sizeof buffer2, "%s:", buffer);				
+				ht_snprintf(buffer2, sizeof buffer2, "[%d] %s:", i, buffer);
 				addComment(b, 0, buffer2);
 				pushAddress(b, b);
 				delete b;
