@@ -545,7 +545,7 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 		break;
 	case CONSTANT_Integer:
 		strcpy(tag, "Int");
-		ht_snprintf(data, "int (%d)", clazz->cpool[token]->value.ival);
+		ht_snprintf(data, sizeof data, "int (%d)", clazz->cpool[token]->value.ival);
 		break;
 	case CONSTANT_Long: {
 		strcpy(tag, "Long");
@@ -557,10 +557,10 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 	case CONSTANT_String: {
 		strcpy(tag, "String");
 		char *d = data;
-		*(d++) = '\"';
+		*d++ = '\"';
 		// FIXME: add "..." on too long strings
 		d += escape_special_str(d, 256, get_string(NULL, clazz, clazz->cpool[token]->value.llval[0]), "\"", false);
-		*(d++) = '\"';
+		*d++ = '\"';
 		*d = 0;
 		break;
 	}
