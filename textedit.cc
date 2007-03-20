@@ -145,8 +145,7 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 			}
 			result = s->create_request(&start, &end, form, s->search_class);
 		} catch (const Exception &e) {
-			String s;
-			errorbox("error: %y", &e.reason(s));
+			errorbox("error: %y", &e);
 		}
 	}
 	dialog->done();
@@ -157,10 +156,6 @@ ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmo
 /*
  *	CLASS ht_undo_data
  */
-ht_undo_data::ht_undo_data()
-{
-}
-
 bool ht_undo_data::combine(ht_undo_data *ud)
 {
 	return false;
@@ -190,7 +185,7 @@ ht_undo_data_delete_string::~ht_undo_data_delete_string()
 
 bool ht_undo_data_delete_string::combine(ht_undo_data *ud)
 {
-	if (ud->getObjectID()==getObjectID()) {
+	if (ud->getObjectID() == getObjectID()) {
 		ht_undo_data_delete_string *ud2 = (ht_undo_data_delete_string *)ud;
 		if (ud2->apos.line == apos.line) {
 			if (ud2->bpos.pofs + ud2->len == bpos.pofs) {
@@ -208,7 +203,7 @@ bool ht_undo_data_delete_string::combine(ht_undo_data *ud)
 
 uint ht_undo_data_delete_string::getsize()
 {
-	return len+sizeof *this;
+	return len + sizeof *this;
 }
 
 void ht_undo_data_delete_string::gettext(char *text, uint maxlen)
@@ -290,7 +285,7 @@ bool ht_undo_data_delete_string2::combine(ht_undo_data *ud)
 
 uint ht_undo_data_delete_string2::getsize()
 {
-	return len+sizeof *this;
+	return len + sizeof *this;
 }
 
 void ht_undo_data_delete_string2::gettext(char *text, uint maxlen)
@@ -373,7 +368,7 @@ bool ht_undo_data_insert_string::combine(ht_undo_data *ud)
 
 uint ht_undo_data_insert_string::getsize()
 {
-	return len+sizeof *this;
+	return len + sizeof *this;
 }
 
 void ht_undo_data_insert_string::gettext(char *text, uint maxlen)
@@ -482,7 +477,7 @@ bool ht_undo_data_overwrite_string::combine(ht_undo_data *ud)
 
 uint ht_undo_data_overwrite_string::getsize()
 {
-	return len+len2+sizeof(*this);
+	return len + len2 + sizeof(*this);
 }
 
 void ht_undo_data_overwrite_string::gettext(char *text, uint maxlen)
@@ -545,10 +540,6 @@ ht_undo_data_split_line::ht_undo_data_split_line(text_viewer_pos *APos, text_vie
 	indent = Indent;
 }
 
-ht_undo_data_split_line::~ht_undo_data_split_line()
-{
-}
-
 uint ht_undo_data_split_line::getsize()
 {
 	return sizeof *this;
@@ -595,10 +586,6 @@ ht_undo_data_join_line::ht_undo_data_join_line(text_viewer_pos *APos, text_viewe
 {
 	apos = *APos;
 	bpos = *BPos;
-}
-
-ht_undo_data_join_line::~ht_undo_data_join_line()
-{
 }
 
 uint ht_undo_data_join_line::getsize()
@@ -913,7 +900,7 @@ bool ht_text_editor_undo::is_clean()
 	return clean_state == current_position;
 }
 
-bool	ht_text_editor_undo::is_clean(int i)
+bool ht_text_editor_undo::is_clean(int i)
 {
 	return clean_state == i;
 }
@@ -1060,8 +1047,7 @@ bool ht_text_viewer::continue_search()
 				r = search(last_search_request, &start, &end);
 			}
 		} catch (const Exception &e) {
-			String s;
-			errorbox("error: %y", &e.reason(s));
+			errorbox("error: %y", &e);
 		}
 		
 		if (r) return show_search_result(r);
@@ -1709,11 +1695,11 @@ void ht_text_viewer::make_pos_physical(text_viewer_pos *p)
 
 void ht_text_viewer::normalize_selection()
 {
-	if ((text_viewer_pos_compare(&sel_end, &sel_start)<=0)) {
-		sel_start.line=0;
-		sel_start.pofs=0;
-		sel_end.line=0;
-		sel_end.pofs=0;
+	if (text_viewer_pos_compare(&sel_end, &sel_start) <= 0) {
+		sel_start.line = 0;
+		sel_start.pofs = 0;
+		sel_end.line = 0;
+		sel_end.pofs = 0;
 	}
 }
 
@@ -1755,7 +1741,7 @@ void ht_text_viewer::popup_change_highlight()
 	b.x=0;
 	b.y=0;
 		
-/* mode (input) */
+	/* mode (input) */
 	c=b;
 	c.x=0;
 	c.y=1;
@@ -1779,7 +1765,7 @@ void ht_text_viewer::popup_change_highlight()
 	if (selected >= 0) mode_input->gotoItemByPosition(selected);
 	d->insert(mode_input);
 	
-/* mode (text) */
+	/* mode (text) */
 	c=b;
 	c.x=0;
 	c.y=0;
