@@ -56,12 +56,11 @@ class ht_text_editor;
  */
 class ht_undo_data: public Object {
 public:
-	ht_undo_data();
 	virtual bool combine(ht_undo_data *ud);
-	virtual uint getsize()=0;
-	virtual void gettext(char *text, uint maxlen)=0;
-	virtual void apply(ht_text_editor *te)=0;
-	virtual void unapply(ht_text_editor *te, bool *goto_only)=0;
+	virtual uint getsize() = 0;
+	virtual void gettext(char *text, uint maxlen) = 0;
+	virtual void apply(ht_text_editor *te) = 0;
+	virtual void unapply(ht_text_editor *te, bool *goto_only) = 0;
 };
 
 /*
@@ -154,7 +153,6 @@ class ht_undo_data_split_line: public ht_undo_data {
 	uint indent;
 public:
 	ht_undo_data_split_line(text_viewer_pos *apos, text_viewer_pos *bpos, uint Indent);
-	~ht_undo_data_split_line();
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
@@ -171,7 +169,6 @@ class ht_undo_data_join_line: public ht_undo_data {
 	text_viewer_pos cpos;
 public:
 	ht_undo_data_join_line(text_viewer_pos *apos, text_viewer_pos *bpos);
-	~ht_undo_data_join_line();
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
