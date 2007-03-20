@@ -357,8 +357,7 @@ int main(int argc, char *argv[])
 		a->run(false);
 	} catch (const Exception &x) {
 		done();
-		String s;
-		ht_fprintf(stderr, "\n\nFATAL: %s: %y\n", "unhandled exception", &x.reason(s));
+		ht_fprintf(stderr, "\n\nFATAL: %s: %y\n", "unhandled exception", &x);
 		return 1;
 	} catch (...) {
 		done();
