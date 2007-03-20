@@ -590,12 +590,12 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 	d->init(&b, pstart, pend, 0);
 	bool run = true;
 	int r;
-	while (run && ((r = d->run(false)) != button_cancel)) {
+	while (run && (r = d->run(false)) != button_cancel) {
 		switch (r) {
-			case 100:
-				dialog_eval_help(blockop_func_eval, blockop_symbol_eval, NULL);
-				break;
-			default: 
+		case 100:
+			dialog_eval_help(blockop_func_eval, blockop_symbol_eval, NULL);
+			break;
+		default: 
 		{
 		ht_blockop_dialog_data t;
 		ViewDataBuf vdb(d, &t, sizeof t);
@@ -607,8 +607,8 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 		if (file->getAccessMode() & IOAM_WRITE) {
 			FileOfs start=pstart, end=pend;
 
-			if (format_string_to_offset_if_avail(format, t.start.text, t.start.textlen, "start", &start) &&
-			format_string_to_offset_if_avail(format, t.end.text, t.end.textlen, "end", &end)) {
+			if (format_string_to_offset_if_avail(format, t.start.text, t.start.textlen, "start", &start)
+			 && format_string_to_offset_if_avail(format, t.end.text, t.end.textlen, "end", &end)) {
 				if (end > start) {
 					int esize=0;
 					int esizes[3]={4, 2, 1};
@@ -637,8 +637,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 									/*bool b = */execute_process(blockop_int_process, ctx);
 								}
 							} catch (const Exception &e) {
-								String res;
-								errorbox("error: %y", &e.reason(res));
+								errorbox("error: %y", &e);
 							}
 							if (ctx) delete ctx;
 							break;
@@ -662,10 +661,9 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 									/*bool b = */execute_process(blockop_str_process, ctx);
 								}
 							} catch (const Exception &e) {
-								String res;
-								errorbox("error: %y", &e.reason(res));
+								errorbox("error: %y", &e);
 							}
-							if (ctx) delete ctx;
+							delete ctx;
 							break;
 						}
 						default:
