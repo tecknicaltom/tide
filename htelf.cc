@@ -86,8 +86,7 @@ static ht_view *htelf_init(Bounds *b, File *file, ht_format_group *format_group)
 		g->init(b, file, htelf_ifs, format_group, header_ofs);
 		return g;
 	} catch (const Exception &x) {
-		String s;
-		errorbox("error while reading ELF: %y", &x.reason(s));
+		errorbox("error while reading ELF: %y", &x);
 		return NULL;
 	}
 }
@@ -180,16 +179,14 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 			try {
 				fake_undefined_symbols32();
 			} catch (const Exception &x) {
-				String s;
-				errorbox("error while faking undefined ELF symbols: %y", &x.reason(s));
+				errorbox("error while faking undefined ELF symbols: %y", &x);
 			}
 
 			/* create streamfile layer for relocations */
 			try {
 				auto_relocate32();
 			} catch (const Exception &x) {
-				String s;
-				errorbox("error while auto-relocating ELF symbols: %y", &x.reason(s));
+				errorbox("error while auto-relocating ELF symbols: %y", &x);
 			}
 		}
 		}
@@ -449,8 +446,7 @@ void ht_elf::auto_relocate32()
 			try {
 				relocate_section(rf, i, elf_shared->shrelocs[i].relocShIdx, elf_shared->shrelocs[i].relocAddr);
 			} catch (const Exception &x) {
-				String s;
-				LOG("error while relocating section %d: %s", i, &x.reason(s));
+				LOG("error while relocating section %d: %s", i, &x);
 			}
 		}
 	}
