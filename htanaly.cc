@@ -749,7 +749,7 @@ void ht_aviewer::generateOutputDialog()
 
 	b.assign(29, 2, 15, 1);
 	NEW_OBJECT(v1, ht_listpopup, &b);
-//	((ht_listpopup*)v1)->insertstring("HTML");
+	((ht_listpopup*)v1)->insertstring("HTML");
 	((ht_listpopup*)v1)->insertstring("plain text");
 	dialog->insert(v1);
 	b.assign(29, 1, 15, 1);
@@ -821,20 +821,20 @@ void ht_aviewer::generateOutputDialog()
 			LocalFile s(name, IOAM_WRITE, FOM_CREATE);
 			AnalyserOutput *out;
 			switch (odd.lp.cursor_pos) {
-				case 0:
-					out = new AnalyserTxtOutput();
-					((AnalyserTxtOutput*)out)->init(analy, &s);
-					break;
-				case 1:
-					out = new AnalyserTxtOutput();
-					((AnalyserTxtOutput*)out)->init(analy, &s);
-					break;
+			case 0:
+				out = new AnalyserTxtOutput();
+				((AnalyserTxtOutput*)out)->init(analy, &s);
+				break;
+			case 1:
+				out = new AnalyserHTMLOutput();
+				((AnalyserHTMLOutput*)out)->init(analy, &s);
+				break;
 			}
 			out->generateFile(start_addr, end_addr);
 			out->done();
 			delete out;
-		} catch (const IOException &) {
-			infobox("couldnt create file '%y'.", &filename);
+		} catch (const IOException &e) {
+			infobox("couldnt create file '%y': %y.", &filename, &e);
 			continue;
 		}
 		break;
