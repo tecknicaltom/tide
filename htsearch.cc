@@ -1022,8 +1022,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 				break;
 			}
 		} catch (const Exception &e) {
-			String s;
-			errorbox("error: %y", &e.reason(s));
+			errorbox("error: %y", &e);
 		}
 	}
 	dialog->done();
@@ -1117,8 +1116,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 
 			request = s->create_request(&start, &end, sform, format, s->search_class);
 		} catch (const Exception &e) {
-			String s;
-			errorbox("error: %y", &e.reason(s));
+			errorbox("error: %y", &e);
 		}
 		
 		if (request) {
@@ -1174,14 +1172,13 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 					delete result;
 				}
 			} catch (const Exception &e) {
-				String s;
-				errorbox("error: %y", &e.reason(s));
+				errorbox("error: %y", &e);
 			}
 
 			app->sendmsg(cmd_vstate_restore);
 		}
 				
-		if (request) delete request;
+		delete request;
 	}
 	dialog->done();
 	delete dialog;
