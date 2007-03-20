@@ -682,7 +682,7 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 	/*
 	 *	If we have reached |min| and line==0, we're on top
 	 */
-	if (cmp<0 || (cmp == 0 && line==0)) {
+	if (cmp < 0 || (cmp == 0 && line == 0)) {
 		DPRINTF2("geht nicht\n");
 		return 0;
 	}
@@ -709,8 +709,8 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 	if (analy->disasm) {
 		analy->disasm->getOpcodeMetrics(min_length, max_length, min_look_ahead, avg_look_ahead, addr_align);
 	} else {
-		min_look_ahead=1;
-		avg_look_ahead=1;
+		min_look_ahead = 1;
+		avg_look_ahead = 1;
 	}
 	
 	int l = n*avg_look_ahead;
@@ -721,7 +721,7 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 	 */
 	 
 	Address *search_addr = Addr->clone();
-	if (!search_addr->add(-l) || search_addr->compareTo(min)<0) {
+	if (!search_addr->add(-l) || search_addr->compareTo(min) < 0) {
 		/*
 		 *	It isnt possible, to go |l| bytes back. So we start at |min|.
 		 */
@@ -839,9 +839,9 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 		n -= i;
 	}
 
-	for (int j=0; j<i; j++) delete addrbuf[j];
+	for (int j=0; j < i; j++) delete addrbuf[j];
 
-	if (n) return prevLine(Addr, line, n, min)+res;
+	if (n) return prevLine(Addr, line, n, min) + res;
 	return res;
 }
 
@@ -850,7 +850,7 @@ void AnalyserOutput::putElement(int element_type, const char *element)
 	write(element);
 }
 
-void	AnalyserOutput::reset()
+void AnalyserOutput::reset()
 {
 	delete addr;
 	addr = new InvalidAddress;
@@ -858,7 +858,7 @@ void	AnalyserOutput::reset()
 	out_addrs->delAll();
 }
 
-void	AnalyserOutput::write(const char *s)
+void AnalyserOutput::write(const char *s)
 {
 	int len = elementLength(s);
 	len = MIN(len, WORKBUF_LEN-(work_buffer-work_buffer_start));
@@ -872,5 +872,3 @@ void AnalyserOutput::write(const char *s, int n)
 	memcpy(work_buffer, s, n);
 	work_buffer += n;
 }
-
-
