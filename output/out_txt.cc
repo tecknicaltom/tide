@@ -37,11 +37,6 @@ void	AnalyserTxtOutput::init(Analyser *analy, Stream *s)
 	dis_style = DIS_STYLE_HEX_NOZEROPAD+DIS_STYLE_HEX_ASMSTYLE+X86DIS_STYLE_OPTIMIZE_ADDR;
 }
 
-void AnalyserTxtOutput::done()
-{
-	AnalyserOutput::done();
-}
-
 void	AnalyserTxtOutput::beginAddr()
 {
 	AnalyserOutput::beginAddr();
