@@ -1756,8 +1756,7 @@ ht_window *ht_app::create_window_file_bin(const char *filename, bool allow_dupli
 		mfile = new FileModificator(emfile, true);
 		file = new FileLayer(mfile, true);
 	} catch (const IOException &e) {
-		String s;
-		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e.reason(s));
+		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e);
 		if (file) delete file;
 		else if (mfile) delete mfile;
 		else delete emfile;
@@ -1879,8 +1878,7 @@ ht_window *ht_app::create_window_file_text(const char *filename, bool allow_dupl
 		tfile = new ht_ltextfile(emfile, true, NULL);
 		file = new ht_layer_textfile(tfile, true);
 	} catch (const IOException &e) {
-		String s;
-		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e.reason(s));
+		LOG_EX(LOG_ERROR, "error loading file %y: %y", &f, &e);
 		if (file) delete file;
 		else if (tfile) delete tfile;
 		else delete emfile;
@@ -2357,9 +2355,8 @@ void ht_app::handlemsg(htmsg *msg)
 							e->layer->seek(0);
 							e->layer->copyAllTo(f);
 						} catch (const IOException &e) {
-							String s;
-							LOG_EX(LOG_ERROR, "error saving file %s: %y", fn, &e.reason(s));
-							errorbox("error saving file %s: %y", fn, &e.reason(s));
+							LOG_EX(LOG_ERROR, "error saving file %s: %y", fn, &e);
+							errorbox("error saving file %s: %y", fn, &e);
 							delete f;
 							return;
 						}
@@ -2547,8 +2544,7 @@ void ht_app::handlemsg(htmsg *msg)
 				try {
 					f->extend(s);
 				} catch (const IOException &e) {
-					String s1;
-					errorbox("couldn't extend file to offset 0x%08qx/%qd: %s", s, s, &e.reason(s1));
+					errorbox("couldn't extend file to offset 0x%08qx/%qd: %y", s, s, &e);
 				}
 				if (!(oam & IOAM_WRITE)) f->setAccessMode(oam);
 //			}
@@ -2645,8 +2641,7 @@ void ht_app::handlemsg(htmsg *msg)
 					LocalFile f(fn, IOAM_WRITE, FOM_CREATE);
 					clipboard_paste(&f, 0);
 				} catch (const IOException &e) {
-					String s;
-					errorbox("error writing: '%s': '%y'", filename, &e.reason(s));
+					errorbox("error writing: '%s': '%y'", filename, &e);
 				}
 			}
 			clearmsg(msg);
@@ -2663,8 +2658,7 @@ void ht_app::handlemsg(htmsg *msg)
 					ht_snprintf(desc, sizeof desc, "file %s", filename);
 					clipboard_copy(desc, &f, 0, f.getSize());
 				} catch (const IOException &e) {
-					String s;
-					errorbox("error reading: '%s': '%y'", filename, &e.reason(s));
+					errorbox("error reading: '%s': '%y'", filename, &e);
 				}
 			}
 			clearmsg(msg);
@@ -3108,8 +3102,7 @@ int ht_app::run(bool modal)
 			}
 			do_idle();
 		} catch (const Exception &x) {
-			String s;
-			errorbox("unhandled exception: %y", &x.reason(s));
+			errorbox("unhandled exception: %y", &x);
 		} catch (const std::exception &x) {
 			errorbox("unhandled exception: %s", x.what());
 		} catch (...) {
