@@ -304,17 +304,16 @@ bool ht_format_group::init_if(format_viewer_if *i)
 				r=1;
 			}
 		} catch (const Exception &x) {
-			String s;
-			errorbox("unhandled exception: %y", &x.reason(s));
+			errorbox("unhandled exception: %y", &x);
 		} catch (const std::exception &x) {
 			errorbox("unhandled exception: %s", x.what());
 		} catch (...) {
 			errorbox("unhandled exception: unknown");
 		}
 	}
-	ht_format_viewer_entry *e=new ht_format_viewer_entry();
-	e->interface=i;
-	e->instance=v;
+	ht_format_viewer_entry *e = new ht_format_viewer_entry();
+	e->interface = i;
+	e->instance = v;
 	format_views->insert(e);
 	return r;
 }
@@ -497,8 +496,7 @@ bool ht_format_viewer::continue_search()
 						}
 					}
 				} catch (const Exception &e) {
-					String s;
-					errorbox("error: %y", &e.reason(s));
+					errorbox("error: %y", &e);
 				}
 			}
 		} else {
@@ -511,8 +509,7 @@ bool ht_format_viewer::continue_search()
 						}
 					}
 				} catch (const Exception &e) {
-					String s;
-					errorbox("error: %y", &e.reason(s));
+					errorbox("error: %y", &e);
 				}
 			}
 		}
@@ -620,8 +617,8 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 					m.type = mt_broadcast;
 					sendmsg(&m);
 				} catch (const IOException &e) {
-					String fn, s;
-					errorbox("can't open file %y in write mode! (%y)", &file->getFilename(fn), &e.reason(s));
+					String fn;
+					errorbox("can't open file %y in write mode! (%y)", &file->getFilename(fn), &e);
 				}
 			}
 			clearmsg(msg);
@@ -638,8 +635,8 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 					m.type = mt_broadcast;
 					sendmsg(&m);
 				} catch (const IOException &e) {
-					String fn, s;
-					errorbox("can't (re)open file %y in read mode! (%y)", &file->getFilename(fn), &e.reason(s));
+					String fn;
+					errorbox("can't (re)open file %y in read mode! (%y)", &file->getFilename(fn), &e);
 				}
 				if (size != file->getSize()) {
 					htmsg m;
@@ -2659,8 +2656,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 								result = psearch(request, start, end);
 							}
 						} catch (const Exception &e) {
-							String s;
-							errorbox("error: %y", &e.reason(s));
+							errorbox("error: %y", &e);
 						}
 						break;
 					}
@@ -2668,8 +2664,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						try {
 							result = vsearch(request, start_pos, end_pos);
 						} catch (const Exception &e) {
-							String s;
-							errorbox("error: %y", &e.reason(s));
+							errorbox("error: %y", &e);
 						}
 						break;
 					}
