@@ -113,7 +113,10 @@ NotImplementedException::NotImplementedException(const String &filename, int lin
 String &NotImplementedException::reason(String &result) const
 {
 	result = "Function not implemented";
-	if (!location.isEmpty()) result += ": "+location;
+	if (!location.isEmpty()) {
+		result += ": "; 
+		result += location;
+	}
 	return result;
 }
 
@@ -132,7 +135,10 @@ IllegalArgumentException::IllegalArgumentException(const String &filename, int l
 String &IllegalArgumentException::reason(String &result) const
 {
 	result = "Illegal argument";
-	if (!location.isEmpty()) result += ": "+location;
+	if (!location.isEmpty()) {
+		result += ": ";
+		result += location;
+	}
 	return result;
 }
 
@@ -151,7 +157,10 @@ IndexOutOfBoundsException::IndexOutOfBoundsException(const String &filename, int
 String &IndexOutOfBoundsException::reason(String &result) const
 {
 	result = "Index out of bounds";
-	if (!location.isEmpty()) result += ": "+location;
+	if (!location.isEmpty()) {
+		result += ": ";
+		result += location;
+	}
 	return result;
 }
 
@@ -167,7 +176,10 @@ TypeCastException::TypeCastException(const String &cast_type, const String &obj_
 String &TypeCastException::reason(String &result) const
 {
 	result = "Bad type cast";
-	if (!aresult.isEmpty()) result += ": "+aresult;
+	if (!aresult.isEmpty()) {
+		result += ": ";
+		result += aresult;
+	}
 	return result;
 }
 
