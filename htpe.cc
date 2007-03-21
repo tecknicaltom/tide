@@ -76,7 +76,6 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	String fn;
 	LOG("%y: PE: found header at 0x%08qx", &file->getFilename(fn), header_ofs);
-
 	ht_pe_shared_data *pe_shared = ht_malloc(sizeof (ht_pe_shared_data));
 	shared_data = pe_shared;
 	pe_shared->header_ofs = header_ofs;
