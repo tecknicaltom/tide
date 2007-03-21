@@ -338,7 +338,7 @@ int main(int argc, char *argv[])
 				break;
 			case LS_ERROR_CORRUPTED:
 //				done();
-				if (screen) delete screen;
+				delete screen;
 				printf("\n\n\nfatal error loading configuration file (%s)", systemconfig_file);
 				if (error_info) {
 					printf(":\nerror near line %d\n", error_info);
