@@ -567,7 +567,7 @@ Address *AnalyX86Disassembler::branchAddr(OPCODE *opcode, branch_enum_t branchty
 				analy->addXRef(addr, analy->addr, xref);
 			}
 			if (examine) {
-				if (addr) delete addr;
+				delete addr;
 				break;
 			} else {
 				return addr;
