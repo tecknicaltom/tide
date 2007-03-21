@@ -981,7 +981,7 @@ void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, Container *l)
 
 void ht_text_viewer::done()
 {
-	if (last_search_request) delete last_search_request;
+	delete last_search_request;
 
 	if (own_textfile) delete textfile;
 
@@ -1906,7 +1906,7 @@ uint ht_text_viewer::scroll_right(uint n)
 ht_search_result *ht_text_viewer::search(ht_search_request *request, text_search_pos *s, text_search_pos *e)
 {
 	if (request != last_search_request) {
-		if (last_search_request) delete last_search_request;
+		delete last_search_request;
 		last_search_request = request->clone();
 	}
 	last_search_end_ofs = e->offset;
