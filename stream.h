@@ -40,7 +40,7 @@ protected:
 		void			checkAccess(IOAccessMode mask);
 public:
 					Stream();
-	virtual				~Stream();
+	virtual				~Stream() {};
 	/* new */
 	virtual	FileOfs			copyAllTo(Stream *stream);
 	virtual	FileOfs			copyTo(Stream *stream, FileOfs count);
