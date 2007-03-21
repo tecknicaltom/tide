@@ -188,8 +188,8 @@ void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, h
 void ht_disasm_viewer::done()
 {
 	ht_uformat_viewer::done();
-	if (assem) delete assem;
-	if (disasm) delete disasm;
+	delete assem;
+	delete disasm;
 }
 
 int ht_disasm_viewer::get_pindicator_str(char *buf, int max_len)
