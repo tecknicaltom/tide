@@ -42,27 +42,27 @@
  */
 
 class AnalyserHTOutput: public AnalyserOutput {
-		palette	analy_pal;
-		char		tmpbuffer[1024];
-		byte 	*work_buffer_edit_bytes_insert;
+	palette	analy_pal;
+	char tmpbuffer[1024];
+	byte *work_buffer_edit_bytes_insert;
 
-		vcp 		getcolor_analy(uint pal_index);
-		int last;
+	vcp getcolor_analy(uint pal_index);
+	int last;
 public:
 
-				void	init(Analyser *analy);
+			void init(Analyser *analy);
 		virtual	void done();
-		virtual	void	beginAddr();
-		virtual	void	beginLine();
-		virtual	void	changeConfig();
-		virtual	int	elementLength(const char *s);
-		virtual	void	endAddr();
-		virtual	void	endLine();
+		virtual	void beginAddr();
+		virtual	void beginLine();
+		virtual	void changeConfig();
+		virtual	int  elementLength(const char *s);
+		virtual	void endAddr();
+		virtual	void endLine();
 		virtual	void putElement(int element_type, const char *element);
 		virtual	char *link(char *s, Address *Addr);
 		virtual	char *externalLink(char *s, uint32 type1, uint32 type2, uint32 type3, uint32 type4, void *special);
 private:
-				void reloadPalette();
+			void reloadPalette();
 };
 
 #endif
