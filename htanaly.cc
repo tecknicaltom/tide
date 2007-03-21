@@ -822,12 +822,12 @@ void ht_aviewer::generateOutputDialog()
 			AnalyserOutput *out;
 			switch (odd.lp.cursor_pos) {
 			case 0:
-				out = new AnalyserTxtOutput();
-				((AnalyserTxtOutput*)out)->init(analy, &s);
-				break;
-			case 1:
 				out = new AnalyserHTMLOutput();
 				((AnalyserHTMLOutput*)out)->init(analy, &s);
+				break;
+			case 1:
+				out = new AnalyserTxtOutput();
+				((AnalyserTxtOutput*)out)->init(analy, &s);
 				break;
 			}
 			out->generateFile(start_addr, end_addr);
