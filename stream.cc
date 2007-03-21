@@ -70,10 +70,13 @@ Stream::Stream()
 //	mListeners = NULL;
 }
 
+/*
 Stream::~Stream()
 {
-//	if (mListeners) delete mListeners;
+//	delete mListeners;
 }
+*/
+
 /*
 void Stream::addEventListener(StreamEventListener *l, StreamEvent mask)
 {
