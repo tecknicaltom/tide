@@ -32,12 +32,10 @@ class AnalyserHTMLOutput: public AnalyserOutput {
 	int last;
 public:
 		void init(Analyser *analy, Stream *stream);
-	virtual	void beginAddr();
 	virtual	void beginLine();
+	virtual	void endLine();
 	virtual	Stream *getGenerateStream();
 	virtual	int  elementLength(const char *s);
-	virtual	void endAddr();
-	virtual	void endLine();
 	virtual	void footer();
 	virtual	void header();
 	virtual	void putElement(int element_type, const char *element);
