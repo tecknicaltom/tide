@@ -639,7 +639,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 							} catch (const Exception &e) {
 								errorbox("error: %y", &e);
 							}
-							if (ctx) delete ctx;
+							delete ctx;
 							break;
 						}
 						/* element type: string */
