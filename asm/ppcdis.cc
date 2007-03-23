@@ -193,22 +193,22 @@ const char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, const char *
 	ppcdis_insn *ppc_insn = (ppcdis_insn *) disasm_insn;
 	if (!ppc_insn->valid) {
 		switch (ppc_insn->size) {
-			case 1:
-				strcpy(insnstr, "db            ?");
-				break;
-			case 2:
-				strcpy(insnstr, "dw            ?");
-				break;
-			case 3:
-				strcpy(insnstr, "db            ? * 3");
-				break;
-			case 4:
-				sprintf(insnstr, "dd           %s0x%08x", cs_number, ppc_insn->data);
-				break;
-			default: { /* braces for empty assert */
-				strcpy(insnstr, "?");
-//				assert(0);
-			}
+		case 1:
+			strcpy(insnstr, "db            ?");
+			break;
+		case 2:
+			strcpy(insnstr, "dw            ?");
+			break;
+		case 3:
+			strcpy(insnstr, "db            ? * 3");
+			break;
+		case 4:
+			sprintf(insnstr, "dd           %s0x%08x", cs_number, ppc_insn->data);
+			break;
+		default: { /* braces for empty assert */
+			strcpy(insnstr, "?");
+//			assert(0);
+		}
 		}
 	} else {
 		char *is = insnstr+sprintf(insnstr, "%-13s", ppc_insn->name);
@@ -298,5 +298,3 @@ bool PPCDisassembler::validInsn(dis_insn *disasm_insn)
 {
 	return ((ppcdis_insn*)disasm_insn)->valid;
 }
-
-
