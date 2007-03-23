@@ -258,6 +258,9 @@ extern const struct powerpc_operand powerpc_operands[];
 #define PPC_OPERAND_VR (020000)
 
 /* This operand is for the DS field in a DS form instruction.  */
-#define PPC_OPERAND_DS (01000000)
+#define PPC_OPERAND_DS (040000)
+
+/* This operand is for the DQ field in a DQ form instruction.  */
+#define PPC_OPERAND_DQ (0100000)
 
 #endif
