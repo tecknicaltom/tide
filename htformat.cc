@@ -2699,8 +2699,8 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 		}
 		case msg_filesize_changed: {
 			htmsg m;
-			m.msg=msg_filesize_changed;
-			m.type=mt_broadcast;
+			m.msg = msg_filesize_changed;
+			m.type = mt_broadcast;
 			sendsubmsg(&m);
 			break;
 		}
@@ -2911,14 +2911,14 @@ vcp ht_uformat_viewer::get_tag_color_edit(FileOfs tag_offset, uint size, bool at
 void ht_uformat_viewer::render_tagstring_desc(const char **string, int *length, vcp *tc, char *tag, uint size, bool bigendian, bool is_cursor)
 {
 	ID id;
-	vcp tag_color=getcolor_tag(palidx_tags_sel_tag);
-	if (is_cursor) tag_color=getcolor_tag(palidx_tags_sel_tag_cursor_focused);
-	*string="?";
-	*length=1;
-	*tc=tag_color;
+	vcp tag_color = getcolor_tag(palidx_tags_sel_tag);
+	if (is_cursor) tag_color = getcolor_tag(palidx_tags_sel_tag_cursor_focused);
+	*string = "?";
+	*length = 1;
+	*tc = tag_color;
 	if (tag_get_desc_id(tag, &id)) {
 		int_hash *tbl;
-		if ((tbl=(int_hash*)getAtomValue(id))) {
+		if ((tbl = (int_hash*)getAtomValue(id))) {
 			const char *str;
 			uint64 q = 0;
 			FileOfs tag_offset = tag_get_offset(tag);
@@ -2953,7 +2953,7 @@ void ht_uformat_viewer::render_tagstring_desc(const char **string, int *length, 
 					}
 					break;
 				}
-/* FIXME: uint64 ? */
+				/* FIXME: uint64 ? */
 				if ((str = matchhash(q, tbl))) {
 					*string = str;
 					*length = strlen(*string);
@@ -2969,10 +2969,8 @@ void ht_uformat_viewer::render_tagstring_desc(const char **string, int *length, 
 void ht_uformat_viewer::reloadpalette()
 {
 	ht_format_viewer::reloadpalette();
-	if (tagpal.data) {
-		free(tagpal.data);
-		tagpal.data = NULL;
-	}	    
+	free(tagpal.data);
+	tagpal.data = NULL;
 	load_pal(palclasskey_tags, palkey_tags_default, &tagpal);
 }
 
@@ -3015,8 +3013,8 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				case HT_TAG_EDIT_WORD_LE: {
 					uint16 d;
 					
-					tag_offset=tag_get_offset(n);
-					tag_color=get_tag_color_edit(tag_offset, 2, (g==cursor.tag_group), is_cursor);
+					tag_offset = tag_get_offset(n);
+					tag_color = get_tag_color_edit(tag_offset, 2, (g==cursor.tag_group), is_cursor);
 					
 					byte buf[2];
 					if (pread(tag_offset, &buf, 2) == 2) {
@@ -3723,21 +3721,21 @@ void ht_uformat_viewer::pselect_set(FileOfs start, FileOfs end)
 
 void ht_uformat_viewer::clear_subs()
 {
-	ht_sub *s=first_sub, *t;
+	ht_sub *s = first_sub, *t;
 	while (s) {
-		t=s->next;
+		t = s->next;
 		s->done();
 		delete s;
-		s=t;
+		s = t;
 	}
 
-	uf_initialized=false;
-	cursor_ypos=0;
+	uf_initialized = false;
+	cursor_ypos = 0;
 
 	clear_viewer_pos(&top);
 	clear_viewer_pos(&cursor);
-	first_sub=0;
-	last_sub=0;
+	first_sub = 0;
+	last_sub = 0;
 }
 
 void ht_uformat_viewer::clear_viewer_pos(viewer_pos *p)
@@ -3760,10 +3758,10 @@ bool ht_uformat_viewer::compeq_viewer_pos(viewer_pos *a, viewer_pos *b)
 	
 bool ht_uformat_viewer::compeq_viewer_pos(uformat_viewer_pos *a, uformat_viewer_pos *b)
 {
-	return ((a->sub == b->sub)
+	return (a->sub == b->sub
 		   && compeq_line_id(a->line_id, b->line_id)
-		   && (a->tag_idx == b->tag_idx)
-		   && (a->tag_group == b->tag_group));
+		   && a->tag_idx == b->tag_idx
+		   && a->tag_group == b->tag_group);
 }
 
 void ht_uformat_viewer::sendsubmsg(int msg)
@@ -3775,8 +3773,8 @@ void ht_uformat_viewer::sendsubmsg(int msg)
 
 void ht_uformat_viewer::sendsubmsg(htmsg *msg)
 {
-	if (msg->type==mt_broadcast) {
-		ht_sub *s=first_sub;
+	if (msg->type == mt_broadcast) {
+		ht_sub *s = first_sub;
 		while (s) {
 			s->handlemsg(msg);
 			s=s->next;
@@ -4154,8 +4152,8 @@ public:
 bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 {
 #define PROCESS_EXPR_SEARCH_BYTES_PER_CALL	256
-	ht_expr_search_pcontext *c=(ht_expr_search_pcontext*)ctx;
-	ht_expr_search_request *s=(ht_expr_search_request*)c->request;
+	ht_expr_search_pcontext *c = (ht_expr_search_pcontext*)ctx;
+	ht_expr_search_request *s = (ht_expr_search_request*)c->request;
 
 	search_expr_eval_context_t context;
 	context.sub = c->sub;
@@ -4202,7 +4200,7 @@ bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, FileOfs fsize)
 {
 	if (start < fofs) start = fofs;
-	if (end>fofs + fsize) end = fofs+fsize;
+	if (end > fofs + fsize) end = fofs+fsize;
 	if (fsize) {
 		ht_search_result *r = NULL;
 		ht_expr_search_pcontext c;
@@ -4222,9 +4220,9 @@ ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, F
 ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
 {
 	ht_search_result *r = NULL;
-	if ((search->search_class==SC_PHYSICAL) && (search->type==ST_EXPR)) {
+	if (search->search_class == SC_PHYSICAL && search->type == ST_EXPR) {
 		r = linear_expr_search(search, start, end, this, uformat_viewer, fofs, fsize);
-	} else if ((search->search_class==SC_PHYSICAL) && (search->type==ST_FXBIN)) {
+	} else if (search->search_class == SC_PHYSICAL && search->type == ST_FXBIN) {
 		r = linear_bin_search(search, start, end, file, fofs, fsize);
 	}
 	return r;
