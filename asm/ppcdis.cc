@@ -68,7 +68,7 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 
 		table_op = PPC_OP (opcode->opcode);
 
-		if ((insn.data & opcode->mask) != opcode->opcode || (opcode->flags & dialect) == 0) {
+		if ((insn.data & opcode->mask) != opcode->opcode/* || (opcode->flags & dialect) == 0*/) {
 			continue;
 		}
 
