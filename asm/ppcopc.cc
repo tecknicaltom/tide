@@ -2818,8 +2818,6 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "lvsr",    X(31,  38), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "lvx",     X(31, 103), X_MASK,	PPCVEC,		{ VD, RA, RB } },
 { "lvxl",    X(31, 359), X_MASK,	PPCVEC,		{ VD, RA, RB } },
-{ "lvlx",    X(31, 519), X_MASK,	PPCVEC,		{ VD, RA, RB } }, //-
-{ "lvrx",    X(31, 551), X_MASK,	PPCVEC,		{ VD, RA, RB } }, //-
 { "stvebx",  X(31, 135), X_MASK,	PPCVEC,		{ VS, RA, RB } },
 { "stvehx",  X(31, 167), X_MASK,	PPCVEC,		{ VS, RA, RB } },
 { "stvewx",  X(31, 199), X_MASK,	PPCVEC,		{ VS, RA, RB } },
