@@ -3,6 +3,9 @@
 
 version 2.0.2:
 	- [IA64] disassembler works again (is anybody using this?)
+	- [Java] fixed stupid undefined behaviour bug
+	- [Java] use Signature information when available
+	         (annotates generic functions etc.)
 
 version 2.0.1:
 	- [Java] annotate exception handlers in byte code
