@@ -41,7 +41,7 @@ bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
 uint64 IA64Disassembler::signExtend(uint64 a, int length)
 {
 	uint64 sign = 1ULL << (length-1);
-	if ((a & sign) != 0ULL) {
+	if (a & sign) {
 		sign <<= 1;
 		sign -= 1;
 		sign = ~sign;
@@ -53,7 +53,7 @@ uint64 IA64Disassembler::signExtend(uint64 a, int length)
 void IA64Disassembler::decodeSlot(int slot_nb)
 {
 	IA64SlotDisInsn *slot = &insn.slot[slot_nb];
-	byte role = (insn.tmplt->slot[slot_nb] & 0xf0);
+	byte role = insn.tmplt->slot[slot_nb] & 0xf0;
 	if (role == IA64_INST_ROLE_LONG) {
 		uint64 tmp = insn.slot[slot_nb].data;
 		insn.slot[slot_nb].data = insn.slot[slot_nb+1].data;
@@ -85,7 +85,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 	}
 	uint16 inst_id = dtree_entry.next_node;
 	
-	if ((inst_id >= IA64_OPCODE_INST_LAST) || inst_id == IA64_OPCODE_ILLOP) {
+	if (inst_id >= IA64_OPCODE_INST_LAST || inst_id == IA64_OPCODE_ILLOP) {
 		// FIXME: ..
 		slot->valid = false;
 	} else {
@@ -419,34 +419,34 @@ dis_insn *IA64Disassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 			insn.valid = false;
 		} else {
 			insn.slot[0].data = 
-				  ((uint32)(code[0] >> 5))
-				| (((uint32)code[1]) << 3)
-				| (((uint32)code[2]) << 11)
-				| (((uint32)code[3]) << 19)
-				| (((uint32)code[4] & 0x1f) << 27)     // 32 bits
+				  (uint32(code[0]) >> 5)
+				| (uint32(code[1]) << 3)
+				| (uint32(code[2]) << 11)
+				| (uint32(code[3]) << 19)
+				| (uint32(code[4] & 0x1f) << 27)     // 32 bits
 				|
-				  (((uint64)(code[4] >> 5))
-				| (((uint64)code[5] & 0x3f) << 3)) << 32;  // +9 = 41 bits
+				  ((uint64(code[4] >> 5)
+				| (uint64(code[5] & 0x3f) << 3)) << 32);  // +9 = 41 bits
 
 			insn.slot[1].data = 
-				  ((uint32)(code[5] >> 6))
-				| (((uint32)code[6]) << 2)
-				| (((uint32)code[7]) << 10)
-				| (((uint32)code[8]) << 18)
-				| (((uint32)code[9] & 0x3f) << 26)    // 32 bits
+				  (uint32(code[5]) >> 6)
+				| (uint32(code[6]) << 2)
+				| (uint32(code[7]) << 10)
+				| (uint32(code[8]) << 18)
+				| (uint32(code[9] & 0x3f) << 26)    // 32 bits
 				|
-				  (((uint64)(code[9] >> 6))
-				| (((uint64)code[10] & 0x7f) << 2)) << 32;    // +9 = 41 bits
+				  ((uint64(code[9] >> 6)
+				| (uint64(code[10] & 0x7f) << 2)) << 32);    // +9 = 41 bits
 
 			insn.slot[2].data = 
-				  ((uint32)(code[10] >> 7))
-				| (((uint32)code[11]) << 1)
-				| (((uint32)code[12]) << 9)
-				| (((uint32)code[13]) << 17)
-				| (((uint32)code[14] & 0x7f) << 25)   // 32 bits
+				  (uint32(code[10]) >> 7)
+				| (uint32(code[11]) << 1)
+				| (uint32(code[12]) << 9)
+				| (uint32(code[13]) << 17)
+				| (uint32(code[14] & 0x7f) << 25)   // 32 bits
 				|
-				  (((uint64)(code[14] >> 7))
-				| (((uint64)code[15]) << 1)) << 32;           // +9 = 41 bits
+				  ((uint64(code[14] >> 7)
+				| (uint64(code[15]) << 1)) << 32);           // +9 = 41 bits
 		}
 		for (int i=0; i<3; ) {
 			insn.slot[i].valid = false;
@@ -510,21 +510,21 @@ const char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, const char 
 		IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
 		is[0] = 0;
 		if (slot->valid) {
-			char qp[6];
+			char qp[10];
 			if (slot->qp) {
-				sprintf(qp, "(p%d)", slot->qp);
+				ht_snprintf(qp, sizeof qp, "(p%d)", slot->qp);
 			} else {
-				qp[0]=0;
+				qp[0] = 0;
 			}
 			is += ht_snprintf(is, 256, "%s%d %5s %s%-20s", cs_comment, dis_insn->selected, qp, cs_default, slot->opcode->name);
-			for (int i=0; i<7; i++) {
-				if (slot->op[i].type==IA64_OPERAND_NO) break;
-				if (slot->op[i].type==IA64_OPERAND_EQUALS) {
+			for (int i=0; i < 7; i++) {
+				if (slot->op[i].type == IA64_OPERAND_NO) break;
+				if (slot->op[i].type == IA64_OPERAND_EQUALS) {
 					is += ht_snprintf(is, 256, " %s= ", cs_symbol);
 					i++;
 					goto w;
 				} else {
-					if (i!=0) is += ht_snprintf(is, 256, "%s, ", cs_symbol);
+					if (i != 0) is += ht_snprintf(is, 256, "%s, ", cs_symbol);
 				}
 				w:
 				switch (slot->op[i].type) {
@@ -562,7 +562,7 @@ const char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, const char 
 					is += ht_snprintf(is, 256, "%s[%sr%d%s]", cs_symbol, cs_default, slot->op[i].reg, cs_symbol);
 					break;                              
 				case IA64_OPERAND_IMM:
-					is += ht_snprintf(is, 256, "%s%qx", cs_number, &slot->op[i].imm);
+					is += ht_snprintf(is, 256, "%s%qx", cs_number, slot->op[i].imm);
 					break;                              
 				case IA64_OPERAND_ADDRESS: {
 					CPU_ADDR caddr;
