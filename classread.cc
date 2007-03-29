@@ -51,18 +51,13 @@ static u4 offset;
 ClassMethod::ClassMethod(char *n, char *d, ClassAddress s, uint l, int f,
 			int e_len, exception_info *e)
 {
-	name = ht_strdup(n);
+	name = n;
 	start = s;
 	type = d;
 	length = l;
 	flags = f;
 	exctbl_len = e_len;
 	exctbl = e;
-}
-
-ClassMethod::~ClassMethod()
-{
-	free(name);
 }
 
 int ClassMethod::compareTo(const Object *obj) const
@@ -94,7 +89,7 @@ static void get_name_and_type(Stream *htio, classfile *clazz, uint index, char *
 }
 
 /* read and return constant pool entry */
-static cp_info *read_cpool_entry (Stream *htio, classfile *clazz)
+static cp_info *read_cpool_entry(Stream *htio, classfile *clazz)
 {
 	cp_info *cp;
 	u2 idx;
@@ -172,6 +167,10 @@ attrib_info *attribute_read(Stream *htio, classfile *clazz)
 			}
 		}
 		len -= 2 + 8*a->code.exctbl_len;
+	} else if (!strcmp(aname, "Signature")) {
+		a->tag = ATTRIB_Signature;
+		a->signature = READ2();
+		len -= 2;
 	} else if (!strcmp(aname, "Exceptions")) {
 		a->tag = ATTRIB_Exceptions;
 	} else if (!strcmp(aname, "InnerClasses")) {
@@ -192,7 +191,7 @@ attrib_info *attribute_read(Stream *htio, classfile *clazz)
 }
 
 /* read and return method info */
-static mf_info *read_fieldmethod (Stream *htio, ht_class_shared_data *shared)
+static mf_info *read_fieldmethod(Stream *htio, ht_class_shared_data *shared)
 {
 	mf_info *m;
 	u2 idx;
@@ -310,10 +309,11 @@ ht_class_shared_data *class_read(File *htio)
 			clazz->methods[i] = m;
 			int acount = m->attribs_count;
 			bool ok = false;
+			ClassMethod *cm = NULL;
 			for (int j=0; j < acount; j++) {
 				attrib_info *ai = m->attribs[j];
 				if (ai->tag == ATTRIB_Code) {
-					ClassMethod *cm = new ClassMethod(m->name, m->desc, 
+					cm = new ClassMethod(m->name, m->desc, 
 						ai->code.start, ai->code.len, m->flags, 
 						ai->code.exctbl_len, ai->code.exctbl);
 					shared->methods->insert(cm);
@@ -322,6 +322,8 @@ ht_class_shared_data *class_read(File *htio)
 					shared->initialized->add(&a1, &a2);
 					shared->valid->add(&a1, &a2);
 					ok = true;
+				} else if (ai->tag == ATTRIB_Signature && cm) {
+					cm->addsig(get_string(htio, shared->file, ai->signature));
 				}
 			}
 			if (!ok) {
@@ -410,50 +412,141 @@ void class_unread(ht_class_shared_data *shared)
 	free(shared);
 }
 
-#define STRIP_PATH
+int java_demangle_type(char *result, const char **type);
 
-int java_demangle_type(char *result, char **type)
+int java_demangle_generic(char *result, const char **type)
 {
-	switch (*((*type)++)) {
-		case '[': {
-			char temp[200];
-			java_demangle_type(temp, type);
-			return sprintf(result, "%s[]", temp);
-		}
-		case 'B':
-			return sprintf(result, "byte");
-		case 'C':
-			return sprintf(result, "char");
-		case 'D':
-			return sprintf(result, "double");
-		case 'F':
-			return sprintf(result, "float");
-		case 'I':
-			return sprintf(result, "int");
-		case 'J':
-			return sprintf(result, "long");
-		case 'L': {
-			char *oldresult = result;
-			while (**type != ';') {
-				*result = **type;
-#ifdef STRIP_PATH
-				if (*result == '/') result = oldresult; else
+#if 0
+ (Ljava/util/List<+Ljava/lang/Float;>;)V
+ (Ljava/util/List<*>;)V
+ (Ljava/util/Map<Ljava/lang/Integer;+Ljava/lang/Integer;>;)V
+ <S:Ljava/lang/Object;>(Ljava/util/Map<Ljava/lang/Integer;+TS;>;)V
+ <S:Ljava/lang/Object;B:Ljava/lang/Object;>(Ljava/util/Map<TS;TB;>;)V
+ <S:Ljava/lang/Object;B:TS;>(Ljava/util/Map<TS;TB;>;)V
+ <T:Ljava/lang/Object;:Ljava/util/List;>(Ljava/util/List<TT;>;)V
 #endif
-				result++;
-				(*type)++;
+	char *old = result;
+	*result++ = '<';
+	(*type)++;
+
+	goto first;
+	do {
+		*result++ = ',';
+		*result++ = ' ';
+	first:
+		switch (**type) {
+		case 0:
+			*result = 0;
+			return result-old;
+		case '*':
+			(*type)++;
+			*result++ = '?'; 
+			break;
+		case '+':
+		case '-':
+			result += sprintf(result, "? %s ", **type=='+' ? "extends": "super");
+			(*type)++;
+			// fall through
+		default:
+			result += java_demangle_type(result, type);
+		}
+	} while (**type != '>');
+	(*type)++;
+	*result++ = '>';
+	*result = 0;
+	return result - old;
+}
+
+#define STRIP_PATH
+int java_demangle_template(char *result, const char **type)
+{
+	char *old = result;
+	*result++ = '<';
+	(*type)++;
+
+	goto first;
+	do {
+		*result++ = ',';
+		*result++ = ' ';
+	first:
+		if (*type == 0) {
+			*result = 0;
+			return result - old;
+		}
+		do {
+			*result++ = **type;
+			(*type)++;
+		} while (**type != ':' && **type != 0);
+		result += sprintf(result, " extends ");
+		goto first2;
+		do {
+			*result++ = ' ';
+			*result++ = '&';
+			*result++ = ' ';
+		first2:
+			if (*type == 0) {
+				*result = 0;
+				return result - old;
 			}
 			(*type)++;
-			*result = 0;
-			return result-oldresult;
+			result += java_demangle_type(result, type);
+		} while (**type == ':');
+	} while (**type != '>');
+	*result++ = '>';
+	(*type)++;
+	return result - old;
+}
+
+int java_demangle_type(char *result, const char **type)
+{
+	switch (*(*type)++) {
+	case 0:
+		*result = 0;
+		(*type)--;
+		return 0;
+	case '[': {
+		char temp[300];
+		java_demangle_type(temp, type);
+		return sprintf(result, "%s[]", temp);
+	}
+	case 'B':
+		return sprintf(result, "byte");
+	case 'C':
+		return sprintf(result, "char");
+	case 'D':
+		return sprintf(result, "double");
+	case 'F':
+		return sprintf(result, "float");
+	case 'I':
+		return sprintf(result, "int");
+	case 'J':
+		return sprintf(result, "long");
+	case 'T':
+	case 'L': {
+		char *oldresult = result;
+		while (**type != ';' && **type != '<' && **type != 0) {
+			*result = **type;
+#ifdef STRIP_PATH
+			if (*result == '/') result = oldresult; else
+#endif
+			result++;
+			(*type)++;
 		}
-		case 'S':
-			return sprintf(result, "short");
-		case 'V':
-			return sprintf(result, "void");
-		case 'Z':
-			return sprintf(result, "boolean");
-		default:
-			return sprintf(result, "%c", *(*type-1));
+		if (**type == '<') {
+			result += java_demangle_generic(result, type);
+		}
+		(*type)++;
+		*result = 0;
+		return result-oldresult;
+	}
+	case 'S':
+		return sprintf(result, "short");
+	case 'V':
+		return sprintf(result, "void");
+	case 'Z':
+		return sprintf(result, "boolean");
+	default:
+		return sprintf(result, "%c", *(*type-1));
 	}
 }
 
@@ -475,25 +568,30 @@ char *java_demangle_flags(char *result, int flags)
 	return result;
 }
 
-static char *java_strip_path(char *name)
+static const char *java_strip_path(const char *name)
 {
 #ifdef STRIP_PATH
-	char *nname = strrchr(name, '/');
+	const char *nname = strrchr(name, '/');
 	return nname?(nname+1):name;
 #else
 	return name;
 #endif
 }
 
-void java_demangle(char *result, char *classname, char *name, char *type, int flags)
+void java_demangle(char *result, const char *classname, const char *name, const char *type, int flags)
 {
 	result = java_demangle_flags(result, flags);
 	name = java_strip_path(name);
 	classname = java_strip_path(classname);
 	strcpy(result, name);
-	if (*type != '(') return;
-	char *ret = strchr(type, ')');
+	const char *ret = strchr(type, ')');
 	if (!ret) return;
+	if (*type == '<') {
+		result += java_demangle_template(result, &type);
+		*result++ = ' ';
+		*result = 0;
+	}
+	if (*type != '(') return;
 	ret++;
 	result += java_demangle_type(result, &ret);
 	if (strcmp(name, "<init>")==0) {
@@ -527,7 +625,7 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 	switch (clazz->cpool[token]->tag) {
 	case CONSTANT_Class: {
 		strcpy(tag, "Class");
-		char *cl = get_class_name(NULL, clazz, token);
+		const char *cl = get_class_name(NULL, clazz, token);
 		if (cl[0] == '[') {
 			java_demangle_type(data, &cl);
 		} else {
@@ -568,7 +666,7 @@ int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *s
 		strcpy(tag, "Field");
 		get_name_and_type(NULL, clazz, clazz->cpool[token]->value.llval[1], name, type);
 		char dtype[1024];
-		char *ttype=type;
+		const char *ttype=type;
 		java_demangle_type(dtype, &ttype);
 		ht_snprintf(data, sizeof data, "%s %s", dtype, name);
 		break;
