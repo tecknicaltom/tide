@@ -133,10 +133,12 @@ void javadis::decode_op(int optype, bool wideopc, java_insn_op *op)
 			op->type = JAVA_OPTYPE_LABEL;
 			if (widesize) {
 				op->size = 4;
-				op->label = addr + sint32(getdword()) - op->size - 1;
+				op->label = addr - 2;
+				op->label += sint32(getdword());
 			} else {
 				op->size = 2;
-				op->label = addr + sint16(getword()) - op->size - 1;
+				op->label = addr - 1;
+				op->label += sint16(getword());
 			}
 			break;
 		case JOPC_TYPE_ATYPE:
