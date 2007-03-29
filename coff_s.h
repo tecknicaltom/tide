@@ -41,6 +41,7 @@ struct COFF_HEADER {
 #define COFF_LINE_NUMS_STRIPPED			0x0004  // Line nunbers stripped from file.
 #define COFF_LOCAL_SYMS_STRIPPED	   	0x0008  // Local symbols stripped from file.
 #define COFF_AGGRESIVE_WS_TRIM	  		0x0010  // Agressively trim working set
+#define COFF_LARGE_ADDRESS	  		0x0020  // Large address aware
 #define COFF_BYTES_REVERSED_LO	  		0x0080  // Bytes of machine uint16 are reversed.
 #define COFF_32BIT_MACHINE			0x0100  // 32 bit uint16 machine.
 #define COFF_DEBUG_STRIPPED		   	0x0200  // Debugging info stripped from file in .DBG file
