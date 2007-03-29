@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 2.0.2:
+	- [IA64] disassembler works again (is anybody using this?)
+
 version 2.0.1:
 	- [Java] annotate exception handlers in byte code
 	- [Java] some byte code improvements (lookupswitch, tableswitch)
