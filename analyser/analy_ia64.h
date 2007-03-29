@@ -26,10 +26,9 @@
 
 class AnalyIA64Disassembler: public AnalyDisassembler {
 public:
-					AnalyIA64Disassembler();
+					AnalyIA64Disassembler() {};
 					AnalyIA64Disassembler(BuildCtorArg&a): AnalyDisassembler(a) {};
 		void			init(Analyser *A);
-	virtual void			done();
 	virtual	ObjectID		getObjectID() const;
 
 	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
