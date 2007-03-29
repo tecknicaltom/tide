@@ -78,7 +78,7 @@ ht_tag_flags_s coff_characteristics[] =
 	{2,  "[02] line numbers stripped"},
 	{3,  "[03] local symbols stripped"},
 	{4,  "[04] aggressively trim working set"},
-	{5,  "[05] * reserved"},
+	{5,  "[05] >2 GiB addresses aware"},
 	{6,  "[06] * reserved"},
 	{7,  "[07] low bytes of machine uint16 are reversed"},
 	{8,  "[08] 32 bit machine"},
