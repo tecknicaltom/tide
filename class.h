@@ -78,6 +78,7 @@ static const u2 ATTRIB_SourceFile         =  6;
 static const u2 ATTRIB_LineNumberTable    =  7;
 static const u2 ATTRIB_LocalVariableTable =  8;
 static const u2 ATTRIB_Deprecated         =  9;
+static const u2 ATTRIB_Signature          =  10;
 
 struct exception_info {
 	u2 start_pc;
@@ -100,6 +101,7 @@ struct attrib_info {
 			u2 exctbl_len;
 			exception_info *exctbl;
 		} code;
+		u2 signature;
 	};
 };
 
@@ -156,7 +158,7 @@ extern void class_unread(ht_class_shared_data *);
 extern attrib_info *attribute_read(Stream *, classfile *);
 
 int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *shared);
-void java_demangle(char *result, char *classname, char *name, char *type, int flags);
+void java_demangle(char *result, const char *classname, const char *name, const char *type, int flags);
 char *java_demangle_flags(char *result, int flags);
 
 class cview: public ht_format_group {
@@ -169,8 +171,8 @@ public:
 
 class ClassMethod: public Object {
 public:
-	char *name;
-	char *type;
+	const char *name;
+	const char *type;
 	ClassAddress start;
 	uint length;
 	int flags;
@@ -179,8 +181,8 @@ public:
 
 			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags,
 				int exctbl_len, exception_info *exctbl);
-	virtual		~ClassMethod();
 	virtual int	compareTo(const Object *obj) const;
+		void	addsig(const char *s) { type = s; } 
 };
 
 
