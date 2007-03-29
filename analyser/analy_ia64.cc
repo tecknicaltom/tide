@@ -26,25 +26,10 @@
 #include "htiobox.h"
 #include "snprintf.h"
 
-/*
- *
- */
-AnalyIA64Disassembler::AnalyIA64Disassembler()
-{
-}
-
 void AnalyIA64Disassembler::init(Analyser *A)
 {
 	disasm = new IA64Disassembler();
 	AnalyDisassembler::init(A);
-}
-
-/*
- *
- */
-void AnalyIA64Disassembler::done()
-{
-	AnalyDisassembler::done();
 }
 
 ObjectID AnalyIA64Disassembler::getObjectID() const
@@ -111,6 +96,8 @@ branch_enum_t AnalyIA64Disassembler::isBranch(OPCODE *opcode)
 			} else {
 				return br_jump;
 			}
+		} else if (ht_strncmp(slot->opcode->name+3, "cloop", 5)==0) {
+			return br_jXX;
 		} else if (ht_strncmp(slot->opcode->name+3, "ret", 3)==0) {
 			if (!slot->qp) return br_return;
 		}
