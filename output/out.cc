@@ -311,17 +311,34 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 	bool is_valid_ini_addr = analy->validAddress(addr, scinitialized);
 	bool is_valid_code_addr = analy->validCodeAddress(addr);
 	
-	if (is_valid_ini_addr && ((cur_addr && ((cur_addr->type.type == dt_code) || ((cur_addr->type.type == dt_unknown) && (is_valid_code_addr))))
-	|| (!cur_addr && is_valid_code_addr))) {
+	if (
+		is_valid_ini_addr 
+		&& (
+			(
+				cur_addr 
+				&& (
+					cur_addr->type.type == dt_code
+					|| (
+						cur_addr->type.type == dt_unknown 
+						&& is_valid_code_addr
+					)
+				)
+			)			
+			|| (
+				!cur_addr 
+				&& is_valid_code_addr
+			)
+		)
+	) {	
 		// code
 		Location *next_addr = analy->enumLocations(addr);
 		int op_len;
 		
 		// max. length of current opcode
 		if (next_addr) {
-			int d=255;
+			int d = 255;
 			next_addr->addr->difference(d, addr);
-			op_len = MIN((uint32)analy->max_opcode_length, (uint)d);
+			op_len = MIN(uint32(analy->max_opcode_length), uint(d));
 		} else {
 			op_len = analy->max_opcode_length;
 		}
@@ -329,7 +346,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 		byte buf[16];
 		int buffer_size = analy->bufPtr(addr, buf, sizeof(buf));
 		if (analy->disasm && buffer_size) {
-			OPCODE *o=analy->disasm->decode(buf, MIN(buffer_size, op_len), analy->mapAddr(Addr));
+			OPCODE *o = analy->disasm->decode(buf, MIN(buffer_size, op_len), analy->mapAddr(Addr));
 			/* inits for addr-sym transformations */
 			addr_sym_func_context = this;
 			if (analy->mode & ANALY_TRANSLATE_SYMBOLS) addr_sym_func = &analyser_output_addr_sym_func;
@@ -341,16 +358,17 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 					const char *x = analy->disasm->str(o, dis_style);
 					putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, x);
 				}
-				if (analy->mode & ANALY_EDIT_BYTES) {
-					want_bytes_line = MIN(complete_bytes_line, 16);
-				} else {
-					want_bytes_line = complete_bytes_line;
-				}
-				bytes_line += want_bytes_line;
-				complete_bytes_line -= want_bytes_line;
-				if ((s = analy->disasm->selectNext(o)) || complete_bytes_line) {
+				if ((s = analy->disasm->selectNext(o))/* || complete_bytes_line*/) {
 					endLine();
 					beginLine();
+				} else {
+					if (analy->mode & ANALY_EDIT_BYTES) {
+						want_bytes_line = MIN(complete_bytes_line, 16);
+					} else {
+						want_bytes_line = complete_bytes_line;
+					}					
+					bytes_line += want_bytes_line;
+					complete_bytes_line -= want_bytes_line;
 				}
 			} while (s || complete_bytes_line);
 			
