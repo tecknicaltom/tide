@@ -43,10 +43,10 @@ ht_tag_flags_s access_flags[] =
 	{8+5,  "[0x0020] synchronized"},
 	{8+6,  "[0x0040] volatile"},
 	{8+7,  "[0x0080] transient"},
-	{8+8,  "[0x0100] native"},
-	{8+9,  "[0x0200] interface"},
-	{8+10, "[0x0400] abstract"},
-	{8+11, "[0x0800] strict"},
+	{0,    "[0x0100] native"},
+	{1,    "[0x0200] interface"},
+	{2,    "[0x0400] abstract"},
+	{3,    "[0x0800] strict"},
 	{0, 0}
 };
 int_hash cpool_tags [] = 
