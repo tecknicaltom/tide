@@ -87,6 +87,18 @@ void ClassAnalyser::beginAnalysis()
 	addComment(a, 0, ";********************************************************");
 	addComment(a, 0, b.contentChar());
 	addComment(a, 0, ";********************************************************");
+	if (class_shared->fields && class_shared->fields->count()) {
+		addComment(a, 0, "");
+ 		addComment(a, 0, ";  Fields: ");
+		addComment(a, 0, "; =========");
+		foreach (ClassField, cf, *class_shared->fields, {
+			char buffer2[1024];
+			java_demangle_field(buffer2, cf->name, cf->type, cf->flags);
+			ht_snprintf(buffer, 1024, ";  %s", buffer2);
+			addComment(a, 0, buffer);
+		});
+		addComment(a, 0, "");
+	}
 	delete a;
 	if (class_shared->methods) {
 		foreach (ClassMethod, cm, *class_shared->methods, {
@@ -129,7 +141,7 @@ void ClassAnalyser::beginAnalysis()
 				delete b;
 			}
 		});
-	}
+ 	}
 	setLocationTreeOptimizeThreshold(1000);
 	setSymbolTreeOptimizeThreshold(1000);
 
