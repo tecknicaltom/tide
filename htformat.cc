@@ -1416,7 +1416,7 @@ int ht_uformat_viewer::cursormicroedit_forward()
 
 	bool cursor_found = false;
 	char c_line[1024];  /* FIXME: possible buffer overflow ! */
-	for (int y=0; y<size.h+16; y++) {
+	for (int y=0; y < size.h+16; y++) {
 		if (!p.sub->getline(c_line, p.line_id)) break;
 		int c=tag_count_selectable_tags_in_group(c_line, p.tag_group);
 		while (p.tag_idx<c) {
@@ -2064,7 +2064,7 @@ const char *ht_uformat_viewer::func(uint i, bool execute)
 				FileOfs o;
 				if (get_current_real_offset(&o)) {
 					char title[128];
-					ht_snprintf(title, sizeof title, "view offset %08x in...", o);
+					ht_snprintf(title, sizeof title, "view offset %08qx in...", o);
 					ht_view *v = ((ht_app*)app)->popup_view_list(title);
 					if (v) {
 						htmsg m;
@@ -2076,7 +2076,7 @@ const char *ht_uformat_viewer::func(uint i, bool execute)
 							vstate_save();
 							app->focus(v);
 						} else {
-							errorbox("offset %08x is not supported/invalid in '%s'", o, v->desc);
+							errorbox("offset %08qx is not supported/invalid in '%s'", o, v->desc);
 						}
 					}
 				}
@@ -3271,10 +3271,10 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					break;
 				}
 				case HT_TAG_FLAGS:
-					n+=HT_TAG_FLAGS_LEN;
-					tag_color=getcolor_tag(palidx_tags_sel_tag);
-					if (is_cursor) tag_color=getcolor_tag(palidx_tags_sel_tag_cursor_focused);
-					c+=render_tagstring_single(chars, colors, maxlen, c, "details", 7, tag_color);
+					n += HT_TAG_FLAGS_LEN;
+					tag_color = getcolor_tag(palidx_tags_sel_tag);
+					if (is_cursor) tag_color = getcolor_tag(palidx_tags_sel_tag_cursor_focused);
+					c += render_tagstring_single(chars, colors, maxlen, c, "details", 7, tag_color);
 					break;
 				case HT_TAG_GROUP:
 					n+=HT_TAG_GROUP_LEN;
@@ -3518,41 +3518,41 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 
 bool ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 {
-	ht_tag_flags_s *flags=(ht_tag_flags_s*)getAtomValue(id), *fl;
+	ht_tag_flags_s *flags = (ht_tag_flags_s*)getAtomValue(id);
 	if (flags) {
 		Bounds b;
-		b.w=60;
-		b.h=14;
-		b.x=(screen->w-b.w)/2;
-		b.y=(screen->h-b.h)/2;
-		ht_dialog *d=new ht_dialog();
+		b.w = 60;
+		b.h = 14;
+		b.x = (screen->w-b.w)/2;
+		b.y = (screen->h-b.h)/2;
+		ht_dialog *d = new ht_dialog();
 		d->init(&b, (flags->bitidx==-1) ? flags->desc : 0, FS_KILLER | FS_TITLE | FS_MOVE);
 
-		b.x=0;
-		b.y=0;
-		b.w-=2;
-		b.h-=2;
-		ht_uformat_viewer *u=new ht_uformat_viewer();
+		b.x = 0;
+		b.y = 0;
+		b.w -= 2;
+		b.h -= 2;
+		ht_uformat_viewer *u = new ht_uformat_viewer();
 		u->init(&b, 0, VC_EDIT, file, 0);
 
-		ht_mask_sub *m=new ht_mask_sub();
+		ht_mask_sub *m = new ht_mask_sub();
 		m->init(file, 0);
 		char *t, x[256];
 
-		int width=0;
-		fl=flags;
-		if (fl->bitidx==-1) fl++;
+		int width = 0;
+		ht_tag_flags_s *fl = flags;
+		if (fl->bitidx == -1) fl++;
 		do {
-			int l=strlen(fl->desc);
-			if (l>width) width=l;
+			int l = strlen(fl->desc);
+			if (l > width) width = l;
 			fl++;
 		} while (fl->desc);
 
-		width=MAX(width, 25);
+		width = MAX(width, 25);
 		width++;
 
-		fl=flags;
-		if (fl->bitidx==-1) fl++;
+		fl = flags;
+		if (fl->bitidx == -1) fl++;
 		do {
 			t = x;
 			int l = strlen(fl->desc);
@@ -3572,7 +3572,7 @@ bool ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 
 		d->setpalette(palkey_generic_window_default);
 
-		uint pmode=file->getAccessMode() & IOAM_WRITE;
+		uint pmode = file->getAccessMode() & IOAM_WRITE;
 
 		if (d->run(false) == button_ok) u->edit_update();
 
