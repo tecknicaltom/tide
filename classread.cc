@@ -68,6 +68,12 @@ int ClassMethod::compareTo(const Object *obj) const
 	return 0;
 }
 
+ClassField::ClassField(char *n, char *d, int f)
+{
+	name = n;
+	type = d;
+	flags = f;
+}
 
 /* extract name from a utf8 constant pool entry */
 static char *get_string(Stream *htio, classfile *clazz, uint index)
@@ -233,6 +239,7 @@ ht_class_shared_data *class_read(File *htio)
 	shared = ht_malloc(sizeof (ht_class_shared_data));
 	shared->file = clazz;
 	shared->methods = new AVLTree(true);
+	shared->fields = new Array(true);
 	shared->valid = new Area();
 	shared->valid->init();
 	shared->initialized = new Area();
@@ -272,11 +279,9 @@ ht_class_shared_data *class_read(File *htio)
 	if (strcmp(shared->classinfo.superclass, "?") == 0) return NULL;
 	if (count) {
 		clazz->interfaces = ht_malloc(count * sizeof (*(clazz->interfaces)));
-		if (!clazz->interfaces) {
-			return NULL;
-		}
+		if (!clazz->interfaces) return NULL;
 		shared->classinfo.interfaces = new Array(true);
-		for (int i=0; i<(int)count; i++) {
+		for (int i=0; i < (int)count; i++) {
 			index = READ2();
 			clazz->interfaces[i] = index;
 			shared->classinfo.interfaces->insert(new String(get_class_name(htio, clazz, index)));
@@ -291,8 +296,18 @@ ht_class_shared_data *class_read(File *htio)
 		if (!clazz->fields) {
 			return NULL;
 		}
-		for (int i=0; i<(int)count; i++) {
-			clazz->fields[i] = read_fieldmethod(htio, shared);
+		for (int i=0; i < (int)count; i++) {
+			mf_info *m = read_fieldmethod(htio, shared);
+			clazz->fields[i] = m;
+			ClassField *cf = new ClassField(m->name, m->desc, m->flags);
+			int acount = m->attribs_count;
+			for (int j=0; j < acount; j++) {
+				attrib_info *ai = m->attribs[j];
+				if (ai->tag == ATTRIB_Signature) {
+					cf->addsig(get_string(htio, shared->file, ai->signature));
+				}
+			}
+			shared->fields->insert(cf);
 		}
 	} else {
 		clazz->fields = 0;
@@ -606,6 +621,14 @@ void java_demangle(char *result, const char *classname, const char *name, const 
 		}
 	}
 	result += sprintf(result, ")");
+}
+
+void java_demangle_field(char *result, const char *name, const char *type, int flags)
+{
+	result = java_demangle_flags(result, flags);
+	result += java_demangle_type(result, &type);
+	*result++ = ' ';
+	strcpy(result, name);
 }
 
 int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *shared)
