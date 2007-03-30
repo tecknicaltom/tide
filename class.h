@@ -142,10 +142,11 @@ struct classfile {
 
 struct ht_class_shared_data {
 	Container	*methods;
+	Container	*fields;
 	classfile	*file;
-	Area *valid;
-	Area *initialized;
-	int flags;
+	Area		*valid;
+	Area		*initialized;
+	int		flags;
 	struct {
 		char *thisclass;
 		char *superclass;
@@ -159,6 +160,7 @@ extern attrib_info *attribute_read(Stream *, classfile *);
 
 int token_translate(char *buf, int maxlen, uint32 token, ht_class_shared_data *shared);
 void java_demangle(char *result, const char *classname, const char *name, const char *type, int flags);
+void java_demangle_field(char *result, const char *name, const char *type, int flags);
 char *java_demangle_flags(char *result, int flags);
 
 class cview: public ht_format_group {
@@ -182,6 +184,16 @@ public:
 			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags,
 				int exctbl_len, exception_info *exctbl);
 	virtual int	compareTo(const Object *obj) const;
+		void	addsig(const char *s) { type = s; } 
+};
+
+class ClassField: public Object {
+public:
+	const char *name;
+	const char *type;
+	int flags;
+
+			ClassField(char *name, char *type, int flags);
 		void	addsig(const char *s) { type = s; } 
 };
 
