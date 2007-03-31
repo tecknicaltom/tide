@@ -692,30 +692,30 @@ void ht_registry::debug_dump_i(FILE *f, Container *t, int ident)
 		for (int i=0; i<ident; i++) fprintf(f, "     ");
 		fprintf(f, "%s ", key->value);
 		switch (n->type) {
-			case RNT_DWORD:
-				fprintf(f, "= (uint32) %08d (%08x)\n", ((ht_data_dword*)n->data)->value, ((ht_data_dword*)n->data)->value);
-				break;
-			case RNT_STRING:
-				fprintf(f, "= (string) \"%s\"\n", ((ht_data_string*)n->data)->value);
-				break;
-			case RNT_SYMLINK:
-				fprintf(f, "=> \"%s\"\n", ((ht_data_string*)n->data)->value);
-				break;
-			case RNT_SUBDIR:
-				fprintf(f, "{\n");
-				debug_dump_i(f, ((ht_registry_data_stree*)n->data)->tree, ident+1);
-				for (int i=0; i<ident; i++) fprintf(f, "     ");
-				fprintf(f, "}\n");
-				break;
-			case RNT_RAW:
-				fprintf(f, "= (raw) nyi!\n");
-				break;
-			default: {
-				char *name=lookup_node_type_name(n->type);
-				if (!name) name="?";
-				fprintf(f, "= ('%s'=%d)\n", name, n->type);
-				break;
-			}
+		case RNT_DWORD:
+			fprintf(f, "= (uint32) %08d (%08x)\n", ((ht_data_dword*)n->data)->value, ((ht_data_dword*)n->data)->value);
+			break;
+		case RNT_STRING:
+			fprintf(f, "= (string) \"%s\"\n", ((ht_data_string*)n->data)->value);
+			break;
+		case RNT_SYMLINK:
+			fprintf(f, "=> \"%s\"\n", ((ht_data_string*)n->data)->value);
+			break;
+		case RNT_SUBDIR:
+			fprintf(f, "{\n");
+			debug_dump_i(f, ((ht_registry_data_stree*)n->data)->tree, ident+1);
+			for (int i=0; i<ident; i++) fprintf(f, "     ");
+			fprintf(f, "}\n");
+			break;
+		case RNT_RAW:
+			fprintf(f, "= (raw) nyi!\n");
+			break;
+		default: {
+			char *name = lookup_node_type_name(n->type);
+			if (!name) name = "?";
+			fprintf(f, "= ('%s'=%d)\n", name, n->type);
+			break;
+		}
 		}
 	}
 #endif
