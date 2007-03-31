@@ -44,12 +44,12 @@
 #define LE_SIZEOF_HEADER				196
 
 struct LE_HEADER {
-	uint16		magic;				// Magic number
-	byte		border;				// The byte ordering for the VXD
-	byte		worder;				// The uint16 ordering for the VXD
+	uint16	magic;				// Magic number
+	byte	border;				// The byte ordering for the VXD
+	byte	worder;				// The uint16 ordering for the VXD
 	uint32	level;				// The EXE format level for now = 0
-	uint16		cpu;					// The CPU type
-	uint16		os;					// The OS type
+	uint16	cpu;					// The CPU type
+	uint16	os;					// The OS type
 	uint32	ver;					// Module version
 	uint32	mflags;				// Module flags
 	uint32	pagecnt;				// Module # pages
@@ -90,11 +90,11 @@ struct LE_HEADER {
 	uint32	instpreload;			// Number of instance pages in preload section of VXD file
 	uint32	instdemand;			// Number of instance pages in demand load section of VXD file
 	uint32	heapsize;				// Size of heap - for 16-bit apps
-	byte		res3[12];				// Reserved words
+	byte	res3[12];				// Reserved words
 	uint32	winresoff;
 	uint32	winreslen;
-	uint16		devid;				// Device ID for VxD
-	uint16		ddkver;				// DDK version for VxD
+	uint16	devid;				// Device ID for VxD
+	uint16	ddkver;				// DDK version for VxD
 } PACKED;
 
 /*
