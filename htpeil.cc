@@ -99,20 +99,20 @@ static ht_view *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 	pe_shared->il = new ht_pe_il();
 	pe_shared->il->dir = dir;
 
-	v=new ht_pe_il_viewer();
+	v = new ht_pe_il_viewer();
 	v->init(b, DESC_PE_IL, VC_EDIT | VC_SEARCH, file, group);
 	pe_shared->v_il = v;
 	ht_mask_sub *s;
 //	ht_collapsable_sub *cs;
 	
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
-	ht_snprintf(info, sizeof info, "* COM+ directory at offset %08x", sec_ofs);
+	ht_snprintf(info, sizeof info, "* COM+ directory at offset %08qx", sec_ofs);
 	s->add_mask(info);
 	v->insertsub(s);
 
-/* FIXME: */
+	/* FIXME: */
 	
 	s=new ht_mask_sub();
 	s->init(file, 1);
