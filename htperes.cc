@@ -139,9 +139,9 @@ static void read_resource_dir(void *node, int ofs, int level)
 				xdata = new ht_pe_resource_leaf();
 				xdata->offset = dofs;
 				xdata->size = data.size;
-				rm += ht_snprintf(rm, rm_end-rm, "offset %08x", dofs);
+				rm += ht_snprintf(rm, rm_end-rm, "offset %08qx", dofs);
 			} else {
-				rm += ht_snprintf(rm, rm_end-rm, "offset ? (rva %08x, currupt)", data.offset_to_data);
+				rm += ht_snprintf(rm, rm_end-rm, "offset? (rva %08x, corrupt)", data.offset_to_data);
 			}
 			ht_snprintf(rm, rm_end-rm, " size %08x", data.size);
 			peresource_tree->add_child(node, peresource_string, xdata);
@@ -187,10 +187,10 @@ static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group
 
 	LOG("%y: PE: reading resource directory at offset 0x%08qx, rva %08x", &file->getFilename(fn), iofs, irva);
 
-	peresource_file=file;
-	peresource_dir_ofs=iofs;
-	peresource_tree=t;
-	peresource_section_headers=&pe_shared->sections;
+	peresource_file = file;
+	peresource_dir_ofs = iofs;
+	peresource_tree = t;
+	peresource_section_headers = &pe_shared->sections;
 
 	root=t->add_child(0, "pe resources");
 
