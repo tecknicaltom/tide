@@ -197,7 +197,7 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
-	ht_xbe_header_viewer *v=new ht_xbe_header_viewer();
+	ht_xbe_header_viewer *v = new ht_xbe_header_viewer();
 	v->init(b, DESC_XBE_HEADER, VC_EDIT | VC_SEARCH, file, group);
 
 	registerAtom(ATOM_XBE_INIT_FLAGS, xbe_init_flags);
@@ -209,7 +209,7 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs;
 	
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
 	ht_snprintf(info, sizeof info, "* XBE header");
@@ -219,28 +219,28 @@ static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	/* FIXME: */
 	bool xbe_bigendian = false;
 	
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 1);
 	s->add_staticmask_ptable(xbemagic, 0x0, xbe_bigendian);
 	
 	/* image header */
 	s->add_staticmask_ptable(xbeimageheader, 0x0, xbe_bigendian);
-	cs=new ht_collapsable_sub();
+	cs = new ht_collapsable_sub();
 	cs->init(file, s, 1, "image header", 1);
 	v->insertsub(cs);
 
 	/* image header */
-	s=new ht_mask_sub();
+	s = new ht_mask_sub();
 	s->init(file, 2);
 	s->add_staticmask_ptable(xbecertificate, xbe_shared->header.certificate_address-xbe_shared->header.base_address, xbe_bigendian);
-	cs=new ht_collapsable_sub();
+	cs = new ht_collapsable_sub();
 	cs->init(file, s, 1, "certificate", 1);
 	v->insertsub(cs);
 	
 	/* library versions */
 	
-	for (uint i=0; i<xbe_shared->header.number_of_library_versions; i++) {
-		s=new ht_mask_sub();
+	for (uint i=0; i < xbe_shared->header.number_of_library_versions; i++) {
+		s = new ht_mask_sub();
 		s->init(file, 50+i);
 
 		s->add_staticmask_ptable(xbelibraryversion, xbe_shared->header.library_versions_address-xbe_shared->header.base_address+i*sizeof *xbe_shared->libraries, xbe_bigendian);
