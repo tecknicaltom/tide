@@ -50,9 +50,9 @@ static ht_mask_ptable mzheader[]=
 
 static ht_view *htmzheader_init(Bounds *b, File *file, ht_format_group *group)
 {
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	ht_uformat_viewer *v = new ht_uformat_viewer();
 	v->init(b, DESC_MZ_HEADER, VC_EDIT | VC_SEARCH, file, group);
-	ht_mask_sub *m=new ht_mask_sub();
+	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 	char info[128];
 	ht_snprintf(info, sizeof info, "* MZ header at offset 0x%08x (paragraph=16 bytes, page=512 bytes)", 0);	/* FIXME: hmm, seems to be always 0 ?! */
