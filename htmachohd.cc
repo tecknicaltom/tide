@@ -182,12 +182,14 @@ static ht_view *htmachoheader_init(Bounds *b, File *file, ht_format_group *group
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 	char info[128];
-	ht_snprintf(info, sizeof info, "* Mach-O header at offset %08x", macho_shared->header_ofs);
+	ht_snprintf(info, sizeof info, "* Mach-O header at offset %08qx", macho_shared->header_ofs);
+
 	bool isbigendian;
 	switch (macho_shared->image_endianess) {
-		case little_endian: isbigendian = false; break;
-		case big_endian: isbigendian = true; break;
+	case little_endian: isbigendian = false; break;
+	case big_endian: isbigendian = true; break;
 	}
+
 	m->add_mask(info);
 	m->add_staticmask_ptable(machoheader, macho_shared->header_ofs, isbigendian);
 
@@ -196,10 +198,8 @@ static ht_view *htmachoheader_init(Bounds *b, File *file, ht_format_group *group
 		switch (macho_shared->cmds.cmds[i]->cmd.cmd) {
 			case LC_SEGMENT: {
 				MACHO_SEGMENT_COMMAND *c = (MACHO_SEGMENT_COMMAND *)macho_shared->cmds.cmds[i];
-				char segname[17];
-				ht_snprintf(segname, sizeof segname, "%s", c->segname);
 			    	char info[128];
-				ht_snprintf(info, sizeof info, "** segment %s: vaddr %08x vsize %08x fileofs %08x, filesize %08x", segname, c->vmaddr, c->vmsize, c->fileoff, c->filesize);
+				ht_snprintf(info, sizeof info, "** segment %s: vaddr %08x vsize %08x fileofs %08x, filesize %08x", c->segname, c->vmaddr, c->vmsize, c->fileoff, c->filesize);
 				m->add_mask(info);
 				m->add_staticmask_ptable(macho_segment_header, ofs, isbigendian);
 				FileOfs sofs = sizeof (MACHO_SEGMENT_COMMAND);
