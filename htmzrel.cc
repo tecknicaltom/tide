@@ -37,8 +37,8 @@ static ht_view *htmzrel_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_uformat_viewer *v=new ht_uformat_viewer();
 	v->init(b, DESC_MZ_REL, VC_EDIT | VC_SEARCH, file, group);
-	uint32 r=0;
-	uint32 rc=0;
+	uint32 r = 0;
+	uint32 rc = 0;
 	file->seek(6);
 	file->read(&rc, 2);
 	file->seek(24);
