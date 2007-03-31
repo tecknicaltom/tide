@@ -70,7 +70,7 @@ static ht_view *htlevxd_init(Bounds *b, File *file, ht_format_group *group)
 	m->init(myfile, 0);
 
 	char info[128];
-	ht_snprintf(info, sizeof info, "* LE VXD descriptor in section 1, offset %08x", le_shared->vxd_desc_linear_ofs);
+	ht_snprintf(info, sizeof info, "* LE VXD descriptor in section 1, offset %08qx", le_shared->vxd_desc_linear_ofs);
 	m->add_mask(info);
 	m->add_staticmask_ptable(le_vxd_header, le_shared->vxd_desc_linear_ofs, le_bigendian);
 	v->insertsub(m);
