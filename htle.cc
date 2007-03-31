@@ -94,10 +94,10 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	file->readx(&le_shared->hdr, sizeof le_shared->hdr);
 	createHostStruct(&le_shared->hdr, LE_HEADER_struct, le_shared->byteorder);
 
-	le_shared->is_vxd = (le_shared->hdr.winresoff) ||
-		(le_shared->hdr.winreslen) ||
-		(le_shared->hdr.devid) ||
-		(le_shared->hdr.ddkver);
+	le_shared->is_vxd = le_shared->hdr.winresoff 
+		|| le_shared->hdr.winreslen
+		|| le_shared->hdr.devid
+		|| le_shared->hdr.ddkver;
 
 	read_pagemap();
 	read_objects();
