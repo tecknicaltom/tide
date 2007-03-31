@@ -130,7 +130,6 @@ struct ht_macho_shared_data {
 class ht_macho: public ht_format_group {
 public:
 		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess image_endianess);
-	virtual	void done();
 };
 
 typedef uint32 MACHOAddress;
