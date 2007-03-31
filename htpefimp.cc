@@ -109,7 +109,7 @@ ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 
 	char iline[1024];
-	ht_snprintf(iline, sizeof iline, "* PEF import library description at offset %08x (%d functions from %d libraries)", 
+	ht_snprintf(iline, sizeof iline, "* PEF import library description at offset %08qx (%d functions from %d libraries)", 
 		pef_shared->loader_info_header_ofs + sizeof pef_shared->loader_info_header, 
 		function_count, lib_count);
 		
