@@ -70,7 +70,7 @@ class AnalyserInformation: public ht_statictext {
 	const char	*atype, *adis;
 	String		aname;
 public:
-		void	init(Bounds *b, ht_aviewer *a);
+		void init(Bounds *b, ht_aviewer *a);
 	virtual	void done();
 	virtual	int  gettext(char *text, int maxlen);
 	virtual	bool idle();
