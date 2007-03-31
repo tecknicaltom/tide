@@ -164,8 +164,8 @@ void set_eval_error(const char *format,...)
 	va_start(vargs, format);
 	ht_vsnprintf(eval_errstr, sizeof eval_errstr, format, vargs);
 	va_end(vargs);
-	eval_error_pos=lex_current_buffer_pos();
-	eval_error=1;
+	eval_error_pos = lex_current_buffer_pos();
+	eval_error = 1;
 }
 
 void set_eval_error_ex(int pos, const char *format, ...)
@@ -175,8 +175,8 @@ void set_eval_error_ex(int pos, const char *format, ...)
 	va_start(vargs, format);
 	ht_vsnprintf(eval_errstr, sizeof eval_errstr, format, vargs);
 	va_end(vargs);
-	eval_error_pos=pos;
-	eval_error=1;
+	eval_error_pos = pos;
+	eval_error = 1;
 }
 
 /*
