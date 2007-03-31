@@ -42,15 +42,15 @@ static ht_view *htlepagemaps_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 
-	int h=le_shared->hdr_ofs;
+	FileOfs h = le_shared->hdr_ofs;
 	ht_uformat_viewer *v=new ht_uformat_viewer();
 	v->init(b, DESC_LE_PAGEMAP, VC_EDIT | VC_SEARCH, file, group);
 	
-	ht_mask_sub *m=new ht_mask_sub();
+	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
 
 	char t[64];
-	ht_snprintf(t, sizeof t, "* LE page maps at offset %08x", h+le_shared->hdr.pagemap);
+	ht_snprintf(t, sizeof t, "* LE page maps at offset %08qx", h+le_shared->hdr.pagemap);
 	m->add_mask(t);
 
 	v->insertsub(m);
