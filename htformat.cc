@@ -3038,7 +3038,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					byte buf[4];
 					if (pread(tag_offset, &buf, 4)==4) {
 						/* little endian */
-						d=(buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
+						d = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 						ht_snprintf(str, sizeof str, "%08x", d);
 					} else {
 						strcpy(str, "????????");
@@ -3465,22 +3465,22 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 				break;
 		}
 
-		int_hash *dsc=desc;
+		int_hash *dsc = desc;
 		while (dsc->desc) {
 			char buf[32];
 			switch (size) {
-				case 1:
-					sprintf(buf, "0x%02x", dsc->value);
-					break;
-				case 2:
-					sprintf(buf, "0x%04x", dsc->value);
-					break;
-				case 4:
-					sprintf(buf, "0x%08x", dsc->value);
-					break;
+			case 1:
+				sprintf(buf, "0x%02x", dsc->value);
+				break;
+			case 2:
+				sprintf(buf, "0x%04x", dsc->value);
+				break;
+			case 4:
+				sprintf(buf, "0x%08x", dsc->value);
+				break;
 			}
-			if (dsc->value==d) {
-				curpos=i;
+			if (dsc->value == d) {
+				curpos = i;
 			}
 			l->insert_str(i, buf, dsc->desc);
 			dsc++;
@@ -3493,7 +3493,7 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 		g->insert(l);
 		g->setpalette(palkey_generic_window_default);
 
-		if (g->run(false)==button_ok) {
+		if (g->run(false) == button_ok) {
 			ht_listbox_data da;
 			ViewDataBuf vdb(l, &da, sizeof da);
 			int i = l->getID(da.data->cursor_ptr);
