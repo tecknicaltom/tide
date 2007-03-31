@@ -63,7 +63,7 @@ class ht_le_page_file;
 
 struct ht_le_shared_data {
 	Endianess byteorder;
-	uint32 hdr_ofs;
+	FileOfs hdr_ofs;
 	LE_HEADER hdr;
 	ht_viewer *v_header;
 	ht_viewer *v_objects;
@@ -73,7 +73,7 @@ struct ht_le_shared_data {
 	ht_le_objmap objmap;
 	ht_le_pagemap pagemap;
 	bool is_vxd;
-	uint vxd_desc_linear_ofs;
+	FileOfs vxd_desc_linear_ofs;
 	LE_VXD_DESCRIPTOR vxd_desc;
 	ht_le_page_file *linear_file;
 	ht_reloc_file *reloc_file;
