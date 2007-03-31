@@ -39,7 +39,7 @@ static ht_view *htneimports_init(Bounds *b, File *file, ht_format_group *group)
 	m->init(file, 0);
 
 	char line[256];	/* secure */
-	ht_snprintf(line, sizeof line, "* NE imported names and module reference table at offset %08x / %08x", h+ne_shared->hdr.imptab, h+ne_shared->hdr.modtab);
+	ht_snprintf(line, sizeof line, "* NE imported names and module reference table at offset %08qx / %08qx", h+ne_shared->hdr.imptab, h+ne_shared->hdr.modtab);
 	m->add_mask(line);
 
 	for (uint i=0; i<ne_shared->modnames_count; i++) {
