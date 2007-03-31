@@ -78,12 +78,12 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	macho_shared->header_ofs = header_ofs;
 	macho_shared->cmds.count = 0;
 	macho_shared->cmds.cmds = NULL;
-/*	macho_shared->shnames=NULL;
-	macho_shared->symtables=0;
-	macho_shared->reloctables=0;
-	macho_shared->v_image=NULL;
-	macho_shared->htrelocs=NULL;
-	macho_shared->fake_undefined_section=0;*/
+/*	macho_shared->shnames = NULL;
+	macho_shared->symtables = 0;
+	macho_shared->reloctables = 0;
+	macho_shared->v_image = NULL;
+	macho_shared->htrelocs = NULL;
+	macho_shared->fake_undefined_section = 0;*/
 
 	FileOfs ofs;
 	/* read header */
@@ -93,56 +93,56 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 
 	/* read commands */
 	uint nsections = 0;
-	ofs = header_ofs+sizeof macho_shared->header;
+	ofs = header_ofs + sizeof macho_shared->header;
 	macho_shared->cmds.cmds = ht_malloc(sizeof (MACHO_COMMAND_U*) * macho_shared->header.ncmds);
 	macho_shared->cmds.count = 0;
-	for (uint i=0; i<macho_shared->header.ncmds; i++) {
+	for (uint i=0; i < macho_shared->header.ncmds; i++) {
 		MACHO_COMMAND cmd;
 		file->seek(ofs);
 		file->read(&cmd, sizeof cmd);
 		createHostStruct(&cmd, MACHO_COMMAND_struct, image_endianess);
-		if (cmd.cmdsize>1024) break;
+		if (cmd.cmdsize > 1024) break;
 		macho_shared->cmds.cmds[i] = ht_malloc(cmd.cmdsize);
 		file->seek(ofs);
 		if (file->read(macho_shared->cmds.cmds[i], cmd.cmdsize) != cmd.cmdsize) {
-			LOG_EX(LOG_ERROR, "%s: Mach-O: error processing command idx %d "
-			"(read error %d bytes from %08x)", i, cmd.cmdsize, ofs);
+			LOG_EX(LOG_ERROR, "%y: Mach-O: error processing command idx %d "
+				"(read error %d bytes from %08qx)", &fn, i, cmd.cmdsize, ofs);
 			free(macho_shared->cmds.cmds[i]);
 			break;
 		}
 		switch (cmd.cmd) {
-			case LC_SEGMENT:
-				createHostStruct(macho_shared->cmds.cmds[i], MACHO_SEGMENT_COMMAND_struct, image_endianess);
-				// already count sections (needed for reading sections, see below)
-				nsections += macho_shared->cmds.cmds[i]->segment.nsects;
-				break;
-			case LC_SYMTAB:
-				createHostStruct(macho_shared->cmds.cmds[i], MACHO_SYMTAB_COMMAND_struct, image_endianess);
-				break;
-			case LC_THREAD:
-			case LC_UNIXTHREAD: {
-				MACHO_THREAD_COMMAND *c = (MACHO_THREAD_COMMAND*)macho_shared->cmds.cmds[i];
-				createHostStruct(macho_shared->cmds.cmds[i], MACHO_THREAD_COMMAND_struct, image_endianess);
-				switch (macho_shared->header.cputype) {
-				case MACHO_CPU_TYPE_I386:
-					switch (c->flavor) {
-					case -1:
-						createHostStruct(&c->state, MACHO_I386_THREAD_STATE_struct, image_endianess);
-						break;
-					}
+		case LC_SEGMENT:
+			createHostStruct(macho_shared->cmds.cmds[i], MACHO_SEGMENT_COMMAND_struct, image_endianess);
+			// already count sections (needed for reading sections, see below)
+			nsections += macho_shared->cmds.cmds[i]->segment.nsects;
+			break;
+		case LC_SYMTAB:
+			createHostStruct(macho_shared->cmds.cmds[i], MACHO_SYMTAB_COMMAND_struct, image_endianess);
+			break;
+		case LC_THREAD:
+		case LC_UNIXTHREAD: {
+			MACHO_THREAD_COMMAND *c = (MACHO_THREAD_COMMAND*)macho_shared->cmds.cmds[i];
+			createHostStruct(macho_shared->cmds.cmds[i], MACHO_THREAD_COMMAND_struct, image_endianess);
+			switch (macho_shared->header.cputype) {
+			case MACHO_CPU_TYPE_I386:
+				switch (c->flavor) {
+				case -1:
+					createHostStruct(&c->state, MACHO_I386_THREAD_STATE_struct, image_endianess);
 					break;
-				case MACHO_CPU_TYPE_POWERPC:
-					switch (c->flavor) {
-					case FLAVOR_PPC_THREAD_STATE:
-						createHostStruct(&c->state, MACHO_PPC_THREAD_STATE_struct, image_endianess);
-						break;
-					}
+				}
+				break;
+			case MACHO_CPU_TYPE_POWERPC:
+				switch (c->flavor) {
+				case FLAVOR_PPC_THREAD_STATE:
+					createHostStruct(&c->state, MACHO_PPC_THREAD_STATE_struct, image_endianess);
 					break;
 				}
 				break;
 			}
-			default:
-				createHostStruct(macho_shared->cmds.cmds[i], MACHO_COMMAND_struct, image_endianess);
+			break;
+		}
+		default:
+			createHostStruct(macho_shared->cmds.cmds[i], MACHO_COMMAND_struct, image_endianess);
 		}
 		ofs += cmd.cmdsize;
 		macho_shared->cmds.count ++;
@@ -153,7 +153,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	macho_shared->sections.count = nsections;
 	macho_shared->sections.sections = ht_malloc(sizeof (MACHO_SECTION) * macho_shared->sections.count);
 	uint sec = 0;
-	for (uint i=0; i<macho_shared->cmds.count; i++) {
+	for (uint i=0; i < macho_shared->cmds.count; i++) {
 		if (macho_shared->cmds.cmds[i]->cmd.cmd == LC_SEGMENT) {
 			FileOfs sofs = ofs+sizeof (MACHO_SEGMENT_COMMAND);
 			file->seek(sofs);
@@ -168,11 +168,6 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 
 	/* init ifs */
 	ht_format_group::init_ifs(ifs);
-}
-
-void ht_macho::done()
-{
-	ht_format_group::done();
 }
 
 /*
