@@ -2536,9 +2536,9 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case cmd_file_extend: {
 			File *f = (File *)msg->data1.ptr;
-			FileOfs s = (uint)msg->data2.q;
+			FileOfs s = msg->data2.q;
 			// don't ask. only for truncates
-//			if (confirmbox("really extend %s to offset %08x/%d?", f->get_filename(), s, s) == button_ok) {
+//			if (confirmbox("really extend %s to offset %08qx/%qd?", f->get_filename(), s, s) == button_ok) {
 				IOAccessMode oam = f->getAccessMode();
 				if (!(oam & IOAM_WRITE)) f->setAccessMode(oam | IOAM_WRITE);
 				try {
@@ -2554,7 +2554,7 @@ void ht_app::handlemsg(htmsg *msg)
 		case cmd_file_truncate: {
 			File *f = (File *)msg->data1.ptr;
 			FileOfs s = msg->data2.q;
-/*               ht_app_window_entry *e;
+/*			ht_app_window_entry *e;
 			if ((e=windows->enum_first())) {
 				do {
 					if ((e->type==AWT_FILE) && ((File*)e->data==f)) {
