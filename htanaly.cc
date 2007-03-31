@@ -411,10 +411,10 @@ int AnalyInfoline::gettext(char *buf, int maxlen)
 					d++;
 					switch (*d) {
 					case ANALY_STATUS_ARG_SECTION:
-						if (sec) ss+=ht_snprintf(ss, maxlen-(ss-s), "%s", sec);
+						if (sec) ss += ht_snprintf(ss, maxlen-(ss-s), "%s", sec);
 						break;
 					case ANALY_STATUS_ARG_FILEOFFSET:
-						ss+=ht_snprintf(ss, maxlen-(ss-s), "%08x", fofs);
+						ss += ht_snprintf(ss, maxlen-(ss-s), "%08qx", fofs);
 						break;
 					case ANALY_STATUS_ARG_RAW_UNASM: {
 						int length;
@@ -666,7 +666,7 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, const char *s, uint64 &v)
 		if (str2int(s, v, 10)) {
 			viewer_pos vp;
 			if (!aviewer->offset_to_pos(v, &vp)) {
-				set_eval_error("invalid offset: %08x", v);
+				set_eval_error("invalid offset: %08qx", v);
 				return false;
 			}
 			aviewer->convertViewerPosToAddress(vp, &a);
@@ -1941,7 +1941,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 		if (parseIntStr(name, v, 10)) {
 			if (*name) return false;
 			if (!offset_to_pos(v, &vp)) {
-				set_eval_error("invalid offset: %08x", v);
+				set_eval_error("invalid offset: %08qx", v);
 				return false;
 			}
 			convertViewerPosToAddress(vp, &w);
