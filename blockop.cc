@@ -394,7 +394,7 @@ bool blockop_str_process(Object *context, ht_text *progress_indicator)
 			ctx->file->seek(ctx->o);
 			ctx->file->writex(ctx->v.value, s);
 /*			!=s) {
-				throw ht_io_exception("blockop_str(): write error at pos %08x, size %08x", ctx->o, s);
+				throw ht_io_exception("blockop_str(): write error at pos %08qx, size %08qx", ctx->o, s);
 			}*/
 			ctx->o += s;
 		} else {
