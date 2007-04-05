@@ -2501,7 +2501,6 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "mullwo.", XO(31,235,1,1), XO_MASK,	PPCCOM,		{ RT, RA, RB } },
 
 { "mtsrin",  X(31,242),	XRA_MASK,	PPC32,		{ RS, RB } },
-{ "mtsri",   X(31,242),	XRA_MASK,	POWER32,	{ RS, RB } },
 
 { "dcbtst",  X(31,246),	XRT_MASK,	PPC,		{ RA, RB } },
 
@@ -2511,6 +2510,8 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "add.",    XO(31,266,0,1), XO_MASK,	PPCCOM,		{ RT, RA, RB } },
 { "addo",    XO(31,266,1,0), XO_MASK,	PPCCOM,		{ RT, RA, RB } },
 { "addo.",   XO(31,266,1,1), XO_MASK,	PPCCOM,		{ RT, RA, RB } },
+
+{ "tlbiel",  X(31,274), XRTLRA_MASK,	POWER4,		{ RB, L } },
 
 { "xdcbt",   X(31,278)|(1<<25),	XRT_MASK, PPC,		{ RA, RB } },
 
