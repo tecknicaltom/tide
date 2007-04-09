@@ -2079,7 +2079,7 @@ int ht_analy_sub::next_line_id(LINE_ID *line_id, int n)
 	return res;
 }
 
-int	ht_analy_sub::prev_line_id(LINE_ID *line_id, int n)
+int ht_analy_sub::prev_line_id(LINE_ID *line_id, int n)
 {
 	if (!analy) return false;
 	Address *a = analy->createAddress();
