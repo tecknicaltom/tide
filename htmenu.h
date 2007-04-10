@@ -31,9 +31,9 @@
 
 class ht_context_menu;
 
-#define CME_ENTRY		0
+#define CME_ENTRY	0
 #define CME_SEPARATOR	1
-#define CME_SUBMENU		2
+#define CME_SUBMENU	2
 
 class ht_context_menu_entry: public Object {
 public:
@@ -124,6 +124,7 @@ public:
 /* overwritten */
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
+	virtual void getminbounds(int *width, int *height);
 /* new */
 		int count();
 		void insert_menu(ht_context_menu *m);
