@@ -1946,7 +1946,6 @@ BUILDER(ATOM_HT_VIEW, ht_view, Object);
 BUILDER(ATOM_HT_GROUP, ht_group, ht_view);
 BUILDER(ATOM_HT_XGROUP, ht_xgroup, ht_group);
 BUILDER(ATOM_HT_WINDOW, ht_window, ht_group);
-BUILDER(ATOM_HT_FRAME, ht_frame, ht_text);
 BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, ht_view);
 
 /*
@@ -1959,7 +1958,6 @@ bool init_obj()
 	REGISTER(ATOM_HT_GROUP, ht_group);
 	REGISTER(ATOM_HT_XGROUP, ht_xgroup);
 	REGISTER(ATOM_HT_WINDOW, ht_window);
-	REGISTER(ATOM_HT_FRAME, ht_frame);
 	REGISTER(ATOM_HT_SCROLLBAR, ht_scrollbar);
 	return true;
 }
