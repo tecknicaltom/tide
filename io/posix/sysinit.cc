@@ -40,8 +40,8 @@ void SIGWINCH_sigaction(int i, siginfo_t *info, void *v);
 bool init_system()
 {
 	setuid(getuid());
-#if 0
 	struct sigaction sa;
+#if 0
 
 	sa.sa_sigaction = SIGCHLD_sigaction;
 	sigemptyset(&sa.sa_mask);
@@ -52,12 +52,11 @@ bool init_system()
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGTRAP, &sa, &old_SIGTRAP);
-
+#endif
 	sa.sa_sigaction = SIGWINCH_sigaction;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_SIGINFO;
 	sigaction(SIGWINCH, &sa, &old_SIGWINCH);
-#endif
 	return true;
 }
 
