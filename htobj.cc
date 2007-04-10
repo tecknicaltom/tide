@@ -556,8 +556,10 @@ void ht_view::redraw()
 void ht_view::resize(int sx, int sy)
 {
 	if (options & VO_RESIZE) {
-		if (size.w+sx <= 0) sx =- size.w+1;
-		if (size.h+sy <= 0) sy =- size.h+1;
+		int min_width, min_height;
+		getminbounds(&min_width, &min_height);
+		if (size.w+sx <= min_width) sx = min_width - size.w;
+		if (size.h+sy <= min_height) sy = min_height - size.h;
 		size.w += sx;
 		size.h += sy;
 		buf->resize(sx, sy);
@@ -1071,74 +1073,81 @@ void ht_group::releasefocus()
 
 void ht_group::remove(ht_view *view)
 {
-	ht_view *n=view->next ? view->next : view->prev;
-	if (n) focus(n); else {
+	ht_view *n = view->next ? view->next : view->prev;
+	if (n) {
+		focus(n);
+	} else {
 		releasefocus();
-		current=0;
+		current = NULL;
 	}
 	
 	Bounds c;
 	getbounds(&c);
 	view->move(-c.x, -c.y);
 	
-	if (view->prev) view->prev->next=view->next;
-	if (view->next) view->next->prev=view->prev;
-	if (first==view) first=first->next;
-	if (last==view) last=last->prev;
+	if (view->prev) view->prev->next = view->next;
+	if (view->next) view->next->prev = view->prev;
+	if (first == view) first = first->next;
+	if (last == view) last = last->prev;
 }
 
 void ht_group::reorder_view(ht_view *v, int rx, int ry)
 {
-	int px=0, py=0;
-	int sx=0, sy=0;
+	int px = 0, py = 0;
+	int sx = 0, sy = 0;
 
 	int gmv = GET_GM_V(v->growmode);
 	int gmh = GET_GM_H(v->growmode);
 	switch (gmh) {
-		case GMH_LEFT:
-			/* do nothing */
-			break;
-		case GMH_RIGHT:
-			px = rx;
-			break;
-		case GMH_FIT:
-			sx = rx;
-			break;
+	case GMH_LEFT:
+		/* do nothing */
+		break;
+	case GMH_RIGHT:
+		px = rx;
+		break;
+	case GMH_FIT:
+		sx = rx;
+		break;
 	}
 	
 	switch (gmv) {
-		case GMV_TOP:
-			/* do nothing */
-			break;
-		case GMV_BOTTOM:
-			py = ry;
-			break;
-		case GMV_FIT:
-			sy = ry;
-			break;
+	case GMV_TOP:
+		/* do nothing */
+		break;
+	case GMV_BOTTOM:
+		py = ry;
+		break;
+	case GMV_FIT:
+		sy = ry;
+		break;
 	}
 
 	v->move(px, py);
 	v->resize(sx, sy);
 }
 
-void ht_group::resize(int rx, int ry)
+void ht_group::resize(int sx, int sy)
 {
-	ht_view::resize(rx, ry);
+	int min_width, min_height;
+	getminbounds(&min_width, &min_height);
+	if (size.w+sx <= min_width) sx = min_width - size.w;
+	if (size.h+sy <= min_height) sy = min_height - size.h;
+
+	ht_view::resize(sx, sy);
 	
 	ht_view *v = first;
 	while (v) {
-		reorder_view(v, rx, ry);
+		reorder_view(v, sx, sy);
 		v = v->next;
 	}
 }
 
 int ht_group::select(ht_view *view)
 {
-	ht_view *v=first;
+	ht_view *v = first;
 	while (v) {
 		if (v->select(view)) {
-			current=v;
+			current = v;
 			putontop(v);
 			return 1;
 		}
@@ -1295,7 +1304,7 @@ bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psiz
 	return true;
 }
 
-void	ht_scrollbar::init(Bounds *b, palette *p, bool isv)
+void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 {
 	ht_view::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_scrollbar");
@@ -1361,8 +1370,10 @@ void ht_scrollbar::draw()
 	}
 }
 
-void ht_scrollbar::load(ObjectStream &s)
+void ht_scrollbar::getminbounds(int *width, int *height)
 {
+	*width = 1;
+	*height = 1;
 }
 
 ObjectID ht_scrollbar::getObjectID() const
@@ -1372,13 +1383,9 @@ ObjectID ht_scrollbar::getObjectID() const
 
 void ht_scrollbar::setpos(int ps, int pz)
 {
-	pstart=ps;
-	psize=pz;
+	pstart = ps;
+	psize = pz;
 	dirtyview();
-}
-
-void	ht_scrollbar::store(ObjectStream &s) const
-{
 }
 
 /*
@@ -1463,14 +1470,14 @@ void ht_frame::draw()
 /* <title> */
 	const char *d;
 	switch (framestate) {
-		case FST_MOVE:
-			d = (char*)((style & FS_RESIZE) ? "(moving) - hit space to resize" : "(moving)");
-			break;
-		case FST_RESIZE:
-			d = (char*)((style & FS_MOVE) ? "(resizing) - hit space to move" : "(resizing)");
-			break;
-		default:
-			d = desc;
+	case FST_MOVE:
+		d = (char*)((style & FS_RESIZE) ? "(moving) - hit space to resize" : "(moving)");
+		break;
+	case FST_RESIZE:
+		d = (char*)((style & FS_MOVE) ? "(resizing) - hit space to move" : "(resizing)");
+		break;
+	default:
+		d = desc;
 	}
 	int ks = (style & FS_KILLER) ? 4 : 0;
 	ns++;
@@ -1491,13 +1498,13 @@ void ht_frame::draw()
 vcp ht_frame::getcurcol_normal()
 {
 	switch (framestate) {
-		case FST_FOCUSED:
-			return getcolor(palidx_generic_frame_focused);
-		case FST_UNFOCUSED:
-			return getcolor(palidx_generic_frame_unfocused);
-		case FST_MOVE:
-		case FST_RESIZE:
-			return getcolor(palidx_generic_frame_move_resize);
+	case FST_FOCUSED:
+		return getcolor(palidx_generic_frame_focused);
+	case FST_UNFOCUSED:
+		return getcolor(palidx_generic_frame_unfocused);
+	case FST_MOVE:
+	case FST_RESIZE:
+		return getcolor(palidx_generic_frame_move_resize);
 	}
 	return 0;
 }
@@ -1640,23 +1647,23 @@ void ht_window::handlemsg(htmsg *msg)
 							break;
 					}
 				}
-			} else if (action_state==WAC_RESIZE) {
+			} else if (action_state == WAC_RESIZE) {
 				if (options & VO_RESIZE) {
 					int min_width, min_height;
 					getminbounds(&min_width, &min_height);
 					switch (msg->data1.integer) {
-						case K_Up:
-							if (size.h > min_height) resize(0, -1);
-							break;
-						case K_Down:
-							if (size.h < group->size.h) resize(0, 1);
-							break;
-						case K_Left:
-							if ((size.x+size.w>1) && (size.w > min_width)) resize(-1, 0);
-							break;
-						case K_Right:
-							if (size.w<group->size.w) resize(1, 0);
-							break;
+					case K_Up:
+						if (size.h > min_height) resize(0, -1);
+						break;
+					case K_Down:
+						if (size.h < group->size.h) resize(0, 1);
+						break;
+					case K_Left:
+						if (size.x+size.w > 1 && size.w > min_width) resize(-1, 0);
+						break;
+					case K_Right:
+						if (size.w < group->size.w) resize(1, 0);
+						break;
 					}
 				}
 			} else {
@@ -1832,11 +1839,6 @@ void ht_window::releasefocus()
 
 	if (frame) frame->setstyle(frame->getstyle() & (~FS_THICK));
 	ht_group::releasefocus();
-}
-
-void ht_window::resize(int rw, int rh)
-{
-	ht_group::resize(rw, rh);
 }
 
 void ht_window::setframe(ht_frame *newframe)
