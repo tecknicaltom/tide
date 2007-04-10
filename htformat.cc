@@ -115,8 +115,8 @@ void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bo
 
 	format_views = new Array(true);	// a list of ht_format_viewer_entrys
 
-	own_file=own_f;
-	editable_file=editable_f;
+	own_file = own_f;
+	editable_file = editable_f;
 	if (i) init_ifs(i);
 }
 
@@ -142,7 +142,9 @@ int ht_format_group::childcount() const
 bool ht_format_group::done_if(format_viewer_if *i, ht_view *v)
 {
 	remove(v);
-	if (i->done) i->done(v); else {
+	if (i->done) {
+		i->done(v); 
+	} else {
 		v->done();
 		delete v;
 	}
@@ -151,7 +153,7 @@ bool ht_format_group::done_if(format_viewer_if *i, ht_view *v)
 
 void ht_format_group::done_ifs()
 {
-	int j=0;
+	int j = 0;
 	while (1) {
 		ht_format_viewer_entry *e=(ht_format_viewer_entry*)(*format_views)[j];
 		if (!(e && e->instance)) break;
@@ -229,55 +231,55 @@ bool ht_format_group::get_vscrollbar_pos(int *pstart, int *psize)
 void ht_format_group::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case msg_keypressed: {
-			int i=0;
-			switch (msg->data1.integer) {
-				case K_F12: i++;
-				case K_F11: i++;
-				case K_F10: i++;
-				case K_F9: i++;
-				case K_F8: i++;
-				case K_F7: i++;
-				case K_F6: i++;
-				case K_F5: i++;
-				case K_F4: i++;
-				case K_F3: i++;
-				case K_F2: i++;
-				case K_F1: {
-					i++;
-					htmsg m;
-					m.msg=msg_funcquery;
-					m.type=mt_empty;
-					m.data1.integer=i;
-					sendmsg(&m);
-					if (m.msg==msg_retval) {
-						sendmsg(msg_funcexec, i);
-						clearmsg(msg);
-						return;
-					}
-					break;
-				}
-			}
-			break;
-		}
-	}
-	ht_format_viewer::handlemsg(msg);
-	xgroup->handlemsg(msg);
-	switch (msg->msg) {
-		case msg_funcexec:
-			if (func(msg->data1.integer, 1)) {
+	case msg_keypressed: {
+		int i=0;
+		switch (msg->data1.integer) {
+		case K_F12: i++;
+		case K_F11: i++;
+		case K_F10: i++;
+		case K_F9: i++;
+		case K_F8: i++;
+		case K_F7: i++;
+		case K_F6: i++;
+		case K_F5: i++;
+		case K_F4: i++;
+		case K_F3: i++;
+		case K_F2: i++;
+		case K_F1: {
+			i++;
+			htmsg m;
+			m.msg=msg_funcquery;
+			m.type=mt_empty;
+			m.data1.integer=i;
+			sendmsg(&m);
+			if (m.msg==msg_retval) {
+				sendmsg(msg_funcexec, i);
 				clearmsg(msg);
 				return;
 			}
 			break;
-		case msg_funcquery: {
-			const char *s=func(msg->data1.integer, 0);
-			if (s) {
-				msg->msg=msg_retval;
-				msg->data1.cstr=s;
-			}
-			break;
 		}
+		}
+		break;
+	}
+	}
+	ht_format_viewer::handlemsg(msg);
+	xgroup->handlemsg(msg);
+	switch (msg->msg) {
+	case msg_funcexec:
+		if (func(msg->data1.integer, 1)) {
+			clearmsg(msg);
+			return;
+		}
+		break;
+	case msg_funcquery: {
+		const char *s=func(msg->data1.integer, 0);
+		if (s) {
+			msg->msg=msg_retval;
+			msg->data1.cstr=s;
+		}
+		break;
+	}
 	}
 }
 
@@ -382,11 +384,6 @@ void ht_viewer::init(Bounds *b, const char *desc, uint c)
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
-void ht_viewer::done()
-{
-	ht_view::done();
-}
-
 const char *ht_viewer::func(uint i, bool execute)
 {
 	return NULL;
@@ -396,50 +393,50 @@ void ht_viewer::handlemsg(htmsg *msg)
 {
 	int i=0;
 	switch (msg->msg) {
-		case msg_keypressed: {
-			switch (msg->data1.integer) {
-				case K_F12: i++;
-				case K_F11: i++;
-				case K_F10: i++;
-				case K_F9: i++;
-				case K_F8: i++;
-				case K_F7: i++;
-				case K_F6: i++;
-				case K_F5: i++;
-				case K_F4: i++;
-				case K_F3: i++;
-				case K_F2: i++;
-				case K_F1: {
-					i++;
-					htmsg m;
-					m.msg=msg_funcquery;
-					m.type=mt_empty;
-					m.data1.integer=i;
-					sendmsg(&m);
-					if (m.msg==msg_retval) {
-						sendmsg(msg_funcexec, i);
-						clearmsg(msg);
-						return;
-					}
-					break;
-				}
-			}
-			break;
-		}
-		case msg_funcexec:
-			if (func(msg->data1.integer, 1)) {
+	case msg_keypressed: {
+		switch (msg->data1.integer) {
+		case K_F12: i++;
+		case K_F11: i++;
+		case K_F10: i++;
+		case K_F9: i++;
+		case K_F8: i++;
+		case K_F7: i++;
+		case K_F6: i++;
+		case K_F5: i++;
+		case K_F4: i++;
+		case K_F3: i++;
+		case K_F2: i++;
+		case K_F1: {
+			i++;
+			htmsg m;
+			m.msg = msg_funcquery;
+			m.type = mt_empty;
+			m.data1.integer = i;
+			sendmsg(&m);
+			if (m.msg == msg_retval) {
+				sendmsg(msg_funcexec, i);
 				clearmsg(msg);
 				return;
 			}
 			break;
-		case msg_funcquery: {
-			const char *s=func(msg->data1.integer, 0);
-			if (s) {
-				msg->msg=msg_retval;
-				msg->data1.cstr=s;
-			}
-			break;
 		}
+		}
+		break;
+	}
+	case msg_funcexec:
+		if (func(msg->data1.integer, 1)) {
+			clearmsg(msg);
+			return;
+		}
+		break;
+	case msg_funcquery: {
+		const char *s = func(msg->data1.integer, 0);
+		if (s) {
+			msg->msg = msg_retval;
+			msg->data1.cstr = s;
+		}
+		break;
+	}
 	}
 	ht_view::handlemsg(msg);
 }
@@ -869,27 +866,27 @@ public:
 
 void ht_uformat_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group)
 {
-	tagpal.data=NULL;
-	tagpal.size=0;
+	tagpal.data = NULL;
+	tagpal.size = 0;
 	ht_format_viewer::init(b, desc, caps, file, format_group);
 	VIEW_DEBUG_NAME("ht_uformat_view");
 	first_sub=0;
 	last_sub=0;
 	clear_viewer_pos(&top);
 	clear_viewer_pos(&cursor);
-	xscroll=0;
-	cursor_ypos=0;
-	cursor_visual_length=0;
-	cursor_visual_xpos=0;
-	cursor_select=0;
-	cursor_select_start=0xffffffff;
-	sel_start=0;
-	sel_end=0;
-	isdirty_cursor_line=0;
+	xscroll = 0;
+	cursor_ypos = 0;
+	cursor_visual_length = 0;
+	cursor_visual_xpos = 0;
+	cursor_select = 0;
+	cursor_select_start = 0xffffffff;
+	sel_start = 0;
+	sel_end = 0;
+	isdirty_cursor_line = 0;
 
-	search_caps=SEARCHMODE_VREGEX;
+	search_caps = SEARCHMODE_VREGEX;
 
-	uf_initialized=0;
+	uf_initialized = 0;
 }
 
 void ht_uformat_viewer::done()
@@ -3882,35 +3879,35 @@ void ht_uformat_viewer::update_misc_info()
 void ht_uformat_viewer::update_visual_info()
 {
 	cursorline_get();
-	char *s, *t=cursor_line;
-	int v=0, vl=0;
-	int i=0, g=0;
+	char *s, *t = cursor_line;
+	int v = 0, vl = 0;
+	int i = 0, g = 0;
 	while ((s=tag_findnext(t))) {
-		int cl=tag_get_class(s);
-		if (s[1]==HT_TAG_GROUP) {
-			i=0;
+		int cl = tag_get_class(s);
+		if (s[1] == HT_TAG_GROUP) {
+			i = 0;
 			g++;
 		}
-		v+=s-t;
-		vl=tag_get_vlen(s);
-		if ((i==cursor.tag_idx) && (g==cursor.tag_group) && (cl!=tag_class_no)) break;
-		v+=vl;
-		t=s+tag_get_len(s);
-		if (cl!=tag_class_no) i++;
+		v += s-t;
+		vl = tag_get_vlen(s);
+		if (i == cursor.tag_idx && g == cursor.tag_group && cl != tag_class_no) break;
+		v += vl;
+		t = s+tag_get_len(s);
+		if (cl != tag_class_no) i++;
 	}
 
 	if (cursor_tag_micropos > vl-1) cursor_tag_micropos = vl ? vl-1 : 0;
-	cursor_visual_xpos=v;
-	cursor_visual_length=vl;
+	cursor_visual_xpos = v;
+	cursor_visual_length = vl;
 }
 
 void ht_uformat_viewer::update_ypos()
 {
 	uformat_viewer_pos p = top;
-	int y=0;
-	while ((next_line(&p, 1)) && (y<size.h)) {
+	int y = 0;
+	while (next_line(&p, 1) && y < size.h) {
 		if (compeq_viewer_pos(&p, &cursor)) {
-			cursor_ypos=y;
+			cursor_ypos = y;
 			break;
 		}
 		y++;
@@ -3922,16 +3919,16 @@ void ht_uformat_viewer::vstate_restore(Object *data)
 	ht_uformat_viewer_vstate *vs = (ht_uformat_viewer_vstate*)data;
 	first_sub = vs->first_sub;
 	last_sub = vs->last_sub;
-/* top line position */
+	/* top line position */
 	top = vs->top;
-/* cursor line and tag position */
+	/* cursor line and tag position */
 	cursor = vs->cursor;
 	cursor_state = vs->cursor_state;
 	cursor_ypos = vs->cursor_ypos;
-/* selection*/
+	/* selection*/
 	sel_start = vs->sel_start;
 	sel_end = vs->sel_end;
-/**/
+	/**/
 	cursorline_dirty();
 	update_misc_info();
 	update_visual_info();
