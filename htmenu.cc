@@ -76,15 +76,15 @@ bool execute_submenu(int x, int y, ht_context_menu *m)
 		frame->init(&b, 0, FS_MOVE/*just for fun*/);
 		d->setframe(frame);
 		d->setpalette(palkey_generic_menu_default);
-		int r=d->run(false);
+		int r = d->run(false);
 		d->done();
 		delete d;
 		switch (r) {
-			case button_ok: {
-				return true;
-			}
-			default:
-				term=true;
+		case button_ok: {
+			return true;
+		}
+		default:
+			term = true;
 		}
 	} while (!term);
 	return false;
@@ -163,25 +163,26 @@ int ht_static_context_menu::count()
 
 ht_context_menu_entry *ht_static_context_menu::enum_entry_first()
 {
-	enum_idx=0;
-	ht_context_menu_entry *e=(ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
+	enum_idx = 0;
+	ht_context_menu_entry *e = (ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
 	return e;
 }
 
 ht_context_menu_entry *ht_static_context_menu::enum_entry_next()
 {
 	enum_idx++;
-	ht_context_menu_entry *e=(ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
+	ht_context_menu_entry *e = (ht_context_menu_entry*)(*context_menu_entry)[enum_idx];
 	return e;
 }
 
 void ht_static_context_menu::insert_entry(const char *Name, const char *Comment, int cmd, int k, bool a)
 {
-	char *name=ht_strdup(Name), *comment, *shortcut=NULL;
-	if (Comment) comment = ht_strdup(Comment); else comment = NULL;
-	shortcut = shortcut_str(name);
-	int l=strlen(name), cl=comment ? strlen(comment)+2 : 0;
-	width=MAX(width, l+cl);
+	char *name = ht_strdup(Name);
+	char *comment = ht_strdup(Comment);
+	char *shortcut = shortcut = shortcut_str(name);
+	int l = strlen(name);
+	int cl = comment ? strlen(comment)+2 : 0;
+	width = MAX(width, l+cl);
 	ht_context_menu_entry *e = new ht_context_menu_entry();
 	e->type = CME_ENTRY;
 	e->entry.name = name;
@@ -195,14 +196,14 @@ void ht_static_context_menu::insert_entry(const char *Name, const char *Comment,
 
 void ht_static_context_menu::insert_separator()
 {
-	ht_context_menu_entry *entry=new ht_context_menu_entry();
+	ht_context_menu_entry *entry = new ht_context_menu_entry();
 	entry->type = CME_SEPARATOR;
 	context_menu_entry->insert(entry);
 }
 
 void ht_static_context_menu::insert_submenu(ht_context_menu *submenu)
 {
-	ht_context_menu_entry *entry=new ht_context_menu_entry();
+	ht_context_menu_entry *entry = new ht_context_menu_entry();
 	entry->type = CME_SUBMENU;
 	entry->submenu = submenu;
 	submenu->xpos = 0;
@@ -216,14 +217,14 @@ void ht_static_context_menu::insert_submenu(ht_context_menu *submenu)
 ht_context_menu_entry::~ht_context_menu_entry()
 {
 	switch (type) {
-		case CME_ENTRY:
-			free(entry.name);
-			free(entry.comment);
-			break;
-		case CME_SUBMENU:
-			submenu->done();
-			delete submenu;
-			break;
+	case CME_ENTRY:
+		free(entry.name);
+		free(entry.comment);
+		break;
+	case CME_SUBMENU:
+		submenu->done();
+		delete submenu;
+		break;
 	}
 }
 
@@ -233,10 +234,12 @@ ht_context_menu_entry::~ht_context_menu_entry()
 
 void ht_menu::init(Bounds *b)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_POSTPROCESS, "menu");
+	ht_view::init(b, VO_OWNBUFFER | VO_POSTPROCESS | VO_RESIZE, "menu");
 	VIEW_DEBUG_NAME("ht_menu");
 
-	menu=new Array(true);
+	growmode = MK_GM(GMH_FIT, GMV_TOP);
+
+	menu = new Array(true);
 	lastmenux = 1;
 	curmenu = -1;
 	localmenu = -1;
@@ -268,11 +271,17 @@ ht_context_menu *ht_menu::get_context_menu(int i)
 	return q;
 }
 
+void ht_menu::getminbounds(int *width, int *height)
+{
+	*width = 1;
+	*height = 1;
+}
+
 void ht_menu::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	int c = count();
-	for (int i=0; i<c; i++) {
+	for (int i=0; i < c; i++) {
 		ht_context_menu *c = get_context_menu(i);
 		const char *n = c->get_name();
 		const char *s = c->get_shortcut();
@@ -290,59 +299,59 @@ void ht_menu::draw()
 
 void ht_menu::execute_menu(int i)
 {
-	curmenu=i;
-	int curentry=0;
-	bool term=false;
+	curmenu = i;
+	int curentry = 0;
+	bool term = false;
 	dirtyview();
 	do {
 		ht_context_menu *m = get_context_menu(curmenu);
 		Bounds b;
-		b.x=m->xpos-1;
-		b.y=1;
-		b.w=m->width+4;
-		b.h=m->count()+2;
-		ht_menu_window *d=new ht_menu_window();
+		b.x = m->xpos-1;
+		b.y = 1;
+		b.w = m->width + 4;
+		b.h = m->count() + 2;
+		ht_menu_window *d = new ht_menu_window();
 		d->init(&b, m);
 		ht_menu_window_data a;
 		a.selected = curentry;
 		d->databuf_set(&a, sizeof a);
-		b.x=0;
-		b.y=0;
-		ht_frame *frame=new ht_menu_frame();
+		b.x = 0;
+		b.y = 0;
+		ht_frame *frame = new ht_menu_frame();
 		frame->init(&b, 0, FS_MOVE);	// just for fun
 		d->setframe(frame);
 		d->setpalette(palkey_generic_menu_default);
-		int r=d->run(false);
+		int r = d->run(false);
 		switch (r) {
-			case button_left:
-				curmenu--;
-				if (curmenu<0) curmenu = count()-1;
-				curentry=0;
-				dirtyview();
-				break;
-			case button_right:
-				curmenu++;
-				if (curmenu>(int)count()-1) curmenu=0;
-				curentry=0;
-				dirtyview();
-				break;
-			case button_ok: {
-//               	return true;
-			}
-			default:
-				term=true;
+		case button_left:
+			curmenu--;
+			if (curmenu < 0) curmenu = count() - 1;
+			curentry=0;
+			dirtyview();
+			break;
+		case button_right:
+			curmenu++;
+			if (curmenu > (int)count()-1) curmenu = 0;
+			curentry = 0;
+			dirtyview();
+			break;
+		case button_ok: {
+//			return true;
+		}
+		default:
+			term = true;
 		}
 		d->done();
 		delete d;
 	} while (!term);
-	curmenu=-1;
+	curmenu = -1;
 	dirtyview();
 }
 
 void ht_menu::handlemsg(htmsg *msg)
 {
-	if (msg->type==mt_postprocess) {
-		if (msg->msg==msg_keypressed) {
+	if (msg->type == mt_postprocess) {
+		if (msg->msg == msg_keypressed) {
 			/* shortcuts */
 			ht_key k = keyb_unmetakey((ht_key)msg->data1.integer);
 			if (k != K_INVALID) {
