@@ -972,8 +972,9 @@ void ht_project_window::handlemsg(htmsg *msg)
 
 void ht_status::init(Bounds *b)
 {
-	ht_view::init(b, VO_TRANSPARENT_CHARS, 0);
+	ht_view::init(b, VO_TRANSPARENT_CHARS | VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_status");
+	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	idle_count = 0;
 	analy_ani = 0;
 	clear_len = 0;
@@ -1002,7 +1003,7 @@ const char *ht_status::defaultpalette()
 void ht_status::draw()
 {
 	fill(size.w-clear_len, 0, clear_len, 1, getcolor(palidx_generic_text_focused), ' ');
-	int len=strlen(workbuf);
+	int len = strlen(workbuf);
 	clear_len = len;
 	buf->print(size.w-len, 0, getcolor(palidx_generic_text_focused), workbuf);
 }
@@ -1010,18 +1011,24 @@ void ht_status::draw()
 void ht_status::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case msg_config_changed:
-			free(format);
-			format = get_config_string("misc/statusline");
-			break;
+	case msg_config_changed:
+		free(format);
+		format = get_config_string("misc/statusline");
+		break;
 	}
 	ht_view::handlemsg(msg);
+}
+
+void ht_status::getminbounds(int *width, int *height)
+{
+	*width = 1;
+	*height = 1;
 }
 
 bool ht_status::idle()
 {
 	if (idle_count % 100 == 0) {
-		char *oldstatus=ht_strdup(workbuf);
+		char *oldstatus = ht_strdup(workbuf);
 		render();
 		if (strcmp(oldstatus, workbuf)) {
 			dirtyview();
@@ -1090,8 +1097,9 @@ void ht_status::render()
 
 void ht_keyline::init(Bounds *b)
 {
-	ht_view::init(b, 0, 0);
+	ht_view::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_keyline");
+	growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
 }
 
 void ht_keyline::done()
@@ -1107,16 +1115,16 @@ const char *ht_keyline::defaultpalette()
 void ht_keyline::draw()
 {
 	clear(getcolor(palidx_generic_text_disabled));
-	int x=0;
-	for (int i=1; i<=10; i++) {
+	int x = 0;
+	for (int i = 1; i <= 10; i++) {
 		htmsg msg;
-		msg.type=mt_empty;
-		msg.msg=msg_funcquery;
-		msg.data1.integer=i;
+		msg.type = mt_empty;
+		msg.msg = msg_funcquery;
+		msg.data1.integer = i;
 		baseview->sendmsg(&msg);
 		buf->printChar(x, 0, getcolor(palidx_generic_text_shortcut), '0'+i%10);
-		if (msg.msg==msg_retval) {
-			char *s=msg.data1.str;
+		if (msg.msg == msg_retval) {
+			char *s = msg.data1.str;
 			if (s) {
 				if (s[0]=='~') {
 					buf->print(x+1, 0, getcolor(palidx_generic_text_disabled), s+1);
@@ -1128,13 +1136,14 @@ void ht_keyline::draw()
 				}
 			}
 		}
-		x+=size.w/10;
+		x += size.w / 10;
 	}
 }
 
-void ht_keyline::handlemsg(htmsg *msg)
+void ht_keyline::getminbounds(int *width, int *height)
 {
-	ht_view::handlemsg(msg);
+	*width = 1;
+	*height = 1;
 }
 
 /*
@@ -1143,7 +1152,7 @@ void ht_keyline::handlemsg(htmsg *msg)
 
 void ht_desktop::init(Bounds *b)
 {
-	ht_view::init(b, VO_OWNBUFFER, 0);
+	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_desktop");
 }
 
@@ -1409,6 +1418,7 @@ void ht_app::init(Bounds *pq)
 	ht_dialog::init(pq, 0, 0);
 	menu = NULL;
 	setframe(NULL);
+	options |= VO_RESIZE;
 	VIEW_DEBUG_NAME("ht_app");
 	exit_program = false;
 	focused = true;
@@ -1503,7 +1513,7 @@ void ht_app::init(Bounds *pq)
 
 	m->insert_local_menu();
 
-	menu=m;
+	menu = m;
 	insert(menu);
 	
 	/* create status */
@@ -3092,6 +3102,19 @@ int ht_app::run(bool modal)
 				ht_key k = keyb_getkey();
 				sendmsg(msg_keypressed, k);
 				sendmsg(msg_draw);
+			}
+			if (sys_get_winch_flag()) {
+				sys_set_winch_flag(0);
+				int w, h;
+				if (sys_get_screen_size(w, h)) {
+					FILE *f = fopen("alala", "a");
+					fprintf(f, "%d, %d,    %d, %d    %d, %d\n", w, h, size.w, size.h, w - size.w, h - size.h);
+					fclose(f);
+					Bounds b(0, 0, w, h);
+					screen->resize(w - screen->w, h - screen->h);
+					resize(w - size.w, h - size.h);
+					sendmsg(msg_draw);					
+				}
 			}
 			ht_queued_msg *q;
 			while ((q = dequeuemsg())) {
