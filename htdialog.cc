@@ -39,6 +39,12 @@ ht_queued_msg::ht_queued_msg(ht_view *aTarget, htmsg &aMsg)
 	msg = aMsg;
 }
 
+void ht_dialog_widget::getminbounds(int *width, int *height)
+{
+	*width = 1;
+	*height = 1;
+}
+
 /*
  *	CLASS ht_dialog
  */
@@ -115,6 +121,8 @@ void ht_dialog::handlemsg(htmsg *msg)
 	}
 }
 
+void do_modal_resize();
+
 int ht_dialog::run(bool modal)
 {
 	ht_view *orig_focused=app->getselected(), *orig_baseview=baseview;
@@ -124,7 +132,7 @@ int ht_dialog::run(bool modal)
 	setstate(ds_normal, 0);
 	((ht_group*)app)->insert(this);
 	((ht_group*)app)->focus(this);
-	baseview=this;
+	baseview = this;
 	drawer->sendmsg(msg_draw, 0);
 	screen->show();
 	while (getstate(0) == ds_normal) {
@@ -133,6 +141,9 @@ int ht_dialog::run(bool modal)
 			sendmsg(msg_keypressed, k);
 			drawer->sendmsg(msg_draw, 0);
 			screen->show();
+		}
+		if (sys_get_winch_flag()) {
+			do_modal_resize();
 		}
 		ht_queued_msg *q;
 		while ((q = dequeuemsg())) {
@@ -568,11 +579,12 @@ void ht_history_popup_dialog::setdata(ObjectStream &s)
 
 void ht_inputfield::init(Bounds *b, int Maxtextlen, List *hist)
 {
-	ht_view::init(b, VO_SELECTABLE, "some inputfield");
+	ht_view::init(b, VO_SELECTABLE | VO_RESIZE, "some inputfield");
 	VIEW_DEBUG_NAME("ht_inputfield");
 
 	history = hist;
 	maxtextlenv = Maxtextlen;
+	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	
 	textv = ht_malloc(maxtextlenv+1);
 	curcharv = textv;
@@ -1228,7 +1240,7 @@ void ht_hexinputfield::handlemsg(htmsg *msg)
 void ht_hexinputfield::receivefocus()
 {
 	correct_viewpoint();
-	if ((nib) && (*curchar-*text==*textlen)) {
+	if (nib && *curchar-*text == *textlen) {
 		nib=0;
 	}
 	ht_inputfield::receivefocus();
@@ -1236,7 +1248,7 @@ void ht_hexinputfield::receivefocus()
 
 void ht_hexinputfield::setnibble(byte a)
 {
-	if (((insert) || (*curchar-*text>=*textlen)) && (nib==0)) {
+	if ((insert || *curchar-*text >= *textlen) && nib == 0) {
 		if ((insertbyte(*curchar, a<<4)) && (*curchar-*text<*textlen)) nib=1;
 	} else {
 		if (nib) {
@@ -1278,6 +1290,12 @@ void ht_button::done()
 {
 	free(text);
 	ht_view::done();
+}
+
+void ht_button::getminbounds(int *width, int *height)
+{
+	*width = 6;
+	*height = 2;
 }
 
 const char *ht_button::defaultpalette()
