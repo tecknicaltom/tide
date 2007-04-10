@@ -263,14 +263,15 @@ public:
 	virtual	ht_view *enum_next(int *handle);
 	virtual	bool focus(ht_view *view);
 	virtual	void getdata(ObjectStream &s);
-	virtual	ht_view *getselected();
 	virtual ht_view *getfirstchild();
+	virtual	void getminbounds(int *width, int *height);
+	virtual	ht_view *getselected();
 	virtual	void handlemsg(htmsg *msg);
 	virtual	int isaclone(ht_view *view);
 		int isviewdirty();
 	virtual	void load(ObjectStream &s);
 	virtual	void move(int x, int y);
-	virtual	ObjectID	getObjectID() const;
+	virtual	ObjectID getObjectID() const;
 		void putontop(ht_view *view);
 	virtual void receivefocus();
 	virtual	void resize(int rw, int rh);
