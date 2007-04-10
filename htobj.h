@@ -238,6 +238,11 @@ public:
 	}
 };
 
+class ht_dialog_widget: public ht_view {
+public:
+	void getminbounds(int *width, int *height);
+};
+
 /*
  *	CLASS ht_group
  */
@@ -343,11 +348,9 @@ public:
  *	CLASS ht_text
  */
 
-class ht_text: public ht_view {
+class ht_text: public ht_dialog_widget {
 public:
 /* new */
-		ht_text() {}
-		ht_text(BuildCtorArg&a): ht_view(a) {};
 	virtual	void settext(const char *text);
 };
 
@@ -377,8 +380,6 @@ protected:
 	virtual	vcp getcurcol_normal();
 	virtual	vcp getcurcol_killer();
 public:
-				ht_frame() {}
-				ht_frame(BuildCtorArg&a): ht_text(a) {};
 		void		init(Bounds *b, const char *desc, uint style, uint number=0);
 	virtual	void		done();
 	/* overwritten */
