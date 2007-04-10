@@ -624,21 +624,21 @@ void ht_view::sendmsg(int msg, int data1, int data2)
 {
 	htmsg m;
 	switch (msg) {
-		case msg_empty:
-			return;
-		case msg_draw:
-		case msg_dirtyview:
-			m.msg=msg;
-			m.type=mt_broadcast;
-			m.data1.integer=data1;
-			m.data2.integer=data2;
-			break;
-		default:
-			m.msg=msg;
-			m.type=mt_empty;
-			m.data1.integer=data1;
-			m.data2.integer=data2;
-			break;
+	case msg_empty:
+		return;
+	case msg_draw:
+	case msg_dirtyview:
+		m.msg = msg;
+		m.type = mt_broadcast;
+		m.data1.integer = data1;
+		m.data2.integer = data2;
+		break;
+	default:
+		m.msg = msg;
+		m.type = mt_empty;
+		m.data1.integer = data1;
+		m.data2.integer = data2;
+		break;
 	}
 	sendmsg(&m);
 }
@@ -894,18 +894,20 @@ ht_view *ht_group::getfirstchild()
 void ht_group::getminbounds(int *width, int *height)
 {
 	ht_view::getminbounds(width, height);
-/*	ht_view *v = first;
-	while (v && (v->options & VO_RESIZE)) {
-		int w, h;
-		v->getminbounds(&w, &h);
-		w += v->size.x;
-		h += v->size.y;
-		uint gmh = GET_GM_H(v->growmode);
-		uint gmv = GET_GM_V(v->growmode);
-		if (gmh == GMH_FIT && w > *width) *width = w;
-		if (gmv == GMV_FIT && h > *height) *height = h;
+	ht_view *v = first;
+	while (v) {
+		if (v->options & VO_RESIZE) {
+			int w, h;
+			v->getminbounds(&w, &h);
+			w += v->size.x + size.w - (v->size.x + v->size.w);
+			h += v->size.y + size.h - (v->size.y + v->size.h);
+			uint gmh = GET_GM_H(v->growmode);
+			uint gmv = GET_GM_V(v->growmode);
+			if (gmh == GMH_FIT && w > *width) *width = w;
+			if (gmv == GMV_FIT && h > *height) *height = h;
+		}
 		v = v->next;
-	}*/
+	}
 }
 
 void ht_group::handlemsg(htmsg *msg)
