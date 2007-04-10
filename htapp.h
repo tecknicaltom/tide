@@ -58,11 +58,12 @@ protected:
 	int		clear_len;
 	int		analy_ani;
 public:
-			void init(Bounds *b);
+		void init(Bounds *b);
 	virtual	void done();
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
 	virtual	bool idle();
+	virtual void getminbounds(int *width, int *height);
 private:
 		void render();
 	virtual	const char *defaultpalette();
@@ -76,10 +77,10 @@ class ht_keyline: public ht_view {
 public:
 		void init(Bounds *b);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void draw();
-	virtual	void handlemsg(htmsg *msg);
 	virtual	const char *defaultpalette();
+	virtual void getminbounds(int *width, int *height);
 };
 
 /*
@@ -88,9 +89,9 @@ public:
 
 class ht_desktop: public ht_view {
 public:
-			void init(Bounds *b);
+		void init(Bounds *b);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void draw();
 	virtual	const char *defaultpalette();
 };
@@ -128,15 +129,15 @@ private:
 	int ofs, xofs;
 	ht_window *window;
 
-/* new */
+	/* new */
 	int cursor_up(int n);
 	int cursor_down(int n);
 	bool get_vscrollbar_pos(int *pstart, int *psize);
 	void update();
 public:
-			void init(Bounds *b, ht_window *window, ht_log *log, bool own_log);
+		void init(Bounds *b, ht_window *window, ht_log *log, bool own_log);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void draw();
 	virtual	void handlemsg(htmsg *msg);
 };
@@ -167,10 +168,11 @@ protected:
 public:
 	File	*file;
 
-		    ht_file_window();
+		ht_file_window();
+		
 		void init(Bounds *b, const char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 };
 
