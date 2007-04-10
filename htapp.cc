@@ -400,13 +400,13 @@ bool file_open_dialog(char **name, uint *mode)
 	List *hist = (List*)getAtomValue(HISTATOM_FILE);
 	
 	/* mode (input) */
-	c=b;
-	c.x=6;
-	c.y=b.h-4;
-	c.w=12;
-	c.h=1;
+	c = b;
+	c.x = 6;
+	c.y = b.h-4;
+	c.w = 12;
+	c.h = 1;
 
-	ht_listpopup *mode_input=new ht_listpopup();
+	ht_listpopup *mode_input = new ht_listpopup();
 	mode_input->init(&c);
 	
 	mode_input->insertstring("autodetect");
@@ -422,7 +422,7 @@ bool file_open_dialog(char **name, uint *mode)
 	c.w=9;
 	c.h=1;
 
-	ht_label *mode_text=new ht_label();
+	ht_label *mode_text = new ht_label();
 	mode_text->init(&c, "~mode", mode_input);
 
 	d->insert(mode_text);
@@ -2998,6 +2998,23 @@ void ht_app::project_opencreate(const char *filename)
 	}
 }
 
+void ht_app::modal_resize()
+{
+	sys_set_winch_flag(0);
+	int w, h;
+	if (sys_get_screen_size(w, h)) {
+		screen->resize(w - screen->w, h - screen->h);
+		resize(w - size.w, h - size.h);
+		sendmsg(msg_dirtyview);
+		sendmsg(msg_draw);
+	}
+}
+
+void do_modal_resize()
+{
+	((ht_app*)app)->modal_resize();
+}
+
 static uint isqr(uint u)
 {
 	uint a = 2;
@@ -3101,14 +3118,7 @@ int ht_app::run(bool modal)
 				sendmsg(msg_draw);
 			}
 			if (sys_get_winch_flag()) {
-				sys_set_winch_flag(0);
-				int w, h;
-				if (sys_get_screen_size(w, h)) {
-					screen->resize(w - screen->w, h - screen->h);
-					resize(w - size.w, h - size.h);
-					sendmsg(msg_dirtyview);
-					sendmsg(msg_draw);
-				}
+				modal_resize();
 			}
 			ht_queued_msg *q;
 			while ((q = dequeuemsg())) {
