@@ -465,17 +465,17 @@ ht_view *ht_view::getselected()
 void ht_view::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
-		case msg_draw:
-			redraw();
-			return;
-		case msg_dirtyview:
-			dirtyview();
-			if (msg->type & mt_broadcast==0) clearmsg(msg);
-			return;
-		case msg_config_changed:
-			config_changed();
-//          	clearmsg(msg);
-			return;
+	case msg_draw:
+		redraw();
+		return;
+	case msg_dirtyview:
+		dirtyview();
+		if (msg->type & mt_broadcast == 0) clearmsg(msg);
+		return;
+	case msg_config_changed:
+		config_changed();
+//		clearmsg(msg);
+		return;
 	}
 }
 
@@ -875,8 +875,8 @@ ht_view *ht_group::get_by_browse_idx(int i)
 void ht_group::getdata(ObjectStream &s)
 {
 	ht_view *v;
-	int h=enum_start();
-	while ((v=enum_next(&h))) {
+	int h = enum_start();
+	while ((v = enum_next(&h))) {
 		v->getdata(s);
 	}
 }
@@ -891,6 +891,23 @@ ht_view *ht_group::getfirstchild()
 	return first;
 }
 
+void ht_group::getminbounds(int *width, int *height)
+{
+	ht_view::getminbounds(width, height);
+/*	ht_view *v = first;
+	while (v && (v->options & VO_RESIZE)) {
+		int w, h;
+		v->getminbounds(&w, &h);
+		w += v->size.x;
+		h += v->size.y;
+		uint gmh = GET_GM_H(v->growmode);
+		uint gmv = GET_GM_V(v->growmode);
+		if (gmh == GMH_FIT && w > *width) *width = w;
+		if (gmv == GMV_FIT && h > *height) *height = h;
+		v = v->next;
+	}*/
+}
+
 void ht_group::handlemsg(htmsg *msg)
 {
 	if (!enabled) return;
@@ -899,10 +916,10 @@ void ht_group::handlemsg(htmsg *msg)
 		ht_view *v=first;
 		while (v) {
 			v->handlemsg(msg);
-			v=v->next;
+			v = v->next;
 		}
 	} else if (msg->type == mt_empty) {
-		int msgtype=msg->type;
+		int msgtype = msg->type;
 		ht_view *v;
 
 		msg->type=mt_preprocess;
