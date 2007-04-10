@@ -27,7 +27,7 @@ sys_exception::sys_exception(const char *s)
 	ht_strlcpy(str, s, sizeof str);
 }
 
-const char *sys_exception::what() const throw()
+const char *sys_exception::what() const throw()
 {
 	return str;
 }
