@@ -1533,7 +1533,7 @@ void ht_app::init(Bounds *pq)
 	b.x = 0;
 	b.y = b.h-1;
 	b.h = 1;
-	keyline=new ht_keyline();
+	keyline = new ht_keyline();
 	keyline->init(&b);
 	insert(keyline);
 
@@ -1544,7 +1544,8 @@ void ht_app::init(Bounds *pq)
 	b.h -= 2;
 
 	battlefield = new ht_group();
-	battlefield->init(&b, VO_TRANSPARENT_CHARS, "battlefield");
+	battlefield->init(&b, VO_TRANSPARENT_CHARS | VO_RESIZE, "battlefield");
+	battlefield->growmode = MK_GM(GMH_FIT, GMV_FIT);
 	insert(battlefield);
 
 	create_window_log();
