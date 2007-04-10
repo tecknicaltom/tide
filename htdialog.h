@@ -77,11 +77,12 @@ public:
 	virtual	void setstate(int state, int return_val);
 };
 
+
 /*
  *	CLASS ht_cluster
  */
 
-class ht_cluster: public ht_view {
+class ht_cluster: public ht_dialog_widget {
 protected:
 			ht_string_list *strings;
 			int sel;
@@ -147,7 +148,7 @@ struct ht_inputfield_data {
 	DDECL_PTR(byte, text);
 };
 
-class ht_inputfield: public ht_view {
+class ht_inputfield: public ht_dialog_widget {
 protected:
 	byte **text, *textv;
 	byte **curchar, *curcharv;
@@ -229,7 +230,7 @@ public:
  *	CLASS ht_button
  */
 
-class ht_button: public ht_view {
+class ht_button: public ht_dialog_widget {
 protected:
 	int value;
 	int pressed;
@@ -243,10 +244,11 @@ protected:
 public:
 		void	init(Bounds *b, const char *text, int value);
 	virtual	void	done();
-/* overwritten */
+	/* overwritten */
 	virtual void 	draw();
 	virtual	void 	handlemsg(htmsg *msg);
-/* new */
+	virtual void	getminbounds(int *width, int *height);
+	/* new */
 	virtual	void 	push();
 };
 
@@ -257,7 +259,7 @@ public:
 
 class ht_listbox;
 
-class ht_listbox_title: public ht_view {
+class ht_listbox_title: public ht_dialog_widget {
 public:
 	ht_listbox *listbox;
 protected:
@@ -294,7 +296,7 @@ struct ht_listbox_data {
 #define LISTBOX_NORMAL 0
 #define LISTBOX_QUICKFIND 1
 
-class ht_listbox: public ht_view {
+class ht_listbox: public ht_dialog_widget {
 protected:
 public:
 	int	cursor, pos, cached_count;
@@ -545,7 +547,7 @@ public:
  *	CLASS ht_label
  */
 
-class ht_label: public ht_view {
+class ht_label: public ht_dialog_widget {
 protected:
 	ht_view *connected;
 	char *text;
@@ -589,7 +591,7 @@ struct ht_color_block_data {
 #define cf_light	1
 #define cf_transparent	2
 
-class ht_color_block: public ht_view {
+class ht_color_block: public ht_dialog_widget {
 protected:
 	int color;
 	int colors;
