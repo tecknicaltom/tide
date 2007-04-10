@@ -211,7 +211,7 @@ void SIGTRAP_sigaction(int i, siginfo_t *info, void *v)
 	old_SIGTRAP.sa_sigaction(i, info, v);
 }
 
-bool gWinChFlag = false;
+sig_atomic_t gWinChFlag = 0;
 
 void SIGWINCH_sigaction(int i, siginfo_t *info, void *v)
 {
@@ -243,7 +243,7 @@ bool sys_get_screen_size(int &w, int &h)
 	        w = winsz.ws_col;
 		h = winsz.ws_row;
     		resizeterm(winsz.ws_row, winsz.ws_col);
-	        clearok(stdscr,TRUE);
+	        clearok(stdscr, TRUE);
 	        return true;
         }
 #endif /* TIOCGWINSZ && !SCO_FLAVOR */
