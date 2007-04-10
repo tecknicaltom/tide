@@ -75,7 +75,7 @@ struct gsi_scrollbar_t {
 };
 
 /* message types */
-#define mt_empty			0
+#define mt_empty		0
 #define mt_broadcast		1
 #define mt_preprocess		2
 #define mt_postprocess		3
@@ -281,7 +281,7 @@ public:
 	virtual	void setdata(ObjectStream &s);
 	virtual	void setpalette(const char *pal_name);
 	virtual	void store(ObjectStream &s) const;
-/* new */
+	/* new */
 	virtual	void reorder_view(ht_view *v, int rx, int ry);
 		void remove(ht_view *view);
 	virtual	void insert(ht_view *view);
@@ -301,7 +301,7 @@ public:
 
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
-/* overwritten */
+	/* overwritten */
 	virtual	int		countselectables();
 	virtual	void		handlemsg(htmsg *msg);
 	virtual	int		isaclone(ht_view *view);
@@ -328,14 +328,13 @@ public:
 
 		void init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void enable();
 	virtual	void disable();
 	virtual void draw();
-	virtual	void		load(ObjectStream &s);
-	virtual	ObjectID	getObjectID() const;
-	virtual	void		store(ObjectStream &s) const;
-/* new */
+	virtual	ObjectID getObjectID() const;
+	virtual void getminbounds(int *width, int *height);
+	/* new */
 	virtual	void setpos(int pstart, int psize);
 };
 
@@ -359,12 +358,12 @@ public:
 #define FS_TITLE 		2
 #define FS_NUMBER		4
 #define FS_RESIZE		8
-#define FS_MOVE		16
+#define FS_MOVE			16
 #define FS_THICK		32
 
 #define FST_FOCUSED		0
-#define FST_UNFOCUSED	1
-#define FST_MOVE      	2
+#define FST_UNFOCUSED		1
+#define FST_MOVE      		2
 #define FST_RESIZE      	3
 
 class ht_frame: public ht_text {
@@ -373,7 +372,7 @@ protected:
 	uint style;
 	uint framestate;
 
-/* new */
+	/* new */
 	virtual	vcp getcurcol_normal();
 	virtual	vcp getcurcol_killer();
 public:
@@ -381,13 +380,13 @@ public:
 				ht_frame(BuildCtorArg&a): ht_text(a) {};
 		void		init(Bounds *b, const char *desc, uint style, uint number=0);
 	virtual	void		done();
-/* overwritten */
+	/* overwritten */
 	virtual	void		draw();
 	virtual	uint		getnumber();
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		setnumber(uint number);
 	virtual	void		settext(const char *text);
-/* new */
+	/* new */
 		uint		getstyle();
 		void		setframestate(uint framestate);
 		void		setstyle(uint style);
@@ -418,7 +417,7 @@ public:
 
 		void init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
-/* overwritten */
+	/* overwritten */
 	virtual	void draw();
 	virtual	uint getnumber();
 	virtual	void handlemsg(htmsg *msg);
@@ -428,10 +427,9 @@ public:
 	virtual	void receivefocus();
 	virtual	void releasefocus();
 	virtual	void redraw();
-	virtual	void resize(int rw, int rh);
 	virtual	void setnumber(uint number);
 	virtual	void store(ObjectStream &s) const;
-/* new */
+	/* new */
 		void getclientarea(Bounds *b);
 		ht_frame *getframe();
 		void setframe(ht_frame *frame);
@@ -449,7 +447,7 @@ bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psiz
 
 class ht_hbar: public ht_view {
 public:
-/* overwritten */
+	/* overwritten */
 	virtual	 void draw();
 };
 
@@ -459,7 +457,7 @@ public:
 
 class ht_vbar: public ht_view {
 public:
-/* overwritten */
+	/* overwritten */
 	virtual	 void draw();
 };
 
