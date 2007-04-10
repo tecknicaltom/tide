@@ -90,7 +90,6 @@ public:
 class ht_desktop: public ht_view {
 public:
 		void init(Bounds *b);
-	virtual	void done();
 	/* overwritten */
 	virtual	void draw();
 	virtual	const char *defaultpalette();
