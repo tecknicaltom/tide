@@ -1154,11 +1154,7 @@ void ht_desktop::init(Bounds *b)
 {
 	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_desktop");
-}
-
-void ht_desktop::done()
-{
-	ht_view::done();
+	growmode = MK_GM(GMV_FIT, GMH_FIT);
 }
 
 const char *ht_desktop::defaultpalette()
@@ -1304,46 +1300,46 @@ void ht_logviewer::handlemsg(htmsg *msg)
 		case msg_keypressed:
 			switch (msg->data1.integer) {
 				case K_Up:
-					cursor_up(1);
-					update();
-					clearmsg(msg);
-					return;
-				case K_Down:
-					cursor_down(1);
-					update();
-					clearmsg(msg);
-					return;
-				case K_PageUp:
-					cursor_up(size.h);
-					update();
-					clearmsg(msg);
-					return;
-				case K_PageDown:
-					cursor_down(size.h);
-					update();
-					clearmsg(msg);
-					return;
-				case K_Right: case K_Control_Right:
-					xofs += 2;
-					update();
-					clearmsg(msg);
-					return;
-				case K_Left: case K_Control_Left:
-					if (xofs-2 >= 0) xofs -= 2;
-					update();
-					clearmsg(msg);
-					return;
-				case K_Control_PageUp:
-					ofs = 0;
-					update();
-					clearmsg(msg);
-					return;
-				case K_Control_PageDown:
-					ofs = lines->count()-size.h;
-					if (ofs < 0) ofs = 0;
-					update();
-					clearmsg(msg);
-					return;
+				cursor_up(1);
+				update();
+				clearmsg(msg);
+				return;
+			case K_Down:
+				cursor_down(1);
+				update();
+				clearmsg(msg);
+				return;
+			case K_PageUp:
+				cursor_up(size.h);
+				update();
+				clearmsg(msg);
+				return;
+			case K_PageDown:
+				cursor_down(size.h);
+				update();
+				clearmsg(msg);
+				return;
+			case K_Right: case K_Control_Right:
+				xofs += 2;
+				update();
+				clearmsg(msg);
+				return;
+			case K_Left: case K_Control_Left:
+				if (xofs-2 >= 0) xofs -= 2;
+				update();
+				clearmsg(msg);
+				return;
+			case K_Control_PageUp:
+				ofs = 0;
+				update();
+				clearmsg(msg);
+				return;
+			case K_Control_PageDown:
+				ofs = lines->count()-size.h;
+				if (ofs < 0) ofs = 0;
+				update();
+				clearmsg(msg);
+				return;
 			}
 			break;
 	}
@@ -3107,13 +3103,10 @@ int ht_app::run(bool modal)
 				sys_set_winch_flag(0);
 				int w, h;
 				if (sys_get_screen_size(w, h)) {
-					FILE *f = fopen("alala", "a");
-					fprintf(f, "%d, %d,    %d, %d    %d, %d\n", w, h, size.w, size.h, w - size.w, h - size.h);
-					fclose(f);
-					Bounds b(0, 0, w, h);
 					screen->resize(w - screen->w, h - screen->h);
 					resize(w - size.w, h - size.h);
-					sendmsg(msg_draw);					
+					sendmsg(msg_dirtyview);
+					sendmsg(msg_draw);
 				}
 			}
 			ht_queued_msg *q;
