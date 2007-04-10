@@ -137,7 +137,6 @@ protected:
 	virtual	const char *func(uint i, bool execute);
 public:
 		void init(Bounds *b, const char *desc, uint caps);
-	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 };
