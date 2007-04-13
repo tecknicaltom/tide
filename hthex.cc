@@ -82,8 +82,8 @@ bool ht_hex_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 	if (s) {
 		uint ll = h->get_line_length();
 		// FIXPORT
-		FileOfs o = top.line_id.id2 - (uint64(top.line_id.id1) << 32);
-		int z = MIN(size.h * ll, s - o);
+		FileOfs o = top.line_id.id2 + (uint64(top.line_id.id1) << 32);
+		sint64 z = MIN(size.h * ll, s - o);
 		return scrollbar_pos(o, z, s, pstart, psize);
 	}
 	return false;
