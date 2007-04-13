@@ -4234,7 +4234,6 @@ void ht_hex_sub::init(File *f, FileOfs ofs, FileOfs size, uint Line_length, uint
 	line_length = Line_length;
 	ht_linear_sub::init(f, ofs, size);
 	vaddrinc = vinc;
-	balign = ofs % line_length;
 	uid = u;
 }
 
@@ -4257,8 +4256,9 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 {
 	if (offset >= fofs && offset < fofs+fsize) {
 		clear_line_id(line_id);
-		line_id->id1 = ((offset - (offset % line_length)) + balign) >> 32;
-		line_id->id2 = (offset - (offset % line_length)) + balign;
+		//offset - offset % line_length??
+		line_id->id1 = offset >> 32;
+		line_id->id2 = offset;
 		line_id->id3 = uid;
 		return true;
 	}
@@ -4344,7 +4344,7 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 		FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
 		if (!o || o == fofs) break;
 		if (line_length > o) {
-			o = 0;
+			o = fofs;
 		} else {
 			if (o - line_length < fofs) {
 				o = fofs;
