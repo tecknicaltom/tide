@@ -93,12 +93,21 @@ uint mapCharToSystemCP(char chr, Codepage codepage)
 	return chr;
 }
 
+bool sys_get_screen_size(int &w, int &h)
+{
+	CONSOLE_SCREEN_BUFFER_INFO screen_info;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &screen_info);
+	w = screen_info.srWindow.Right - screen_info.srWindow.Left + 1;
+	h = screen_info.srWindow.Bottom - screen_info.srWindow.Top + 1;
+	return true;
+}
+
 /*
  *	Class Win32SystemDisplay
  */
 
 class Win32SystemDisplay: public SystemDisplay {
-protected:
+public:
 	CHAR_INFO *buf;
 	vcp *colorbuf;
 	HANDLE output;
@@ -115,7 +124,7 @@ protected:
 public:
 					Win32SystemDisplay(const char *title);
 	virtual				~Win32SystemDisplay();
-/* extends Display */
+	/* extends Display */
 	virtual	void			copyFromDisplay(const Display &display, int x, int y, const Bounds &clipping);
 	virtual	void			fill(int x, int y, int w, int h, vcp color, char chr, Codepage cp = CP_DEVICE);
 	virtual	void			getCursor(int &x, int &y) const;
@@ -125,9 +134,9 @@ public:
 	virtual	void			setBounds(const Bounds &b);
 	virtual	void			setCursor(int x, int y, CursorMode mode = CURSOR_NORMAL);
 	virtual	void			setCursorMode(CursorMode mode = CURSOR_NORMAL);
-/* extends SystemDisplay */
+	/* extends SystemDisplay */
 	virtual	void			show();
-/* new */
+	/* new */
         	void			putChar(int dest, uint rawchar, vcp vc);
 		uint			vcpToSystem(vcp color);
 };
