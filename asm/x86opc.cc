@@ -2823,7 +2823,7 @@ x86opc_insn x86_modfloat_group_insns[8][8] = {
 /* prefix DD */
 {
 {"fld", {{Ml}}},
-{0},
+{"fisttp", {{Mq}}},
 {"fst", {{Ml}}},
 {"fstp", {{Ml}}},
 {"frstor", {{M}}},
@@ -2845,7 +2845,7 @@ x86opc_insn x86_modfloat_group_insns[8][8] = {
 /* prefix DF */
 {
 {"fild", {{Mw}}},
-{0},
+{"fisttp", {{Mw}}},
 {"fist", {{Mw}}},
 {"fistp", {{Mw}}},
 {"fbld", {{Ma}}},
