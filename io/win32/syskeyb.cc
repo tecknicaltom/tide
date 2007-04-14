@@ -237,6 +237,18 @@ static ht_key_keycode ht_win32_key_defs[] = {
 
 };
 
+static bool gWinChFlag;
+
+bool sys_get_winch_flag()
+{
+	return gWinChFlag;
+}
+
+void sys_set_winch_flag(bool f)
+{
+	gWinChFlag = f;
+}
+
 bool keyb_keypressed()
 {
 	DWORD read;
@@ -260,6 +272,8 @@ bool keyb_keypressed()
 				key_pending = true;
 				return true;
 			}
+		} else if (key_event_record.EventType & WINDOW_BUFFER_SIZE_EVENT) {
+			gWinChFlag = true;
 		}
 	}
 }
