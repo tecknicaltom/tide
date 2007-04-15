@@ -468,14 +468,15 @@ public:
 
 class ht_hex_sub: public ht_linear_sub {
 protected:
-	uint32 vaddrinc;
-	uint32 balign;
-	uint32 line_length;
+	uint disp;
+	uint line_length;
 	uint uid;
 public:
-		void init(File *file, FileOfs ofs, FileOfs size, uint line_length, uint uid, uint32 vaddrinc=0);
+		void init(File *file, FileOfs ofs, FileOfs size, uint line_length, uint uid, uint disp=0);
 		int  get_line_length();
 		void set_line_length(int line_length);
+		int  get_disp();
+		void set_disp(int disp);
 /* overwritten */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
 	virtual	bool convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset);
