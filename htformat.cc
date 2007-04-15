@@ -4229,11 +4229,11 @@ ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start
  *	CLASS ht_hex_sub
  */
 
-void ht_hex_sub::init(File *f, FileOfs ofs, FileOfs size, uint Line_length, uint u, uint32 vinc)
+void ht_hex_sub::init(File *f, FileOfs ofs, FileOfs size, uint Line_length, uint u, uint Disp)
 {
 	line_length = Line_length;
 	ht_linear_sub::init(f, ofs, size);
-	vaddrinc = vinc;
+	disp = Disp;
 	uid = u;
 }
 
@@ -4244,10 +4244,20 @@ int ht_hex_sub::get_line_length()
 
 void ht_hex_sub::set_line_length(int Line_length)
 {
-	if (Line_length > 0) {
+	if (Line_length > 0 && Line_length > disp) {
 		line_length = Line_length;
-//		dirty_view();
-//		redraw();
+	}
+}
+
+int ht_hex_sub::get_disp()
+{
+	return disp;
+}
+
+void ht_hex_sub::set_disp(int Disp)
+{
+	if (Disp >= 0 && Disp < line_length) {
+		disp = Disp;
 	}
 }
 
@@ -4256,9 +4266,10 @@ bool ht_hex_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 {
 	if (offset >= fofs && offset < fofs+fsize) {
 		clear_line_id(line_id);
-		//offset - offset % line_length??
-		line_id->id1 = offset >> 32;
-		line_id->id2 = offset;
+		FileOfs begin = offset - offset % line_length;
+		if (begin < fofs) begin = fofs;
+		line_id->id1 = begin >> 32;
+		line_id->id2 = begin;
 		line_id->id3 = uid;
 		return true;
 	}
@@ -4279,11 +4290,11 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 	if (c <= 0) return false;
 	c = MIN(uint64(line_length), c + ofs%line_length);
 	char *l = line;
-	l += ht_snprintf(l, 17, "%08qx", ofs + vaddrinc);
+	l += ht_snprintf(l, 17, "%08qx", ofs);
 	*l++ = ' ';
 	if (ofs % line_length) ofs -= ofs % line_length;
 	for (uint i = 0; i < line_length; i++) {
-		if (i < c && ofs+i >= fofs) {
+		if (ofs+i >= fofs && i < c) {
 			l = tag_make_edit_byte(l, ofs+i);
 		} else {
 			*l++ = ' ';
@@ -4301,8 +4312,8 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 	}
 	l = tag_make_group(l);
 	*l++ = '|';
-	for (uint32 i=0; i < line_length; i++) {
-		if (i < c && ofs+i >= fofs) {
+	for (uint i=0; i < line_length; i++) {
+		if (ofs+i >= fofs && i < c) {
 			l = tag_make_edit_char(l, ofs+i);
 		} else {
 			*l++ = ' ';
@@ -4325,8 +4336,9 @@ void ht_hex_sub::last_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
 	if (fsize) {
-		FileOfs k = fsize + (fofs % line_length);
-		FileOfs ofs = (k - k%line_length) + (fofs - fofs%line_length);
+		FileOfs ofs = fsize + fofs - 1;
+		ofs -= ofs % line_length;
+		if (ofs < fofs) ofs = fofs;
 		line_id->id1 = ofs >> 32;
 		line_id->id2 = ofs;
 	} else {
@@ -4339,9 +4351,9 @@ void ht_hex_sub::last_line_id(LINE_ID *line_id)
 int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 {
 	if (line_id->id3 != uid) return 0;
-	int c=0;
+	int c = 0;
+	FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
 	while (n--) {
-		FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
 		if (!o || o == fofs) break;
 		if (line_length > o) {
 			o = fofs;
@@ -4352,10 +4364,12 @@ int ht_hex_sub::prev_line_id(LINE_ID *line_id, int n)
 				o -= line_length;
 			}
 		}
-		line_id->id1 = o >> 32;
-		line_id->id2 = o;
 		c++;
 	}
+	o -= o % line_length;
+	if (o < fofs) o = fofs;
+	line_id->id1 = o >> 32;
+	line_id->id2 = o;
 	return c;
 }
 
@@ -4363,19 +4377,14 @@ int ht_hex_sub::next_line_id(LINE_ID *line_id, int n)
 {
 	if (line_id->id3 != uid) return 0;
 	int c = 0;
+	FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
 	while (n--) {
-		FileOfs o = (uint64(line_id->id1) << 32) + line_id->id2;
-		if (o % line_length) {
-			if (o + (line_length - o % line_length) >= fofs + fsize) break;
-			o += line_length - o % line_length;
-		} else {
-			if (o + line_length >= fofs + fsize) break;
-			o += line_length;
-		}
-		line_id->id1 = o >> 32;
-		line_id->id2 = o;
+		if (o + (line_length - o % line_length) >= fofs + fsize) break;
+		o += line_length - o % line_length;
 		c++;
 	}
+	line_id->id1 = o >> 32;
+	line_id->id2 = o;
 	return c;
 }
 
