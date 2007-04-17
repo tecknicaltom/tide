@@ -77,6 +77,7 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 
 	prefixes();
 
+	fixdisp = false;
 	insn.opcode = c;
 	decode_insn(&(*x86_insns)[insn.opcode]);
 
@@ -94,6 +95,14 @@ dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
 		for (int i = 1; i < 3; i++) insn.op[i].type = X86_OPTYPE_EMPTY;
 	} else {
 		insn.size = codep - ocodep;
+		if (fixdisp) {
+			// ip-relativ addressing in PM64
+			for (int i = 0; i < 2; i++) {
+				if (insn.op[i].type == X86_OPTYPE_MEM && insn.op[i].mem.hasdisp) {
+					insn.op[i].mem.disp += getoffset() + insn.size;
+				}
+			}
+		}
 	}
 	return &insn;
 }
@@ -788,7 +797,7 @@ uint64 x86dis::getoffset()
 
 void x86dis::filloffset(CPU_ADDR &addr, uint64 offset)
 {
-	addr.addr32.offset= offset;
+	addr.addr32.offset = offset;
 }
 
 int x86dis::getmodrm()
@@ -1465,8 +1474,8 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 
 		if (mod == 0 && (rm & 0x7) == 5) {
 			op->mem.hasdisp = true;
-			uint64 ip = getoffset() + (codep - ocodep) + 4;
-			op->mem.disp = sint32(getdword()) + ip;
+			op->mem.disp = sint32(getdword());
+			fixdisp = true;
 //			op->mem.base = X86_REG_IP;
 			op->mem.base = X86_REG_NO;
 			op->mem.index = X86_REG_NO;
