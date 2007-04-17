@@ -879,7 +879,7 @@ void ht_uformat_viewer::init(Bounds *b, const char *desc, int caps, File *file, 
 	cursor_visual_length = 0;
 	cursor_visual_xpos = 0;
 	cursor_select = 0;
-	cursor_select_start = 0xffffffff;
+	cursor_select_start = -1ULL;
 	sel_start = 0;
 	sel_end = 0;
 	isdirty_cursor_line = 0;
@@ -2307,7 +2307,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						if (find_first_tag(&p, size.h)) {
 							set_cursor(p);
 						} else {
-							cursor_ypos=0x7fffffff;
+							cursor_ypos = 0x7fffffff;
 							update_misc_info();
 							update_visual_info();
 							check_cursor_visibility();
@@ -2352,14 +2352,14 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class == tag_class_edit)
 						s = cursor_tag_offset;
 					else
-						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
-					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : -1ULL;
+					e = get_current_tag_size(&ts) ? s+ts : -1ULL;
 					cursor_up(1);
-					if (s != 0xffffffff) {
-						if (cursor_tag_class==tag_class_edit) {
+					if (s != -1ULL) {
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
 						} else if (cursor_tag_class == tag_class_sel 
-						       && e != 0xffffffff) {
+						       && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2374,14 +2374,14 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class == tag_class_edit)
 						s = cursor_tag_offset;
 					else
-						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
-					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : -1ULL;
+					e = get_current_tag_size(&ts) ? s+ts : -1ULL;
 					cursor_down(1);
-					if (s!=0xffffffff) {
+					if (s != -1ULL) {
 						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
 						} else if (cursor_tag_class == tag_class_sel
-						        && e != 0xffffffff) {
+						        && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2396,14 +2396,14 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class==tag_class_edit)
 						s = cursor_tag_offset;
 					else
-						s = sel_end > sel_start ? sel_end : 0xffffffff;
-					e = get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = sel_end > sel_start ? sel_end : -1ULL;
+					e = get_current_tag_size(&ts) ? s+ts : -1ULL;
 					int r;
 					if (edit()) r = cursormicro_backward(); else r = cursor_left();
-					if (s != 0xffffffff & r) {
+					if (s != -1ULL & r) {
 						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if (cursor_tag_class == tag_class_sel && e != 0xffffffff) {
+						} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2415,22 +2415,22 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					focus_cursor();
 					FileOfs s, e;
 					uint32 ts;
-					if (cursor_tag_class==tag_class_edit)
+					if (cursor_tag_class == tag_class_edit)
 						s = cursor_tag_offset;
 					else
-						s = (sel_end > sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : -1ULL;
+					e=get_current_tag_size(&ts) ? s+ts : -1ULL;
 					int r;
-					if (edit()) r=cursormicro_forward(); else r=cursor_right();
-					if (s!=0xffffffff) {
+					if (edit()) r = cursormicro_forward(); else r = cursor_right();
+					if (s != -1ULL) {
 						if (r) {
-							if (cursor_tag_class==tag_class_edit) {
+							if (cursor_tag_class == tag_class_edit) {
 								pselect_add(s, cursor_tag_offset);
-							} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+							} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 								pselect_add(s, e);
 							}
 						} else {
-							if ((cursor_tag_class==tag_class_edit) && (sel_end != e)) {
+							if (cursor_tag_class == tag_class_edit && sel_end != e) {
 								pselect_add(s, e);
 							}
 						}
@@ -2443,16 +2443,16 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					focus_cursor();
 					FileOfs s, e;
 					uint32 ts;
-					if (cursor_tag_class==tag_class_edit)
-						s=cursor_tag_offset;
+					if (cursor_tag_class == tag_class_edit)
+						s = cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s = (sel_end > sel_start) ? sel_end : -1ULL;
+					e = get_current_tag_size(&ts) ? s+ts : -1ULL;
 					cursor_up(size.h);
-					if (s!=0xffffffff) {
-						if (cursor_tag_class==tag_class_edit) {
+					if (s != -1ULL) {
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2467,13 +2467,13 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class==tag_class_edit)
 						s=cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s=(sel_end>sel_start) ? sel_end : -1ULL;
+					e=get_current_tag_size(&ts) ? s+ts : -1ULL;
 					cursor_down(size.h);
-					if (s!=0xffffffff) {
+					if (s != -1ULL) {
 						if (cursor_tag_class==tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2488,13 +2488,13 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class==tag_class_edit)
 						s=cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s=(sel_end>sel_start) ? sel_end : -1ULL;
+					e=get_current_tag_size(&ts) ? s+ts : -1ULL;
 					int r=cursor_home();
-					if ((s!=0xffffffff) && (r)) {
-						if (cursor_tag_class==tag_class_edit) {
+					if (s != -1ULL && r) {
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(cursor_tag_offset, s);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 							pselect_add(e, s);
 						}
 					}
@@ -2509,13 +2509,13 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (cursor_tag_class==tag_class_edit)
 						s=cursor_tag_offset;
 					else
-						s=(sel_end>sel_start) ? sel_end : 0xffffffff;
-					e=get_current_tag_size(&ts) ? s+ts : 0xffffffff;
+						s=(sel_end>sel_start) ? sel_end : -1ULL;
+					e=get_current_tag_size(&ts) ? s+ts : -1ULL;
 					int r=cursor_end();
-					if ((s!=0xffffffff) && (r)){
-						if (cursor_tag_class==tag_class_edit) {
+					if (s != -1ULL && r){
+						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if ((cursor_tag_class==tag_class_sel) && (e!=0xffffffff)) {
+						} else if (cursor_tag_class == tag_class_sel && e != -1ULL) {
 							pselect_add(s, e);
 						}
 					}
@@ -2803,22 +2803,22 @@ bool ht_uformat_viewer::goto_offset(FileOfs offset, bool save_vstate)
 		if (p.sub->convert_ofs_to_id(offset, &p.line_id)) {
 			if (save_vstate) vstate_save();
 			switch (cursor_state) {
-				case cursor_state_visible: {
-					select_mode_pre();
-					/* FIXME: magic 42 */
-					if (!find_first_edit_tag_with_offset(&p, 42, offset)
-						&& !find_first_tag(&p, size.h)) break;
-					bool r = set_cursor(p);
-					select_mode_post(false);
-					return r;
-				}
-				case cursor_state_invisible:
-					select_mode_pre();
-					p.tag_group = -1;
-					p.tag_idx = -1;
-					bool r = set_cursor(p);
-					select_mode_post(false);
-					return r;
+			case cursor_state_visible: {
+				select_mode_pre();
+				/* FIXME: magic 42 */
+				if (!find_first_edit_tag_with_offset(&p, 42, offset)
+					&& !find_first_tag(&p, size.h)) break;
+				bool r = set_cursor(p);
+				select_mode_post(false);
+				return r;
+			}
+			case cursor_state_invisible:
+				select_mode_pre();
+				p.tag_group = -1;
+				p.tag_idx = -1;
+				bool r = set_cursor(p);
+				select_mode_post(false);
+				return r;
 			}
 			break;
 		}
@@ -2973,11 +2973,11 @@ void ht_uformat_viewer::reloadpalette()
 
 uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, char *tagstring, bool cursor_in_line)
 {
-	char *n=tagstring;
-	uint c=0;
-	int i=0, g=0;
+	char *n = tagstring;
+	uint c = 0;
+	int i = 0, g = 0;
 	bool is_cursor;
-	vcp color_normal=getcolor(palidx_generic_body);
+	vcp color_normal = getcolor(palidx_generic_body);
 	do {
 		int l=0;
 		while (n[l] && n[l]!='\e') { l++; }
@@ -3033,7 +3033,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					tag_color=get_tag_color_edit(tag_offset, 4, (g==cursor.tag_group), is_cursor);
 					
 					byte buf[4];
-					if (pread(tag_offset, &buf, 4)==4) {
+					if (pread(tag_offset, &buf, 4) == 4) {
 						/* little endian */
 						d = (buf[3] << 24) | (buf[2] << 16) | (buf[1] << 8) | buf[0];
 						ht_snprintf(str, sizeof str, "%08x", d);
@@ -3280,7 +3280,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 					continue;
 				case HT_TAG_COLOR:
 					color_normal = tag_get_color(n);
-					if (color_normal == (int)0xffffffff) {
+					if (color_normal == -1) {
 						color_normal = getcolor(palidx_generic_body);
 					}
 					n += HT_TAG_COLOR_LEN;
@@ -3351,20 +3351,20 @@ void ht_uformat_viewer::select_mode_on()
 void ht_uformat_viewer::select_mode_pre()
 {
 	if (cursor_select) {
-		if (cursor_tag_class==tag_class_edit)
-			cursor_select_start=cursor_tag_offset;
+		if (cursor_tag_class == tag_class_edit)
+			cursor_select_start = cursor_tag_offset;
 		else
-			cursor_select_start=(sel_end>sel_start) ? sel_end : 0xffffffff;
-		if (!get_current_tag_size(&cursor_select_cursor_length)) cursor_select_cursor_length=0xffffffff;
+			cursor_select_start = (sel_end > sel_start) ? sel_end : -1ULL;
+		if (!get_current_tag_size(&cursor_select_cursor_length)) cursor_select_cursor_length = -1;
 	}		
 }	
 	
 void ht_uformat_viewer::select_mode_post(bool lastpos)
 {
 	if (cursor_select) {
-		if (cursor_select_start!=0xffffffff) {
-			if (cursor_tag_class==tag_class_edit) {
-				if ((lastpos) && (cursor_select_cursor_length!=0xffffffff)) {
+		if (cursor_select_start != -1ULL) {
+			if (cursor_tag_class == tag_class_edit) {
+				if (lastpos && cursor_select_cursor_length != uint32(-1)) {
 					FileOfs s, e;
 					pselect_get(&s, &e);
 					if (e != cursor_tag_offset+cursor_select_cursor_length) {
@@ -3373,7 +3373,7 @@ void ht_uformat_viewer::select_mode_post(bool lastpos)
 				} else {
 					pselect_add(cursor_select_start, cursor_tag_offset);
 				}
-			} else if ((cursor_tag_class==tag_class_sel) && (cursor_select_cursor_length!=0xffffffff)) {
+			} else if (cursor_tag_class == tag_class_sel && cursor_select_cursor_length != uint32(-1)) {
 				pselect_add(cursor_select_start, cursor_select_start+cursor_select_cursor_length);
 			}
 		}
@@ -4242,7 +4242,7 @@ int ht_hex_sub::get_line_length()
 	return line_length;
 }
 
-void ht_hex_sub::set_line_length(int Line_length)
+void ht_hex_sub::set_line_length(uint Line_length)
 {
 	if (Line_length > 0 && Line_length > disp) {
 		line_length = Line_length;
@@ -4254,7 +4254,7 @@ int ht_hex_sub::get_disp()
 	return disp;
 }
 
-void ht_hex_sub::set_disp(int Disp)
+void ht_hex_sub::set_disp(uint Disp)
 {
 	if (Disp >= 0 && Disp < line_length) {
 		disp = Disp;
@@ -4577,7 +4577,7 @@ ht_search_result *ht_layer_sub::search(ht_search_request *search, FileOfs start,
  *	CLASS ht_collapsable_sub
  */
 
-ID ht_collapsable_sub_globalfaddr=0xffffffff;
+static ID ht_collapsable_sub_globalfaddr = -1;
 
 void ht_collapsable_sub::init(File *file, ht_sub *sub, bool own_sub, const char *ns, bool c)
 {
@@ -4585,8 +4585,6 @@ void ht_collapsable_sub::init(File *file, ht_sub *sub, bool own_sub, const char 
 	nodestring = ht_strdup(ns);
 	collapsed = c;
 	ht_layer_sub::first_line_id(&fid);
-//	myfid1=0x12345678;	// it's kinda magic
-//	myfid2=0x35043859;
 	clear_line_id(&myfid);
 	myfid.id1 = 0;
 	myfid.id2 = ht_collapsable_sub_globalfaddr--;
