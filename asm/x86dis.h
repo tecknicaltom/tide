@@ -72,8 +72,9 @@ protected:
 	int modrm;
 	int sib;
 	int maxlen;
+	bool fixdisp;
 
-/* new */
+	/* new */
 	virtual		void	checkInfo(x86opc_insn *xinsn);
 			void	decode_insn(x86opc_insn *insn);
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm);
@@ -104,7 +105,7 @@ public:
 				x86dis(X86OpSize opsize, X86AddrSize addrsize);
 				x86dis(BuildCtorArg&a): Disassembler(a) {};
 
-/* overwritten */
+	/* overwritten */
 	virtual	dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn *	duplicateInsn(dis_insn *disasm_insn);
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
