@@ -748,8 +748,8 @@ x86opc_insn x86_insns_ext[256] = {
 {"punpckhwd", {{Pu}, {Qu}}},
 {"punpckhdq", {{Pu}, {Qu}}},
 {"packssdw", {{Pu}, {Qu}}},
-{"punpcklqdq", {{Vo}, {Wo}}},
-{"punpckhqdq", {{Vo}, {Wo}}},
+{0},
+{0},
 {"movd", {{Pu}, {Er}}},
 {"movq", {{Pu}, {Qu}}},
 /* 70 */
@@ -834,7 +834,7 @@ x86opc_insn x86_insns_ext[256] = {
 {"movzx", {{Gv}, {Eb}}},
 {"movzx", {{Gv}, {Ew}}},
 /* B8 */
-{0},
+{"jmpe", {{Jv}}},
 {"ud2"},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_BA}}},
 {"btc", {{Ev}, {Gv}}},
@@ -847,9 +847,9 @@ x86opc_insn x86_insns_ext[256] = {
 {"xadd", {{Ev}, {Gv}}},
 {"cmpCCps", {{Vo}, {Wo}, {Ib}}},
 {"movnti", {{Mr}, {Gr}}},
-{"pinsrw", {{Pu}, {Gw}, {Ib}}},
-{"pextrw", {{Gd}, {PRu}, {Ib}}},
-{"shufps", {{Vo}, {Wo}}},
+{"pinsrw", {{Pq}, {MRwr}, {Ib}}},
+{"pextrw", {{Gr}, {PRq}, {Ib}}},
+{"shufps", {{Vo}, {Wo}, {Ib}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_C7}}},
 /* C8 */
 {"bswap", {{__axdq}}},
@@ -1125,7 +1125,7 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"movzx", {{Gv}, {Eb}}},
 {"movzx", {{Gv}, {Ew}}},
 /* B8 */
-{0},
+{"jmpe", {{Jv}}},
 {"ud2"},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_BA}}},
 {"btc", {{Ev}, {Gv}}},
@@ -1138,9 +1138,9 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"xadd", {{Ev}, {Gv}}},
 {"cmpCCpd", {{Vo}, {Wo}, {Ib}}},
 {0},
-{"pinsrw", {{Pu}, {Gw}, {Ib}}},
-{"pextrw", {{Gd}, {PRu}, {Ib}}},
-{"shufpd", {{Vo}, {Wo}}},
+{"pinsrw", {{Vo}, {MRwr}, {Ib}}},
+{"pextrw", {{Gr}, {VRo}, {Ib}}},
+{"shufpd", {{Vo}, {Wo}, {Ib}}},
 {0, {{SPECIAL_TYPE_GROUP, GROUP_EXT_66_C7}}},
 /* C8 */
 {"bswap", {{__axdq}}},
@@ -1875,7 +1875,7 @@ x86opc_insn x86_opc_group_insns[X86_OPC_GROUPS][256] = {
 {"blendps", {{Vo}, {Wo}, {Ib}}},
 {"blendpd", {{Vo}, {Wo}, {Ib}}},
 {"pblendw", {{Vo}, {Wo}, {Ib}}},
-{"palignr", {{Pu}, {Qu}, {Ib}}},
+{"palignr", {{Vo}, {Wo}, {Ib}}},
 /* 10 */
 {0},
 {0},
