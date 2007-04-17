@@ -474,9 +474,9 @@ protected:
 public:
 		void init(File *file, FileOfs ofs, FileOfs size, uint line_length, uint uid, uint disp=0);
 		int  get_line_length();
-		void set_line_length(int line_length);
+		void set_line_length(uint line_length);
 		int  get_disp();
-		void set_disp(int disp);
+		void set_disp(uint disp);
 /* overwritten */
 	virtual	bool convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);
 	virtual	bool convert_id_to_ofs(const LINE_ID line_id, FileOfs *offset);
