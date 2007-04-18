@@ -48,6 +48,7 @@ struct x86dis_insn {
 	int opcodeclass;
 	X86OpSize eopsize;
 	X86AddrSize eaddrsize;
+	bool ambiguous;
 	const char *name;
 	x86_insn_op op[3];
 };
@@ -92,7 +93,6 @@ protected:
 			bool	isfloat(char c);
 			bool	isaddr(char c);
 	virtual		void	prefixes();
-			int	special_param_ambiguity(x86dis_insn *disasm_insn);
 			void	str_format(char **str, const char **format, char *p, char *n, char *op[3], int oplen[3], char stopchar, int print);
 	virtual		void	str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
 			uint	mkmod(uint modrm);
