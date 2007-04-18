@@ -177,16 +177,9 @@ struct x86opc_insn_op {
 	byte size;
 };
 
-struct x86opc_insn_op_special {
-	byte type;
-	byte data;
-	byte res1;
-	byte res2;
-};
-
 struct x86opc_insn {
 	const char *name;
-	x86opc_insn_op op[3];
+	byte op[4];
 };
 
 struct x86_64_insn_patch {
@@ -229,6 +222,7 @@ extern const char *x86_regs[4][8];
 extern const char *x86_64regs[4][16];
 extern const char *x86_ipregs[4];
 extern const char *x86_segs[8];
+extern x86opc_insn_op x86_op_type[];
 extern x86opc_insn x86_32_insns[256];
 extern x86_64_insn_patch x86_64_insn_patches[];
 extern x86opc_insn x86_insns_ext[256];
