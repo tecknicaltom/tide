@@ -846,7 +846,7 @@ void ht_aviewer::generateOutputDialog()
 bool ht_aviewer::canCreateAddress(Address *addr, bool error_msg)
 {
 	Location *ctx = analy->getLocationContextByAddress(addr);
-	if (ctx && ctx->addr->compareTo(addr)!=0) {
+	if (ctx && ctx->addr->compareTo(addr) != 0) {
 		if (error_msg) {
 			global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_ZEROS;
 			errorbox("Can't create new symbol: Address %y belongs to %y (%s)", addr, ctx->addr, ctx->label ? ctx->label->name : "unnamed");
