@@ -203,7 +203,7 @@ static const int addr2size[4] = {-1, 2, 4, 8};
  *	CLASS x86asm
  */
 
-x86asm::x86asm(int o, int a)
+x86asm::x86asm(X86OpSize o, X86AddrSize a)
 : Assembler(false)
 {
 	opsize = o;
@@ -216,14 +216,21 @@ asm_insn *x86asm::alloc_insn()
 	return ht_malloc(sizeof (x86asm_insn));
 }
 
-void x86asm::delete_nonsense()
+x86dis *x86asm::createCompatibleDisassembler()
 {
+	return new x86dis(opsize, addrsize);
+}
+
+void x86asm::delete_nonsense(CPU_ADDR addr)
+{
+	x86dis *dis = createCompatibleDisassembler();
 restart:
 	asm_code *c=codes;
 	while (c) {
-		if (delete_nonsense_insn(c)) goto restart;
+		if (delete_nonsense_insn(c, dis, addr)) goto restart;
 		c = c->next;
 	}
+	delete dis;
 }
 
 static void skip_prefixes(byte **p, int &sizep, int addrsize)
@@ -238,20 +245,30 @@ static void skip_prefixes(byte **p, int &sizep, int addrsize)
 	}
 }
 
-static bool cmp_insn_normal(byte *p, int sizep, byte *q, int sizeq, int addrsize)
+static bool cmp_insn_normal(byte *p, int sizep, byte *q, int sizeq, int addrsize, x86dis *dis, CPU_ADDR addr)
 {
+	// UGLY: compare disassembly
+	char s[200];
+	dis_insn *d = dis->decode(p, sizep, addr);
+	ht_strlcpy(s, dis->str(d, X86DIS_STYLE_EXPLICIT_MEMSIZE), sizeof s);
+	d = dis->decode(q, sizeq, addr);
+	if (strcmp(s, dis->str(d, X86DIS_STYLE_EXPLICIT_MEMSIZE))) return false;
+	// different disassembly --> not the same
+		
+	// compare opcodes (w/o prefixes)
 	skip_prefixes(&p, sizep, addrsize);
 	skip_prefixes(&q, sizeq, addrsize);
 	if (sizep != sizeq) return false;
+	// -> different raw opcodes --> not the same
 	return memcmp(p, q, sizep) == 0;
 }
 
-bool x86asm::delete_nonsense_insn(asm_code *code)
+bool x86asm::delete_nonsense_insn(asm_code *code, x86dis *dis, CPU_ADDR addr)
 {
 	asm_code *c = codes;
 	while (c) {
 		if (c != code && code->size <= c->size) {
-			if (cmp_insn_normal(c->data, c->size, code->data, code->size, addrsize)) {
+			if (cmp_insn_normal(c->data, c->size, code->data, code->size, addrsize, dis, addr)) {
 				deletecode(c);
 				return true;
 			}
@@ -385,7 +402,7 @@ asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 			set_error_msg(X86ASM_ERRMSG_UNKNOWN_COMMAND, insn->name);
 		}
 	} else {
-		delete_nonsense();
+		delete_nonsense(cur_address);
 	}
 	return codes;
 }
@@ -1224,6 +1241,7 @@ static void pickname(char *result, const char *name, int n)
 int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_name, int def_match)
 {
 	if (opcodelist_name) {
+		if (*opcodelist_name == '~') opcodelist_name++;
 		char n1[32], n2[32], n3[32];
 		pickname(n1, opcodelist_name, 0);
 		pickname(n2, opcodelist_name, 1);
@@ -1270,6 +1288,8 @@ void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, by
 		switch (addrsize) {
 		case X86_ADDRSIZE32: swap(addrsizes[0], addrsizes[1]); break;
 		case X86_ADDRSIZE64: swap(addrsizes[0], addrsizes[2]); break;
+		case X86_ADDRSIZE16:
+		case X86_ADDRSIZEUNKNOWN:;
 		}
 		
 		bool done1 = false;
@@ -1887,6 +1907,11 @@ void x86_64asm::prepInsns()
 		}
 	}
 	x86_insns = x86_64_insns;
+}
+
+x86dis *x86_64asm::createCompatibleDisassembler()
+{
+	return new x86_64dis();
 }
 
 bool x86_64asm::opreg(x86_insn_op *op, const char *xop)
