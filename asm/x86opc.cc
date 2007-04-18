@@ -3,7 +3,7 @@
  *	x86opc.cc
  *
  *	Copyright (C) 1999-2002 Stefan Weyergraf
- *	Copyright (C) 2005-2006 Sebastian Biallas (sb@biallas.net)
+ *	Copyright (C) 2005-2007 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -21,54 +21,6 @@
 
 #include "x86opc.h"
 
-/* 	Percent tokens in strings:
-	First char after '%':
-		A - direct address
-		C - reg of r/m picks control register
-		D - reg of r/m picks debug register
-		E - r/m picks operand
-		F - flags register
-		G - reg of r/m picks general register
-		I - immediate data (takes extended size, data size)
-		J - relative IP offset
-		M - r/m picks memory
-		O - no r/m, offset only
-		P - reg of r/m picks mm register (mm0-mm7)
-		PR - mod of r/m picks mm register only (mm0-mm7)
-		Q - r/m picks mm operand (mm0-mm7/mem64)
-		R - mod of r/m picks register only
-		S - reg of r/m picks segment register
-		T - reg of r/m picks test register
-		V - reg of r/m picks xmm register (xmm0-xmm7)
-		VR - mod of r/m picks xmm register only (xmm0-xmm7)
-		W - r/m picks xmm operand (xmm0-xmm7/mem128)
-		X - DS:ESI
-		Y - ES:EDI
-		2 - prefix of two-unsigned char opcode
-		3 - prefix of 3DNow! opcode
-		e - put in 'e' if use32 (second char is part of reg name)
-		    put in 'w' for use16 or 'd' for use32 (second char is 'w')
-		f - floating point (second char is esc value)
-		g - do r/m group n (where n may be one of 0-9,A-Z)
-		p - prefix
-		s - size override (second char is a)
-		+ - make default signed
-	Second char after '%':
-		a - two words in memory (BOUND)
-		b - byte
-		c - byte or word
-		d - dword
-		p - 32 or 48 bit pointer
-		q - quadword
-		o - doublequadword (128 bits)
-		s - six unsigned char pseudo-descriptor
-		v - word or dword (PM64: or qword)
-		w - word
-		F - use floating regs in mod/rm
-		+ - always sign
-		- - sign if negative
-		1-8 - group number, esc value, etc
-*/
 
 x86opc_insn_op x86_op_type[] = {
 
@@ -80,7 +32,7 @@ x86opc_insn_op x86_op_type[] = {
 #define Ap	_064+1
 {TYPE_A, 0, 0, SIZE_P},
 #define Cd	Ap+1
-{TYPE_C, 0, 0, SIZE_D},
+{TYPE_C, 0, INFO_DEFAULT_64, SIZE_D},
 #define Dd	Cd+1
 {TYPE_D, 0, 0, SIZE_D},
 #define E	Dd+1
@@ -187,12 +139,14 @@ x86opc_insn_op x86_op_type[] = {
 {TYPE_Q, 0, 0, SIZE_Z},
 #define Rw	Qz+1
 {TYPE_R, 0, 0, SIZE_W},
-#define Rd	Rw+1
-{TYPE_R, 0, 0, SIZE_D},
-#define Sw	Rd+1
+#define Rr	Rw+1
+{TYPE_R, 0, 0, SIZE_R},
+#define Rr64	Rr+1
+{TYPE_R, 0, INFO_DEFAULT_64, SIZE_R},
+#define Sw	Rr64+1
 {TYPE_S, 0, 0, SIZE_W},
 #define Td	Sw+1
-{TYPE_T, 0, 0, SIZE_D},
+{TYPE_T, 0, INFO_DEFAULT_64, SIZE_D},
 #define Vd	Td+1
 {TYPE_V, 0, 0, SIZE_D},
 #define Vq	Vd+1
@@ -416,7 +370,11 @@ const char *x86_segs[8] = {
 #define GROUP_SPECIAL_0FAE_7	6
 
 /*
-	Opcode name modifiers (first char):
+
+	Opcode name modifiers 
+	~ ambigous size (need explicit "size ptr")
+	
+	first char after ~:
 	|    alternative mnemonics with same semantic (|je|jz)
 	?    different name depending on opsize    (?16bit|32bit|64bit)
 	*    different name depending on addrsize  (*16bit|32bit|64bit)
@@ -598,7 +556,7 @@ x86opc_insn x86_32_insns[256] = {
 /* 98 */
 {"?cbw|cwde|cdqe"},
 {"?cwd|cdq|cqo"},
-{"call", {Ap}},
+{"~call", {Ap}},
 {"fwait"},
 {"?pushf|pushfd|pushfq", {_064}},
 {"?popf|popfd|popfq", {_064}},
@@ -688,7 +646,7 @@ x86opc_insn x86_32_insns[256] = {
 /* E8 */
 {"call", {Jv}},
 {"jmp", {Jv}},
-{"jmp", {Ap}},
+{"~jmp", {Ap}},
 {"jmp", {Jb}},
 {"in", {X__al, X__dxw}},
 {"in", {X__ax, X__dxw}},
@@ -787,21 +745,21 @@ x86opc_insn x86_insns_ext[256] = {
 {"movhps", {Mq, Vq}},
 /* 18 */
 {0, {SPECIAL_TYPE_GROUP, GROUP_EXT_18}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
 /* 20 */
-{"mov", {Rd, Cd}},
-{"mov", {Rd, Dd}},
-{"mov", {Cd, Rd}},
-{"mov", {Dd, Rd}},
-{"mov", {Rd, Td}},
+{"mov", {Rr64, Cd}},
+{"mov", {Rr, Dd}},
+{"mov", {Cd, Rr}},
+{"mov", {Dd, Rr}},
+{"mov", {Rr64, Td}},
 {0},
-{"mov", {Td, Rd}},
+{"mov", {Td, Rr}},
 {0},
 /* 28 */
 {"movaps", {Vo, Wo}},
@@ -882,7 +840,7 @@ x86opc_insn x86_insns_ext[256] = {
 {"packssdw", {Pu, Qu}},
 {0},
 {0},
-{"movd", {Pu, Er}},
+{"~movd", {Pu, Er}},
 {"movq", {Pu, Qu}},
 /* 70 */
 {"pshufw", {Pu, Qu, Ib}},
@@ -900,7 +858,7 @@ x86opc_insn x86_insns_ext[256] = {
 {0},
 {0},
 {0},
-{"movd", {Er, Pq}},
+{"~movd", {Er, Pq}},
 {"movq", {Qq, Pq}},
 /* 80 */
 {"jo", {Jv}},
@@ -963,8 +921,8 @@ x86opc_insn x86_insns_ext[256] = {
 {"btr", {Ev, Gv}},
 {"lfs", {Gv, Mp}},
 {"lgs", {Gv, Mp}},
-{"movzx", {Gv, Eb}},
-{"movzx", {Gv, Ew}},
+{"~movzx", {Gv, Eb}},
+{"~movzx", {Gv, Ew}},
 /* B8 */
 {"jmpe", {Jv}},
 {"ud2"},
@@ -972,8 +930,8 @@ x86opc_insn x86_insns_ext[256] = {
 {"btc", {Ev, Gv}},
 {"bsf", {Gv, Ev}},
 {"bsr", {Gv, Ev}},
-{"movsx", {Gv, Eb}},
-{"movsx", {Gv, Ew}},
+{"~movsx", {Gv, Eb}},
+{"~movsx", {Gv, Ew}},
 /* C0 */
 {"xadd", {Eb, Gb}},
 {"xadd", {Ev, Gv}},
@@ -1078,21 +1036,21 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"movhpd", {Mq, Vq}},
 /* 18 */
 {0, {SPECIAL_TYPE_GROUP, GROUP_EXT_18}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
 /* 20 */
-{"mov", {Rd, Cd}},
-{"mov", {Rd, Dd}},
-{"mov", {Cd, Rd}},
-{"mov", {Dd, Rd}},
-{"mov", {Rd, Td}},
+{"mov", {Rr64, Cd}},	// default 64
+{"mov", {Rr, Dd}},	// default 32
+{"mov", {Cd, Rr}},	// default 64
+{"mov", {Dd, Rr}},	// default 32
+{"mov", {Rr64, Td}},	// default 64
 {0},
-{"mov", {Td, Rd}},
+{"mov", {Td, Rr}},	// default 64
 {0},
 /* 28 */
 {"movapd", {Vo, Wo}},
@@ -1173,7 +1131,7 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"packssdw", {Pu, Qu}},
 {"punpcklqdq", {Vo, Wo}},
 {"punpckhqdq", {Vo, Wo}},
-{"movd", {Vo, Er}},
+{"~movd", {Vo, Er}},
 {"movdqa", {Pu, Qu}},
 /* 70 */
 {"pshufd", {Pu, Qu, Ib}},
@@ -1191,7 +1149,7 @@ x86opc_insn x86_insns_ext_66[256] = {
 {0},
 {"haddpd", {Vo, Wo}},
 {"hsubpd", {Vo, Wo}},
-{"movd", {Er, Vo}},
+{"~movd", {Er, Vo}},
 {"movdqa", {Wo, Vo}},
 /* 80 */
 {"jo", {Jv}},
@@ -1254,8 +1212,8 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"btr", {Ev, Gv}},
 {"lfs", {Gv, Mp}},
 {"lgs", {Gv, Mp}},
-{"movzx", {Gv, Eb}},
-{"movzx", {Gv, Ew}},
+{"~movzx", {Gv, Eb}},
+{"~movzx", {Gv, Ew}},
 /* B8 */
 {"jmpe", {Jv}},
 {"ud2"},
@@ -1263,8 +1221,8 @@ x86opc_insn x86_insns_ext_66[256] = {
 {"btc", {Ev, Gv}},
 {"bsf", {Gv, Ev}},
 {"bsr", {Gv, Ev}},
-{"movsx", {Gv, Eb}},
-{"movsx", {Gv, Ew}},
+{"~movsx", {Gv, Eb}},
+{"~movsx", {Gv, Ew}},
 /* C0 */
 {"xadd", {Eb, Gb}},
 {"xadd", {Ev, Gv}},
@@ -1360,7 +1318,7 @@ x86opc_insn x86_insns_ext_f2[256] = {
 /* 28 */
 {0},
 {0},
-{"cvtsi2sd", {Vq, Er}},
+{"~cvtsi2sd", {Vq, Er}},
 {"movntsd", {Mq, Vq}},
 {"cvttsd2si", {Gr, Wq}},
 {"cvtsd2si", {Gr, Wq}},
@@ -1504,7 +1462,7 @@ x86opc_insn x86_insns_ext_f3[256] = {
 /* 28 */
 {0},
 {0},
-{"cvtsi2ss", {Vd, Er}},
+{"~cvtsi2ss", {Vd, Er}},
 {"movntss", {Md, Vd}},
 {"cvttss2si", {Gr, Wd}},
 {"cvtss2si", {Gr, Wd}},
@@ -2102,40 +2060,40 @@ x86opc_insn x86_opc_group_insns[X86_OPC_GROUPS][256] = {
 x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 /* 0 - GROUP_80 */
 {
-{"add", {Eb, Ib}},
-{"or", {Eb, Ib}},
-{"adc", {Eb, Ib}},
-{"sbb", {Eb, Ib}},
-{"and", {Eb, Ib}},
-{"sub", {Eb, Ib}},
-{"xor", {Eb, Ib}},
-{"cmp", {Eb, Ib}},
+{"~add", {Eb, Ib}},
+{"~or", {Eb, Ib}},
+{"~adc", {Eb, Ib}},
+{"~sbb", {Eb, Ib}},
+{"~and", {Eb, Ib}},
+{"~sub", {Eb, Ib}},
+{"~xor", {Eb, Ib}},
+{"~cmp", {Eb, Ib}},
 },
 /* 1 - GROUP_81 */
 {
-{"add", {Ev, Iv}},
-{"or", {Ev, Iv}},
-{"adc", {Ev, Iv}},
-{"sbb", {Ev, Iv}},
-{"and", {Ev, Iv}},
-{"sub", {Ev, Iv}},
-{"xor", {Ev, Iv}},
-{"cmp", {Ev, Iv}},
+{"~add", {Ev, Iv}},
+{"~or", {Ev, Iv}},
+{"~adc", {Ev, Iv}},
+{"~sbb", {Ev, Iv}},
+{"~and", {Ev, Iv}},
+{"~sub", {Ev, Iv}},
+{"~xor", {Ev, Iv}},
+{"~cmp", {Ev, Iv}},
 },
 /* 2 - GROUP_83 */
 {
-{"add", {Ev, sIbv}},
-{"or", {Ev, sIbv}},
-{"adc", {Ev, sIbv}},
-{"sbb", {Ev, sIbv}},
-{"and", {Ev, sIbv}},
-{"sub", {Ev, sIbv}},
-{"xor", {Ev, sIbv}},
-{"cmp", {Ev, sIbv}},
+{"~add", {Ev, sIbv}},
+{"~or", {Ev, sIbv}},
+{"~adc", {Ev, sIbv}},
+{"~sbb", {Ev, sIbv}},
+{"~and", {Ev, sIbv}},
+{"~sub", {Ev, sIbv}},
+{"~xor", {Ev, sIbv}},
+{"~cmp", {Ev, sIbv}},
 },
 /* 3 - GROUP_8F */
 {
-{"pop", {Ev64}},
+{"~pop", {Ev64}},
 {0},
 {0},
 {0},
@@ -2146,29 +2104,29 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 4 - GROUP_C0 */
 {
-{"rol", {Eb, Ib}},
-{"ror", {Eb, Ib}},
-{"rcl", {Eb, Ib}},
-{"rcr", {Eb, Ib}},
-{"shl", {Eb, Ib}},
-{"shr", {Eb, Ib}},
-{"sal", {Eb, Ib}},
-{"sar", {Eb, Ib}},
+{"~rol", {Eb, Ib}},
+{"~ror", {Eb, Ib}},
+{"~rcl", {Eb, Ib}},
+{"~rcr", {Eb, Ib}},
+{"~shl", {Eb, Ib}},
+{"~shr", {Eb, Ib}},
+{"~sal", {Eb, Ib}},
+{"~sar", {Eb, Ib}},
 },
 /* 5 - GROUP_C1 */
 {
-{"rol", {Ev, Ib}},
-{"ror", {Ev, Ib}},
-{"rcl", {Ev, Ib}},
-{"rcr", {Ev, Ib}},
-{"shl", {Ev, Ib}},
-{"shr", {Ev, Ib}},
-{"sal", {Ev, Ib}},
-{"sar", {Ev, Ib}},
+{"~rol", {Ev, Ib}},
+{"~ror", {Ev, Ib}},
+{"~rcl", {Ev, Ib}},
+{"~rcr", {Ev, Ib}},
+{"~shl", {Ev, Ib}},
+{"~shr", {Ev, Ib}},
+{"~sal", {Ev, Ib}},
+{"~sar", {Ev, Ib}},
 },
 /* 6 - GROUP_C6 */
 {
-{"mov", {Eb, Ib}},
+{"~mov", {Eb, Ib}},
 {0},
 {0},
 {0},
@@ -2179,7 +2137,7 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 7 - GROUP_C7 */
 {
-{"mov", {Ev, Iv}},
+{"~mov", {Ev, Iv}},
 {0},
 {0},
 {0},
@@ -2190,54 +2148,54 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 8 - GROUP_D0 */
 {
-{"rol", {Eb, __1}},
-{"ror", {Eb, __1}},
-{"rcl", {Eb, __1}},
-{"rcr", {Eb, __1}},
-{"shl", {Eb, __1}},
-{"shr", {Eb, __1}},
-{"sal", {Eb, __1}},
-{"sar", {Eb, __1}},
+{"~rol", {Eb, __1}},
+{"~ror", {Eb, __1}},
+{"~rcl", {Eb, __1}},
+{"~rcr", {Eb, __1}},
+{"~shl", {Eb, __1}},
+{"~shr", {Eb, __1}},
+{"~sal", {Eb, __1}},
+{"~sar", {Eb, __1}},
 },
 /* 9 - GROUP_D1 */
 {
-{"rol", {Ev, __1}},
-{"ror", {Ev, __1}},
-{"rcl", {Ev, __1}},
-{"rcr", {Ev, __1}},
-{"shl", {Ev, __1}},
-{"shr", {Ev, __1}},
-{"sal", {Ev, __1}},
-{"sar", {Ev, __1}},
+{"~rol", {Ev, __1}},
+{"~ror", {Ev, __1}},
+{"~rcl", {Ev, __1}},
+{"~rcr", {Ev, __1}},
+{"~shl", {Ev, __1}},
+{"~shr", {Ev, __1}},
+{"~sal", {Ev, __1}},
+{"~sar", {Ev, __1}},
 },
 /* 10 - GROUP_D2 */
 {
-{"rol", {Eb, X__cl}},
-{"ror", {Eb, X__cl}},
-{"rcl", {Eb, X__cl}},
-{"rcr", {Eb, X__cl}},
-{"shl", {Eb, X__cl}},
-{"shr", {Eb, X__cl}},
-{"sal", {Eb, X__cl}},
-{"sar", {Eb, X__cl}},
+{"~rol", {Eb, X__cl}},
+{"~ror", {Eb, X__cl}},
+{"~rcl", {Eb, X__cl}},
+{"~rcr", {Eb, X__cl}},
+{"~shl", {Eb, X__cl}},
+{"~shr", {Eb, X__cl}},
+{"~sal", {Eb, X__cl}},
+{"~sar", {Eb, X__cl}},
 },
 /* 11 - GROUP_D3 */
 {
-{"rol", {Ev, X__cl}},
-{"ror", {Ev, X__cl}},
-{"rcl", {Ev, X__cl}},
-{"rcr", {Ev, X__cl}},
-{"shl", {Ev, X__cl}},
-{"shr", {Ev, X__cl}},
-{"sal", {Ev, X__cl}},
-{"sar", {Ev, X__cl}},
+{"~rol", {Ev, X__cl}},
+{"~ror", {Ev, X__cl}},
+{"~rcl", {Ev, X__cl}},
+{"~rcr", {Ev, X__cl}},
+{"~shl", {Ev, X__cl}},
+{"~shr", {Ev, X__cl}},
+{"~sal", {Ev, X__cl}},
+{"~sar", {Ev, X__cl}},
 },
 /* 12 - GROUP_F6 */
 {
-{"test", {Eb, Ib}},
-{"test", {Eb, Ib}},
-{"not", {Eb}},
-{"neg", {Eb}},
+{"~test", {Eb, Ib}},
+{"~test", {Eb, Ib}},
+{"~not", {Eb}},
+{"~neg", {Eb}},
 {"mul", {X__al, Eb}},
 {"imul", {X__al, Eb}},
 {"div", {X__al, Eb}},
@@ -2245,10 +2203,10 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 13 - GROUP_F7 */
 {
-{"test", {Ev, Iv}},
-{"test", {Ev, Iv}},
-{"not", {Ev}},
-{"neg", {Ev}},
+{"~test", {Ev, Iv}},
+{"~test", {Ev, Iv}},
+{"~not", {Ev}},
+{"~neg", {Ev}},
 {"mul", {X__ax, Ev}},
 {"imul", {X__ax, Ev}},
 {"div", {X__ax, Ev}},
@@ -2256,8 +2214,8 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 14 - GROUP_FE */
 {
-{"inc", {Eb}},
-{"dec", {Eb}},
+{"~inc", {Eb}},
+{"~dec", {Eb}},
 {0},
 {0},
 {0},
@@ -2267,13 +2225,13 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 },
 /* 15 - GROUP_FF */
 {
-{"inc", {Ev}},
-{"dec", {Ev}},
-{"call", {Ev64}},
-{"call", {Mp}},
-{"jmp", {Ev64}},
-{"jmp", {Mp}},
-{"push", {Ev64}},
+{"~inc", {Ev}},
+{"~dec", {Ev}},
+{"~call", {Ev64}},
+{"~call", {Mp}},
+{"~jmp", {Ev64}},
+{"~jmp", {Mp}},
+{"~push", {Ev64}},
 {0},
 },
 /* 16 - GROUP_EXT_00 */
@@ -2304,10 +2262,10 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 {"prefetch0", {M}},
 {"prefetch1", {M}},
 {"prefetch2", {M}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
-{"nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
+{"~nop", {Ev}},
 },
 /* 16 - GROUP_EXT_71 */
 {
@@ -2359,10 +2317,10 @@ x86opc_insn x86_group_insns[X86_GROUPS][8] = {
 {0},
 {0},
 {0},
-{"bt", {Ev, Ib}},
-{"bts", {Ev, Ib}},
-{"btr", {Ev, Ib}},
-{"btc", {Ev, Ib}},
+{"~bt", {Ev, Ib}},
+{"~bts", {Ev, Ib}},
+{"~btr", {Ev, Ib}},
+{"~btc", {Ev, Ib}},
 },
 /* 24 - GROUP_EXT_C7 */
 {
@@ -2500,21 +2458,21 @@ x86opc_insn x86_special_group_insns[X86_SPECIAL_GROUPS][9] = {
 x86opc_insn x86_modfloat_group_insns[8][8] = {
 /* prefix D8 */
 {
-{"fadd", {Ms}},
-{"fmul", {Ms}},
-{"fcom", {Ms}},
-{"fcomp", {Ms}},
-{"fsub", {Ms}},
-{"fsubr", {Ms}},
-{"fdiv", {Ms}},
-{"fdivr", {Ms}},
+{"~fadd", {Ms}},
+{"~fmul", {Ms}},
+{"~fcom", {Ms}},
+{"~fcomp", {Ms}},
+{"~fsub", {Ms}},
+{"~fsubr", {Ms}},
+{"~fdiv", {Ms}},
+{"~fdivr", {Ms}},
 },
 /* prefix D9 */
 {
-{"fld", {Ms}},
+{"~fld", {Ms}},
 {0},
-{"fst", {Ms}},
-{"fstp", {Ms}},
+{"~fst", {Ms}},
+{"~fstp", {Ms}},
 {"fldenv", {M}},
 {"fldcw", {Mw}},
 {"fstenv", {M}},
@@ -2522,69 +2480,69 @@ x86opc_insn x86_modfloat_group_insns[8][8] = {
 },
 /* prefix DA */
 {
-{"fiadd", {Md}},
-{"fimul", {Md}},
-{"ficom", {Md}},
-{"ficomp", {Md}},
-{"fisub", {Md}},
-{"fisubr", {Md}},
-{"fidiv", {Md}},
-{"fidivr", {Md}},
+{"~fiadd", {Md}},
+{"~fimul", {Md}},
+{"~ficom", {Md}},
+{"~ficomp", {Md}},
+{"~fisub", {Md}},
+{"~fisubr", {Md}},
+{"~fidiv", {Md}},
+{"~fidivr", {Md}},
 },
 /* prefix DB */
 {
-{"fild", {Md}},
-{"fisttp", {Md}},
-{"fist", {Md}},
-{"fistp", {Md}},
+{"~fild", {Md}},
+{"~fisttp", {Md}},
+{"~fist", {Md}},
+{"~fistp", {Md}},
 {0},
-{"fld", {Mt}},
+{"~fld", {Mt}},
 {0},
-{"fstp", {Mt}},
+{"~fstp", {Mt}},
 },
 /* prefix DC */
 {
-{"fadd", {Ml}},
-{"fmul", {Ml}},
-{"fcom", {Ml}},
-{"fcomp", {Ml}},
-{"fsub", {Ml}},
-{"fsubr", {Ml}},
-{"fdiv", {Ml}},
-{"fdivr", {Ml}},
+{"~fadd", {Ml}},
+{"~fmul", {Ml}},
+{"~fcom", {Ml}},
+{"~fcomp", {Ml}},
+{"~fsub", {Ml}},
+{"~fsubr", {Ml}},
+{"~fdiv", {Ml}},
+{"~fdivr", {Ml}},
 },
 /* prefix DD */
 {
-{"fld", {Ml}},
-{"fisttp", {Mq}},
-{"fst", {Ml}},
-{"fstp", {Ml}},
-{"frstor", {M}},
+{"~fld", {Ml}},
+{"~fisttp", {Mq}},
+{"~fst", {Ml}},
+{"~fstp", {Ml}},
+{"~frstor", {M}},
 {0},
 {"fsave", {M}},
 {"fstsw", {Mw}},
 },
 /* prefix DE */
 {
-{"fiadd", {Mw}},
-{"fimul", {Mw}},
-{"ficom", {Mw}},
-{"ficomp", {Mw}},
-{"fisub", {Mw}},
-{"fisubr", {Mw}},
-{"fidiv", {Mw}},
-{"fidivr", {Mw}},
+{"~fiadd", {Mw}},
+{"~fimul", {Mw}},
+{"~ficom", {Mw}},
+{"~ficomp", {Mw}},
+{"~fisub", {Mw}},
+{"~fisubr", {Mw}},
+{"~fidiv", {Mw}},
+{"~fidivr", {Mw}},
 },
 /* prefix DF */
 {
-{"fild", {Mw}},
-{"fisttp", {Mw}},
-{"fist", {Mw}},
-{"fistp", {Mw}},
-{"fbld", {Ma}},
-{"fild", {Mq}},
-{"fbstp", {Ma}},
-{"fistp", {Mq}},
+{"~fild", {Mw}},
+{"~fisttp", {Mw}},
+{"~fist", {Mw}},
+{"~fistp", {Mw}},
+{"~fbld", {Ma}},
+{"~fild", {Mq}},
+{"~fbstp", {Ma}},
+{"~fistp", {Mq}},
 }
 
 };
