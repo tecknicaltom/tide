@@ -705,7 +705,7 @@ int x86dis::esizeop(uint c)
 		default: {assert(0);}
 		}
 	case SIZE_R:
-		if (rexw(insn.rexprefix)) return 8; else return 4;
+		if (insn.eopsize == X86_OPSIZE64) return 8; else return 4;
 	case SIZE_U:
 		if (insn.opsizeprefix == X86_PREFIX_OPSIZE) return 16; else return 8;
 	case SIZE_Z:
@@ -912,8 +912,14 @@ void x86dis::prefixes()
 	}
 }
 
-int x86dis::special_param_ambiguity(x86dis_insn *disasm_insn)
+#if 0
+bool x86dis::special_param_ambiguity(x86opc_insn *insn)
 {
+	if (insn->name) {
+		return insn->name[0] == '~';
+	} else {
+		return false;
+	}
 	bool regc = false;
 	bool memc = false;
 	bool segc = false;
@@ -942,6 +948,7 @@ int x86dis::special_param_ambiguity(x86dis_insn *disasm_insn)
 		|| (strcmp(disasm_insn->name, "movzx") == 0)
 		|| (strncmp(disasm_insn->name, "movsx", 5) == 0);
 }
+#endif
 
 static const char *regs(x86dis_insn *insn, int mode, int nr)
 {
@@ -1332,46 +1339,47 @@ const char *x86dis::strf(dis_insn *disasm_insn, int opt, const char *format)
 	char *p = prefix;
 	options = opt;
 	*p = 0;
-	if (insn->lockprefix == X86_PREFIX_LOCK) p+=sprintf(p, "lock ");
+	if (insn->lockprefix == X86_PREFIX_LOCK) p += sprintf(p, "lock ");
 	if (insn->repprefix == X86_PREFIX_REPZ) {
 		p += sprintf(p, "repz ");
 	} else if (insn->repprefix == X86_PREFIX_REPNZ) {
 		p += sprintf(p, "repnz ");
 	}
-	if ((p != prefix) && (*(p-1) == ' ')) {
+	if (p != prefix && p[-1] == ' ') {
 		p--;
 		*p = 0;
 	}
-
-	bool explicit_params = ((options & X86DIS_STYLE_EXPLICIT_MEMSIZE) ||
-		special_param_ambiguity(insn));
+	const char *iname = insn->name;
+	bool explicit_params = (options & X86DIS_STYLE_EXPLICIT_MEMSIZE) || iname[0] == '~';
 
 	char ops[3][512];	/* FIXME: possible buffer overflow ! */
 	char *op[3];
 	int oplen[3];
 
 	if (options & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	for (int i=0; i<3; i++) {
+	for (int i=0; i < 3; i++) {
 		op[i] = (char*)&ops[i];
 		str_op(op[i], &oplen[i], insn, &insn->op[i], explicit_params);
 	}
 	char *s=insnstr;
+	
+	if (iname[0] == '~') iname++;
 	char n[32];
-	switch (insn->name[0]) {
+	switch (iname[0]) {
 	case '|':
-		pickname(n, insn->name, 0);
+		pickname(n, iname, 0);
 		break;
 	case '?':
 	case '&':
 		switch (insn->eopsize) {
 		case X86_OPSIZE16: 
-			pickname(n, insn->name, 0);
+			pickname(n, iname, 0);
 			break;
 		case X86_OPSIZE32:
-			pickname(n, insn->name, 1);
+			pickname(n, iname, 1);
 			break;
 		case X86_OPSIZE64:
-			pickname(n, insn->name, 2);
+			pickname(n, iname, 2);
 			break;
 		default: {assert(0);}
 		}
@@ -1379,19 +1387,19 @@ const char *x86dis::strf(dis_insn *disasm_insn, int opt, const char *format)
 	case '*':
 		switch (insn->eaddrsize) {
 		case X86_ADDRSIZE16: 
-			pickname(n, insn->name, 0);
+			pickname(n, iname, 0);
 			break;
 		case X86_ADDRSIZE32:
-			pickname(n, insn->name, 1);
+			pickname(n, iname, 1);
 			break;
 		case X86_ADDRSIZE64:
-			pickname(n, insn->name, 2);
+			pickname(n, iname, 2);
 			break;
 		default: {assert(0);}
 		}
 		break;
 	default:
-		strcpy(n, insn->name);
+		strcpy(n, iname);
 	}
 	str_format(&s, &format, prefix, n, op, oplen, 0, 1);
 	disable_highlighting();
