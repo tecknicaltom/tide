@@ -397,7 +397,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 
 	bool opsize_depend = false;
 	for (int i = 0; i < 3; i++) {
-		switch (opcode->op[i].size) {
+		switch (x86_op_type[opcode->op[i]].size) {
 		case SIZE_BV:
 		case SIZE_V:
 		case SIZE_VV:
@@ -436,12 +436,12 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	if (addrsize == X86_ADDRSIZE64) {
 		if (eopsize == X86_ADDRSIZE64) {
 			if (insn->opsizeprefix == X86_PREFIX_OPSIZE) emitbyte(0x66);
-			if (!(opcode->op[0].info & 0x80)) {
+			if (!(x86_op_type[opcode->op[0]].info & INFO_DEFAULT_64)) {
 				// instruction doesn't default to 64 bit opsize
 				rexprefix |= rexw;
 			}
 		} else if (eopsize == X86_ADDRSIZE32) {
-			if (opcode->op[0].info & 0x80) {
+			if (x86_op_type[opcode->op[0]].info & INFO_DEFAULT_64) {
 				// instruction defaults to 64 bit opsize
 				// it's not possible to switch to 32 bit
 				return false;
@@ -533,7 +533,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 
 	/* encode the ops */
 	for (int i=0; i<3; i++) {
-		if (!encode_op(&insn->op[i], &opcode->op[i], &esizes[i], eopsize, eaddrsize)) {
+		if (!encode_op(&insn->op[i], &x86_op_type[opcode->op[i]], &esizes[i], eopsize, eaddrsize)) {
 			clearcode();
 			return false;
 		}
@@ -1196,13 +1196,13 @@ int x86asm::match_allops(x86asm_insn *insn, x86opc_insn *xinsn, int opsize, int 
 {
 	int m = 0;
 	for (int i = 0; i < 3; i++) {
-		int m2 = match_type(&insn->op[i], &xinsn->op[i], addrsize);
+		int m2 = match_type(&insn->op[i], &x86_op_type[xinsn->op[i]], addrsize);
 		if (!m2 || (m && m != MATCHTYPE_MATCH && m2 != MATCHTYPE_MATCH && m != m2)) {
 			return MATCHTYPE_NOMATCH;
 		} else {
 			if (m2 > m) m = m2;
 		}
-		if (!match_size(&insn->op[i], &xinsn->op[i], opsize)) return MATCHTYPE_NOMATCH;
+		if (!match_size(&insn->op[i], &x86_op_type[xinsn->op[i]], opsize)) return MATCHTYPE_NOMATCH;
 	}
 	return m;
 }
@@ -1333,14 +1333,16 @@ void x86asm::match_opcodes(x86opc_insn *opcodes, x86asm_insn *insn, int prefix, 
 {
 	for (int i=0; i < 256; i++) {
 		if (!opcodes[i].name) {
-			x86opc_insn_op_special *special = ((x86opc_insn_op_special*)(&opcodes[i].op[0]));
-			if (special->type == SPECIAL_TYPE_GROUP) {
-				x86opc_insn *group = x86_group_insns[special->data];
+			byte specialtype = opcodes[i].op[0];
+			if (specialtype == SPECIAL_TYPE_GROUP) {
+				byte specialdata = opcodes[i].op[1];
+				x86opc_insn *group = x86_group_insns[specialdata];
 				for (int g=0; g < 8; g++) {
 					if (!group[g].name) {
-						x86opc_insn_op_special *special2 = ((x86opc_insn_op_special*)(&group[g].op[0]));
-						if (special2->type == SPECIAL_TYPE_SGROUP) {
-							x86opc_insn *group = x86_special_group_insns[special2->data];
+						byte special2type = group[g].op[0];
+						if (special2type == SPECIAL_TYPE_SGROUP) {
+							byte special2data = group[g].op[1];
+							x86opc_insn *group = x86_special_group_insns[special2data];
 							for (int h=0; h < 8; h++) {
 								match_opcode(&group[h], insn, prefix, i, (h<<3) + g + 0x800, def_match);
 							}
