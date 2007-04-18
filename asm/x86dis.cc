@@ -232,8 +232,9 @@ void x86dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 void x86dis::decode_insn(x86opc_insn *xinsn)
 {
 	if (!xinsn->name) {
-		x86opc_insn_op_special special = *((x86opc_insn_op_special*)(&xinsn->op[0]));
-		switch (special.type) {
+		byte specialtype = xinsn->op[0];
+		byte specialdata = xinsn->op[1];
+		switch (specialtype) {
 		case SPECIAL_TYPE_INVALID:
 			invalidate();
 			break;
@@ -281,12 +282,12 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		case SPECIAL_TYPE_OPC_GROUP: {
 			insn.opcodeclass = X86DIS_OPCODE_CLASS_EXT;
 			insn.opcode = getbyte();
-			decode_insn(&x86_opc_group_insns[(int)special.data][insn.opcode]);
+			decode_insn(&x86_opc_group_insns[specialdata][insn.opcode]);
 			break;
 		}
 		case SPECIAL_TYPE_GROUP: {
 			int m = mkreg(getmodrm()) & 0x7;
-			decode_insn(&x86_group_insns[(int)special.data][m]);
+			decode_insn(&x86_group_insns[specialdata][m]);
 			break;
 		}
 		case SPECIAL_TYPE_SGROUP: {
@@ -296,13 +297,13 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 			} else {
 				m = mkrm(m) & 0x7;
 			}
-			decode_insn(&x86_special_group_insns[(int)special.data][m]);
+			decode_insn(&x86_special_group_insns[specialdata][m]);
 			break;
 		}
 		case SPECIAL_TYPE_FGROUP: {
 			int m = getmodrm();
 			if (mkmod(m) == 3) {
-				x86opc_finsn f = x86_float_group_insns[(int)special.data][mkreg(m) & 0x7];
+				x86opc_finsn f = x86_float_group_insns[specialdata][mkreg(m) & 0x7];
 /*				fprintf(stderr, "special.data=%d, m=%d, mkreg(m)=%d, mkrm(m)=%d\n", special.data, m, mkreg(m), mkrm(m));*/
 				if (f.group) {
 					decode_insn(&f.group[mkrm(m) & 0x7]);
@@ -310,7 +311,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 					decode_insn(&f.insn);
 				} else invalidate();
 			} else {
-				decode_insn(&x86_modfloat_group_insns[(int)special.data][mkreg(m) & 0x7]);
+				decode_insn(&x86_modfloat_group_insns[specialdata][mkreg(m) & 0x7]);
 			}
 			break;
 		}
@@ -320,7 +321,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		
 		insn.name = xinsn->name;
 		for (int i = 0; i < 3; i++) {
-			decode_op(&insn.op[i], &xinsn->op[i]);
+			decode_op(&insn.op[i], &x86_op_type[xinsn->op[i]]);
 		}
 	}
 }
@@ -1444,7 +1445,6 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 	int mod = mkmod(modrm);
 	int rm = mkrm(modrm);
 	if (mod == 3) {
-		/* reg */
 		if (!allow_reg) {
 			invalidate();
 			return;
@@ -1461,7 +1461,6 @@ void x86_64dis::decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool al
 		}
 		op->size = esizeop(size);
 	} else {
-		/* mem */
 		if (!allow_mem) {
 			invalidate();
 			return;
@@ -1559,7 +1558,7 @@ void x86_64dis::prefixes()
 void x86_64dis::checkInfo(x86opc_insn *xinsn)
 {
 	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
-	&& (xinsn->op[0].info & INFO_DEFAULT_64)) {
+	&& (x86_op_type[xinsn->op[0]].info & INFO_DEFAULT_64)) {
 		// instruction defaults to 64 bit opsize
 		insn.eopsize = X86_OPSIZE64;
 	}
