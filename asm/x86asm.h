@@ -24,6 +24,7 @@
 
 #include "asm.h"
 #include "x86opc.h"
+#include "x86dis.h"
 
 struct x86asm_insn {
 	char lockprefix;
@@ -50,8 +51,8 @@ struct x86addrcoding {
 
 class x86asm: public Assembler {
 public:
-	int opsize;
-	int addrsize;
+	X86OpSize opsize;
+	X86AddrSize addrsize;
 protected:
 	int esizes[3];
 
@@ -70,8 +71,9 @@ protected:
 	bool addrsize_depend;
 	x86opc_insn (*x86_insns)[256];
 
-	void delete_nonsense();
-	bool delete_nonsense_insn(asm_code *c);
+	virtual x86dis *createCompatibleDisassembler();
+	void delete_nonsense(CPU_ADDR addr);
+	bool delete_nonsense_insn(asm_code *c, x86dis *dis, CPU_ADDR addr);
 	void emitdisp(uint64 disp, int size);
 	void emitfarptr(uint32 s, uint32 o, bool big);
 	void emitimm(uint64 imm, int size);
@@ -113,7 +115,7 @@ protected:
 	void splitstr(const char *s, char *name, int size, char *op[3], int opsize);
 	void tok(const char **s, char *res, int reslen, const char *sep);
 public:
-		x86asm(int opsize, int addrsize);
+		x86asm(X86OpSize opsize, X86AddrSize addrsize);
 
 	virtual	asm_insn *alloc_insn();
 	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
@@ -130,6 +132,8 @@ public:
 	virtual bool opreg(x86_insn_op *op, const char *xop);
 	virtual bool opxmm(x86_insn_op *op, const char *xop);
 		void prepInsns();
+protected:
+	virtual x86dis *createCompatibleDisassembler();
 };
 
 
