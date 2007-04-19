@@ -4318,7 +4318,7 @@ bool ht_hex_sub::getline(char *line, const LINE_ID line_id)
 			*l++ = ' ';
 			*l++ = ' ';
 		}
-		if (i+1 >= start && i+1 < end) {
+		if (i+1 > start && i+1 < end) {
 			if (i%8 == 7) {
 				l = tag_make_edit_selvis(l, ofs, '-');
 			} else {
