@@ -3,6 +3,7 @@
  *	hthex.cc
  *
  *	Copyright (C) 1999-2002 Stefan Weyergraf
+ *	Copyright (C) 2007 Sebastian Biallas (sb@biallas.net)
  *
  *	This program is free software; you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License version 2 as
@@ -81,7 +82,6 @@ bool ht_hex_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 	FileOfs s = file->getSize();
 	if (s) {
 		uint ll = h->get_line_length();
-		// FIXPORT
 		FileOfs o = top.line_id.id2 + (uint64(top.line_id.id1) << 32);
 		sint64 z = MIN(size.h * ll, s - o);
 		return scrollbar_pos(o, z, s, pstart, psize);
@@ -94,11 +94,11 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 	switch (msg->msg) {
 	case msg_filesize_changed:
 		htmsg m;
-		m.msg=msg_filesize_changed;
-		m.type=mt_broadcast;
+		m.msg = msg_filesize_changed;
+		m.type = mt_broadcast;
 		sendsubmsg(&m);
 
-		uf_initialized=false;
+		uf_initialized = false;
 		complete_init();
 
 		dirtyview();
@@ -119,12 +119,42 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 		char result[256];
 		sprintf(result, "%d", h->get_line_length());
 		if (inputbox("Change display width", "~Line length (Bytes)", result, 256)) {
-			char *p;
-			int ll = strtoul(result, &p, 10);
+			int ll = strtoul(result, NULL, 10);
 			if (ll > 0 && ll <= 32) {
+				FileOfs ofs = -1ULL;
+				get_current_offset(&ofs);
+				int disp = h->get_disp();
+				if (disp >= ll) {
+					h->set_disp(0);
+				}
 				h->set_line_length(ll);
+				viewer_pos p;
+				if (ofs != -1ULL && offset_to_pos(ofs, &p) && goto_pos(p, this)) {
+					focus_cursor();
+				}
 			} else {
 				errorbox("Line length must be > 0 and <= 32!");
+			}
+		}
+		clearmsg(msg);
+		return;
+	}
+	case cmd_hex_display_disp: {
+		char result[256];
+		sprintf(result, "%d", h->get_disp());
+		if (inputbox("Change display displacement", "~Displacement (Bytes)", result, 256)) {
+			int ll = h->get_line_length();
+			int disp = strtoul(result, NULL, 10);
+			if (disp >= 0 && disp < ll) {
+				FileOfs ofs = -1ULL;
+				get_current_offset(&ofs);
+				h->set_disp(disp);
+				viewer_pos p;
+				if (ofs != -1ULL && offset_to_pos(ofs, &p) && goto_pos(p, this)) {
+					focus_cursor();
+				}
+			} else {
+				errorbox("Displacement must be >= 0 and < line length (%d)!", ll);
 			}
 		}
 		clearmsg(msg);
@@ -136,7 +166,8 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 		m->insert_entry("~Block operations", "Ctrl+B", cmd_file_blockop, K_Control_B, 1);
 		m->insert_entry("~Replace", "Ctrl+E", cmd_file_replace, K_Control_E, 1);
 		m->insert_entry("~Entropy", "Ctrl+T", cmd_hex_entropy, K_Control_T, 1);
-		m->insert_entry("~Change display width...", "Ctrl+O", cmd_hex_display_bytes, K_Control_O, 1);
+		m->insert_entry("Change display ~width...", "Ctrl+O", cmd_hex_display_bytes, K_Control_O, 1);
+		m->insert_entry("Change display ~displacement...", "Ctrl+U", cmd_hex_display_disp, K_Control_U, 1);
 
 		msg->msg = msg_retval;
 		msg->data1.ptr = m;
@@ -155,22 +186,35 @@ bool ht_hex_viewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
 bool ht_hex_viewer::offset_to_pos(FileOfs ofs, viewer_pos *p)
 {
 	uint ll = h->get_line_length();
+	uint disp = h->get_disp();
 	clear_viewer_pos(p);
 	p->u.sub = first_sub;
-	p->u.line_id.id1 = (ofs - (ofs % ll)) >> 32;
-	p->u.line_id.id2 = ofs - (ofs % ll);
-	p->u.tag_idx = ofs % ll;
+	FileOfs id;
+	if (ofs < disp) {
+		id = 0;
+		p->u.tag_idx = ofs;
+	} else {
+		id = ofs - ((ofs - disp) % ll);
+		p->u.tag_idx = (ofs - disp) % ll;
+	}
+	p->u.line_id.id1 = id >> 32;
+	p->u.line_id.id2 = id;
 	return true;
 }
 
 bool ht_hex_viewer::qword_to_pos(uint64 q, viewer_pos *p)
 {
-	int ll = h->get_line_length();
+	uint ll = h->get_line_length();
+	uint disp = h->get_disp();
 	ht_linear_sub *s = (ht_linear_sub*)cursor.sub;
 	FileOfs ofs = q;
 	clear_viewer_pos(p);
 	p->u.sub = s;
-	p->u.tag_idx = ofs % ll;
+	if (ofs < disp) {
+		p->u.tag_idx = ofs;
+	} else {
+		p->u.tag_idx = (ofs - disp) % ll;
+	}
 	return s->convert_ofs_to_id(ofs, &p->u.line_id);
 }
 
