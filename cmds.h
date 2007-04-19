@@ -99,6 +99,7 @@
  
 #define cmd_hex_entropy				HT_COMMAND(1500)
 #define cmd_hex_display_bytes			HT_COMMAND(1501)
+#define cmd_hex_display_disp			HT_COMMAND(1502)
 
 /*
  *	disasm 2000 - 2499
@@ -106,21 +107,5 @@
  
 #define cmd_disasm_call_assembler		HT_COMMAND(2000)
 #define cmd_disasm_toggle1632			HT_COMMAND(2001)
-
-/*typedef bool (*cmd_handler)(htmsg_param *data1, htmsg_param *data2);
-
-struct cmd_rec {
-	CMD cmd;
-	bool enabled;
-	bool dynamic;
-	cmd_handler handler;
-};
-
-struct cmd_name {
-	CMD cmd;
-	char *name;
-};
-
-extern cmd_name cmd_names[];*/
 
 #endif /* __CMDS_H__ */
