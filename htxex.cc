@@ -151,6 +151,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		}
 		xex_shared->pages.page_shift = 16; // FIXME: can also be 12
 	} else {
+		xex_shared->pages.page = NULL;
 		xex_shared->file_header.hdr_size = 0;
 		xex_shared->image_size = 0;
 		xex_shared->image_base = 0;
@@ -295,9 +296,15 @@ void ht_xex::done()
 
 	ht_xex_shared_data *xex_shared = (ht_xex_shared_data*)shared_data;
 
+	delete[] xex_shared->pages.page;
+	for (int i=0; i < xex_shared->imports.lib_count; i++) {
+		free(xex_shared->imports.libs[i].name);
+		delete[] xex_shared->imports.libs[i].funcs;
+	}
+	delete[] xex_shared->imports.libs;
 	free(xex_shared->info_table);
 	free(xex_shared->info_table_cooked);
-	free(xex_shared->image);
+	delete xex_shared->image;
 	free(xex_shared);
 }
 
