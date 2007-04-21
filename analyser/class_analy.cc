@@ -208,9 +208,14 @@ FileOfs ClassAnalyser::addressToFileofs(Address *Addr)
  */
 const char *ClassAnalyser::getSegmentNameByAddress(Address *Addr)
 {
-	static char sectionname[9];
-	strcpy(sectionname, "test");
-	return sectionname;
+	static char sectionname[1];
+	Location *loc = getFunctionByAddress(Addr);
+	if (loc && loc->label && loc->label->name) {
+		return loc->label->name;
+	} else {
+		sectionname[0] = 0;
+		return sectionname;
+	}
 }
 
 /*
