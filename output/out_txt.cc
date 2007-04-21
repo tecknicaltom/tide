@@ -89,13 +89,33 @@ void	AnalyserTxtOutput::endLine()
 void AnalyserTxtOutput::putElement(int element_type, const char *element)
 {
 	switch (element_type) {
-		case ELEMENT_TYPE_HIGHLIGHT_DATA_CODE:
-			write("  ");
-			write(element);
-			break;
-		default:
-			write(element);
-			break;
+	case ELEMENT_TYPE_HIGHLIGHT_DATA_CODE: {
+		write("  ");
+		while (*element) {
+			if (*element == '\\') {
+				element++;
+				if (*element == '@') {
+					element++;
+					if (!*element) break;
+					element++;
+				} else if (*element == 0) {
+					break;
+				} else {
+					*work_buffer++ = '\\';
+					*work_buffer++ = *element++;
+				}
+				continue;
+			}
+			*work_buffer++ = *element++;
+		}
+		break;
+	}
+	case ELEMENT_TYPE_INDENT_XREF:
+		write("  ");
+		break;
+	default:
+		write(element);
+		break;
 	}
 }
 
