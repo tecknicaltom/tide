@@ -565,7 +565,7 @@ bool ht_aviewer::pos_to_string(viewer_pos p, char *result, int maxlen)
 bool ht_aviewer::convertViewerPosToAddress(const viewer_pos &p, Address **a)
 {
 	*a = analy->createAddress();
-	(*a)->getFromArray((byte*)&(p.u.line_id.id2));
+	(*a)->getFromUInt64((uint64(p.u.line_id.id1) << 32) + p.u.line_id.id2);
 	return true;
 }
 
@@ -574,8 +574,11 @@ bool ht_aviewer::convertAddressToViewerPos(Address *a, viewer_pos *p)
 	if (a && a->isValid()) {
 		clear_viewer_pos(p);
 		p->u.sub = analy_sub;
-		a->putIntoArray((byte*)&(p->u.line_id.id2));
-		p->u.line_id.id1 = 0;
+		uint64 u;
+		a->putIntoUInt64(u);
+		p->u.line_id.id1 = u >> 32;
+		p->u.line_id.id2 = u;
+		p->u.line_id.id3 = 0;
 		return true;
 	} else {
 		return false;
@@ -679,7 +682,7 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, const char *s, uint64 &v)
 		return false;
 	} else if (strcmp(s, "&") ==0) {
 		if (aviewer->getCurrentAddress(&a)) {
-			a->putIntoArray((byte*)&v);
+			a->putIntoUInt64(v);
 			delete a;
 			return true;
 		} else {
@@ -1547,7 +1550,7 @@ bool ht_aviewer::ref_sel(LINE_ID *id)
 	case 0:
 		if (analy) {
 			Address *a = analy->createAddress();
-			a->getFromArray((byte*)&id->id1);
+			a->getFromUInt64((uint64(id->id1) << 32) + id->id2);
 			bool res = gotoAddress(a, this);
 			delete a;
 			return res;
@@ -1557,7 +1560,7 @@ bool ht_aviewer::ref_sel(LINE_ID *id)
 	case 1:
 		if (analy) {
 			Address *a = analy->createAddress();
-			a->getFromArray((byte*)&id->id1);
+			a->getFromUInt64((uint64(id->id1) << 32) + id->id2);
 			showXRefs(a);
 			delete a;
 		}
@@ -1946,7 +1949,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 			}
 			convertViewerPosToAddress(vp, &w);
 			uint64 b = 0;
-			w->putIntoArray((byte*)&b);
+			w->putIntoUInt64(b);
 			delete w;
 			scalar_create_int_q(result, b);
 			return true;
@@ -1956,7 +1959,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 		if (strcmp(name, "$")==0) {
 			if (getCurrentAddress(&w)) {
 				uint64 b = 0;
-				w->putIntoArray((byte*)&b);
+				w->putIntoUInt64(b);
 				scalar_create_int_q(result, b);
 				delete w;
 				return true;
@@ -1969,7 +1972,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 		if (l) {
 			w=l->location->addr;
 			uint64 b;
-			w->putIntoArray((byte*)&b);
+			w->putIntoUInt64(b);
 			scalar_create_int_q(result, b);
 			return true;
 		}
@@ -1981,13 +1984,7 @@ bool ht_aviewer::qword_to_pos(uint64 q, viewer_pos *pos)
 {
 	if (!analy) return false;
 	Address *a=analy->createAddress();
-	// FIXME: this is just plain wrong!!
-	if (a->byteSize()==8) {
-		a->getFromArray((byte*)&q);
-	} else {
-		uint32 ii = q;
-		a->getFromArray((byte*)&ii);
-	}
+	a->getFromUInt64(q);
 	if (analy->validAddress(a, scvalid)) {
 		bool res = convertAddressToViewerPos(a, pos);
 		delete a;
@@ -2045,15 +2042,18 @@ bool ht_analy_sub::convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id)
 void	ht_analy_sub::first_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
-	lowestaddress->putIntoArray((byte*)&(line_id->id2));
+	uint64 u;
+	lowestaddress->putIntoUInt64(u);
+	line_id->id1 = u >> 32;
+	line_id->id2 = u;
 }
 
 bool ht_analy_sub::getline(char *line, const LINE_ID line_id)
 {
 	if (!analy) return false;
 	Address *a = analy->createAddress();
-	a->getFromArray((byte*)&(line_id.id2));
-	bool res = output->getLineString(line, 1024, a, (int)line_id.id1);
+	a->getFromUInt64((uint64(line_id.id1) << 32) + line_id.id2);
+	bool res = output->getLineString(line, 1024, a, (int)line_id.id3);
 	delete a;
 	return res;
 }
@@ -2061,19 +2061,25 @@ bool ht_analy_sub::getline(char *line, const LINE_ID line_id)
 void	ht_analy_sub::last_line_id(LINE_ID *line_id)
 {
 	clear_line_id(line_id);
-	highestaddress->putIntoArray((byte*)&(line_id->id2));
+	uint64 u;
+	highestaddress->putIntoUInt64(u);
+	line_id->id1 = u >> 32;
+	line_id->id2 = u;
 }
 
 int ht_analy_sub::next_line_id(LINE_ID *line_id, int n)
 {
 	if (!analy) return false;
 	Address *a = analy->createAddress();
-	a->getFromArray((byte*)&(line_id->id2));
-	int line = line_id->id1;
+	a->getFromUInt64((uint64(line_id->id1) << 32) + line_id->id2);
+	int line = line_id->id3;
 	int res = output->nextLine(a, line, n, highestaddress);
 	if (res) {
-		line_id->id1 = line;
-		a->putIntoArray((byte*)&(line_id->id2));
+		line_id->id3 = line;
+		uint64 u;
+		a->putIntoUInt64(u);
+		line_id->id1 = u >> 32;
+		line_id->id2 = u;
 	}
 	delete a;
 	return res;
@@ -2083,12 +2089,15 @@ int ht_analy_sub::prev_line_id(LINE_ID *line_id, int n)
 {
 	if (!analy) return false;
 	Address *a = analy->createAddress();
-	a->getFromArray((byte*)&(line_id->id2));
-	int line = line_id->id1;
+	a->getFromUInt64((uint64(line_id->id1) << 32) + line_id->id2);
+	int line = line_id->id3;
 	int res = output->prevLine(a, line, n, lowestaddress);
 	if (res) {
-		line_id->id1 = line;
-		a->putIntoArray((byte*)&(line_id->id2));
+		line_id->id3 = line;
+		uint64 u;
+		a->putIntoUInt64(u);
+		line_id->id1 = u >> 32;
+		line_id->id2 = u;
 	}
 	delete a;
 	return res;
