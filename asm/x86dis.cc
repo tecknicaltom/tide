@@ -850,10 +850,10 @@ bool x86dis::isaddr(char c)
 
 void x86dis::load(ObjectStream &f)
 {
+	Disassembler::load(f);
 	opsize = (X86OpSize)GETX_INT32(f, "opsize");
 	addrsize = (X86AddrSize)GETX_INT32(f, "addrsize");
 	x86_insns = &x86_32_insns;
-	Disassembler::load(f);
 }
 
 ObjectID x86dis::getObjectID() const
