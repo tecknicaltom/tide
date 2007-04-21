@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 2.0.4:
+	- Fixed some 64 bit issues
+
 version 2.0.3:
 	- [POSIX] Resize application on SIGWINCH
 	- [x86] SSE4.1/SSE4.2
