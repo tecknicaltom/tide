@@ -975,7 +975,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 				ht_inputfield_data *data = ht_malloc(dsize);
 				ViewDataBuf vdb(input, data, dsize);
 				bin2str(result, data->text, data->textlen);
-				delete data;
+				free(data);
 				if (hist) insert_history_entry(hist, result, 0);
 				run = false;
 				retval = button_ok;
