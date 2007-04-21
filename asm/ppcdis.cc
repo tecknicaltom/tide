@@ -33,6 +33,7 @@ PPCDisassembler::PPCDisassembler(int aMode)
 
 void PPCDisassembler::load(ObjectStream &f)
 {
+	Disassembler::load(f);
 	GET_INT32X(f, mode);
 }
 
