@@ -215,6 +215,11 @@ Disassembler::Disassembler()
 	disable_highlighting();
 }
 
+void Disassembler::load(ObjectStream &f)
+{
+	disable_highlighting();
+}
+
 char* (*addr_sym_func)(CPU_ADDR addr, int *symstrlen, void *context) = NULL;
 void* addr_sym_func_context = NULL;
 
@@ -302,7 +307,7 @@ const char *Disassembler::get_cs(AsmSyntaxHighlightEnum style)
 		ASM_SYNTAX_SYMBOL,
 		ASM_SYNTAX_STRING
 	};
-	return (highlight) ? highlights[(int)style] : "";
+	return highlight ? highlights[(int)style] : "";
 }
 
 void Disassembler::enable_highlighting()
