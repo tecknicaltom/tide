@@ -45,14 +45,6 @@ extern "C" {
 #include <stdlib.h>
 #include <string.h>
 
-/*
- *
- */
-
-ElfAnalyser::ElfAnalyser()
-{
-}
-
 void ElfAnalyser::init(ht_elf_shared_data *Elf_shared, File *File)
 {
 	elf_shared = Elf_shared;
@@ -291,7 +283,7 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 						if (!demangled) demangled = cplus_demangle_v3(label, DMGL_PARAMS | DMGL_ANSI | DMGL_TYPES);
 						make_valid_name(label, label);
 						ht_snprintf(elf_buffer, sizeof elf_buffer, "; function %s (%s)", (demangled) ? demangled : label, bind);
-						if (demangled) free(demangled);
+						free(demangled);
 						addComment(address, 0, "");
 						addComment(address, 0, ";********************************************************");
 						addComment(address, 0, elf_buffer);
@@ -408,12 +400,13 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 				if (!getSymbolByName(label)) {
 					Address *address = createAddress64(sym.st_value);
 					char *demangled = cplus_demangle(label, DMGL_PARAMS | DMGL_ANSI);
+					if (!demangled) demangled = cplus_demangle_v3(label, DMGL_PARAMS | DMGL_ANSI | DMGL_TYPES);
 
 					make_valid_name(label, label);
 
 					ht_snprintf(elf_buffer, sizeof elf_buffer, "; data object %s, size %qd (%s)", (demangled) ? demangled : label, sym.st_size, bind);
 
-					if (demangled) free(demangled);
+					free(demangled);
 
 					addComment(address, 0, "");
 					addComment(address, 0, ";********************************************************");
