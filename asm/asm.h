@@ -126,6 +126,7 @@ protected:
 public:
 		Disassembler();
 		Disassembler(BuildCtorArg&a): Object(a) {};
+		void load(ObjectStream &f);
 /* new */
 	virtual	dis_insn *createInvalidInsn();
 	virtual	dis_insn *decode(byte *code, int maxlen, CPU_ADDR cur_address)=0;
