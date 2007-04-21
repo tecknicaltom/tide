@@ -270,7 +270,7 @@ bool AddressFlat64::add(int offset)
 {
 	// check for overflow
 	// FIXME: XXXXXXXXXXXXX
-	addr += (sint64) offset;
+	addr += sint64(offset);
 	return true;
 }
 
