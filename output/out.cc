@@ -377,7 +377,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 			} else {
 				putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "db          ??");
 			}
-			bytes_line++;
+			bytes_line = want_bytes_line = 1;
 		}
 		
 	} else {
@@ -388,7 +388,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 			&& (cur_addr->type.type != dt_code)) {
 				switch (cur_addr->type.type) {
 					case dt_int: {
-						bytes_line += cur_addr->type.length;
+						bytes_line = want_bytes_line = cur_addr->type.length;
 						assert(cur_addr->type.length);
 						if (analy->validAddress(addr, scinitialized)) {
 							char buf[50];
@@ -458,7 +458,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 								b = buf + 16 + escape_special(buf+16, 100, bufread, r, "\"", false);
 								*b = '\"'; b++; *b = 0;
 								putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
-								bytes_line += cur_addr->type.length;
+								bytes_line = want_bytes_line = cur_addr->type.length;
 								break;
 							}
 							default: {assert(0);}
@@ -474,7 +474,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 				}
 			} else {
 				// not a known address
-				bytes_line++;
+				bytes_line = want_bytes_line = 1;
 				byte c;
 				if (analy->validAddress(addr, scinitialized) && (analy->bufPtr(addr, &c, 1)==1)) {
 					char buf[20];
@@ -496,7 +496,7 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 				sprintf(buf, "db          ?? * %d", d);
 				putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, buf);
 			} else {
-				bytes_line += 1;
+				bytes_line = want_bytes_line = 1;
 				putElement(ELEMENT_TYPE_HIGHLIGHT_DATA_CODE, "db          ??");
 			}
 		}
