@@ -68,7 +68,7 @@ struct XexImportFunc {
 };
 
 struct XexImportLib {
-	const char *name;
+	char *name;
 	int func_count;
 	XexImportFunc *funcs;
 };
