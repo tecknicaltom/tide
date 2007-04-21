@@ -1,6 +1,10 @@
  HT ChangeLog
 ==============
 
+version 2.0.5:
+	- Editing bytes in image mode was broken under
+	  subtile circumstances
+
 version 2.0.4:
 	- Fixed some 64 bit issues
 
