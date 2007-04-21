@@ -681,8 +681,8 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 {
 //	fprintf(stdout, "prev_line(%x, %d, %d)\n", *Addr, *line, n);
 //#undef DPRINTF2
-//#define DPRINTF2(msg...) {ht_snprintf(tbuf, 1024, ##msg); fprintf(stderr, "%s", tbuf);}
-//	char tbuf[1024];
+//#define DPRINTF2(msg...) {ht_snprintf(tbuf, 1024, msg); fprintf(stderr, "%s", tbuf);}
+	char tbuf[1024];
 	DPRINTF2("prev_line(%y, %d, %d, %y)\n", Addr, line, n, min);
 
 	int res = 0;
@@ -738,6 +738,7 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 		delete search_addr;
 		search_addr = min->clone();
 	}
+	DPRINTF2("search-start: %y\n", search_addr);
 
 	/*
 	 *	|prev| contains the previous "logical" location.
@@ -745,13 +746,14 @@ int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
 	 */
 	Location *prev = analy->enumLocationsReverse(Addr);
 	if (prev) {
+		DPRINTF2("prev: %y\n", prev->addr);
 		/*
 		 *	|prevnext| contains the "end address" of |prev|.
 		 *	So we know how long (how much bytes) prev is.
 		 */
 		Address *prevnext = prev->addr->clone();
 		if (prevnext->add(getAddrByteLength(prev->addr))) {
-			DPRINTF2("mid-test\n");
+			DPRINTF2("mid-test: prevnext %y\n", prevnext);
 			if (prevnext->compareTo(Addr) > 0) {
 				/*
 				 *   We were in the middle of a location.
