@@ -262,18 +262,9 @@ void AnalyserOutput::generateAddr(Address *Addr, OutAddr *oa)
 				char b[32];
 				sprintf(b, "<< show xrefs (%d) >>", xref_count);
 				char *t;
-				if (Addr->byteSize()==4) {
-					uint32 d;
-					Addr->putIntoArray((byte*)&d);
-					t = externalLink(b, d, 0, 0, 1, NULL);
-				} else {
-					struct {
-						uint32 a PACKED;
-						uint32 b PACKED;
-					} d;
-					Addr->putIntoArray((byte*)&d);
-					t = externalLink(b, d.a, d.b, 0, 1, NULL);
-				}
+				uint64 u;
+				Addr->putIntoUInt64(u);
+				t = externalLink(b, u >> 32, u, 0, 1, NULL);				
 				write(t);
 			} else {
 				Container *xr = cur_addr->xrefs;
