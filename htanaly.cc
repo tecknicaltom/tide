@@ -744,9 +744,10 @@ void ht_aviewer::generateOutputDialog()
 	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
-	String filename, basename, suffix;
+	String filename, basename, basename2, suffix;
 	file->getFilename(filename);
-	filename.rightSplit('.', basename, suffix);
+	filename.rightSplit('/', suffix, basename2);
+	basename2.rightSplit('.', basename, suffix);
 	basename += ".out";
 	setdatastr(v1, basename.contentChar());
 
