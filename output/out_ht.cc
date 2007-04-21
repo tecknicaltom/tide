@@ -157,18 +157,9 @@ char *AnalyserHTOutput::externalLink(char *s, uint32 type1, uint32 type2, uint32
 char *AnalyserHTOutput::link(char *s, Address *Addr)
 {
 	// FIXNEW
-	if (Addr->byteSize() == 4) {
-		uint32 d;
-		Addr->putIntoArray((byte*)&d);
-		*(tag_make_ref(tmpbuffer, d, 0, 0, 0, s)) = 0;
-	} else {
-		struct {
-			uint32 a PACKED;
-			uint32 b PACKED;
-		} d;
-		Addr->putIntoArray((byte*)&d);
-		*(tag_make_ref(tmpbuffer, d.a, d.b, 0, 0, s)) = 0;
-	}
+	uint64 u;
+	Addr->putIntoUInt64(u);
+	*(tag_make_ref(tmpbuffer, u >> 32, u, 0, 0, s)) = 0;
 	return tmpbuffer;
 }
 
