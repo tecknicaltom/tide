@@ -562,6 +562,7 @@ OutAddr *AnalyserOutput::getAddr(Address *Addr)
 			DPRINTF("generate\n");
 			if (out_addrs->count() > 1024) {
 				reset();
+				delete addr;
 				addr = Addr->clone();
 			}
 			oa = new OutAddr(Addr, current_time);
