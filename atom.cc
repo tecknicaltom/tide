@@ -25,7 +25,6 @@
 #include "snprintf.h"
 
 static AVLTree atoms(true);
-static Array atoms2(false);
 
 class Atom: public Object {
 public:
