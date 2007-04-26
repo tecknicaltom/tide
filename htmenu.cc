@@ -179,7 +179,7 @@ void ht_static_context_menu::insert_entry(const char *Name, const char *Comment,
 {
 	char *name = ht_strdup(Name);
 	char *comment = ht_strdup(Comment);
-	char *shortcut = shortcut = shortcut_str(name);
+	char *shortcut = shortcut_str(name);
 	int l = strlen(name);
 	int cl = comment ? strlen(comment)+2 : 0;
 	width = MAX(width, l+cl);
