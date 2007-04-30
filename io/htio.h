@@ -1,3 +1,9 @@
+asfasfas
+a
+sfa
+sf
+as
+f
 /*
  *	HT Editor
  *	io.h
@@ -21,7 +27,7 @@
 #ifndef __IO_H__
 #define __IO_H__
 
-#include "global.h"
+#include "types.h"
 
 // include sys/types.h _before_ dirent.h because Darwin needs this (!)
 #include <sys/types.h>
@@ -32,111 +38,12 @@
  *	COMMON SYS
  */
  
-#ifdef PATH_MAX
-#define HT_NAME_MAX PATH_MAX		/* DJGPP at least */
-#else
-#ifdef MAXNAMLEN
-#define HT_NAME_MAX MAXNAMLEN		/* some BSD... */
-#else
-#ifdef NAME_MAX
-#define HT_NAME_MAX NAME_MAX		/* POSIX and friends... */
-#else
-#define HT_NAME_MAX 260			/* unknown... */
-#endif
-#endif
-#endif
-
-#define HT_S_IFREG         	0x1000
-#define HT_S_IFBLK         	0x2000
-#define HT_S_IFCHR         	0x3000
-#define HT_S_IFDIR         	0x4000
-#define HT_S_IFFIFO        	0x5000
-#define HT_S_IFLNK         	0x6000
-#define HT_S_IFSOCK        	0x7000
-
-#define HT_S_IFMT			0xf000
-
-#define HT_S_ISREG(m)		(((m) & HT_S_IFMT) == HT_S_IFREG)
-#define HT_S_ISBLK(m)		(((m) & HT_S_IFMT) == HT_S_IFBLK)
-#define HT_S_ISCHR(m)		(((m) & HT_S_IFMT) == HT_S_IFCHR)
-#define HT_S_ISDIR(m)		(((m) & HT_S_IFMT) == HT_S_IFDIR)
-#define HT_S_ISFIFO(m)		(((m) & HT_S_IFMT) == HT_S_IFFIFO)
-#define HT_S_ISLNK(m)		(((m) & HT_S_IFMT) == HT_S_IFLNK)
-#define HT_S_ISSOCK(m)		(((m) & HT_S_IFMT) == HT_S_IFSOCK)
-
-#define HT_S_IRUSR            0x0100
-#define HT_S_IRGRP            0x0020
-#define HT_S_IROTH            0x0004
-#define HT_S_IWUSR            0x0080
-#define HT_S_IWGRP            0x0010
-#define HT_S_IWOTH            0x0002
-#define HT_S_IXUSR            0x0040
-#define HT_S_IXGRP            0x0008
-#define HT_S_IXOTH			0x0001
-#define HT_S_IRWXU            (HT_S_IRUSR || HT_S_IWUSR || HT_S_IXUSR)
-#define HT_S_IRWXG            (HT_S_IRGRP || HT_S_IWGRP || HT_S_IXGRP)
-#define HT_S_IRWXO            (HT_S_IROTH || HT_S_IWOTH || HT_S_IXOTH)
-
-#define pstat_ctime			0x00000001
-#define pstat_mtime			0x00000002
-#define pstat_atime			0x00000004
-#define pstat_uid			0x00000008
-#define pstat_gid			0x00000010
-#define pstat_mode_usr		0x00000020
-#define pstat_mode_grp		0x00000040
-#define pstat_mode_oth		0x00000080
-#define pstat_mode_r          0x00000100
-#define pstat_mode_w          0x00000200
-#define pstat_mode_x         	0x00000400
-#define pstat_mode_type		0x00000800
-#define pstat_size			0x00001000
-#define pstat_inode			0x00002000
-#define pstat_cluster		0x00004000
-#define pstat_fsid			0x00008000
-#define pstat_desc			0x00010000
-
-#define pstat_mode_all		(pstat_mode_usr|pstat_mode_grp|pstat_mode_oth|pstat_mode_r|pstat_mode_w|pstat_mode_x|pstat_mode_type)
 
 /* sys_ipc_exec(...) options param flags */
 #define HT_IPC_NONBLOCKING	1
 
 /* system capabilities */
 #define SYSCAP_NONBLOCKING_IPC	1
-
-struct pstat_t {
-	dword	caps;
-	time_t	ctime;
-	time_t	mtime;
-	time_t	atime;
-	int		uid;
-	int		gid;
-	mode_t	mode;	// S_ISUID, S_ISGID, S_I[RWX](USR|GRP|OTH)
-	dword	size;
-	dword	size_high;
-	union {
-		dword	inode;
-		dword	cluster;
-		dword	fsid;
-	};
-	char desc[32];
-};
-
-struct pfind_t {
-	const char *name;
-	pstat_t stat;
-	void *findstate;
-};
-
-typedef bool (*is_path_delim)(char c);
-
-int sys_ht_mode(int mode);
-
-int sys_basename(char *result, const char *filename);
-int sys_dirname(char *result, const char *filename);
-int sys_relname(char *result, const char *filename, const char *cwd);
-int sys_common_canonicalize(char *result, const char *in_name, const char *cwd, is_path_delim delim);
-char *sys_filename_suffix(const char *fn);
-int sys_tmpfile();
 
 /*
  *	COMMON CURSES
@@ -186,7 +93,7 @@ struct drawbufch {
 
 class genericdrawbuf {
 public:
-	bounds size;
+	Bounds size;
 
 	genericdrawbuf();
 	virtual ~genericdrawbuf();
@@ -200,7 +107,7 @@ public:
 	virtual int b_lprintw(int x, int y, int c, int l, int *text);
 	virtual void b_resize(int rw, int rh);
 	virtual void b_rmove(int rx, int ry);
-	virtual void b_setbounds(bounds *b);
+	virtual void b_setbounds(Bounds *b);
 /* graphical extension */
 	virtual void b_line(int px1, int py1, int px2, int py2, int c);
 	virtual void b_putpixel(int px, int py, int c);
@@ -216,7 +123,7 @@ class drawbuf: public genericdrawbuf {
 public:
 	drawbufch *buf;
 
-	drawbuf(bounds *b);
+	drawbuf(Bounds *b);
 	~drawbuf();
 	
 /* overwritten */
@@ -224,7 +131,7 @@ public:
 	virtual void b_printchar(int x, int y, int c, int ch);
 	virtual int b_lprint(int x, int y, int c, int l, char *text);
 	virtual int b_lprintw(int x, int y, int c, int l, int *text);
-	virtual void b_setbounds(bounds *b);
+	virtual void b_setbounds(Bounds *b);
 };
 
 /*
