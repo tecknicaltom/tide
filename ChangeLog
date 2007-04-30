@@ -1,6 +1,9 @@
  HT ChangeLog
 ==============
 
+version 2.0.6:
+	- [POSIX] Ignore mouse events
+
 version 2.0.5:
 	- Editing bytes in image mode was broken under
 	  subtile circumstances
