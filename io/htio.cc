@@ -1,3 +1,4 @@
+asfasdf
 /* 
  *	HT Editor
  *	io.cc
@@ -125,65 +126,6 @@
 #ifndef S_IXOTH
 #define S_IXOTH 0
 #endif
-
-int sys_basename(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash=(slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		int l=strlen(filename);
-		strncpy(result, slash+1, l-(slash-filename)-1);
-		result[l-(slash-filename)-1]=0;
-		return 0;
-	}
-	strcpy(result, filename);
-	return 0;
-}
-
-int sys_dirname(char *result, const char *filename)
-{
-// FIXME: use is_path_delim
-	char *slash1 = strrchr(filename, '/');
-	char *slash2 = strrchr(filename, '\\');
-	char *slash = (slash1>slash2) ? slash1 : slash2;
-	if (slash) {
-		strncpy(result, filename, slash-filename);
-		result[slash-filename] = 0;
-		return 0;
-	}
-	strcpy(result, ".");
-	return 0;
-}
-
-/* filename and pathname must be canonicalized */
-int sys_relname(char *result, const char *filename, const char *cwd)
-{
-	const char *f = filename, *p = cwd;
-	while ((*f == *p) && (*f)) {
-		f++;
-		p++;
-	}
-	if (*f == '/') f++;
-	const char *last = f, *h = f;
-	while (*h) {
-		if (*h == '/') {
-			*(result++) = '.';
-			*(result++) = '.';
-			*(result++) = '/';
-			last = h+1;
-		}
-		h++;
-	}
-	while (f<last) {
-		*(result++) = *f;
-		f++;
-	}
-	*result = 0;
-	strcat(result, last);
-	return 0;
-}
 
 int sys_ht_mode(int mode)
 {
@@ -392,7 +334,7 @@ void genericdrawbuf::b_rmove(int rx, int ry)
 	size.y+=ry;
 }
 
-void genericdrawbuf::b_setbounds(bounds *b)
+void genericdrawbuf::b_setbounds(Bounds *b)
 {
 	size=*b;
 }
@@ -401,7 +343,7 @@ void genericdrawbuf::b_setbounds(bounds *b)
  *	CLASS drawbuf
  */
  
-drawbuf::drawbuf(bounds *b)
+drawbuf::drawbuf(Bounds *b)
 {
 	buf=0;
 	b_setbounds(b);
@@ -416,12 +358,12 @@ void drawbuf::b_fill(int x, int y, int w, int h, int c, int ch)
 {
 	x-=size.x;
 	y-=size.y;
-	for (int iy=y; iy < y+h; iy++) {
-		if (iy < size.h) {
+	for (int iy=y; iy<y+h; iy++) {
+		if (iy<size.h) {
 			drawbufch *b=buf+x+iy*size.w;
-			for (int ix=x; ix < x+w; ix++) {
-				b->ch = ch;
-				b->c = vcp_mix(b->c, c);
+			for (int ix=x; ix<x+w; ix++) {
+				b->ch=ch;
+				b->c=vcp_mix(b->c, c);
 				b++;
 			}
 		}
@@ -430,9 +372,9 @@ void drawbuf::b_fill(int x, int y, int w, int h, int c, int ch)
 
 void drawbuf::b_printchar(int x, int y, int c, int ch)
 {
-	drawbufch *b = buf+(x-size.x)+(y-size.y)*size.w;
-	b->ch = ch;
-	b->c = vcp_mix(b->c, c);
+	drawbufch *b=buf+(x-size.x)+(y-size.y)*size.w;
+	b->ch=ch;
+	b->c=vcp_mix(b->c, c);
 }
 
 int drawbuf::b_lprint(int x, int y, int c, int l, char *text)
@@ -441,10 +383,10 @@ int drawbuf::b_lprint(int x, int y, int c, int l, char *text)
 	x-=size.x;
 	y-=size.y;
 	drawbufch *b=buf+x+y*size.w;
-	if (y < size.h) {
-		while (ox < size.w && *text && ox < l) {
-			b->ch = (byte)*text;
-			b->c = vcp_mix(b->c, c);
+	if (y<size.h) {
+		while ((ox<size.w) && (*text) && (ox<l)) {
+			b->ch=(byte)*text;
+			b->c=vcp_mix(b->c, c);
 			text++;
 			ox++;
 			b++;
@@ -459,10 +401,10 @@ int drawbuf::b_lprintw(int x, int y, int c, int l, int *text)
 	x-=size.x;
 	y-=size.y;
 	drawbufch *b=buf+x+y*size.w;
-	if (y < size.h) {
-		while (ox < size.w && *text && ox < l) {
-			b->ch = *text;
-			b->c = vcp_mix(b->c, c);
+	if (y<size.h) {
+		while ((ox<size.w) && (*text) && (ox<l)) {
+			b->ch=(byte)*text;
+			b->c=vcp_mix(b->c, c);
 			text++;
 			ox++;
 			b++;
@@ -471,7 +413,7 @@ int drawbuf::b_lprintw(int x, int y, int c, int l, int *text)
 	return ox;
 }
 
-void drawbuf::b_setbounds(bounds *b)
+void drawbuf::b_setbounds(Bounds *b)
 {
 	genericdrawbuf::b_setbounds(b);
 	if (buf) free(buf);
