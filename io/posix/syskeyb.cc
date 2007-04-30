@@ -468,8 +468,8 @@ bool init_keyb()
 	/* Mouse support */
 
 	// xterm (VT200-like)
-	printf("\e[?1001s");	// save old highlight mouse tracking
-	printf("\e[?1000h");	// enable mouse tracking aka. receive mouse events through stdin
+//	printf("\e[?1001s");	// save old highlight mouse tracking
+//	printf("\e[?1000h");	// enable mouse tracking aka. receive mouse events through stdin
 
 	return true;
 }
@@ -486,6 +486,6 @@ void done_keyb()
 	/* Mouse support */
 
 	// xterm (VT200-like)
-	printf("\e[?1000l");	// disable mouse tracking
-	printf("\e[?1001r");	// restore old highlight mouse tracking
+//	printf("\e[?1000l");	// disable mouse tracking
+//	printf("\e[?1001r");	// restore old highlight mouse tracking
 }
