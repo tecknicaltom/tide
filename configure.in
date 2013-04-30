@@ -69,7 +69,7 @@ cygwin*)
 mingw32*)
 	IO_DIR=win32
 	echo "*** MINGW32, building native Win32 version" 1>&2
-	HT_LDFLAGS="$HT_LDFLAGS -static-libgcc -static-libstdc++"
+	TIDE_LDFLAGS="$TIDE_LDFLAGS -static-libgcc -static-libstdc++"
 	NEED_CURSES=0
 	HAVE_PIPE=1
 ;;
@@ -171,13 +171,13 @@ HAVE_X11=0
 
 if test "x$enable_x11_textmode" = "xyes"; then
 	TEMP_LDFLAGS=$LDFLAGS
-	LDFLAGS="$HT_LDFLAGS $HT_X11BASE"
+	LDFLAGS="$TIDE_LDFLAGS $HT_X11BASE"
 	AC_CHECK_LIB(X11, XOpenDisplay, HAVE_X11=1)
 	LDFLAGS=$TEMP_LDFLAGS
 	if test "x$HAVE_X11" = "x1"; then
 		AC_DEFINE(HAVE_TEXTMODE_X11, 1, [This system has Xlib support and we shall use it])
-		HT_LIBS="$HT_LIBS -lX11"
-		HT_LDFLAGS="$HT_LDFLAGS $HT_X11BASE"
+		TIDE_LIBS="$TIDE_LIBS -lX11"
+		TIDE_LDFLAGS="$TIDE_LDFLAGS $HT_X11BASE"
 	fi
 fi
 
@@ -197,13 +197,13 @@ if test "x$NEED_CURSES" = "x1"; then
 			   AC_MSG_ERROR([*** (n)curses.h needed ***])
 		fi
 	fi
-	HT_LIBS="$HT_LIBS -l$CURSES_LIB"
+	TIDE_LIBS="$TIDE_LIBS -l$CURSES_LIB"
 fi    
 
 dnl Makefile vars.
 AC_SUBST(IO_DIR)
-AC_SUBST(HT_LDFLAGS)
-AC_SUBST(HT_LIBS)
+AC_SUBST(TIDE_LDFLAGS)
+AC_SUBST(TIDE_LIBS)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

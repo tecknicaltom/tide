@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 
-noinst_LIBRARIES = libhtio.a
-libhtio_a_SOURCES = event.cc sysfile.cc sysdisplay.cc syskeyb.cc sysinit.cc \
+noinst_LIBRARIES = libtideio.a
+libtideio_a_SOURCES = event.cc sysfile.cc sysdisplay.cc syskeyb.cc sysinit.cc \
 sysclipboard.cc types.h
 #htcurses.cc htcurses.h htkeyb.cc htkeyb.h htsys.cc htsys.h
 

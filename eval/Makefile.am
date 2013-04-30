@@ -4,8 +4,8 @@ LFLAGS=
 
 AUTOMAKE_OPTIONS=foreign
 
-noinst_LIBRARIES = libhteval.a
-libhteval_a_SOURCES = evalparse.y evalparse.h eval.cc eval.h lex.l lex.h evalx.c evalx.h evaltype.h
+noinst_LIBRARIES = libtideeval.a
+libtideeval_a_SOURCES = evalparse.y evalparse.h eval.cc eval.h lex.l lex.h evalx.c evalx.h evaltype.h
 INCLUDES = -I$(srcdir) -I$(top_srcdir)
 
 #bin_PROGRAMS = testeval
