@@ -22,3 +22,5 @@ htdoc.h
 htdoc.c
 README
 *.o
+tags
+.glimpse
