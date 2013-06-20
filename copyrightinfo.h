@@ -1,7 +1,9 @@
-/* 
- *	HTE Editor
- *	htinfo.h
+/*
+ *	Tide Editor
+ *	buildinfo.h
  *
+ *	Copyright (C) 2012-2013 Tom Samstag
+ *	Based on HT Editor
  *	Copyright (C) 1999-2002 Stefan Weyergraf
  *
  *	This program is free software; you can redistribute it and/or modify
@@ -18,19 +20,15 @@
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __HTINFO_H__
-#define __HTINFO_H__
+#ifndef __COPYRIGHTINFO_H__
+#define __COPYRIGHTINFO_H__
 
-#define ht_url "http://hte.sourceforge.net"
+#define program_name "Tide"
+#define program_version "0.1"
+#define program_url "http://TODO-REPLACE_WITH_URL"
 
-#define ht_name "ht"
-#define ht_version "2.1.0"
+extern const char *copyright_text[];
 
-#define ht_author1 "Stefan Weyergraf"
-#define ht_copyright1 "(c) 1999-2004 "ht_author1
+extern const char *copyright_html[];
 
-#define ht_author2 "Sebastian Biallas"
-#define ht_mail2 "sb@biallas.net"
-#define ht_copyright2 "(c) 1999-2013 "ht_author2" <"ht_mail2">"
-
-#endif /* !__HTINFO_H__ */
+#endif /* !__COPYRIGHTINFO_H__ */

@@ -32,7 +32,7 @@ htdebug.cc htdebug.h htdialog.cc htdialog.h htelf.cc htelf.h htelfhd.cc \
 htelfhd.h htelfimg.cc htelfimg.h htelfphs.cc htelfphs.h htelfshs.cc htelfshs.h \
 htelfsym.cc htelfsym.h htelfrel.cc htelfrel.h htfinfo.cc htfinfo.h htformat.cc \
 htformat.h hthex.cc hthex.h hthist.cc hthist.h htidle.cc \
-htidle.h htinfo.h htiobox.cc htiobox.h htle.cc htle.h htleent.cc \
+htidle.h copyrightinfo.h copyrightinfo.cc  htiobox.cc htiobox.h htle.cc htle.h htleent.cc \
 htleent.h htlehead.cc htlehead.h htleimg.cc htleimg.h htleobj.cc htleobj.h \
 htlepage.cc htlepage.h htmenu.cc htmenu.h htmz.cc htmz.h \
 htmzhead.cc htmzhead.h htmzimg.cc htmzimg.h htmzrel.cc htmzrel.h htne.cc \

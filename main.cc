@@ -37,21 +37,13 @@
 #include "htidle.h"
 #include "htmenu.h"
 #include "htpal.h"
-#include "htinfo.h"
+#include "copyrightinfo.h"
 #include "htreg.h"
 #include "sys.h"
 #include "snprintf.h"
 #include "info/infoview.h"
 #include "log.h"
 #include "stddata.h"
-
-const char *htcopyrights[]=
-{
-	ht_name" "ht_version" (%s) "__TIME__" on "__DATE__,
-	ht_copyright1,
-	ht_copyright2,
-	NULL
-};
 
 static void add_file_history_entry(char *n)
 {
@@ -128,7 +120,7 @@ static void show_help()
 
 static void show_version()
 {
-	const char **copyrights = htcopyrights;
+	const char **copyrights = copyright_text;
 	while (*copyrights) {
 		printf(*copyrights, sys_get_name());
 		puts("");
@@ -284,7 +276,7 @@ int main(int argc, char *argv[])
 
 	((ht_app*)app)->sendmsg(msg_draw);
 
-	const char **copyrights = htcopyrights;
+	const char **copyrights = copyright_text;
 	while (*copyrights) {
 		LOG(*copyrights, sys_get_name());
 		copyrights++;
@@ -303,7 +295,7 @@ int main(int argc, char *argv[])
 			break;
 		case LS_ERROR_NOT_FOUND:
 			LOG_EX(LOG_WARN, "couldn't load configuration file, using defaults");
-			LOG_EX(LOG_WARN, "note that %s has no mouse support. Use the keyboard!", ht_name);
+			LOG_EX(LOG_WARN, "note that %s has no mouse support. Use the keyboard!", program_name);
 			break;
 		case LS_ERROR_READ:
 			LOG_EX(LOG_ERROR, "couldn't read configuration file...");

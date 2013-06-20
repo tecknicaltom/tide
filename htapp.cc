@@ -31,7 +31,7 @@
 #include "hteval.h"
 #include "hthist.h"
 #include "htidle.h"
-#include "htinfo.h"
+#include "copyrightinfo.h"
 #include "htiobox.h"
 #include "keyb.h"
 #include "htmenu.h"
@@ -1503,7 +1503,7 @@ void ht_app::init(Bounds *pq)
 
 	ht_static_context_menu *help=new ht_static_context_menu();
 	help->init("~Help");
-	help->insert_entry("~About "ht_name, "", cmd_about, 0, 1);
+	help->insert_entry("~About "program_name, "", cmd_about, 0, 1);
 	help->insert_separator();
 	help->insert_entry("~Help contents", "F1", cmd_popup_window_help, 0, 1);
 	help->insert_entry("~Open info file...", NULL, cmd_popup_dialog_info_loader, 0, 1);
@@ -2511,10 +2511,12 @@ void ht_app::handlemsg(htmsg *msg)
 			break;
 		}
 		case cmd_about:
-			msgbox(btmask_ok, "About "ht_name, 0, align_custom, "\n"
-				"\ec"ht_name" "ht_version" (%s)\n\n"
+							 /* TODO: fix
+			msgbox(btmask_ok, "About "program_name, 0, align_custom, "\n"
+				"\ec"program_name" "program_version" (%s)\n\n"
 				"\el"ht_copyright1"\n"ht_copyright2"\n\n"
 				"This program is GPL'd. See Help for more information.", sys_get_name());
+				*/
 			break;
 		case msg_funcexec:
 			if (func(msg->data1.integer, 1)) {
@@ -3347,7 +3349,7 @@ BUILDER(ATOM_HT_PROJECT_ITEM, ht_project_item, Object);
 bool init_app()
 {
 	Bounds b;
-	screen = allocSystemDisplay(ht_name" "ht_version);
+	screen = allocSystemDisplay(program_name" "program_version);
 
 	loglines = new ht_log();
 	loglines->init();

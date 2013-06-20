@@ -21,7 +21,7 @@
 
 #include "analy_names.h"
 #include "htdebug.h"
-#include "htinfo.h"
+#include "copyrightinfo.h"
 #include "out_html.h"
 #include "tools.h"
 #include "x86dis.h"
