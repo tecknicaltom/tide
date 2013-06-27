@@ -225,7 +225,9 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 	char elf_buffer[1024];
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS] == ELFCLASS32) {
 		FileOfs h = elf_shared->sheaders.sheaders32[shidx].sh_offset;
-		FileOfs sto = elf_shared->sheaders.sheaders32[elf_shared->sheaders.sheaders32[shidx].sh_link].sh_offset;
+		int si_symbol = elf_shared->sheaders.sheaders32[shidx].sh_link;
+		if (!isValidELFSectionIdx(elf_shared, si_symbol)) return;
+		FileOfs sto = elf_shared->sheaders.sheaders32[si_symbol].sh_offset;
 		uint symnum = elf_shared->sheaders.sheaders32[shidx].sh_size / sizeof (ELF_SYMBOL32);
 
 		int *entropy = random_permutation(symnum);
@@ -329,7 +331,9 @@ void ElfAnalyser::initInsertSymbols(int shidx)
 	} else {
 		// FIXME: 64 bit
 		FileOfs h = elf_shared->sheaders.sheaders64[shidx].sh_offset;
-		FileOfs sto = elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[shidx].sh_link].sh_offset;
+		int si_symbol = elf_shared->sheaders.sheaders64[shidx].sh_link;
+		if (!isValidELFSectionIdx(elf_shared, si_symbol)) return;
+		FileOfs sto = elf_shared->sheaders.sheaders64[si_symbol].sh_offset;
 		uint symnum = elf_shared->sheaders.sheaders64[shidx].sh_size / sizeof (ELF_SYMBOL64);
 
 		int *entropy = random_permutation(symnum);

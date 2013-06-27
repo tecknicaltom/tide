@@ -50,6 +50,9 @@ static int_hash elf_st_type[] =
 
 static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *group)
 {
+	/* section index of associated symbol table */
+	int si_symbol;
+
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS32 &&
@@ -73,9 +76,14 @@ static ht_view *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *gr
 	FileOfs h = elf32 ? elf_shared->sheaders.sheaders32[symtab_shidx].sh_offset : elf_shared->sheaders.sheaders64[symtab_shidx].sh_offset;
 
 	/* associated string table offset (from sh_link) */
+	si_symbol = elf32 ?
+		elf_shared->sheaders.sheaders32[symtab_shidx].sh_link :
+		elf_shared->sheaders.sheaders64[symtab_shidx].sh_link;
+	// TODO: show the symbol table details even if the string table link is corrupt
+	if (!isValidELFSectionIdx(elf_shared, si_symbol)) return NULL;
 	FileOfs sto = elf32 ?
-		elf_shared->sheaders.sheaders32[elf_shared->sheaders.sheaders32[symtab_shidx].sh_link].sh_offset :
-		elf_shared->sheaders.sheaders64[elf_shared->sheaders.sheaders64[symtab_shidx].sh_link].sh_offset;
+		elf_shared->sheaders.sheaders32[si_symbol].sh_offset :
+		elf_shared->sheaders.sheaders64[si_symbol].sh_offset;
 
 	String symtab_name("?");
 	if (elf32)
