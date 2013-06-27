@@ -3919,7 +3919,7 @@ bool ht_uformat_viewer::set_cursor(uformat_viewer_pos p)
 	bool half_screen_above = false;
 	bool half_screen_below = false;
 
-	if (cursor_state != cursor_state_visible) {
+	if (cursor_state != cursor_state_visible || !t.sub) {
 		return false;
 	}
 
