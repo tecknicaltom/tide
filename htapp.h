@@ -272,7 +272,6 @@ public:
 #define AWT_FILE	3
 #define AWT_OFM		4
 #define AWT_PROJECT	5
-#define AWT_TERM	6
 
 class ht_app_window_entry: public Object {
 public:
@@ -348,7 +347,6 @@ public:
 		ht_window *create_window_log();
 		ht_window *create_window_ofm(const char *url1, const char *url2);
 		ht_window *create_window_project();
-		ht_window *create_window_term(const char *cmd);
 		void delete_window(ht_window *window);
 		ht_window *get_window_by_filename(const char *filename);
 		ht_window *get_window_by_number(uint number);

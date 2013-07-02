@@ -1445,7 +1445,6 @@ void ht_app::init(Bounds *pq)
 	file->insert_entry("Open/Create ~project...", NULL, cmd_project_open, 0, 1);
 	file->insert_entry("Close p~roject", NULL, cmd_project_close, 0, 1);
 	file->insert_separator();
-//	file->insert_entry("~Execute", "Alt+Z", cmd_file_exec_cmd, K_Meta_Z, 1);
 	file->insert_entry("~Quit", "F10", cmd_quit, 0, 1);
 	m->insert_menu(file);
 
@@ -1595,65 +1594,6 @@ ht_window *ht_app::create_window_log()
 		logwindow->insert(logviewer);
 		
 		insert_window(logwindow, AWT_LOG, 0, false, NULL);
-	}
-	return w;
-}
-
-ht_window *ht_app::create_window_term(const char *cmd)
-{
-	ht_window *w = get_window_by_type(AWT_TERM);
-	if (w) {
-		focus(w);
-	} else {
-		Bounds b;
-		get_stdbounds_file(&b);
-
-		ht_window *termwindow=new ht_window();
-		termwindow->init(&b, "terminal", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
-		
-		Bounds k=b;
-		k.x=3;
-		k.y=k.h-2;
-		k.w-=7;
-		k.h=1;
-		ht_statictext *ind=new ht_statictext();
-		ind->init(&k, NULL, align_left, false, true);
-		ind->disable_buffering();
-		ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
-
-		termwindow->setpindicator(ind);
-
-		k=b;
-		k.x=b.w-2;
-		k.y=0;
-		k.w=1;
-		k.h-=2;
-		ht_scrollbar *hs=new ht_scrollbar();
-		hs->init(&k, &termwindow->pal, true);
-
-		termwindow->setvscrollbar(hs);
-
-/*FIXPORT
-		File *in, *out, *err;
-		int handle;
-		int e;
-		if ((e = sys_ipc_exec(&in, &out, &err, &handle, cmd, 0)) == 0) {
-			Terminal *terminal = new Terminal();
-			terminal->init(in, out, err, handle);
-
-			b.x=0;
-			b.y=0;
-			b.w-=2;
-			b.h-=2;
-			TerminalViewer *termviewer=new TerminalViewer();
-			termviewer->init(&b, terminal, true);
-			termwindow->insert(termviewer);
-		
-			insert_window(termwindow, AWT_LOG, 0, false, NULL);
-		} else {
-			errorbox("couldn't create child-process (%d)", e);
-			return NULL;
-		}*/
 	}
 	return w;
 }
@@ -2201,12 +2141,6 @@ const char *ht_app::func(uint i, bool execute)
 		case 6:
 			if (execute) sendmsg(cmd_popup_dialog_view_list);
 			return "mode";
-		/* FIXME: experimental */
-/*		case 9:
-			if (execute) {
-				create_window_term("make");
-			}
-			return "make";*/
 		case 10:
 			if (execute) sendmsg(cmd_quit);
 			return "quit";
@@ -2456,23 +2390,6 @@ void ht_app::handlemsg(htmsg *msg)
 					return;
 				}
 */
-#if 0
-				/* FIXME: experimental */
-				case K_Control_F9:
-					((ht_app*)app)->create_window_term("main.exe");
-					clearmsg(msg);
-					return;
-				case K_Meta_T:
-					create_window_ofm("reg:/", "local:/");
-					clearmsg(msg);
-					return;*/
-				case K_Control_A:
-					create_window_help("/HT/res/info/intidx.info", "Top");
-//					create_window_help("c:/djgpp/projects/enew/res/info/ibnidx.info", "Interrupts By Number");
-					dirtyview();
-					clearmsg(msg);
-					return;
-#endif
 				case K_Space:
 					sendmsg(cmd_popup_dialog_view_list);
 					clearmsg(msg);
@@ -2500,18 +2417,6 @@ void ht_app::handlemsg(htmsg *msg)
 				msg->msg = msg_retval;
 				msg->data1.cstr = s;
 			} else clearmsg(msg);
-			return;
-		}
-		case cmd_file_exec_cmd: {
-			char cmd[HT_NAME_MAX];
-			cmd[0] = 0;
-			if (inputbox("execute shell command (experimental!)",
-			    (sys_get_caps() & SYSCAP_NBIPC) ? "command"
-			    : "non-interactive (!) command",
-			    cmd, sizeof cmd, HISTATOM_FILE) == button_ok) {
-				if (cmd[0]) create_window_term(cmd);
-			}
-			clearmsg(msg);
 			return;
 		}
 		case cmd_file_extend: {
