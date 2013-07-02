@@ -609,20 +609,6 @@ public:
 	virtual	void handlemsg(htmsg *msg);
 };
 
-/*
- *	CLASS ht_listbox_ptr
- */
-
-class ht_listbox_ptr: public Object {
-public:
-	ht_listbox *listbox;
-
-	ht_listbox_ptr(ht_listbox *aListbox)
-		: listbox(aListbox)
-	{
-	}
-};
-
 void center_bounds(Bounds *b);
 
 #endif /* !__HTDIALOG_H__ */
