@@ -289,7 +289,7 @@ bool init_cfg()
 	if (ht_cfg_use_homedir) d = sys_get_home_dir();
 	if (!d || !ht_cfg_use_homedir) d = sys_dirname(appname);
 	if (!d) d = ht_strdup("");
-#if !defined(WIN32) && !defined(__WIN32__) && !defined(DJGPP) && !defined(MSDOS)
+#if !defined(WIN32) && !defined(__WIN32__)
 	const char *b = "/"SYSTEM_CONFIG_FILE_NAME;
 #else
 	const char *b = "\\"SYSTEM_CONFIG_FILE_NAME;

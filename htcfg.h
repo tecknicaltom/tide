@@ -24,7 +24,7 @@
 #include "data.h"
 #include "stream.h"
 
-#if defined(WIN32) || defined(__WIN32__) || defined(MSDOS) || defined(DJGPP)
+#if defined(WIN32) || defined(__WIN32__)
 #define SYSTEM_CONFIG_FILE_NAME "ht2.cfg"
 #else
 #define SYSTEM_CONFIG_FILE_NAME ".htcfg2"

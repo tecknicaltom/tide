@@ -175,7 +175,7 @@ static char *_env_replace(char *str, unsigned int len)
 	char *t2;
 	while (cc != len) {
 		t2 = prt?prt:str;
-#if defined(WIN32) || defined(__WIN32__) || defined(DJGPP) || defined(MSDOC)
+#if defined(WIN32) || defined(__WIN32__)
 		if (t2[cc] == '%' || t2[cc] == ' ') {
 #else
 		if (t2[cc] == '$' || t2[cc] == ' ') {
@@ -304,10 +304,6 @@ char *sys_get_home_dir(void)
 			}
 		}
 	}
-#elif defined(MSDOS) 
-	// -?
-#elif defined(DJGPP)
-	// unknown...
 #else 
 	char *path = getenv("HOME");
 	if (path) return _env_replace(path, strlen(path));

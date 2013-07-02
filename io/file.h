@@ -34,8 +34,9 @@
 #include <sys/types.h>
 #include <time.h>
 
+// TODO: Can this be done with autoconf?
 #ifdef PATH_MAX
-#define HT_NAME_MAX PATH_MAX	/* DJGPP at least */
+#define HT_NAME_MAX PATH_MAX	/* Still needed without DJGPP support? */
 #else
 #ifdef MAXNAMLEN
 #define HT_NAME_MAX MAXNAMLEN	/* some BSD... */
