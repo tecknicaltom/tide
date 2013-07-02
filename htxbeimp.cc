@@ -413,9 +413,6 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
-	int h0=new_timer();
-	start_timer(h0);
-
 	ht_group *g;
 	Bounds c;
 
@@ -457,10 +454,6 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 	
 
-	stop_timer(h0);
-//	LOG("%y: PE: %d ticks (%d msec) to read imports", file->get_name(), get_timer_tick(h0), get_timer_msec(h0));
-	delete_timer(h0);
-
 	char iline[256];
 	ht_snprintf(iline, sizeof iline, "* XBE kernel thunk table at offset %08x (%d functions)", xbe_shared->header.kernel_image_thunk_address, function_count);
 	head=new ht_statictext();
@@ -489,7 +482,6 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 	xbe_shared->v_imports=v;
 	return g;
 xbe_read_error:
-	delete_timer(h0);
 	String fn;
 	errorbox("%y: XBE import section seems to be corrupted.", &file->getFilename(fn));
 	g->done();

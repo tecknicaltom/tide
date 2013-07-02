@@ -51,9 +51,6 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	sec_size = pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_EXPORT].size;
 	if (!sec_rva || !sec_size) return NULL;
 
-	int h0=new_timer();
-	start_timer(h0);
-
 	uint32 *efunct=NULL, *enamet=NULL;
 	uint16 *eordt=NULL;
 	String filename;
@@ -205,10 +202,6 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 
 	g->setpalette(palkey_generic_window_default);
 
-	stop_timer(h0);
-//	LOG("%y: PE: %d ticks (%d msec) to read exports", filename, get_timer_tick(h0), get_timer_msec(h0));
-	delete_timer(h0);
-
 	free(ename);
 
 	free(efunct);
@@ -219,7 +212,6 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	free(esectionbuf);
 	return g;
 pe_read_error:
-	delete_timer(h0);
 	errorbox("%y: PE export directory seems to be corrupted.", &filename);
 	free(efunct);
 	free(enamet);

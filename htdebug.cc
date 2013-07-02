@@ -25,9 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// FIXME: auto-detect ?
-#define CPU_CLOCK 500000000
-
 void ht_assert_failed(const char *file, int line, const char *assertion)
 {
 	fprintf(stderr, "in file %s, line %d: assertion failed: %s\n", file, line, assertion);
@@ -71,40 +68,3 @@ void ht_warn(char *file, int line, char *format,...)
 	fputc('\n', stderr);
 	va_end(arg);
 }
-
-// TODO: delete code
-#ifndef DELETE_DEPRECATED
-
-timer_handle new_timer()
-{
-	return -1;
-}
-
-void start_timer(timer_handle handle)
-{
-}
-
-void stop_timer(timer_handle handle)
-{
-}
-
-void delete_timer(timer_handle handle)
-{
-}
-
-uint32 get_timer_sec(timer_handle handle)
-{
-	return 0;
-}
-
-uint32 get_timer_msec(timer_handle handle)
-{
-	return 0;
-}
-
-uint32 get_timer_tick(timer_handle h)
-{
-	return 0;
-}
-
-#endif

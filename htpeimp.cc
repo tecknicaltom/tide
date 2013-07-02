@@ -57,9 +57,6 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 	}
 	if (!sec_rva || !sec_size) return NULL;
 
-	int h0=new_timer();
-	start_timer(h0);
-
 	ht_group *g;
 	Bounds c;
 	String fn, s, dllname;
@@ -263,10 +260,6 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 		}			
 	}
 
-	stop_timer(h0);
-//	LOG("%y: PE: %d ticks (%d msec) to read imports", file->get_name(), get_timer_tick(h0), get_timer_msec(h0));
-	delete_timer(h0);
-
 	ht_snprintf(iline, sizeof iline, "* PE import directory at offset %08qx (%d functions from %d libraries)", iofs, function_count, dll_count);
 	head=new ht_statictext();
 	head->init(&c, iline, align_left);
@@ -296,7 +289,6 @@ static ht_view *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 	pe_shared->v_imports=v;
 	return g;
 pe_read_error:
-	delete_timer(h0);
 	errorbox("%y: PE import section seems to be corrupted.", &file->getFilename(fn));
 	g->done();
 	delete g;

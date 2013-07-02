@@ -34,19 +34,6 @@ void ht_error(const char *file, int line, const char *format,...) __attribute__ 
 void ht_trace(const char *file, int line, const char *format,...);
 void ht_warn(const char *file, int line, const char *format,...);
 
-typedef uint64 timepoint;
-
-typedef int timer_handle;
-
-timer_handle new_timer();
-void start_timer(timer_handle handle);
-void stop_timer(timer_handle handle);
-void delete_timer(timer_handle handle);
-
-uint get_timer_sec(timer_handle handle);
-uint get_timer_msec(timer_handle handle);
-uint get_timer_tick(timer_handle h);
-
 #define HT_ERROR(a...) ht_error(__FILE__, __LINE__, a)
 #define HT_WARN(a...) ht_warn(__FILE__, __LINE__, a)
 

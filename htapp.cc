@@ -1402,15 +1402,6 @@ static bool doFileChecks(File *file)
 	return false;
 }
 
-/*debug*/
-//#define DRAW_TIMINGS
-//#define NO_AVG
-#define AVG_TIMINGS 10
-int timings[AVG_TIMINGS];
-int cur_timing=0, max_timing=0;
-int h0;
-/**/
-
 void ht_app::init(Bounds *pq)
 {
 	ht_dialog::init(pq, 0, 0);
@@ -1435,9 +1426,6 @@ void ht_app::init(Bounds *pq)
 	html_lexer->init();
 
 	syntax_lexers->insert(html_lexer);
-	
-	/* init timer */
-	h0=new_timer();
 
 	/* create menu */
 	getbounds(&b);
@@ -1555,8 +1543,6 @@ void ht_app::init(Bounds *pq)
 
 void ht_app::done()
 {
-	delete_timer(h0);
-
 	delete syntax_lexers;
 	delete windows;
 
@@ -2173,20 +2159,6 @@ const char *ht_app::defaultpaletteclass()
 int analy_id = 0;
 void ht_app::draw()
 {
-/* show draw timings */
-#ifdef DRAW_TIMING
-	int xyz=get_timer_1024tick(h0);
-	buf->printf(17, 1, 7, "cur: %d (%d msec)", xyz*1024, get_timer_msec(h0));
-#ifndef NO_AVG
-	if (cur_timing>=AVG_TIMINGS-1) cur_timing=0;
-	timings[cur_timing++]=xyz;
-	if (cur_timing>max_timing) max_timing=cur_timing;
-	int avg=0;
-	for (int i=0; i<max_timing; i++) avg+=timings[i];
-	avg=avg/max_timing;
-	buf->printf(57, 1, 7, "avg%d: %d", max_timing+1, avg*1024);
-#endif
-#endif
 }
 
 void ht_app::delete_window(ht_window *window)
@@ -2414,7 +2386,6 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 	}
 	if (msg->msg == msg_draw) {
-		start_timer(h0);
 		if (msg->type == mt_broadcast) {
 			ht_view *v = first;
 			while (v) {
@@ -2424,7 +2395,6 @@ void ht_app::handlemsg(htmsg *msg)
 		} else {
 			current->handlemsg(msg);
 		}
-		stop_timer(h0);
 		draw();
 		screen->show();
 	} else {

@@ -1154,11 +1154,6 @@ void ht_text_viewer::cursor_vput(uint vx)
 
 void ht_text_viewer::draw()
 {
-//#define TIME_DRAW
-#ifdef TIME_DRAW
-	timer_handle h=new_timer();
-	start_timer(h);
-#endif /* TIME_DRAW */
 	if (!textfile) return;
 
 	vcp bgcolor = get_bgcolor();
@@ -1268,13 +1263,6 @@ void ht_text_viewer::draw()
 		pos.line++;
 	}
 	if (focused) setcursor(cursorx, cursory, get_cursor_mode());
-
-#ifdef TIME_DRAW
-	stop_timer(h);
-	int tix=get_timer_tick(h);
-	delete_timer(h);
-	buf_printf(40, 0, bgcolor, "%dtix", tix);
-#endif /* TIME_DRAW */
 }
 
 const char *ht_text_viewer::func(uint i, bool execute)

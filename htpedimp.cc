@@ -48,9 +48,6 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 	uint sec_size = pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_DELAY_IMPORT].size;
 	if (!sec_rva || !sec_size) return NULL;
 
-	int h0=new_timer();
-	start_timer(h0);
-
 	uint dll_count=0;
 	uint function_count=0;
 
@@ -139,10 +136,6 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 		dll_index++;
 	}
 
-	stop_timer(h0);
-//	LOG("%y: PE: %d ticks (%d msec) to read delay-imports", file->get_name(), get_timer_tick(h0), get_timer_msec(h0));
-	delete_timer(h0);
-
 	ht_snprintf(iline, sizeof iline, "* PE delay-import directory at offset %08x (%d delay-imports from %d libraries)", iofs, function_count, dll_count);
 
 	head=new ht_statictext();
@@ -175,7 +168,6 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 
 	return g;
 pe_read_error:
-	delete_timer(h0);
 	errorbox("%y: PE delay-import directory seems to be corrupted.", &file->getFilename(fn));
 	v->done();
 	delete v;
