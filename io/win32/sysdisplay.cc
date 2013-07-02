@@ -438,11 +438,3 @@ SystemDisplay *allocSystemDisplay(const char *title)
 	sysdisplay_count++;
 	return new Win32SystemDisplay(title);
 }
-
-void sys_display_enter()
-{
-}
-
-void sys_display_leave()
-{
-}

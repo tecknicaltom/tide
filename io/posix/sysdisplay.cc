@@ -526,15 +526,3 @@ SystemDisplay *allocSystemDisplay(const char *title)
 	gDisplay = new CursesSystemDisplay(title);
 	return gDisplay;
 }
-
-/*
-void sys_display_enter()
-{
-	gDisplay->term_on();
-}
-
-void sys_display_leave()
-{
-	gDisplay->term_off();
-}
-*/
