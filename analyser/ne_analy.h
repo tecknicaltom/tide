@@ -38,7 +38,7 @@ public:
 	virtual	ObjectID	getObjectID() const;
 
 	virtual	void		beginAnalysis();
-	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
+	virtual	uint		bufPtr(const Address *Addr, byte *buf, int size);
 		bool		convertAddressToNEAddress(const Address *addr, NEAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress1616(uint16 seg, uint16 ofs);
@@ -53,7 +53,7 @@ public:
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
-	virtual	FileOfs		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(const Address *Addr);
 	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 };
 

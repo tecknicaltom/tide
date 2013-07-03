@@ -231,7 +231,7 @@ ObjectID	CoffAnalyser::getObjectID() const
 /*
  *
  */
-uint CoffAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint CoffAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 	assert(ofs != INVALID_FILE_OFS);
@@ -295,7 +295,7 @@ Assembler *CoffAnalyser::createAssembler()
 /*
  *
  */
-FileOfs CoffAnalyser::addressToFileofs(Address *Addr)
+FileOfs CoffAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;

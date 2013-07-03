@@ -39,7 +39,7 @@ public:
 	virtual	ObjectID	getObjectID() const;
 
 	virtual	void		beginAnalysis();
-	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
+	virtual	uint		bufPtr(const Address *Addr, byte *buf, int size);
 		bool		convertAddressToRVA(const Address *addr, RVA *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(uint32 addr);
@@ -54,7 +54,7 @@ public:
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
-	virtual	FileOfs		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(const Address *Addr);
 	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 };
 

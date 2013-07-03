@@ -288,7 +288,7 @@ ObjectID	PEAnalyser::getObjectID() const
 /*
  *
  */
-uint PEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint PEAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*	if (ofs == INVALID_FILE_OFS) {
@@ -382,7 +382,7 @@ Assembler *PEAnalyser::createAssembler()
 /*
  *
  */
-FileOfs PEAnalyser::addressToFileofs(Address *Addr)
+FileOfs PEAnalyser::addressToFileofs(const Address *Addr)
 {
 /*     char tbuf[1024];
 	Addr->stringify(tbuf, 1024, 0);

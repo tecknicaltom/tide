@@ -207,7 +207,7 @@ ObjectID	XBEAnalyser::getObjectID() const
 /*
  *
  */
-uint XBEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint XBEAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*	if (ofs == INVALID_FILE_OFS) {
@@ -269,7 +269,7 @@ Assembler *XBEAnalyser::createAssembler()
 /*
  *
  */
-FileOfs XBEAnalyser::addressToFileofs(Address *Addr)
+FileOfs XBEAnalyser::addressToFileofs(const Address *Addr)
 {
 /*     char tbuf[1024];
 	Addr->stringify(tbuf, 1024, 0);

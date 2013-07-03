@@ -170,7 +170,7 @@ ObjectID	XEXAnalyser::getObjectID() const
 /*
  *
  */
-uint XEXAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint XEXAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*	if (ofs == INVALID_FILE_OFS) {
@@ -208,7 +208,7 @@ Address *XEXAnalyser::createAddress()
 /*
  *
  */
-FileOfs XEXAnalyser::addressToFileofs(Address *Addr)
+FileOfs XEXAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;

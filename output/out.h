@@ -124,8 +124,8 @@ public:
 	virtual	void			header();
 			void		invalidateCache();
 	virtual	char *			link(char *s, Address *Addr);
-			int		nextLine(Address *&Addr, int &line, int n, Address *max);
-			int		prevLine(Address *&Addr, int &line, int n, Address *min);
+			int		nextLine(Address *&Addr, int &line, int n, const Address *max);
+			int		prevLine(Address *&Addr, int &line, int n, const Address *min);
 	virtual	void			putElement(int element_type, const char *element);
 			void		reset();
 			void		write(const char *s);

@@ -61,7 +61,7 @@ int AddressX86Flat32::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86Flat32::difference(int &result, Address *to)
+bool AddressX86Flat32::difference(int &result, const Address *to)
 {
 	if (getObjectID() == to->getObjectID()) {
 		result = addr-((AddressX86Flat32 *)to)->addr;
@@ -200,7 +200,7 @@ int AddressX86_1632::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86_1632::difference(int &result, Address *to)
+bool AddressX86_1632::difference(int &result, const Address *to)
 {
 	if ((getObjectID() == to->getObjectID()) && (seg == ((AddressX86_1632 *)to)->seg)) {
 		result = addr-((AddressX86_1632 *)to)->addr;
@@ -343,7 +343,7 @@ int AddressX86_1616::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86_1616::difference(int &result, Address *to)
+bool AddressX86_1616::difference(int &result, const Address *to)
 {
 	if ((getObjectID() == to->getObjectID()) && (seg == ((AddressX86_1616 *)to)->seg)) {
 		result = (int)addr-(int)((AddressX86_1616 *)to)->addr;

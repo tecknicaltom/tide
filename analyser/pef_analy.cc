@@ -374,7 +374,7 @@ ObjectID PEFAnalyser::getObjectID() const
 /*
  *
  */
-uint PEFAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint PEFAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
@@ -421,7 +421,7 @@ Assembler *PEFAnalyser::createAssembler()
 /*
  *
  */
-FileOfs PEFAnalyser::addressToFileofs(Address *Addr)
+FileOfs PEFAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		uint32 ofs;

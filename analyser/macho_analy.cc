@@ -238,7 +238,7 @@ ObjectID MachoAnalyser::getObjectID() const
 /*
  *
  */
-uint MachoAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint MachoAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 	assert(ofs != INVALID_FILE_OFS);
@@ -314,7 +314,7 @@ Assembler *MachoAnalyser::createAssembler()
 /*
  *
  */
-FileOfs MachoAnalyser::addressToFileofs(Address *Addr)
+FileOfs MachoAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;

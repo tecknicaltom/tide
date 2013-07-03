@@ -316,7 +316,7 @@ ObjectID	LEAnalyser::getObjectID() const
 /*
  *
  */
-FileOfs LEAnalyser::addressToFileofs(Address *Addr)
+FileOfs LEAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;
@@ -361,7 +361,7 @@ FileOfs LEAnalyser::addressToRealFileofs(Address *Addr)
 /*
  *
  */
-uint LEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint LEAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {

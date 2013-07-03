@@ -142,7 +142,7 @@ ObjectID FLTAnalyser::getObjectID() const
 /*
  *
  */
-uint FLTAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint FLTAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
@@ -184,7 +184,7 @@ Assembler *FLTAnalyser::createAssembler()
 /*
  *
  */
-FileOfs FLTAnalyser::addressToFileofs(Address *Addr)
+FileOfs FLTAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FLTAddress ea;

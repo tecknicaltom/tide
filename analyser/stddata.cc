@@ -95,7 +95,7 @@ Area *Area::clone() const
 	return area;
 }
 
-static area_s *areaget(area_s *p, Object *V)
+static area_s *areaget(area_s *p, const Object *V)
 {
 	if (p) {
 		if (V->compareTo(p->start) < 0) return areaget(p->left, V);
@@ -104,12 +104,12 @@ static area_s *areaget(area_s *p, Object *V)
 	} else return NULL;
 }
 
-area_s *Area::getArea(Object *at)
+area_s *Area::getArea(const Object *at)
 {
 	return areaget(a, at);
 }
 
-static void areaadd(area_s *&p, Object *Start, Object *End)
+static void areaadd(area_s *&p, const Object *Start, const Object *End)
 {
 	if (p) {
 		if (Start->compareTo(p->start) >= 0 && Start->compareTo(p->end)<=0) {
@@ -145,7 +145,7 @@ static void areaadd(area_s *&p, Object *Start, Object *End)
 	}
 }
 
-void Area::add(Object *Start, Object *End)
+void Area::add(const Object *Start, const Object *End)
 {
 	areaadd(a, Start, End);
 }

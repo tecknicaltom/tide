@@ -279,7 +279,7 @@ ObjectID	NEAnalyser::getObjectID() const
 /*
  *
  */
-uint NEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint NEAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
@@ -324,7 +324,7 @@ Assembler *NEAnalyser::createAssembler()
 /*
  *
  */
-FileOfs NEAnalyser::addressToFileofs(Address *Addr)
+FileOfs NEAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;

@@ -77,7 +77,7 @@ void InvalidAddress::putIntoCPUAddress(CPU_ADDR *ca) const
 {
 }
 
-bool InvalidAddress::difference(int &result, Address *to)
+bool InvalidAddress::difference(int &result, const Address *to)
 {
 	return false;
 }
@@ -172,7 +172,7 @@ int AddressFlat32::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressFlat32::difference(int &result, Address *to)
+bool AddressFlat32::difference(int &result, const Address *to)
 {
 	if (getObjectID() == to->getObjectID()) {
 		result = addr - ((AddressFlat32 *)to)->addr;
@@ -298,7 +298,7 @@ int AddressFlat64::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressFlat64::difference(int &result, Address *to)
+bool AddressFlat64::difference(int &result, const Address *to)
 {
 	if (getObjectID() == to->getObjectID()) {
 		uint64 res = addr - ((AddressFlat64 *)to)->addr;
@@ -393,7 +393,7 @@ int AddressFlat64::stringSize() const
  *
  */
  
-AddrXRef::AddrXRef(Address *a, xref_enum_t Type)
+AddrXRef::AddrXRef(const Address *a, xref_enum_t Type)
 {
 	addr = a->clone();
 	type = Type;
@@ -430,7 +430,7 @@ int AddrXRef::compareTo(const Object *o) const
 /*
  *
  */
-AddressQueueItem::AddressQueueItem(Address *aAddr, Address *aFunc)
+AddressQueueItem::AddressQueueItem(const Address *aAddr, const Address *aFunc)
 {
 	addr = aAddr->clone();
 	func = aFunc->clone();
@@ -704,7 +704,7 @@ void	Analyser::done()
 /*
  *	addAddressSymbol will never overwrite an existing label (like addlabel)
  */
-bool Analyser::addAddressSymbol(Address *address, const char *prefix, labeltype type, Location *infunc)
+bool Analyser::addAddressSymbol(const Address *address, const char *prefix, labeltype type, Location *infunc)
 {
 	if (!validAddress(address, scvalid)) return false;
 
@@ -722,7 +722,7 @@ bool Analyser::addAddressSymbol(Address *address, const char *prefix, labeltype 
 /*
  *
  */
-void	Analyser::addComment(Address *Addr, int line, const char *c)
+void	Analyser::addComment(const Address *Addr, int line, const char *c)
 {
 	// line 0 meens append (at the moment assume append every time ;-))
 
@@ -747,7 +747,7 @@ void	Analyser::addComment(Address *Addr, int line, const char *c)
  *           fail if label exist on another address
  *
  */
-bool Analyser::addSymbol(Address *Addr, const char *label, labeltype type, Location *infunc)
+bool Analyser::addSymbol(const Address *Addr, const char *label, labeltype type, Location *infunc)
 {
 	if (!validAddress(Addr, scvalid)) return false;
 
@@ -793,7 +793,7 @@ bool Analyser::addSymbol(Address *Addr, const char *label, labeltype type, Locat
 /*
  *
  */
-bool Analyser::addXRef(Address *from, Address *to, xref_enum_t action)
+bool Analyser::addXRef(const Address *from, const Address *to, xref_enum_t action)
 {
 	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return false;
 
@@ -816,7 +816,7 @@ bool Analyser::addXRef(Address *from, Address *to, xref_enum_t action)
 /*
  *
  */
-void	Analyser::assignComment(Address *Addr, int line, const char *c)
+void	Analyser::assignComment(const Address *Addr, int line, const char *c)
 {
 	/* not really implemented */
 	addComment(Addr, line, c);
@@ -872,7 +872,7 @@ bool Analyser::assignSymbol(Address *Addr, const char *label, labeltype type, Lo
 /*
  *
  */
-void Analyser::assignXRef(Address *from, Address *to, xref_enum_t action)
+void Analyser::assignXRef(const Address *from, const Address *to, xref_enum_t action)
 {
 	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return;
 
@@ -987,7 +987,7 @@ bool	Analyser::continueAnalysis()
 /*
  *
  */
-void Analyser::continueAnalysisAt(Address *Addr)
+void Analyser::continueAnalysisAt(const Address *Addr)
 {
 	if (!validAddress(Addr, sccode)) return;
 	if (queryConfig(Q_DO_ANALYSIS)) {
@@ -1017,7 +1017,7 @@ Assembler *Analyser::createAssembler()
 /*
  *
  */
-void	Analyser::dataAccess(Address *Addr, taccess access)
+void	Analyser::dataAccess(const Address *Addr, taccess access)
 {
 	if (!validAddress(Addr, scvalid)) {
 		char	msg[100];
@@ -1088,7 +1088,7 @@ void	Analyser::dataAccess(Address *Addr, taccess access)
 /*
  *	disables address, frees misc
  */
-void	Analyser::deleteLocation(Address *Addr)
+void	Analyser::deleteLocation(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 	if (a) {
@@ -1102,7 +1102,7 @@ void	Analyser::deleteLocation(Address *Addr)
 /*
  *	disables label of an address and unassigns address' label
  */
-void Analyser::deleteSymbol(Address *Addr)
+void Analyser::deleteSymbol(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 	if (a) {
@@ -1115,7 +1115,7 @@ void Analyser::deleteSymbol(Address *Addr)
 /*
  *
  */
-bool Analyser::deleteXRef(Address *from, Address *to)
+bool Analyser::deleteXRef(const Address *from, const Address *to)
 {
 	if (!validAddress(from, scvalid) || !validAddress(to, scvalid)) return false;
 
@@ -1264,7 +1264,7 @@ void	Analyser::engageCodeanalyser()
 	}
 }
 
-static void analyserenum_addrs(Location *locs, Address *at, Location *&loc)
+static void analyserenum_addrs(Location *locs, const Address *at, Location *&loc)
 {
 	if ((at->compareTo(locs->addr) < 0) || !at->isValid()) {
 		loc = locs;
@@ -1277,7 +1277,7 @@ static void analyserenum_addrs(Location *locs, Address *at, Location *&loc)
 /*
  *
  */
-Location *Analyser::enumLocations(Address *Addr)
+Location *Analyser::enumLocations(const Address *Addr)
 {
 	Location *result = NULL;
 	if (locations) analyserenum_addrs(locations, Addr, result);
@@ -1378,7 +1378,7 @@ Symbol *Analyser::enumSymbolsByNameReverse(const char *at)
 	return result;
 }
 
-Symbol *Analyser::enumSymbols(Symbol *sym)
+Symbol *Analyser::enumSymbols(const Symbol *sym)
 {
 	if (sym) {
 		return enumSymbolsByName(sym->name);
@@ -1387,7 +1387,7 @@ Symbol *Analyser::enumSymbols(Symbol *sym)
 	}
 }
 
-Symbol *Analyser::enumSymbolsReverse(Symbol *sym)
+Symbol *Analyser::enumSymbolsReverse(const Symbol *sym)
 {
 	if (sym) {
 		return enumSymbolsByNameReverse(sym->name);
@@ -1400,7 +1400,7 @@ Symbol *Analyser::enumSymbolsReverse(Symbol *sym)
 /*
  *
  */
-taddr_typetype Analyser::examineData(Address *Addr)
+taddr_typetype Analyser::examineData(const Address *Addr)
 {
 	if ((validReadAddress(Addr)) && (validAddress(Addr, scinitialized))) {
 		DPRINTF("examinating data @%y:\n", Addr);
@@ -1433,7 +1433,7 @@ Location *Analyser::getLocationByAddress(const Address *Addr)
 /*
  *   finds the address Addr belongs to (if address has size > 1)
  */
-Location *Analyser::getLocationContextByAddress(Address *Addr)
+Location *Analyser::getLocationContextByAddress(const Address *Addr)
 {
 	Location *res = enumLocationsReverse(Addr);
 	if (res && res->type.type != dt_unknown) {
@@ -1465,7 +1465,7 @@ Location *Analyser::getFunctionByAddress(const Address *Addr)
 /*
  *	searches back to the last location
  */
-Location *Analyser::getPreviousSymbolByAddress(Address *Addr)
+Location *Analyser::getPreviousSymbolByAddress(const Address *Addr)
 {
 	Location *loc = getLocationByAddress(Addr);
 	if (!loc) loc = enumLocationsReverse(Addr);
@@ -1498,7 +1498,7 @@ Symbol *Analyser::getSymbolByName(const char *label)
 	return analyserfindlabel(symbols, label);
 }
 
-const char *Analyser::getSymbolNameByLocation(Location *loc)
+const char *Analyser::getSymbolNameByLocation(const Location *loc)
 {
 	return loc ? (loc->label ? loc->label->name : NULL): NULL;
 }
@@ -1587,7 +1587,7 @@ void Analyser::freeSymbols(Symbol *labels)
 /*
  *
  */
-CommentList *Analyser::getComments(Address *Addr)
+CommentList *Analyser::getComments(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 	if (a) {
@@ -1612,7 +1612,7 @@ static char *analy_addr_sym_func2(CPU_ADDR Addr, int *symstrlen, void *analy)
 /*
  *
  */
-const char *Analyser::getDisasmStr(Address *Addr, int &length)
+const char *Analyser::getDisasmStr(const Address *Addr, int &length)
 {
 	if (validAddress(Addr, scinitialized)) {
 		if (disasm) {
@@ -1633,7 +1633,7 @@ const char *Analyser::getDisasmStr(Address *Addr, int &length)
 /*
  *
  */
-const char *Analyser::getDisasmStrFormatted(Address *Addr)
+const char *Analyser::getDisasmStrFormatted(const Address *Addr)
 {
 	if (disasm) {
 		addr_sym_func_context = this;
@@ -1718,7 +1718,7 @@ const char *Analyser::getSegmentNameByAddress(const Address *Addr)
 /*
  *
  */
-Symbol *Analyser::getSymbolByAddress(Address *Addr)
+Symbol *Analyser::getSymbolByAddress(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 
@@ -1736,7 +1736,7 @@ const char *Analyser::getType()
 /*
  *
  */
-Container *Analyser::getXRefs(Address *Addr)
+Container *Analyser::getXRefs(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 	if (!a) return NULL;
@@ -1844,7 +1844,7 @@ void Analyser::makeDirty()
 /*
  *
  */
-CPU_ADDR Analyser::mapAddr(Address *aAddr)
+CPU_ADDR Analyser::mapAddr(const Address *aAddr)
 {
 	/*
 	 * 	this function should map the independent address Addr to a
@@ -1959,7 +1959,7 @@ bool Analyser::popAddress(Address **Addr, Address **func)
 /*
  *
  */
-void Analyser::pushAddress(Address *Addr, Address *func)
+void Analyser::pushAddress(const Address *Addr, const Address *func)
 {
 	if (validCodeAddress(Addr)) {
 		if (!func->isValid()) {

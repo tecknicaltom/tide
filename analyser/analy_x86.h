@@ -32,7 +32,7 @@ public:
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(const Address *to);
-	virtual bool difference(int &result, Address *to);
+	virtual bool difference(int &result, const Address *to);
 	virtual AddressX86Flat32 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(const CPU_ADDR *ca);
@@ -59,7 +59,7 @@ public:
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(const Address *to);
-	virtual bool difference(int &result, Address *to);
+	virtual bool difference(int &result, const Address *to);
 	virtual AddressX86_1616 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(const CPU_ADDR *ca);
@@ -86,7 +86,7 @@ public:
 	virtual int byteSize();
 	virtual int compareTo(const Object *obj) const;
 	virtual int compareDelinear(const Address *obj);
-	virtual bool difference(int &result, Address *to);
+	virtual bool difference(int &result, const Address *to);
 	virtual AddressX86_1632 *clone() const;
 	virtual void getFromArray(const byte *array);
 	virtual void getFromCPUAddress(const CPU_ADDR *ca);

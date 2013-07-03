@@ -664,7 +664,7 @@ void	AnalyserOutput::invalidateCache()
 	}
 }
 
-int	AnalyserOutput::nextLine(Address *&Addr, int &line, int n, Address *max)
+int	AnalyserOutput::nextLine(Address *&Addr, int &line, int n, const Address *max)
 {
 	int res = 0;
 	int len;
@@ -682,7 +682,7 @@ int	AnalyserOutput::nextLine(Address *&Addr, int &line, int n, Address *max)
 	return res;
 }
 
-int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, Address *min)
+int	AnalyserOutput::prevLine(Address *&Addr, int &line, int n, const Address *min)
 {
 //#undef DPRINTF2
 //#define DPRINTF2(msg...) {ht_snprintf(tbuf, 1024, msg); fprintf(stderr, "%s", tbuf);}

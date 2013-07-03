@@ -36,7 +36,7 @@ public:
 	virtual	ObjectID	getObjectID() const;
 
 	virtual	void		beginAnalysis();
-	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
+	virtual	uint		bufPtr(const Address *Addr, byte *buf, int size);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(ClassAddress addr);
 	virtual Assembler 	*createAssembler();
@@ -49,7 +49,7 @@ public:
 	virtual	int		queryConfig(int mode);
 	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
-	virtual	FileOfs		addressToFileofs(Address *Addr);
+	virtual	FileOfs		addressToFileofs(const Address *Addr);
 	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 		void		reinit(ht_class_shared_data *class_shared, File *file);
 };

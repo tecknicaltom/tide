@@ -40,9 +40,9 @@ public:
 	virtual	ObjectID	getObjectID() const;
 	virtual Area *		clone() const;
 
-		void		add(Object *Start, Object *End);
+		void		add(const Object *Start, const Object *End);
 		bool		contains(const Object *V);
-		area_s		*getArea(Object *at);
+		area_s		*getArea(const Object *at);
 		Object		*findNext(const Object *From);
 		Object		*findPrev(const Object *From);
 		void		freeRecursive(area_s *p);

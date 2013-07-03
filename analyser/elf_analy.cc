@@ -460,7 +460,7 @@ ObjectID ElfAnalyser::getObjectID() const
 /*
  *
  */
-uint ElfAnalyser::bufPtr(Address *Addr, byte *buf, int size)
+uint ElfAnalyser::bufPtr(const Address *Addr, byte *buf, int size)
 {
 	FileOfs ofs = addressToFileofs(Addr);
 /*     if (ofs == INVALID_FILE_OFS) {
@@ -549,7 +549,7 @@ Assembler *ElfAnalyser::createAssembler()
 /*
  *
  */
-FileOfs ElfAnalyser::addressToFileofs(Address *Addr)
+FileOfs ElfAnalyser::addressToFileofs(const Address *Addr)
 {
 	if (validAddress(Addr, scinitialized)) {
 		FileOfs ofs;
