@@ -28,7 +28,7 @@ AVRDisassembler::AVRDisassembler()
 {
 }
 
-dis_insn *AVRDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *AVRDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	const struct avr_opcode *opcode;
 	const struct avr_opcode *opcode_end;
@@ -130,7 +130,7 @@ dis_insn *AVRDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 	return &insn;
 }
 
-dis_insn *AVRDisassembler::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *AVRDisassembler::duplicateInsn(const dis_insn *disasm_insn)
 {
 	avrdis_insn *insn = ht_malloc(sizeof (avrdis_insn));
 	*insn = *(avrdis_insn *)disasm_insn;
@@ -284,7 +284,7 @@ ObjectID AVRDisassembler::getObjectID() const
 	return ATOM_DISASM_AVR;
 }
 
-bool AVRDisassembler::validInsn(dis_insn *disasm_insn)
+bool AVRDisassembler::validInsn(const dis_insn *disasm_insn)
 {
 	return ((avrdis_insn*)disasm_insn)->valid;
 }

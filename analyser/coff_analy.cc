@@ -239,7 +239,7 @@ uint CoffAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool CoffAnalyser::convertAddressToRVA(Address *addr, RVA *r)
+bool CoffAnalyser::convertAddressToRVA(const Address *addr, RVA *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_X86_FLAT_32) {
 		*r = ((AddressX86Flat32*)addr)->addr;
@@ -312,7 +312,7 @@ FileOfs CoffAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *CoffAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *CoffAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char sectionname[9];
 	coff_section_headers *sections=&coff_shared->sections;
@@ -418,7 +418,7 @@ void CoffAnalyser::log(const char *msg)
 /*
  *
  */
-Address *CoffAnalyser::nextValid(Address *Addr)
+Address *CoffAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -468,7 +468,7 @@ Address *CoffAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool CoffAnalyser::validAddress(Address *Addr, tsectype action)
+bool CoffAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	coff_section_headers *sections=&coff_shared->sections;
 	int sec;

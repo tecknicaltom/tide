@@ -76,7 +76,7 @@ public:
 protected:
 	x86dis_insn insn;
 	char insnstr[256];
-	byte *codep, *ocodep;
+	const byte *codep, *ocodep;
 	CPU_ADDR addr;
 	byte c;
 	int modrm;
@@ -123,8 +123,8 @@ public:
 				x86dis(BuildCtorArg&a): Disassembler(a) {};
 
 	/* overwritten */
-	virtual	dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
-	virtual	dis_insn *	duplicateInsn(dis_insn *disasm_insn);
+	virtual	dis_insn *	decode(const byte *code, int maxlen, CPU_ADDR addr);
+	virtual	dis_insn *	duplicateInsn(const dis_insn *disasm_insn);
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual	const char *	getName();
 	virtual	byte		getSize(dis_insn *disasm_insn);
@@ -133,7 +133,7 @@ public:
 	virtual const char *	str(dis_insn *disasm_insn, int options);
 	virtual const char *	strf(dis_insn *disasm_insn, int options, const char *format);
 	virtual void		store(ObjectStream &f) const;
-	virtual bool		validInsn(dis_insn *disasm_insn);
+	virtual bool		validInsn(const dis_insn *disasm_insn);
 };
 
 class x86_64dis: public x86dis {
@@ -159,7 +159,7 @@ public:
 				x86dis_vxd(BuildCtorArg&a): x86dis(a) {};
 				x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize);
 
-	virtual dis_insn *	decode(byte *code, int maxlen, CPU_ADDR addr);
+	virtual dis_insn *	decode(const byte *code, int maxlen, CPU_ADDR addr);
 	virtual ObjectID	getObjectID() const;
 };
 

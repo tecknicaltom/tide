@@ -55,7 +55,7 @@ public:
         di.application_data = this;
     }
 
-    void Decode(byte *code, int maxlen, unsigned addr, ArmDisInsn *insn_)
+    void Decode(const byte *code, int maxlen, unsigned addr, ArmDisInsn *insn_)
     {
         memset(buf, 0, sizeof(buf));
         memcpy(buf, code, maxlen > 4 ? 4 : maxlen);
@@ -80,7 +80,7 @@ void ArmDisassembler::load(ObjectStream &f)
 	Disassembler::load(f);
 }
 
-dis_insn *ArmDisassembler::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *ArmDisassembler::duplicateInsn(const dis_insn *disasm_insn)
 {
 	ArmDisInsn *insn = (ArmDisInsn *) malloc(sizeof(ArmDisInsn));
 	*insn = *(ArmDisInsn *)disasm_insn;
@@ -111,14 +111,14 @@ ObjectID ArmDisassembler::getObjectID() const
 	return ATOM_DISASM_ARM;
 }
 
-bool ArmDisassembler::validInsn(dis_insn *disasm_insn)
+bool ArmDisassembler::validInsn(const dis_insn *disasm_insn)
 {
 	return true;
-	ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
+	const ArmDisInsn *adi = static_cast<const ArmDisInsn *>(disasm_insn);
 	return memcmp(adi->opstr, "undefined", 9) != 0;
 }
 
-dis_insn *ArmDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *ArmDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	bfdif->Decode(code, maxlen, addr.addr32.offset, &insn);
 #if 0

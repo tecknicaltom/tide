@@ -299,7 +299,7 @@ uint PEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool PEAnalyser::convertAddressToRVA(Address *addr, RVA *r)
+bool PEAnalyser::convertAddressToRVA(const Address *addr, RVA *r)
 {
 	ObjectID oid = addr->getObjectID();
 	if (oid == ATOM_ADDRESS_FLAT_32) {
@@ -403,7 +403,7 @@ FileOfs PEAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *PEAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *PEAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char sectionname[9];
 	pe_section_headers *sections=&pe_shared->sections;
@@ -589,7 +589,7 @@ void PEAnalyser::log(const char *msg)
 /*
  *
  */
-Address *PEAnalyser::nextValid(Address *Addr)
+Address *PEAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -638,7 +638,7 @@ Address *PEAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool PEAnalyser::validAddress(Address *Addr, tsectype action)
+bool PEAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	pe_section_headers *sections=&pe_shared->sections;
 	int sec;

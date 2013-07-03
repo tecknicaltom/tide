@@ -39,7 +39,7 @@ public:
 
 	virtual	void		beginAnalysis();
 	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
-		bool		convertAddressToNEAddress(Address *addr, NEAddress *r);
+		bool		convertAddressToNEAddress(const Address *addr, NEAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress1616(uint16 seg, uint16 ofs);
 	virtual Assembler 	*createAssembler();
@@ -48,13 +48,13 @@ public:
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
-	virtual	Address		*nextValid(Address *Addr);
+	virtual	Address		*nextValid(const Address *Addr);
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
-	virtual	const char	*getSegmentNameByAddress(Address *Addr);
+	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
-	virtual	bool 		validAddress(Address *Addr, tsectype action);
+	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 };
 
 #endif /* ne_analy_h */

@@ -110,7 +110,7 @@ void	DataAnalyser::access(Address *Addr, OP op, int size)
 {
 }
 
-void	DataAnalyser::setAddressType(Address *Addr, taddr_typetype type, int subtype, int length)
+void	DataAnalyser::setAddressType(const Address *Addr, taddr_typetype type, int subtype, int length)
 {
 	setAddressType(analy->newLocation(Addr), type, subtype, length);
 }
@@ -123,7 +123,7 @@ void	DataAnalyser::setAddressType(Location *Addr, taddr_typetype type, int subty
 	Addr->type.length = length;
 }
 
-void	DataAnalyser::setCodeAddressType(Address *Addr, taddr_code_subtype subtype)
+void	DataAnalyser::setCodeAddressType(const Address *Addr, taddr_code_subtype subtype)
 {
 	setAddressType(analy->newLocation(Addr), dt_code, subtype, 0);
 }
@@ -133,7 +133,7 @@ void	DataAnalyser::setCodeAddressType(Location *Addr, taddr_code_subtype subtype
 	setAddressType(Addr, dt_code, subtype, 0);
 }
 
-void	DataAnalyser::setIntAddressType(Address *Addr, taddr_int_subtype subtype, int length)
+void	DataAnalyser::setIntAddressType(const Address *Addr, taddr_int_subtype subtype, int length)
 {
 	setAddressType(analy->newLocation(Addr), dt_int, subtype, length);
 }
@@ -143,7 +143,7 @@ void	DataAnalyser::setIntAddressType(Location *Addr, taddr_int_subtype subtype, 
 	setAddressType(Addr, dt_int, subtype, length);
 }
 
-void	DataAnalyser::setFloatAddressType(Address *Addr, taddr_float_subtype subtype, int length)
+void	DataAnalyser::setFloatAddressType(const Address *Addr, taddr_float_subtype subtype, int length)
 {
 	setAddressType(analy->newLocation(Addr), dt_float, subtype, length);
 }
@@ -153,7 +153,7 @@ void	DataAnalyser::setFloatAddressType(Location *Addr, taddr_float_subtype subty
 	setAddressType(Addr, dt_float, subtype, length);
 }
 
-void	DataAnalyser::setArrayAddressType(Address *Addr, taddr_array_subtype subtype, int length)
+void	DataAnalyser::setArrayAddressType(const Address *Addr, taddr_array_subtype subtype, int length)
 {
 	setAddressType(analy->newLocation(Addr), dt_array, subtype, length);
 }

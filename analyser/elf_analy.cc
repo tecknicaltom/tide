@@ -471,7 +471,7 @@ uint ElfAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool ElfAnalyser::convertAddressToELFAddress(Address *addr, ELFAddress *r)
+bool ElfAnalyser::convertAddressToELFAddress(const Address *addr, ELFAddress *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_FLAT_32) {
 		r->a32 = ((AddressFlat32*)addr)->addr;
@@ -566,7 +566,7 @@ FileOfs ElfAnalyser::addressToFileofs(Address *Addr)
  *
  */
 
-const char *ElfAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *ElfAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char elf_sectionname[33];
 	elf_section_headers *sections=&elf_shared->sheaders;
@@ -685,7 +685,7 @@ void ElfAnalyser::initUnasm()
 /*
  *
  */
-Address *ElfAnalyser::nextValid(Address *Addr)
+Address *ElfAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -734,7 +734,7 @@ Address *ElfAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool ElfAnalyser::validAddress(Address *Addr, tsectype action)
+bool ElfAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	elf_section_headers *sections=&elf_shared->sheaders;
 	int sec;

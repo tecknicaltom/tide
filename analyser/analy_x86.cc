@@ -51,7 +51,7 @@ int AddressX86Flat32::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86Flat32::compareDelinear(Address *to)
+int AddressX86Flat32::compareDelinear(const Address *to)
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 da = delinearize(addr);
@@ -81,7 +81,7 @@ void AddressX86Flat32::getFromArray(const byte *array)
 	UNALIGNED_MOVE(addr, *(uint32*)array);
 }
 
-void AddressX86Flat32::getFromCPUAddress(CPU_ADDR *ca)
+void AddressX86Flat32::getFromCPUAddress(const CPU_ADDR *ca)
 {
 	addr = ca->addr32.offset;
 }
@@ -186,7 +186,7 @@ int AddressX86_1632::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86_1632::compareDelinear(Address *to)
+int AddressX86_1632::compareDelinear(const Address *to)
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 s1 = delinearize(seg);
@@ -221,7 +221,7 @@ void AddressX86_1632::getFromArray(const byte *array)
 	UNALIGNED_MOVE(seg, *(uint16*)(array+sizeof addr));
 }
 
-void AddressX86_1632::getFromCPUAddress(CPU_ADDR *ca)
+void AddressX86_1632::getFromCPUAddress(const CPU_ADDR *ca)
 {
 	seg = ca->addr32.seg;
 	addr = ca->addr32.offset;
@@ -329,7 +329,7 @@ int AddressX86_1616::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86_1616::compareDelinear(Address *to)
+int AddressX86_1616::compareDelinear(const Address *to)
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 s1 = delinearize(seg);
@@ -369,7 +369,7 @@ bool AddressX86_1616::getFromUInt64(uint64 u)
 	return false;
 }
 
-void AddressX86_1616::getFromCPUAddress(CPU_ADDR *ca)
+void AddressX86_1616::getFromCPUAddress(const CPU_ADDR *ca)
 {
 	seg = ca->addr32.seg;
 	addr = ca->addr32.offset;

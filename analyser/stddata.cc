@@ -150,7 +150,7 @@ void Area::add(Object *Start, Object *End)
 	areaadd(a, Start, End);
 }
 
-static bool areacontains(area_s *p, Object *V)
+static bool areacontains(const area_s *p, const Object *V)
 {
 	if (p) {
 		if (V->compareTo(p->start) < 0) return areacontains(p->left, V);
@@ -159,30 +159,30 @@ static bool areacontains(area_s *p, Object *V)
 	} else return false;
 }
 
-bool Area::contains(Object *v)
+bool Area::contains(const Object *v)
 {
 	if (instanceOf<InvalidAddress>(v)) return false;
 	return areacontains(a, v);
 }
 
-static void areafindnext(area_s *p, Object *from, Object **res)
+static void areafindnext(area_s *p, const Object *from, Object **res)
 {
 	if (!from || from->compareTo(p->start) < 0) {
 		*res = p->start;
 		if (p->left) areafindnext(p->left, from, res);
 	} else if (from->compareTo(p->end) >= 0) {
 		if (p->right) areafindnext(p->right, from, res);
-	} else *res = from;
+	} else *res = const_cast<Object*>(from);
 }
 
-Object *Area::findNext(Object *from)
+Object *Area::findNext(const Object *from)
 {
 	Object *res = NULL;
 	if (a) areafindnext(a, from, &res);
 	return res;
 }
 
-static void areafindprev(area_s *p, Object *from, Object **res)
+static void areafindprev(area_s *p, const Object *from, Object **res)
 {
 //FIXME ??:
 	if (p) {
@@ -191,11 +191,11 @@ static void areafindprev(area_s *p, Object *from, Object **res)
 			areafindprev(p->right, from, res);
 		} else if (from->compareTo(p->start) < 0) {
 			areafindprev(p->left, from, res);
-		} else *res = from;
+		} else *res = const_cast<Object*>(from);
 	};
 }
 
-Object *Area::findPrev(Object *from)
+Object *Area::findPrev(const Object *from)
 {
 	Object *res = NULL;
 	areafindprev(a, from, &res);

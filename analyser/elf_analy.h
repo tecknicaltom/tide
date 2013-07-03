@@ -42,7 +42,7 @@ public:
 
 	virtual	void		beginAnalysis();
 	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
-		bool		convertAddressToELFAddress(Address *addr, ELFAddress *r);
+		bool		convertAddressToELFAddress(const Address *addr, ELFAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(uint32 addr);
 		Address		*createAddress64(uint64 addr);
@@ -53,13 +53,13 @@ public:
 		void		initInsertSymbols(int shidx);
 		void		initInsertFakeSymbols();
 	virtual	void 		initUnasm();
-	virtual	Address		*nextValid(Address *Addr);
+	virtual	Address		*nextValid(const Address *Addr);
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
-	virtual	bool 		validAddress(Address *Addr, tsectype action);
+	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
-	virtual	const char	*getSegmentNameByAddress(Address *Addr);
+	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 };
 
 #endif

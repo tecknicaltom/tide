@@ -72,7 +72,7 @@ int find_alpha_instruction(alpha_opcode_tab_entry *table, int f)
 	return i;
 }
 
-dis_insn *Alphadis::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *Alphadis::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	// alpha code instructions must be 32 bits long
 	if (maxlen < 4) {
@@ -236,7 +236,7 @@ dis_insn *Alphadis::decode(byte *code, int maxlen, CPU_ADDR addr)
 	return &insn;
 }
 
-dis_insn *Alphadis::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *Alphadis::duplicateInsn(const dis_insn *disasm_insn)
 {
 	alphadis_insn *insn = ht_malloc(sizeof (alphadis_insn));
 	*insn = *(alphadis_insn *)disasm_insn;
@@ -373,7 +373,7 @@ const char *Alphadis::strf(dis_insn *disasm_insn, int style, const char *format)
 	return insnstr;     
 }
 
-bool	Alphadis::validInsn(dis_insn *disasm_insn)
+bool	Alphadis::validInsn(const dis_insn *disasm_insn)
 {
 	return ((alphadis_insn *)disasm_insn)->valid;
 }

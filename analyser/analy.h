@@ -47,12 +47,12 @@ public:
 	virtual	bool		add(int offset) = 0;
 	virtual	int		byteSize() = 0;
 	virtual Address	*	clone() const = 0;
-	virtual	int		compareDelinear(Address *to);
+	virtual	int		compareDelinear(const Address *to);
 	virtual	bool 		difference(int &result, Address *to) = 0;
 	virtual	void 		getFromArray(const byte *array) = 0;
-	virtual	void 		getFromCPUAddress(CPU_ADDR *ca) = 0;
+	virtual	void 		getFromCPUAddress(const CPU_ADDR *ca) = 0;
 	virtual	bool		getFromUInt64(uint64 u) = 0;
-	virtual	bool 		isValid();
+	virtual	bool 		isValid() const;
 	virtual	int		parseString(const char *s, int length, Analyser *a) = 0;
 	virtual	void		putIntoArray(byte *array) const = 0;
 	virtual	void		putIntoCPUAddress(CPU_ADDR *ca) const = 0;
@@ -72,9 +72,9 @@ public:
 	virtual	bool		difference(int &result, Address *to);
 	virtual	InvalidAddress *clone() const;
 	virtual	void 		getFromArray(const byte *array);
-	virtual	void		getFromCPUAddress(CPU_ADDR *ca);
+	virtual	void		getFromCPUAddress(const CPU_ADDR *ca);
 	virtual	bool		getFromUInt64(uint64 u);
-	virtual	bool		isValid();
+	virtual	bool		isValid() const;
 	virtual	ObjectID	getObjectID() const;
 	virtual	int		parseString(const char *s, int length, Analyser *a);
 	virtual	void 		putIntoArray(byte *array) const;
@@ -96,9 +96,9 @@ public:
 	virtual	int		byteSize();
 	virtual	AddressFlat32 *	clone() const;
 	virtual	int		compareTo(const Object *obj) const;
-	virtual	int		compareDelinear(Address *to);
+	virtual	int		compareDelinear(const Address *to);
 	virtual	void		getFromArray(const byte *array);
-	virtual	void		getFromCPUAddress(CPU_ADDR *ca);
+	virtual	void		getFromCPUAddress(const CPU_ADDR *ca);
 	virtual	bool		getFromUInt64(uint64 u);
 	virtual	bool		difference(int &result, Address *to);
 	virtual	void		load(ObjectStream &s);
@@ -120,9 +120,9 @@ public:
 	virtual	bool		add(int offset);
 	virtual	int		byteSize();
 	virtual	int		compareTo(const Object *obj) const;
-	virtual	int		compareDelinear(Address *to);
+	virtual	int		compareDelinear(const Address *to);
 	virtual	void		getFromArray(const byte *array);
-	virtual	void		getFromCPUAddress(CPU_ADDR *ca);
+	virtual	void		getFromCPUAddress(const CPU_ADDR *ca);
 	virtual	bool		getFromUInt64(uint64 u);
 	virtual	bool		difference(int &result, Address *to);
 	virtual	AddressFlat64 *	clone() const;
@@ -355,7 +355,7 @@ public:
 		void		doBranch(branch_enum_t branch, OPCODE *opcode, int len);
 		void		engageCodeanalyser();
 		Location *	enumLocations(Address *Addr);
-		Location *	enumLocationsReverse(Address *Addr);
+		Location *	enumLocationsReverse(const Address *Addr);
 		Symbol *	enumSymbolsByName(const char *at);
 		Symbol *	enumSymbolsByNameReverse(const char *at);
 		Symbol *	enumSymbols(Symbol *sym);
@@ -367,12 +367,12 @@ public:
 		void		freeComments(Location *loc);
 		void		freeSymbol(Symbol *sym);
 		void		freeSymbols(Symbol *syms);
-		Location *	getLocationByAddress(Address *Addr);
+		Location *	getLocationByAddress(const Address *Addr);
 		Location *	getLocationContextByAddress(Address *Addr);
 		int		getLocationCount() const;
-		Location *	getFunctionByAddress(Address *Addr);
+		Location *	getFunctionByAddress(const Address *Addr);
 		Location *	getPreviousSymbolByAddress(Address *Addr);
-	virtual	const char *	getSegmentNameByAddress(Address *Addr);
+	virtual	const char *	getSegmentNameByAddress(const Address *Addr);
 		Symbol *	getSymbolByAddress(Address *Addr);
 		Symbol *	getSymbolByName(const char *label);
 		const char *	getSymbolNameByLocation(Location *loc);
@@ -383,11 +383,11 @@ public:
 	virtual	void		initUnasm() = 0;
 	virtual	void		log(const char *s);                // stub
 	virtual	CPU_ADDR 	mapAddr(Address *Addr);      // stub
-		Location *	newLocation(Address *Addr);
-		Location *	newLocation(Location *&locs, Address *Addr);
+		Location *	newLocation(const Address *Addr);
+		Location *	newLocation(Location *&locs, const Address *Addr);
 		Symbol *	newSymbol(const char *label, Location *loc, labeltype type, Location *infunc);
 		Symbol *	newSymbol(Symbol *&syms, const char *label, Location *loc, labeltype type);
-	virtual	Address *	nextValid(Address *Addr) = 0;
+	virtual	Address *	nextValid(const Address *Addr) = 0;
 		void		optimizeLocationTree();
 		void		optimizeSymbolTree();
 		bool		popAddress(Address **Addr, Address **func);
@@ -399,10 +399,10 @@ public:
 		void		setDisasm(Disassembler *d);
 		void		setSymbolTreeOptimizeThreshold(int threshold);
 	virtual	void		store(ObjectStream &s) const;
-	virtual	bool		validAddress(Address *addr, tsectype action) = 0;
-		bool		validCodeAddress(Address *addr);
-		bool		validReadAddress(Address *addr);
-		bool		validWriteAddress(Address *addr);
+	virtual	bool		validAddress(const Address *addr, tsectype action) = 0;
+		bool		validCodeAddress(const Address *addr);
+		bool		validReadAddress(const Address *addr);
+		bool		validWriteAddress(const Address *addr);
 
 //  interface only (there's no internal use)
 		int	mode;

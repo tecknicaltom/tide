@@ -45,12 +45,12 @@ public:
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
-	virtual	Address		*nextValid(Address *Addr);
+	virtual	Address		*nextValid(const Address *Addr);
 	virtual	int		queryConfig(int mode);
-	virtual	bool 		validAddress(Address *Addr, tsectype action);
+	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
-	virtual	const char	*getSegmentNameByAddress(Address *Addr);
+	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 		void		reinit(ht_class_shared_data *class_shared, File *file);
 };
 

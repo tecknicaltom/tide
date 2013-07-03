@@ -74,7 +74,7 @@ void x86dis::checkInfo(x86opc_insn *xinsn)
 {
 }
 
-dis_insn *x86dis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
+dis_insn *x86dis::decode(const byte *code, int Maxlen, CPU_ADDR Addr)
 {
 	ocodep = code;
 
@@ -857,7 +857,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 	}
 }
 
-dis_insn *x86dis::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *x86dis::duplicateInsn(const dis_insn *disasm_insn)
 {
 	x86dis_insn *insn = ht_malloc(sizeof (x86dis_insn));
 	*insn = *(x86dis_insn *)disasm_insn;
@@ -1640,7 +1640,7 @@ void x86dis::store(ObjectStream &f) const
 	PUT_INT32X(f, addrsize);
 }
 
-bool x86dis::validInsn(dis_insn *disasm_insn)
+bool x86dis::validInsn(const dis_insn *disasm_insn)
 {
 	return !((x86dis_insn *)disasm_insn)->invalid;
 }
@@ -1832,7 +1832,7 @@ x86dis_vxd::x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize)
 {
 }
 
-dis_insn *x86dis_vxd::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *x86dis_vxd::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	if ((maxlen >= 6) && (code[0] == 0xcd) && (code[1] == 0x20)) {
 		insn.name = "VxDCall";

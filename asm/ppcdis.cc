@@ -37,7 +37,7 @@ void PPCDisassembler::load(ObjectStream &f)
 	GET_INT32X(f, mode);
 }
 
-dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *PPCDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	const struct powerpc_opcode *opcode;
 	const struct powerpc_opcode *opcode_end;
@@ -156,7 +156,7 @@ dis_insn *PPCDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 	return &insn;
 }
 
-dis_insn *PPCDisassembler::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *PPCDisassembler::duplicateInsn(const dis_insn *disasm_insn)
 {
 	ppcdis_insn *insn = ht_malloc(sizeof (ppcdis_insn));
 	*insn = *(ppcdis_insn *)disasm_insn;
@@ -295,7 +295,7 @@ void PPCDisassembler::store(ObjectStream &f) const
 	PUT_INT32X(f, mode);
 }
 
-bool PPCDisassembler::validInsn(dis_insn *disasm_insn)
+bool PPCDisassembler::validInsn(const dis_insn *disasm_insn)
 {
 	return ((ppcdis_insn*)disasm_insn)->valid;
 }

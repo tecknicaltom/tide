@@ -218,7 +218,7 @@ uint XBEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool XBEAnalyser::convertAddressToRVA(Address *addr, RVA *r)
+bool XBEAnalyser::convertAddressToRVA(const Address *addr, RVA *r)
 {
 	ObjectID oid = addr->getObjectID();
 	if (oid==ATOM_ADDRESS_FLAT_32) {
@@ -290,7 +290,7 @@ FileOfs XBEAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *XBEAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *XBEAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char sectionname[9];
 	xbe_section_headers *sections=&xbe_shared->sections;
@@ -414,7 +414,7 @@ void XBEAnalyser::log(const char *msg)
 /*
  *
  */
-Address *XBEAnalyser::nextValid(Address *Addr)
+Address *XBEAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -464,7 +464,7 @@ Address *XBEAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool XBEAnalyser::validAddress(Address *Addr, tsectype action)
+bool XBEAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	xbe_section_headers *sections=&xbe_shared->sections;
 	int sec;

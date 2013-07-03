@@ -246,7 +246,7 @@ uint MachoAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool MachoAnalyser::convertAddressToMACHOAddress(Address *addr, MACHOAddress *r)
+bool MachoAnalyser::convertAddressToMACHOAddress(const Address *addr, MACHOAddress *r)
 {
 	if (addr->getObjectID() == ATOM_ADDRESS_FLAT_64) {
 		*r = ((AddressFlat64*)addr)->addr;
@@ -330,7 +330,7 @@ FileOfs MachoAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *MachoAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *MachoAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char macho_sectionname[33];
 	int i;
@@ -419,7 +419,7 @@ void MachoAnalyser::log(const char *msg)
 /*
  *
  */
-Address *MachoAnalyser::nextValid(Address *Addr)
+Address *MachoAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -468,7 +468,7 @@ Address *MachoAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool MachoAnalyser::validAddress(Address *Addr, tsectype action)
+bool MachoAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	int sec;
 	MACHOAddress ea;

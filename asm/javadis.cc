@@ -41,7 +41,7 @@ void javadis::initialize(java_token_func tf, void *c)
 	context = c;
 }
 
-dis_insn *javadis::decode(byte *code, int Maxlen, CPU_ADDR Addr)
+dis_insn *javadis::decode(const byte *code, int Maxlen, CPU_ADDR Addr)
 {
 	ocodep = code;
 	codep = ocodep;
@@ -156,7 +156,7 @@ void javadis::decode_op(int optype, bool wideopc, java_insn_op *op)
 	}
 }
 
-dis_insn *javadis::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *javadis::duplicateInsn(const dis_insn *disasm_insn)
 {
 	javadis_insn *insn = ht_malloc(sizeof (javadis_insn));
 	*insn = *(javadis_insn *)disasm_insn;
@@ -436,7 +436,7 @@ const char *javadis::strf(dis_insn *disasm_insn, int opt, const char *format)
 	return insnstr;
 }
 
-bool javadis::validInsn(dis_insn *disasm_insn)
+bool javadis::validInsn(const dis_insn *disasm_insn)
 {
 	return !((javadis_insn *)disasm_insn)->invalid;
 }

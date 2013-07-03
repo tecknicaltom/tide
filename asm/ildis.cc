@@ -39,7 +39,7 @@ void ILDisassembler::initialize(char* (*sf)(uint32 string_ofs, void *context), c
 	context = ctx;
 }
 
-dis_insn *ILDisassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *ILDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	insn.valid = false;
 	insn.prefix = NULL;
@@ -161,7 +161,7 @@ restart:
 	return (dis_insn *)&insn;
 }
 
-dis_insn *ILDisassembler::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *ILDisassembler::duplicateInsn(const dis_insn *disasm_insn)
 {
 	ILDisInsn *insn = ht_malloc(sizeof (ILDisInsn));
 	*insn = *(ILDisInsn *)disasm_insn;
@@ -304,7 +304,7 @@ ObjectID ILDisassembler::getObjectID() const
 	return ATOM_DISASM_IL;
 }
 
-bool ILDisassembler::validInsn(dis_insn *disasm_insn)
+bool ILDisassembler::validInsn(const dis_insn *disasm_insn)
 {
 	return ((ILDisInsn *)disasm_insn)->valid;
 }

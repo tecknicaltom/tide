@@ -373,7 +373,7 @@ uint LEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool LEAnalyser::convertAddressToLEAddress(Address *addr, LEAddress *r)
+bool LEAnalyser::convertAddressToLEAddress(const Address *addr, LEAddress *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_X86_FLAT_32) {
 //		*r = LE_MAKE_ADDR(le_shared, ((AddressX86Flat32*)addr)->seg, ((AddressX86_1632*)addr)->addr);
@@ -408,7 +408,7 @@ Assembler *LEAnalyser::createAssembler()
 /*
  *
  */
-const char *LEAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *LEAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char segmentname[16];
 	int i;
@@ -478,7 +478,7 @@ void LEAnalyser::log(const char *msg)
 /*
  *
  */
-Address *LEAnalyser::nextValid(Address *Addr)
+Address *LEAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -540,7 +540,7 @@ Address *LEAnalyser::realFileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool LEAnalyser::validAddress(Address *Addr, tsectype action)
+bool LEAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	ht_le_objmap *objects = &le_shared->objmap;
 	int sec;

@@ -103,15 +103,15 @@ public:
 	virtual	ObjectID	getObjectID() const;
 
 		void		access(Address *Addr, OP op, int size);
-		void		setAddressType(Address *Addr, taddr_typetype type, int subtype, int length);
+		void		setAddressType(const Address *Addr, taddr_typetype type, int subtype, int length);
 		void		setAddressType(Location *Addr, taddr_typetype type, int subtype, int length);
-		void		setCodeAddressType(Address *Addr, taddr_code_subtype subtype);
+		void		setCodeAddressType(const Address *Addr, taddr_code_subtype subtype);
 		void		setCodeAddressType(Location *Addr, taddr_code_subtype subtype);
-		void		setIntAddressType(Address *Addr, taddr_int_subtype subtype, int length);
+		void		setIntAddressType(const Address *Addr, taddr_int_subtype subtype, int length);
 		void		setIntAddressType(Location *Addr, taddr_int_subtype subtype, int length);
-		void		setFloatAddressType(Address *Addr, taddr_float_subtype subtype, int length);
+		void		setFloatAddressType(const Address *Addr, taddr_float_subtype subtype, int length);
 		void		setFloatAddressType(Location *Addr, taddr_float_subtype subtype, int length);
-		void		setArrayAddressType(Address *Addr, taddr_array_subtype subtype, int length);
+		void		setArrayAddressType(const Address *Addr, taddr_array_subtype subtype, int length);
 		void		setArrayAddressType(Location *Addr, taddr_array_subtype subtype, int length);
 	virtual	void		store(ObjectStream &s) const;
 };

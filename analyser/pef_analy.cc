@@ -385,7 +385,7 @@ uint PEFAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);;
 }
 
-bool PEFAnalyser::convertAddressToPEFAddress(Address *addr, PEFAddress *r)
+bool PEFAnalyser::convertAddressToPEFAddress(const Address *addr, PEFAddress *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_FLAT_32) {
 		r->a32 = ((AddressFlat32*)addr)->addr;
@@ -437,7 +437,7 @@ FileOfs PEFAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *PEFAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *PEFAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char pef_sectionname[33];
 	pef_section_headers *sections=&pef_shared->sheaders;
@@ -515,7 +515,7 @@ void PEFAnalyser::log(const char *msg)
 /*
  *
  */
-Address *PEFAnalyser::nextValid(Address *Addr)
+Address *PEFAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -560,7 +560,7 @@ Address *PEFAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool PEFAnalyser::validAddress(Address *Addr, tsectype action)
+bool PEFAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	pef_section_headers *sections=&pef_shared->sheaders;
 	int sec;

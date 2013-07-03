@@ -39,7 +39,7 @@ public:
 
 	virtual	void		beginAnalysis();
 	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
-		bool		convertAddressToLEAddress(Address *addr, LEAddress *r);
+		bool		convertAddressToLEAddress(const Address *addr, LEAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddressFlat32(uint32 ofs);
 	virtual Assembler 	*createAssembler();
@@ -48,13 +48,13 @@ public:
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
-	virtual	Address		*nextValid(Address *Addr);
+	virtual	Address		*nextValid(const Address *Addr);
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
-	virtual	const char	*getSegmentNameByAddress(Address *Addr);
+	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
-	virtual	bool 		validAddress(Address *Addr, tsectype action);
+	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 	virtual	Address *	realFileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToRealFileofs(Address *Addr);
 };

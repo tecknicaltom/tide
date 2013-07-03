@@ -42,7 +42,7 @@ public:
 
 	virtual	void		beginAnalysis();
 	virtual	uint		bufPtr(Address *Addr, byte *buf, int size);
-		bool		convertAddressToMACHOAddress(Address *addr, MACHOAddress *r);
+		bool		convertAddressToMACHOAddress(const Address *addr, MACHOAddress *r);
 	virtual	Address		*createAddress();
 		Address		*createAddress32(uint32 addr);
 		Address		*createAddress64(uint64 addr);
@@ -52,13 +52,13 @@ public:
 	virtual	void 		initCodeAnalyser();
 	virtual	void 		initUnasm();
 	virtual	void 		log(const char *msg);
-	virtual	Address		*nextValid(Address *Addr);
+	virtual	Address		*nextValid(const Address *Addr);
 	virtual	void		store(ObjectStream &f) const;
 	virtual	int		queryConfig(int mode);
-	virtual	bool 		validAddress(Address *Addr, tsectype action);
+	virtual	bool 		validAddress(const Address *Addr, tsectype action);
 	virtual	Address		*fileofsToAddress(FileOfs fileofs);
 	virtual	FileOfs		addressToFileofs(Address *Addr);
-	virtual	const char	*getSegmentNameByAddress(Address *Addr);
+	virtual	const char	*getSegmentNameByAddress(const Address *Addr);
 };
 
 #endif

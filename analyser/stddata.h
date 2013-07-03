@@ -41,10 +41,10 @@ public:
 	virtual Area *		clone() const;
 
 		void		add(Object *Start, Object *End);
-		bool		contains(Object *V);
+		bool		contains(const Object *V);
 		area_s		*getArea(Object *at);
-		Object		*findNext(Object *From);
-		Object		*findPrev(Object *From);
+		Object		*findNext(const Object *From);
+		Object		*findPrev(const Object *From);
 		void		freeRecursive(area_s *p);
 	virtual	void		store(ObjectStream &s) const;
 #ifdef DEBUG_FIXNEW

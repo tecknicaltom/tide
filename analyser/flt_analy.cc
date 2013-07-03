@@ -153,7 +153,7 @@ uint FLTAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool FLTAnalyser::convertAddressToFLTAddress(Address *addr, FLTAddress *r)
+bool FLTAnalyser::convertAddressToFLTAddress(const Address *addr, FLTAddress *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_FLAT_32) {
 		*r = ((AddressFlat32*)addr)->addr;
@@ -198,7 +198,7 @@ FileOfs FLTAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *FLTAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *FLTAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	FLTAddress ea;
 	if (!convertAddressToFLTAddress(Addr, &ea)) return NULL;
@@ -268,7 +268,7 @@ void FLTAnalyser::log(const char *msg)
 /*
  *
  */
-Address *FLTAnalyser::nextValid(Address *Addr)
+Address *FLTAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -313,7 +313,7 @@ Address *FLTAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool FLTAnalyser::validAddress(Address *Addr, tsectype action)
+bool FLTAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	FLTAddress ea;
 	if (!convertAddressToFLTAddress(Addr, &ea)) return false;

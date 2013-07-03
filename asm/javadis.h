@@ -51,7 +51,7 @@ protected:
 	javadis_insn insn;
 	char insnstr[1024];
 	/* initme! */
-	unsigned char *codep, *ocodep;
+	const unsigned char *codep, *ocodep;
 	int maxlen;
 	java_token_func token_func;
 	void *context;
@@ -72,15 +72,15 @@ public:
 
 	void initialize(java_token_func token_func, void *context);
 	/* overwritten */
-	virtual dis_insn *decode(byte *code, int maxlen, CPU_ADDR addr);
-	virtual dis_insn *duplicateInsn(dis_insn *disasm_insn);
+	virtual dis_insn *decode(const byte *code, int maxlen, CPU_ADDR addr);
+	virtual dis_insn *duplicateInsn(const dis_insn *disasm_insn);
 	virtual void getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual const char *getName();
 	virtual byte getSize(dis_insn *disasm_insn);
 	virtual ObjectID getObjectID() const;
 	virtual const char *str(dis_insn *disasm_insn, int options);
 	virtual const char *strf(dis_insn *disasm_insn, int options, const char *format);
-	virtual bool validInsn(dis_insn *disasm_insn);
+	virtual bool validInsn(const dis_insn *disasm_insn);
 };
 
 #endif /* __JAVADIS_H__ */

@@ -206,7 +206,7 @@ FileOfs ClassAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *ClassAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *ClassAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char sectionname[1];
 	Location *loc = getFunctionByAddress(Addr);
@@ -274,7 +274,7 @@ void ClassAnalyser::log(const char *msg)
 /*
  *
  */
-Address *ClassAnalyser::nextValid(Address *Addr)
+Address *ClassAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)class_shared->valid->findNext(Addr);
 }
@@ -320,7 +320,7 @@ Address *ClassAnalyser::fileofsToAddress(FileOfs fileaddr)
 /*
  *
  */
-bool ClassAnalyser::validAddress(Address *Addr, tsectype action)
+bool ClassAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	if (!Addr->isValid() || !class_shared->valid->contains(Addr)) return false;
 	switch (action) {

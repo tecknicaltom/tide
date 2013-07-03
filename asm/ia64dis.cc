@@ -398,7 +398,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 	
 }
 
-dis_insn *IA64Disassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
+dis_insn *IA64Disassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	cpu_addr = addr;
 	insn.selected = 0;
@@ -457,7 +457,7 @@ dis_insn *IA64Disassembler::decode(byte *code, int maxlen, CPU_ADDR addr)
 	return (dis_insn*)&insn;
 }
 
-dis_insn *IA64Disassembler::duplicateInsn(dis_insn *disasm_insn)
+dis_insn *IA64Disassembler::duplicateInsn(const dis_insn *disasm_insn)
 {
 	IA64DisInsn *insn = ht_malloc(sizeof (IA64DisInsn));
 	*insn = *(IA64DisInsn *)disasm_insn;
@@ -635,7 +635,7 @@ ObjectID IA64Disassembler::getObjectID() const
 	return ATOM_DISASM_IA64;
 }
 
-bool IA64Disassembler::validInsn(dis_insn *disasm_insn)
+bool IA64Disassembler::validInsn(const dis_insn *disasm_insn)
 {
 	return ((IA64DisInsn *)disasm_insn)->valid;
 }

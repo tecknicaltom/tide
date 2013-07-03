@@ -290,7 +290,7 @@ uint NEAnalyser::bufPtr(Address *Addr, byte *buf, int size)
 	return file->read(buf, size);
 }
 
-bool NEAnalyser::convertAddressToNEAddress(Address *addr, NEAddress *r)
+bool NEAnalyser::convertAddressToNEAddress(const Address *addr, NEAddress *r)
 {
 	if (addr->getObjectID()==ATOM_ADDRESS_X86_1616) {
 		*r = NE_MAKE_ADDR(((AddressX86_1616*)addr)->seg, ((AddressX86_1616*)addr)->addr);
@@ -342,7 +342,7 @@ FileOfs NEAnalyser::addressToFileofs(Address *Addr)
 /*
  *
  */
-const char *NEAnalyser::getSegmentNameByAddress(Address *Addr)
+const char *NEAnalyser::getSegmentNameByAddress(const Address *Addr)
 {
 	static char segmentname[16];
 	int i;
@@ -408,7 +408,7 @@ void NEAnalyser::log(const char *msg)
 /*
  *
  */
-Address *NEAnalyser::nextValid(Address *Addr)
+Address *NEAnalyser::nextValid(const Address *Addr)
 {
 	return (Address *)validarea->findNext(Addr);
 }
@@ -453,7 +453,7 @@ Address *NEAnalyser::fileofsToAddress(FileOfs fileofs)
 /*
  *
  */
-bool NEAnalyser::validAddress(Address *Addr, tsectype action)
+bool NEAnalyser::validAddress(const Address *Addr, tsectype action)
 {
 	ne_segment_headers *segments = &ne_shared->segments;
 	int sec;

@@ -43,12 +43,12 @@
 
 int global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 
-int Address::compareDelinear(Address *obj)
+int Address::compareDelinear(const Address *obj)
 {
 	return compareTo(obj);
 }
 
-bool Address::isValid()
+bool Address::isValid() const
 {
 	return true;
 }
@@ -91,7 +91,7 @@ void InvalidAddress::getFromArray(const byte *array)
 {
 }
 
-void InvalidAddress::getFromCPUAddress(CPU_ADDR *ca)
+void InvalidAddress::getFromCPUAddress(const CPU_ADDR *ca)
 {
 }
 
@@ -100,7 +100,7 @@ bool InvalidAddress::getFromUInt64(uint64 u)
 	return false;
 }
 
-bool InvalidAddress::isValid()
+bool InvalidAddress::isValid() const
 {
 	return false;
 }
@@ -162,7 +162,7 @@ int AddressFlat32::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressFlat32::compareDelinear(Address *to)
+int AddressFlat32::compareDelinear(const Address *to)
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 da = delinearize(addr);
@@ -192,7 +192,7 @@ void AddressFlat32::getFromArray(const byte *array)
 	UNALIGNED_MOVE(addr, *(uint32*)array);
 }
 
-void AddressFlat32::getFromCPUAddress(CPU_ADDR *ca)
+void AddressFlat32::getFromCPUAddress(const CPU_ADDR *ca)
 {
 	addr = ca->addr32.offset;
 }
@@ -287,7 +287,7 @@ int AddressFlat64::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressFlat64::compareDelinear(Address *to)
+int AddressFlat64::compareDelinear(const Address *to)
 {
 	assert(getObjectID() == to->getObjectID());
 	uint64 da1, da2;
@@ -321,7 +321,7 @@ void AddressFlat64::getFromArray(const byte *array)
 	UNALIGNED_MOVE(addr, *(uint64*)array);
 }
 
-void AddressFlat64::getFromCPUAddress(CPU_ADDR *ca)
+void AddressFlat64::getFromCPUAddress(const CPU_ADDR *ca)
 {
 	addr = ca->flat64.addr;
 }
@@ -1289,7 +1289,7 @@ Location *Analyser::enumLocations(Address *Addr)
 	return result;
 }
 
-static void analyserenum_addrs_back(Location *locs, Address *at, Location *&loc)
+static void analyserenum_addrs_back(Location *locs, const Address *at, Location *&loc)
 {
 	if (at->compareTo(locs->addr) <= 0) {
 		if (locs->left) analyserenum_addrs_back(locs->left, at, loc);
@@ -1302,7 +1302,7 @@ static void analyserenum_addrs_back(Location *locs, Address *at, Location *&loc)
 /*
  *
  */
-Location *Analyser::enumLocationsReverse(Address *Addr)
+Location *Analyser::enumLocationsReverse(const Address *Addr)
 {
 	Location *result = NULL;
 	if (locations) analyserenum_addrs_back(locations, Addr, result);
@@ -1412,7 +1412,7 @@ taddr_typetype Analyser::examineData(Address *Addr)
 /*
  *
  */
-static Location *analyserfindaddr(Location *locs, Address *Addr)
+static Location *analyserfindaddr(Location *locs, const Address *Addr)
 {
 	if (locs) {
 		if (Addr->compareTo(locs->addr) < 0) return analyserfindaddr(locs->left, Addr);
@@ -1425,7 +1425,7 @@ static Location *analyserfindaddr(Location *locs, Address *Addr)
 /*
  *
  */
-Location *Analyser::getLocationByAddress(Address *Addr)
+Location *Analyser::getLocationByAddress(const Address *Addr)
 {
 	return analyserfindaddr(locations, Addr);
 }
@@ -1451,7 +1451,7 @@ Location *Analyser::getLocationContextByAddress(Address *Addr)
 /*
  *	finds the function the Addr belongs to (if possible/applicable).
  */
-Location *Analyser::getFunctionByAddress(Address *Addr)
+Location *Analyser::getFunctionByAddress(const Address *Addr)
 {
 	Location *loc = getLocationByAddress(Addr);
 	if (!loc) loc = enumLocationsReverse(Addr);
@@ -1710,7 +1710,7 @@ int	Analyser::getSymbolCount() const
 /*
  *
  */
-const char *Analyser::getSegmentNameByAddress(Address *Addr)
+const char *Analyser::getSegmentNameByAddress(const Address *Addr)
 {
 	return NULL;
 }
@@ -1857,7 +1857,7 @@ CPU_ADDR Analyser::mapAddr(Address *aAddr)
 	return a;
 }
 
-Location *Analyser::newLocation(Location *&locs, Address *aAddr)
+Location *Analyser::newLocation(Location *&locs, const Address *aAddr)
 {
 	if (locs) {
 		if (aAddr->compareTo(locs->addr) < 0) return newLocation(locs->left, aAddr);
@@ -1875,7 +1875,7 @@ Location *Analyser::newLocation(Location *&locs, Address *aAddr)
 /*
  *
  */
-Location *Analyser::newLocation(Address *Addr)
+Location *Analyser::newLocation(const Address *Addr)
 {
 /*	if (!(cur_addr_ops--)) {
 		optimizeLocationTree();
@@ -2160,7 +2160,7 @@ void Analyser::toggleDisplayMode(int toggle)
 /*
  *
  */
-bool	Analyser::validCodeAddress(Address *Addr)
+bool	Analyser::validCodeAddress(const Address *Addr)
 {
 	Location *a = getLocationByAddress(Addr);
 	if (a) {
@@ -2172,7 +2172,7 @@ bool	Analyser::validCodeAddress(Address *Addr)
 /*
  *
  */
-bool	Analyser::validReadAddress(Address *Addr)
+bool	Analyser::validReadAddress(const Address *Addr)
 {
 	return validAddress(Addr, scread);
 }
@@ -2180,7 +2180,7 @@ bool	Analyser::validReadAddress(Address *Addr)
 /*
  *
  */
-bool	Analyser::validWriteAddress(Address *Addr)
+bool	Analyser::validWriteAddress(const Address *Addr)
 {
 	return validAddress(Addr, scwrite);
 }
