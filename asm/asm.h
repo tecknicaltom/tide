@@ -132,11 +132,11 @@ public:
 	virtual	dis_insn *decode(const byte *code, int maxlen, CPU_ADDR cur_address)=0;
 	virtual	dis_insn *duplicateInsn(const dis_insn *disasm_insn)=0;
 	virtual	void	getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align)=0;
-	virtual	byte getSize(dis_insn *disasm_insn)=0;
+	virtual	byte getSize(const dis_insn *disasm_insn)=0;
 	virtual	const char *getName() const =0;
-	virtual	bool selectNext(dis_insn *disasm_insn);
-	virtual	const char *str(dis_insn *disasm_insn, int style);
-	virtual	const char *strf(dis_insn *disasm_insn, int style, const char *format)=0;
+	virtual	bool selectNext(const dis_insn *disasm_insn);
+	virtual	const char *str(const dis_insn *disasm_insn, int style);
+	virtual	const char *strf(const dis_insn *disasm_insn, int style, const char *format)=0;
 	virtual	bool validInsn(const dis_insn *disasm_insn)=0;
 };
 

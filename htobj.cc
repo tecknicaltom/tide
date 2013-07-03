@@ -485,7 +485,7 @@ void ht_view::hidecursor()
 	screen->setCursorMode(CURSOR_OFF);
 }
 
-int ht_view::isaclone(ht_view *view)
+int ht_view::isaclone(const ht_view *view)
 {
 	return (view==this) && (countselectables()==1);
 }
@@ -1028,7 +1028,7 @@ void ht_group::insert(ht_view *view)
 	}
 }
 
-int ht_group::isaclone(ht_view *view)
+int ht_group::isaclone(const ht_view *view)
 {
 	ht_view *v = first;
 	while (v) {
@@ -1269,7 +1269,7 @@ void ht_xgroup::handlemsg(htmsg *msg)
 	}
 }
 
-int ht_xgroup::isaclone(ht_view *view)
+int ht_xgroup::isaclone(const ht_view *view)
 {
 	if (group) return group->isaclone(this);
 	return 0;

@@ -96,7 +96,7 @@ void ArmDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &mi
 	addr_align = 4;
 }
 
-byte ArmDisassembler::getSize(dis_insn *disasm_insn)
+byte ArmDisassembler::getSize(const dis_insn *disasm_insn)
 {
 	return 4;//((ArmDisInsn*)disasm_insn)->size;
 }
@@ -129,9 +129,9 @@ dis_insn *ArmDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 	return &insn;
 }
 
-const char *ArmDisassembler::strf(dis_insn *disasm_insn, int style, const char *)
+const char *ArmDisassembler::strf(const dis_insn *disasm_insn, int style, const char *)
 {
-	ArmDisInsn *adi = static_cast<ArmDisInsn *>(disasm_insn);
+	const ArmDisInsn *adi = static_cast<const ArmDisInsn *>(disasm_insn);
 
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 

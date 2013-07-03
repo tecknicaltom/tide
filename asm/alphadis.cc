@@ -257,7 +257,7 @@ const char *Alphadis::getName() const
 	return "alpha/disassembler";
 }
 
-byte	Alphadis::getSize(dis_insn *disasm_insn)
+byte	Alphadis::getSize(const dis_insn *disasm_insn)
 {
 	return ((alphadis_insn*)disasm_insn)->size;
 }
@@ -267,7 +267,7 @@ ObjectID Alphadis::getObjectID() const
 	return ATOM_DISASM_ALPHA;
 }
 
-const char *Alphadis::str(dis_insn *disasm_insn, int style)
+const char *Alphadis::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
@@ -277,7 +277,7 @@ const char *Alphadis::str(dis_insn *disasm_insn, int style)
 #define A_REG_C alpha_reg_names[alpha_insn->regC]
 #define A_NAME (alpha_insn->table+alpha_insn->code)->name
 
-const char *Alphadis::strf(dis_insn *disasm_insn, int style, const char *format)
+const char *Alphadis::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 	

@@ -178,7 +178,7 @@ void ILDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &min
 	addr_align = 1;
 }
 
-byte ILDisassembler::getSize(dis_insn *disasm_insn)
+byte ILDisassembler::getSize(const dis_insn *disasm_insn)
 {
 	return ((ILDisInsn*)disasm_insn)->size;
 }
@@ -188,12 +188,12 @@ const char *ILDisassembler::getName() const
 	return "IL/Disassembler";
 }
 
-const char *ILDisassembler::str(dis_insn *disasm_insn, int style)
+const char *ILDisassembler::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-const char *ILDisassembler::strf(dis_insn *disasm_insn, int style, const char *format)
+const char *ILDisassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 

@@ -290,12 +290,12 @@ void Disassembler::hexq(char **s, int size, int options, uint64 imm)
 	}
 }
 
-bool Disassembler::selectNext(dis_insn *disasm_insn)
+bool Disassembler::selectNext(const dis_insn *disasm_insn)
 {
 	return false;
 }
 
-const char *Disassembler::str(dis_insn *disasm_insn, int style)
+const char *Disassembler::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, DISASM_STRF_DEFAULT_FORMAT);
 }

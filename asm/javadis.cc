@@ -216,7 +216,7 @@ const char *javadis::getName() const
 	return "Java/Disassembler";
 }
 
-byte javadis::getSize(dis_insn *disasm_insn)
+byte javadis::getSize(const dis_insn *disasm_insn)
 {
 	return ((javadis_insn*)disasm_insn)->size;
 }
@@ -408,12 +408,12 @@ void javadis::str_format(char **str, const char **format, const char *p, const c
 	*str = s;
 }
 
-const char *javadis::str(dis_insn *disasm_insn, int options)
+const char *javadis::str(const dis_insn *disasm_insn, int options)
 {
 	return strf(disasm_insn, options, DISASM_STRF_DEFAULT_FORMAT);
 }
 
-const char *javadis::strf(dis_insn *disasm_insn, int opt, const char *format)
+const char *javadis::strf(const dis_insn *disasm_insn, int opt, const char *format)
 {
 	javadis_insn *insn = (javadis_insn*)disasm_insn;
 	char prefix[64];

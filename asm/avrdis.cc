@@ -146,7 +146,7 @@ void AVRDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &mi
 	addr_align = 2;
 }
 
-byte AVRDisassembler::getSize(dis_insn *disasm_insn)
+byte AVRDisassembler::getSize(const dis_insn *disasm_insn)
 {
 	return ((avrdis_insn*)disasm_insn)->size;
 }
@@ -156,12 +156,12 @@ const char *AVRDisassembler::getName() const
 	return "AVR/Disassembler";
 }
 
-const char *AVRDisassembler::str(dis_insn *disasm_insn, int style)
+const char *AVRDisassembler::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-const char *AVRDisassembler::strf(dis_insn *disasm_insn, int style, const char *format)
+const char *AVRDisassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 	

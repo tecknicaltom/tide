@@ -190,7 +190,7 @@ public:
 	virtual void		handlemsg(htmsg *msg);
 		void		hidecursor();
 		int		isviewdirty();
-	virtual	int		isaclone(ht_view *view);
+	virtual	int		isaclone(const ht_view *view);
 	virtual	void		load(ObjectStream &s);
 	virtual	void		move(int rx, int ry);
 	virtual	ObjectID	getObjectID() const;
@@ -272,7 +272,7 @@ public:
 	virtual	void getminbounds(int *width, int *height);
 	virtual	ht_view *getselected();
 	virtual	void handlemsg(htmsg *msg);
-	virtual	int isaclone(ht_view *view);
+	virtual	int isaclone(const ht_view *view);
 		int isviewdirty();
 	virtual	void load(ObjectStream &s);
 	virtual	void move(int x, int y);
@@ -310,7 +310,7 @@ public:
 	/* overwritten */
 	virtual	int		countselectables();
 	virtual	void		handlemsg(htmsg *msg);
-	virtual	int		isaclone(ht_view *view);
+	virtual	int		isaclone(const ht_view *view);
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		redraw();

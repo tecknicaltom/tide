@@ -1067,7 +1067,7 @@ int x86dis::getsib()
 	return sib;
 }
 
-byte x86dis::getSize(dis_insn *disasm_insn)
+byte x86dis::getSize(const dis_insn *disasm_insn)
 {
 	return ((x86dis_insn*)disasm_insn)->size;
 }
@@ -1541,7 +1541,7 @@ void x86dis::str_format(char **str, const char **format, char *p, char *n, char 
 	*str=s;
 }
 
-const char *x86dis::str(dis_insn *disasm_insn, int options)
+const char *x86dis::str(const dis_insn *disasm_insn, int options)
 {
 	return strf(disasm_insn, options, DISASM_STRF_DEFAULT_FORMAT);
 }
@@ -1560,7 +1560,7 @@ static void pickname(char *result, const char *name, int n)
 	ht_strlcpy(result, name, s-name+1);
 }
 
-const char *x86dis::strf(dis_insn *disasm_insn, int opt, const char *format)
+const char *x86dis::strf(const dis_insn *disasm_insn, int opt, const char *format)
 {
 	x86dis_insn *insn = (x86dis_insn*)disasm_insn;
 	char prefix[64];

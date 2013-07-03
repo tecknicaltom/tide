@@ -168,7 +168,7 @@ void PPCDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &mi
 	min_length = max_length = min_look_ahead = avg_look_ahead = addr_align = 4;
 }
 
-byte PPCDisassembler::getSize(dis_insn *disasm_insn)
+byte PPCDisassembler::getSize(const dis_insn *disasm_insn)
 {
 	return ((ppcdis_insn*)disasm_insn)->size;
 }
@@ -178,12 +178,12 @@ const char *PPCDisassembler::getName() const
 	return "PPC/Disassembler";
 }
 
-const char *PPCDisassembler::str(dis_insn *disasm_insn, int style)
+const char *PPCDisassembler::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-const char *PPCDisassembler::strf(dis_insn *disasm_insn, int style, const char *format)
+const char *PPCDisassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 	

@@ -26,7 +26,7 @@
 #include "ia64opc.h"
 #include "snprintf.h"
 
-bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
+bool IA64Disassembler::selectNext(const dis_insn *disasm_insn)
 {
 	IA64DisInsn *insn = (IA64DisInsn *)disasm_insn;
 	if (!insn->valid) return false;
@@ -473,7 +473,7 @@ void IA64Disassembler::getOpcodeMetrics(int &min_length, int &max_length, int &m
 	addr_align = 16;
 }
 
-byte IA64Disassembler::getSize(dis_insn *disasm_insn)
+byte IA64Disassembler::getSize(const dis_insn *disasm_insn)
 {
 	return ((IA64DisInsn*)disasm_insn)->size;
 }
@@ -483,12 +483,12 @@ const char *IA64Disassembler::getName() const
 	return "IA64/Disassembler";
 }
 
-const char *IA64Disassembler::str(dis_insn *disasm_insn, int style)
+const char *IA64Disassembler::str(const dis_insn *disasm_insn, int style)
 {
 	return strf(disasm_insn, style, "");
 }
 
-const char *IA64Disassembler::strf(dis_insn *disasm_insn, int style, const char *format)
+const char *IA64Disassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
 
