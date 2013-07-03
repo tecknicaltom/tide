@@ -1056,7 +1056,7 @@ int x86dis::getspecialimm()
 	return special_imm;
 }
 
-const char *x86dis::getName()
+const char *x86dis::getName() const
 {
 	return "x86/Disassembler";
 }

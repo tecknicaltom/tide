@@ -151,7 +151,7 @@ byte AVRDisassembler::getSize(dis_insn *disasm_insn)
 	return ((avrdis_insn*)disasm_insn)->size;
 }
 
-const char *AVRDisassembler::getName()
+const char *AVRDisassembler::getName() const
 {
 	return "AVR/Disassembler";
 }

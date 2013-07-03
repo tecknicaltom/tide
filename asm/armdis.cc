@@ -101,7 +101,7 @@ byte ArmDisassembler::getSize(dis_insn *disasm_insn)
 	return 4;//((ArmDisInsn*)disasm_insn)->size;
 }
 
-const char *ArmDisassembler::getName()
+const char *ArmDisassembler::getName() const
 {
 	return "Arm/Disassembler";
 }

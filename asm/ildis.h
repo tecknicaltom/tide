@@ -59,7 +59,7 @@ public:
 	virtual	dis_insn	*duplicateInsn(const dis_insn *disasm_insn);
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual	byte		getSize(dis_insn *disasm_insn);
-	virtual	const char	*getName();
+	virtual	const char	*getName() const;
 		void		initialize(char* (*string_func)(uint32 string_ofs, void *context), char* (*token_func)(uint32 token, void *context), void *context);
 	virtual	const char	*str(dis_insn *disasm_insn, int style);
 	virtual	const char	*strf(dis_insn *disasm_insn, int style, const char *format);

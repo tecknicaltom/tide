@@ -478,7 +478,7 @@ byte IA64Disassembler::getSize(dis_insn *disasm_insn)
 	return ((IA64DisInsn*)disasm_insn)->size;
 }
 
-const char *IA64Disassembler::getName()
+const char *IA64Disassembler::getName() const
 {
 	return "IA64/Disassembler";
 }

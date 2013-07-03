@@ -173,7 +173,7 @@ byte PPCDisassembler::getSize(dis_insn *disasm_insn)
 	return ((ppcdis_insn*)disasm_insn)->size;
 }
 
-const char *PPCDisassembler::getName()
+const char *PPCDisassembler::getName() const
 {
 	return "PPC/Disassembler";
 }

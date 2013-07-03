@@ -252,7 +252,7 @@ void Alphadis::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_
 	addr_align = 4;
 }
 
-const char *Alphadis::getName()
+const char *Alphadis::getName() const
 {
 	return "alpha/disassembler";
 }

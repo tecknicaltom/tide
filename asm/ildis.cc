@@ -183,7 +183,7 @@ byte ILDisassembler::getSize(dis_insn *disasm_insn)
 	return ((ILDisInsn*)disasm_insn)->size;
 }
 
-const char *ILDisassembler::getName()
+const char *ILDisassembler::getName() const
 {
 	return "IL/Disassembler";
 }

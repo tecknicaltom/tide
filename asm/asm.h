@@ -79,9 +79,9 @@ public:
 
 /* new */
 	virtual	asm_insn *alloc_insn();
-	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
+	virtual	asm_code *encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_address);
 		const char *get_error_msg();
-	virtual	const char *get_name();
+	virtual	const char *get_name() const;
 	virtual	bool translate_str(asm_insn *asm_insn, const char *s) = 0;
 		void set_error_msg(const char *format, ...);
 		void set_imm_eval_proc(int (*imm_eval_proc)(void *context, const char *s, uint64 &v), void *imm_eval_context);
@@ -133,7 +133,7 @@ public:
 	virtual	dis_insn *duplicateInsn(const dis_insn *disasm_insn)=0;
 	virtual	void	getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align)=0;
 	virtual	byte getSize(dis_insn *disasm_insn)=0;
-	virtual	const char *getName()=0;
+	virtual	const char *getName() const =0;
 	virtual	bool selectNext(dis_insn *disasm_insn);
 	virtual	const char *str(dis_insn *disasm_insn, int style);
 	virtual	const char *strf(dis_insn *disasm_insn, int style, const char *format)=0;

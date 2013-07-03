@@ -127,8 +127,8 @@ public:
 		x86asm(X86OpSize opsize, X86AddrSize addrsize);
 
 	virtual	asm_insn *alloc_insn();
-	virtual	asm_code *encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address);
-	virtual	const char *get_name();
+	virtual	asm_code *encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_address);
+	virtual	const char *get_name() const;
 	virtual	bool translate_str(asm_insn *asm_insn, const char *s);
 };
 

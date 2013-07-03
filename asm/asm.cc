@@ -72,7 +72,7 @@ void Assembler::deletecode(asm_code *code)
 	}
 }
 
-asm_code *Assembler::encode(asm_insn *asm_insn, int _options, CPU_ADDR cur_address)
+asm_code *Assembler::encode(const asm_insn *asm_insn, int _options, CPU_ADDR cur_address)
 {
 	free_asm_codes();
 	error = 0;
@@ -157,7 +157,7 @@ const char *Assembler::get_error_msg()
 	return error_msg;
 }
 
-const char *Assembler::get_name()
+const char *Assembler::get_name() const
 {
 	return "generic asm";
 }

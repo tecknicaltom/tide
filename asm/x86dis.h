@@ -126,7 +126,7 @@ public:
 	virtual	dis_insn *	decode(const byte *code, int maxlen, CPU_ADDR addr);
 	virtual	dis_insn *	duplicateInsn(const dis_insn *disasm_insn);
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
-	virtual	const char *	getName();
+	virtual	const char *	getName() const;
 	virtual	byte		getSize(dis_insn *disasm_insn);
 	virtual	void		load(ObjectStream &f);
 	virtual ObjectID	getObjectID() const;

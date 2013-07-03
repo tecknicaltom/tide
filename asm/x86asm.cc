@@ -376,7 +376,7 @@ void x86asm::emitsib_scale(int scale)
 #define MATCHOPNAME_MATCH_IF_OPPREFIX	8
 #define MATCHOPNAME_MATCH_IF_NOOPPREFIX	9
 
-asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
+asm_code *x86asm::encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 {
 	Assembler::encode(asm_insn, options, cur_address);
 	x86asm_insn *insn = (x86asm_insn*)asm_insn;
@@ -1262,7 +1262,7 @@ char x86asm::flsz2hsz(int size)
 	return 0;
 }
 
-const char *x86asm::get_name()
+const char *x86asm::get_name() const
 {
 	return "x86asm";
 }

@@ -211,7 +211,7 @@ void javadis::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_a
 	addr_align = 1;
 }
 
-const char *javadis::getName()
+const char *javadis::getName() const
 {
 	return "Java/Disassembler";
 }
