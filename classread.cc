@@ -427,9 +427,9 @@ void class_unread(ht_class_shared_data *shared)
 	free(shared);
 }
 
-int java_demangle_type(char *result, const char **type);
+static int java_demangle_type(char *result, const char **type);
 
-int java_demangle_generic(char *result, const char **type)
+static int java_demangle_generic(char *result, const char **type)
 {
 #if 0
  (Ljava/util/List<+Ljava/lang/Float;>;)V
@@ -473,7 +473,7 @@ int java_demangle_generic(char *result, const char **type)
 }
 
 #define STRIP_PATH
-int java_demangle_template(char *result, const char **type)
+static int java_demangle_template(char *result, const char **type)
 {
 	char *old = result;
 	*result++ = '<';
@@ -512,7 +512,7 @@ int java_demangle_template(char *result, const char **type)
 	return result - old;
 }
 
-int java_demangle_type(char *result, const char **type)
+static int java_demangle_type(char *result, const char **type)
 {
 	switch (*(*type)++) {
 	case 0:

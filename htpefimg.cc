@@ -27,7 +27,7 @@
 #include "pefstruc.h"
 #include "snprintf.h"
 
-ht_view *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 

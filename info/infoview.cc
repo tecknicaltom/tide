@@ -68,7 +68,7 @@ public:
 };
 
 // FIXME: this function is considered harmful
-char *memndup(const char *s, int n)
+static char *memndup(const char *s, int n)
 {
 	char *q = ht_malloc(n+1);
 	memcpy(q, s, n);
@@ -80,7 +80,7 @@ char *memndup(const char *s, int n)
  *
  */
 
-bool parse_xref_body(File *f, Container *t, const char *&n, uint *o, uint *line, bool note)
+static bool parse_xref_body(File *f, Container *t, const char *&n, uint *o, uint *line, bool note)
 {
 	whitespaces(n);
 	const char *l = strchr(n, ':');
@@ -153,7 +153,7 @@ bool parse_xref_body(File *f, Container *t, const char *&n, uint *o, uint *line,
 	return true;
 }
 
-Container *parse_info_node(File *fl, const char *infotext)
+static Container *parse_info_node(File *fl, const char *infotext)
 {
 	const char *n = infotext;
 	bool linestart = true;

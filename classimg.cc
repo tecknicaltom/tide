@@ -27,7 +27,7 @@
 #include "log.h"
 #include "snprintf.h"
 
-ht_view *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_class_shared_data *class_shared=(ht_class_shared_data *)group->get_shared_data();
 

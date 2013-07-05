@@ -197,7 +197,7 @@ int sys_pstat_fd(pstat_t &s, int fd)
 	return 0;
 }
 
-int sys_pstat_filename(pstat_t &s, const char *filename)
+static int sys_pstat_filename(pstat_t &s, const char *filename)
 {
 }
 

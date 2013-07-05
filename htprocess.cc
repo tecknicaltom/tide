@@ -52,7 +52,7 @@ bool execute_process(process_func pp, Object *context)
 	return !cancelled;
 }
 
-void execute_process_bg(process_func pp, Object *context)
+static void execute_process_bg(process_func pp, Object *context)
 {
 	/* FIXME: nyi */
 }

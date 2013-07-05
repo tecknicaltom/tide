@@ -647,7 +647,7 @@ void ht_html_syntax_lexer::reloadpalette()
  *	sorted stringtable
  */
 
-int qsort_stringlist(const void *e1, const void *e2)
+static int qsort_stringlist(const void *e1, const void *e2)
 {
 	return strcmp(*(char **)e1, *(char **)e2);
 }

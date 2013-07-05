@@ -348,7 +348,7 @@ public:
 	}
 };
 
-Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size, bool netendian, char *action)
+static Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size, bool netendian, char *action)
 {
 	ht_blockop_str_context *ctx = new ht_blockop_str_context();
 	ctx->file = file;
@@ -385,7 +385,7 @@ Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uint size,
 }
 
 #define BLOCKOP_STR_MAX_ITERATIONS 1024
-bool blockop_str_process(Object *context, ht_text *progress_indicator)
+static bool blockop_str_process(Object *context, ht_text *progress_indicator)
 {
 	char status[64];
 	ht_blockop_str_context *ctx = (ht_blockop_str_context*)context;
@@ -470,7 +470,7 @@ public:
 	}
 };
 
-Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size, Endianess endian, char *action)
+static Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size, Endianess endian, char *action)
 {
 	ht_blockop_int_context *ctx = new ht_blockop_int_context();
 	ctx->file = file;
@@ -509,7 +509,7 @@ Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uint size,
 }
 
 #define BLOCKOP_INT_MAX_ITERATIONS	1024
-bool blockop_int_process(Object *context, ht_text *progress_indicator)
+static bool blockop_int_process(Object *context, ht_text *progress_indicator)
 {
 	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
 	char status[64];

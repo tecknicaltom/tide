@@ -44,7 +44,7 @@
 #define object_stream_txt			1
 #define object_stream_bin_compressed		2
 
-ObjectStream *create_object_stream(Stream &f, int object_stream_type)
+static ObjectStream *create_object_stream(Stream &f, int object_stream_type)
 {
 	ObjectStream *s;
 	switch (object_stream_type) {

@@ -150,7 +150,7 @@ vcp getcolorv(palette *pal, uint index)
 	return VCP(VC_WHITE, VC_RED);
 }
 
-pal_layout *find_pal_layout(pal_class *layouts, const char *pal_class, int *lsize)
+static pal_layout *find_pal_layout(pal_class *layouts, const char *pal_class, int *lsize)
 {
 	pal_layout *pl = NULL;
 	while (layouts->layout && layouts->name) {
@@ -172,7 +172,7 @@ pal_layout *find_pal_layout(pal_class *layouts, const char *pal_class, int *lsiz
 	return pl;
 }
 
-int find_pal_entry_idx(pal_layout *layout, const char *name)
+static int find_pal_entry_idx(pal_layout *layout, const char *name)
 {
 	while (layout->name) {
 		if (strcmp(layout->name, name) == 0) return layout->idx;

@@ -51,7 +51,7 @@ uint64 f2i(double f)
 	return r;
 }
 
-void set_helpmode(int flag, char *name)
+static void set_helpmode(int flag, char *name)
 {
 	helpmode = flag;
 	int l = name ? strlen(name) : (MAX_FUNCNAME_LEN+1);
@@ -692,7 +692,7 @@ void scalar_miniif(eval_scalar *xr, eval_scalar *xa, eval_scalar *xb, eval_scala
  *	BUILTIN FUNCTIONS
  */
 
-int func_typeof(eval_scalar *r, eval_scalar *s)
+static int func_typeof(eval_scalar *r, eval_scalar *s)
 {
 	switch (s->type) {
 		case SCALAR_INT:
@@ -712,7 +712,7 @@ int func_typeof(eval_scalar *r, eval_scalar *s)
 	return 1;
 }
 
-int func_is_int(eval_scalar *r, eval_scalar *s)
+static int func_is_int(eval_scalar *r, eval_scalar *s)
 {
 	if (s->type == SCALAR_INT) {
 		scalar_create_int_c(r, 1);
@@ -722,7 +722,7 @@ int func_is_int(eval_scalar *r, eval_scalar *s)
 	return 1;
 }
 
-int func_is_string(eval_scalar *r, eval_scalar *s)
+static int func_is_string(eval_scalar *r, eval_scalar *s)
 {
 	if (s->type == SCALAR_STR) {
 		scalar_create_int_c(r, 1);
@@ -732,7 +732,7 @@ int func_is_string(eval_scalar *r, eval_scalar *s)
 	return 1;
 }
 
-int func_is_float(eval_scalar *r, eval_scalar *s)
+static int func_is_float(eval_scalar *r, eval_scalar *s)
 {
 	if (s->type == SCALAR_FLOAT) {
 		scalar_create_int_c(r, 1);
@@ -742,7 +742,7 @@ int func_is_float(eval_scalar *r, eval_scalar *s)
 	return 1;
 }
 
-int func_char(eval_scalar *r, eval_int *i)
+static int func_char(eval_scalar *r, eval_int *i)
 {
 	eval_str s;
 	char c = i->value;
@@ -752,75 +752,75 @@ int func_char(eval_scalar *r, eval_int *i)
 	return 1;
 }
 
-int func_byte(eval_scalar *r, eval_int *i)
+static int func_byte(eval_scalar *r, eval_int *i)
 {
 	uint c = i->value;
 	scalar_create_int_c(r, c & 0xff);
 	return 1;
 }
 
-int func_word(eval_scalar *r, eval_int *i)
+static int func_word(eval_scalar *r, eval_int *i)
 {
 	uint c = i->value;
 	scalar_create_int_c(r, c & 0xffff);
 	return 1;
 }
 
-int func_dword(eval_scalar *r, eval_int *i)
+static int func_dword(eval_scalar *r, eval_int *i)
 {
 	uint c = i->value;
 	scalar_create_int_q(r, c & 0xffffffff);
 	return 1;
 }
 
-int func_sbyte(eval_scalar *r, eval_int *i)
+static int func_sbyte(eval_scalar *r, eval_int *i)
 {
 	uint c = i->value;
 	scalar_create_int_c(r, (signed char)c);
 	return 1;
 }
 
-int func_short(eval_scalar *r, eval_int *i)
+static int func_short(eval_scalar *r, eval_int *i)
 {
 	uint c = i->value;
 	scalar_create_int_c(r, (short)c);
 	return 1;
 }
 
-int func_long(eval_scalar *r, eval_int *i)
+static int func_long(eval_scalar *r, eval_int *i)
 {
 	int c = i->value;
 	scalar_create_int_c(r, c);
 	return 1;
 }
 
-int func_float(eval_scalar *r, eval_float *p)
+static int func_float(eval_scalar *r, eval_float *p)
 {
 	scalar_create_float(r, p);
 	return 1;
 }
 
-int func_fmax(eval_scalar *r, eval_float *p1, eval_float *p2)
+static int func_fmax(eval_scalar *r, eval_float *p1, eval_float *p2)
 {
 	r->type=SCALAR_FLOAT;
 	r->scalar.floatnum.value=(p1->value>p2->value) ? p1->value : p2->value;
 	return 1;
 }
 
-int func_fmin(eval_scalar *r, eval_float *p1, eval_float *p2)
+static int func_fmin(eval_scalar *r, eval_float *p1, eval_float *p2)
 {
 	r->type=SCALAR_FLOAT;
 	r->scalar.floatnum.value=(p1->value<p2->value) ? p1->value : p2->value;
 	return 1;
 }
 
-int func_int(eval_scalar *r, eval_int *p)
+static int func_int(eval_scalar *r, eval_int *p)
 {
 	scalar_create_int(r, p);
 	return 1;
 }
 
-int func_ord(eval_scalar *r, eval_str *s)
+static int func_ord(eval_scalar *r, eval_str *s)
 {
 	if (s->len>=1) {
 		scalar_create_int_c(r, s->value[0]);
@@ -830,32 +830,32 @@ int func_ord(eval_scalar *r, eval_str *s)
 	return 0;		
 }
 
-int func_max(eval_scalar *r, eval_int *p1, eval_int *p2)
+static int func_max(eval_scalar *r, eval_int *p1, eval_int *p2)
 {
 	scalar_create_int(r, (p1->value>p2->value) ? p1 : p2);
 	return 1;
 }
 
-int func_min(eval_scalar *r, eval_int *p1, eval_int *p2)
+static int func_min(eval_scalar *r, eval_int *p1, eval_int *p2)
 {
 	scalar_create_int(r, (p1->value<p2->value) ? p1 : p2);
 	return 1;
 }
 
-int func_random(eval_scalar *r, eval_int *p1)
+static int func_random(eval_scalar *r, eval_int *p1)
 {
 	uint64 d = rand();
 	scalar_create_int_q(r, (p1->value != 0) ? (d % p1->value):0);
 	return 1;
 }
 
-int func_rnd(eval_scalar *r)
+static int func_rnd(eval_scalar *r)
 {
 	scalar_create_int_c(r, rand() % 2);
 	return 1;
 }
 
-int func_round(eval_scalar *r, eval_float *p)
+static int func_round(eval_scalar *r, eval_float *p)
 {
 	r->type=SCALAR_INT;
 	r->scalar.integer.value=f2i(p->value+0.5);
@@ -863,7 +863,7 @@ int func_round(eval_scalar *r, eval_float *p)
 	return 1;
 }
 
-int func_strchr(eval_scalar *r, eval_str *p1, eval_str *p2)
+static int func_strchr(eval_scalar *r, eval_str *p1, eval_str *p2)
 {
 	if (p2->len) {
 		if (p1->len) {
@@ -882,7 +882,7 @@ int func_strchr(eval_scalar *r, eval_str *p1, eval_str *p2)
 	}
 }
 
-int func_strcmp(eval_scalar *r, eval_str *p1, eval_str *p2)
+static int func_strcmp(eval_scalar *r, eval_str *p1, eval_str *p2)
 {
 	int r2=memcmp(p1->value, p2->value, MIN(p1->len, p2->len));
 	if (r2) {
@@ -899,35 +899,35 @@ int func_strcmp(eval_scalar *r, eval_str *p1, eval_str *p2)
 	return 1;     
 }
 
-int func_string(eval_scalar *r, eval_str *p)
+static int func_string(eval_scalar *r, eval_str *p)
 {
 	scalar_create_str(r, p);
 	return 1;
 }
 
-int func_strlen(eval_scalar *r, eval_str *p1)
+static int func_strlen(eval_scalar *r, eval_str *p1)
 {
 	scalar_create_int_c(r, p1->len);
 	return 1;
 }
 
-int func_strncmp(eval_scalar *r, eval_str *p1, eval_str *p2, eval_int *p3)
+static int func_strncmp(eval_scalar *r, eval_str *p1, eval_str *p2, eval_int *p3)
 {
 	return 1;
 }
 
-int func_strrchr(eval_scalar *r, eval_str *p1, eval_str *p2)
+static int func_strrchr(eval_scalar *r, eval_str *p1, eval_str *p2)
 {
 	return 1;
 }
 
-int func_strstr(eval_scalar *r, eval_str *p1, eval_str *p2)
+static int func_strstr(eval_scalar *r, eval_str *p1, eval_str *p2)
 {
 
 	return 1;
 }
 
-int func_substr(eval_scalar *r, eval_str *p1, eval_int *p2, eval_int *p3)
+static int func_substr(eval_scalar *r, eval_str *p1, eval_int *p2, eval_int *p3)
 {
 	if (p2->value >= 0 && p3->value > 0) {
 		if (p2->value < p1->len) {
@@ -944,7 +944,7 @@ int func_substr(eval_scalar *r, eval_str *p1, eval_int *p2, eval_int *p3)
 	return 1;
 }
 
-int func_trunc(eval_scalar *r, eval_float *p)
+static int func_trunc(eval_scalar *r, eval_float *p)
 {
 	r->type=SCALAR_INT;
 	r->scalar.integer.value=f2i(p->value);
@@ -1169,7 +1169,7 @@ int func_error(eval_scalar *r, eval_str *s)
 	return 0;
 }
 
-int func_help_helper(eval_scalar *r, eval_str *s)
+static int func_help_helper(eval_scalar *r, eval_str *s)
 {
 	if (s->len > MAX_FUNCNAME_LEN) return 0;
 	char b[MAX_FUNCNAME_LEN+1];
@@ -1185,7 +1185,7 @@ int func_help_helper(eval_scalar *r, eval_str *s)
 	return 1;
 }
 
-int func_whatis(eval_scalar *r, eval_str *s)
+static int func_whatis(eval_scalar *r, eval_str *s)
 {
 	int t = 0;
 	if (s->len != 0) t = func_help_helper(r, s);
@@ -1198,7 +1198,7 @@ int func_whatis(eval_scalar *r, eval_str *s)
 	return t;
 }
 
-int func_help(eval_scalar *r)
+static int func_help(eval_scalar *r)
 {
 	eval_scalar str;
 	scalar_create_str_c(&str, "");

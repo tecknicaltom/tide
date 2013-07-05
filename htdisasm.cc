@@ -37,7 +37,7 @@ extern "C" {
 #include "regex.h"
 }
 
-ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
 {
 	int t1632;
 #if 1

@@ -156,14 +156,14 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 
 /***/
 
-ht_view* create_form_evalstr(Bounds *b, uint histid)
+static ht_view* create_form_evalstr(Bounds *b, uint histid)
 {
 	ht_evalstr_search_form *form=new ht_evalstr_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
 {
 #define EVALSTR_MAXSTRLEN		256
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
@@ -203,7 +203,7 @@ ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht
 	return request;
 }
 
-void create_desc_evalstr(char *buf, int buflen, ht_view *f)
+static void create_desc_evalstr(char *buf, int buflen, ht_view *f)
 {
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
 	ht_evalstr_search_form_data d;
@@ -258,14 +258,14 @@ ht_fxbin_search_request *ht_fxbin_search_request::clone() const
  *	CLASS ht_regex_search_request
  */
  
-ht_view* create_form_vregex(Bounds *b, uint histid)
+static ht_view* create_form_vregex(Bounds *b, uint histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
 {
 #define VREGEX_MAXSTRLEN		256
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
@@ -364,14 +364,14 @@ String &ht_regex_search_exception::reason(String &s) const
  *	CLASS ht_expr_search_request
  */
 
-ht_view* create_form_expr(Bounds *b, uint histid)
+static ht_view* create_form_expr(Bounds *b, uint histid)
 {
 	ht_expr_search_form *form = new ht_expr_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
 {
 #define EXPR_MAXSTRLEN		256
 	ht_expr_search_form *form=(ht_expr_search_form*)f;
@@ -397,7 +397,7 @@ ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_vi
 	return request;
 }
 
-void create_desc_expr(char *buf, int buflen, ht_view *f)
+static void create_desc_expr(char *buf, int buflen, ht_view *f)
 {
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
@@ -451,7 +451,7 @@ ht_expr_search_request *ht_expr_search_request::clone() const
  */
 
 /* FIXME: put somewhere else */
-void bufdowncase(byte *buf, uint32 len)
+static void bufdowncase(byte *buf, uint32 len)
 {
 	for (uint32 i=0; i<len; i++) {
 		if (buf[i] >= 'A' && buf[i] <= 'Z') buf[i] += 32;
@@ -861,7 +861,7 @@ ht_replace_bin_context::~ht_replace_bin_context()
 	free(repl);
 }
 
-ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
+static ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
 {
 	ht_replace_hexascii_search_form *form=new ht_replace_hexascii_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));

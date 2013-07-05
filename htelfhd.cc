@@ -197,7 +197,7 @@ static int_hash elf_machine[] =
 	{0, 0}
 };
 
-ht_view *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 	

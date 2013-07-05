@@ -1634,7 +1634,7 @@ AVLTree::AVLTree(bool aOwnObjects, Comparator aComparator)
 
 }
 
-void debugOutNode(FILE *f, BinTreeNode *n, BinTreeNode *p)
+static void debugOutNode(FILE *f, BinTreeNode *n, BinTreeNode *p)
 {
 	if (n) {
 		char b[1024];
@@ -1658,7 +1658,7 @@ void AVLTree::debugOut()
 	fclose(f);
 }
 
-bool AVLTree__expensiveCheck(BinTreeNode *n, int &height)
+static bool AVLTree__expensiveCheck(BinTreeNode *n, int &height)
 {
 	if (n) {
 		int left, right;

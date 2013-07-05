@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 

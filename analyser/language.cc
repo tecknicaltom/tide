@@ -48,7 +48,7 @@ byte mapchar[] = {
 	INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV,INV
 };
 
-int analy_string__raw_test(const byte *s, int len)
+static int analy_string__raw_test(const byte *s, int len)
 {
 	// could be a "" string
 	if (!len) return 1;

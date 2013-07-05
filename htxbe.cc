@@ -281,7 +281,7 @@ bool xbe_ofs_to_rva_and_section(xbe_section_headers *section_headers, FileOfs of
 	return r;
 }
 
-bool xbe_ofs_is_valid(xbe_section_headers *section_headers, FileOfs ofs)
+static bool xbe_ofs_is_valid(xbe_section_headers *section_headers, FileOfs ofs)
 {
 	RVA rva;
 	return xbe_ofs_to_rva(section_headers, ofs, &rva);

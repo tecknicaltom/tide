@@ -2360,7 +2360,7 @@ int	ht_itext_listbox::compare_ccomm(const char *s1, const char *s2)
 
 #define STATICTEXT_MIN_LINE_FILL 70	/* percent */
 
-void ht_statictext_align(ht_statictext_linedesc *d, statictext_align align, int w)
+static void ht_statictext_align(ht_statictext_linedesc *d, statictext_align align, int w)
 {
 	switch (align) {
 	case align_center:

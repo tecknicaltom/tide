@@ -605,7 +605,7 @@ bool elf_addr_is_valid(elf_section_headers *section_headers, uint elfclass, ELFA
 	return false;
 }
 
-bool elf_addr_is_physical(elf_section_headers *section_headers, uint elfclass, ELFAddress addr)
+static bool elf_addr_is_physical(elf_section_headers *section_headers, uint elfclass, ELFAddress addr)
 {
 	return false;
 }
@@ -675,7 +675,7 @@ bool elf_ofs_to_section(elf_section_headers *section_headers, uint elfclass, uin
 	return false;
 }
 
-bool elf_ofs_to_addr_and_section(elf_section_headers *section_headers, uint elfclass, uint32 ofs, ELFAddress *addr, int *section)
+static bool elf_ofs_to_addr_and_section(elf_section_headers *section_headers, uint elfclass, uint32 ofs, ELFAddress *addr, int *section)
 {
 	return false;
 }

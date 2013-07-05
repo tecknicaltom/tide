@@ -311,7 +311,7 @@ bool pe_ofs_to_rva_and_section(pe_section_headers *section_headers, FileOfs ofs,
 	return r;
 }
 
-bool pe_ofs_is_valid(pe_section_headers *section_headers, FileOfs ofs)
+static bool pe_ofs_is_valid(pe_section_headers *section_headers, FileOfs ofs)
 {
 	RVA rva;
 	return pe_ofs_to_rva(section_headers, ofs, &rva);

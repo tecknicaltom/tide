@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, char *buf)
+static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, char *buf)
 {
 	ht_dialog *dialog=new ht_dialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | (modal ? 0 : FS_MOVE | FS_RESIZE));

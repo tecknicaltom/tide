@@ -243,7 +243,7 @@ void ClassAnalyser::initCodeAnalyser()
 }
 
 
-int class_token_func(char *result, int maxlen, uint32 token, void *context)
+static int class_token_func(char *result, int maxlen, uint32 token, void *context)
 {
 	return token_translate(result, maxlen, token, (ht_class_shared_data *)context);
 }

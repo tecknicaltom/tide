@@ -35,7 +35,7 @@ static vc gInverseColors[8] = {
 #define VC_GET_INVERSE(vc) (7-((vc)&7))
 #endif
 
-inline vc mixSingleColor(vc base, vc layer)
+static inline vc mixSingleColor(vc base, vc layer)
 {
 	if (VC_GET_BASECOLOR(base) > 7) return layer;
 	

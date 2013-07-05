@@ -136,13 +136,13 @@ static int hist_atoms[]={
 	HISTATOM_EVAL_EXPR
 };
 
-void create_hist_atom(uint atom)
+static void create_hist_atom(uint atom)
 {
 	List *c = new Array(true);
 	registerAtom(atom, c);
 }
 
-void destroy_hist_atom(uint atom)
+static void destroy_hist_atom(uint atom)
 {
 	Object *c = (Object*)getAtomValue(atom);
 	if (c) {

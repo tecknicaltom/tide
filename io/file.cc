@@ -371,7 +371,7 @@ static int flatten_path(char *path, is_path_delim delim)
 	return pp;
 }
 
-bool sys_path_is_absolute(const char *filename, is_path_delim delim)
+static bool sys_path_is_absolute(const char *filename, is_path_delim delim)
 {
 	return delim(filename[0]) || (isalpha(filename[0]) && (filename[1] == ':'));
 }

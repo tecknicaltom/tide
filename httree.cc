@@ -364,7 +364,7 @@ void ht_static_treeview::init(Bounds *b, const char *desc)
 	root=0;
 }
 
-void ht_static_treeviewdone_r(static_node *node)
+static void ht_static_treeviewdone_r(static_node *node)
 {
 	while (node) {
 		ht_static_treeviewdone_r(node->child);

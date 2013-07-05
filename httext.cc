@@ -24,7 +24,7 @@
 
 #include <string.h>
 
-ht_view *httext_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *httext_init(Bounds *b, File *file, ht_format_group *group)
 {
 	/* no httext for file > 5 MiB */
 	if (file->getSize() > 5*1024*1024) {
@@ -103,7 +103,7 @@ void ht_text_viewer2::handlemsg(htmsg *msg)
  */
 
 /* FIXME: put it somewhere else..., why ain't this a POSIX function ? */
-const void *ht_memrchr(const void *string, int ch, size_t num)
+static const void *ht_memrchr(const void *string, int ch, size_t num)
 {
 	while (num--) {
 		if (((const char*)string)[num]==ch) return ((const char*)string)+num;

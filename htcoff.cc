@@ -284,7 +284,7 @@ int coff_ofs_to_rva_and_section(coff_section_headers *section_headers, uint32 of
 	return r;
 }
 
-bool coff_ofs_is_valid(coff_section_headers *section_headers, uint32 ofs)
+static bool coff_ofs_is_valid(coff_section_headers *section_headers, uint32 ofs)
 {
 	RVA rva;
 	return coff_ofs_to_rva(section_headers, ofs, &rva);

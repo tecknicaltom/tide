@@ -259,7 +259,7 @@ void	CallChain::init(Bounds *b, Analyser *Analy, Address *a, char *desc)
 	root = createNode(a);
 }
 
-void CallChain_done(CallChainNode *n)
+static void CallChain_done(CallChainNode *n)
 {
 	while (n) {
 		CallChain_done(n->child);

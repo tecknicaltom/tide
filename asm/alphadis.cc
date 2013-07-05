@@ -65,7 +65,7 @@ Alphadis::Alphadis()
 	insn.valid = false;
 }
 
-int find_alpha_instruction(alpha_opcode_tab_entry *table, int f)
+static int find_alpha_instruction(alpha_opcode_tab_entry *table, int f)
 {
 	int i=0;
 	while (f > (table+i)->fcode) i++;

@@ -69,7 +69,7 @@ bool compeq_line_id(const LINE_ID &a, const LINE_ID &b)
 	     && a.id3 == b.id3 && a.id4 == b.id4 && a.id5 == b.id5);
 }
 
-void load_line_id(ObjectStream &st, LINE_ID &line)
+static void load_line_id(ObjectStream &st, LINE_ID &line)
 {
 	GET_INT32X(st, line.id1);
 	GET_INT32X(st, line.id2);
@@ -78,7 +78,7 @@ void load_line_id(ObjectStream &st, LINE_ID &line)
 	GET_INT32X(st, line.id5);
 }
 
-void store_line_id(ObjectStream &st, const LINE_ID &line)
+static void store_line_id(ObjectStream &st, const LINE_ID &line)
 {
 	PUT_INT32X(st, line.id1);
 	PUT_INT32X(st, line.id2);
@@ -4320,7 +4320,7 @@ public:
 	ht_search_result **result;
 };
 
-bool process_search_expr(Object *ctx, ht_text *progress_indicator)
+static bool process_search_expr(Object *ctx, ht_text *progress_indicator)
 {
 #define PROCESS_EXPR_SEARCH_BYTES_PER_CALL	256
 	ht_expr_search_pcontext *c = (ht_expr_search_pcontext*)ctx;

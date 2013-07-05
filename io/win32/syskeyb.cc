@@ -278,7 +278,7 @@ bool keyb_keypressed()
 	}
 }
 
-int ht_key_meta(bool shift, bool control, bool alt)
+static int ht_key_meta(bool shift, bool control, bool alt)
 {
     return (((key_event_record.Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED) && shift) ? HT_VK_SHIFT : 0)
 	+(((key_event_record.Event.KeyEvent.dwControlKeyState & (LEFT_CTRL_PRESSED|RIGHT_CTRL_PRESSED)) && control) ? HT_VK_CTRL : 0)

@@ -102,7 +102,7 @@ void ht_help_window::handlemsg(htmsg *msg)
 	}
 }
 
-bool file_new_dialog(uint *mode)
+static bool file_new_dialog(uint *mode)
 {
 	Bounds b, c;
 	
@@ -318,7 +318,7 @@ void FileBrowser::setstate(int state, int return_val)
 
 /**/
 
-bool file_chooser(const char *title, char *buf, int bufsize)
+static bool file_chooser(const char *title, char *buf, int bufsize)
 {
 	Bounds b, c;
 	
@@ -369,7 +369,7 @@ bool file_chooser(const char *title, char *buf, int bufsize)
 }
 /**/
 
-bool file_open_dialog(char **name, uint *mode)
+static bool file_open_dialog(char **name, uint *mode)
 {
 	Bounds b, c;
 	
@@ -496,7 +496,7 @@ static uint autodetect_file_open_mode(const char *filename)
 	return FOM_BIN;
 }
 
-void file_window_load_fcfg_func(ObjectStream &f, void *context)
+static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 {
 	ht_file_window *w = (ht_file_window*)context;
 
@@ -536,7 +536,7 @@ void file_window_load_fcfg_func(ObjectStream &f, void *context)
 	w->sendmsg(&m);
 }
 
-void file_window_store_fcfg_func(ObjectStream &f, void *context)
+static void file_window_store_fcfg_func(ObjectStream &f, void *context)
 {
 	ht_file_window *w = (ht_file_window*)context;
 	htmsg m;
@@ -556,12 +556,12 @@ void file_window_store_fcfg_func(ObjectStream &f, void *context)
 	}
 }
 
-void file_project_store_fcfg_func(ObjectStream &f, void *context)
+static void file_project_store_fcfg_func(ObjectStream &f, void *context)
 {
 	PUT_OBJECT(f, project);
 }
 
-void file_project_load_fcfg_func(ObjectStream &f, void *context)
+static void file_project_load_fcfg_func(ObjectStream &f, void *context)
 {
 	GET_OBJECT(f, project);
 }
@@ -618,7 +618,7 @@ int app_stream_error_func(ht_stream *stream)
  */
 void *app_memory_reserve = NULL;
 
-int app_out_of_memory_proc(int size)
+static int app_out_of_memory_proc(int size)
 {
 	if (app_memory_reserve) {
 		free(app_memory_reserve);
@@ -3180,7 +3180,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 
 /**/
 
-List *build_vfs_list()
+static List *build_vfs_list()
 {
 	/* build vfs list */
 	List *vfslist = new Array(true);

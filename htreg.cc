@@ -301,22 +301,22 @@ ObjectID ht_registry_node::getObjectID() const
  *	create_empty_*
  */
 
-ht_registry_data *create_empty_symlink()
+static ht_registry_data *create_empty_symlink()
 {
 	return new ht_registry_data_string("");
 }
 
-ht_registry_data *create_empty_dword()
+static ht_registry_data *create_empty_dword()
 {
 	return new ht_registry_data_dword(0);
 }
 
-ht_registry_data *create_empty_string()
+static ht_registry_data *create_empty_string()
 {
 	return new ht_registry_data_string("");
 }
 
-ht_registry_data *create_empty_raw()
+static ht_registry_data *create_empty_raw()
 {
 	return new ht_registry_data_raw(NULL, 0);
 }

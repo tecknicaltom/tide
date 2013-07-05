@@ -60,7 +60,7 @@ b_op *c_op_prec[] = {
 	NULL
 };
 
-uint get_op_prec(b_op bop, b_op **op_prec)
+static uint get_op_prec(b_op bop, b_op **op_prec)
 {
 	uint k = 0;
 	while (*op_prec) {

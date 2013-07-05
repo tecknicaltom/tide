@@ -83,7 +83,7 @@ static ht_text_search_method text_search_methods[] =
 		create_form_hexascii, create_request_hexascii, create_desc_hexascii }
 };
 
-ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmodes, const text_viewer_pos *end_pos)
+static ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint searchmodes, const text_viewer_pos *end_pos)
 {
 	ht_search_request *result = NULL;
 	Bounds b;
@@ -638,7 +638,7 @@ void ht_undo_data_join_line::unapply(ht_text_editor *te, bool *goto_only)
  *	INSERT/DELETE BLOCK
  */
 
-text_viewer_pos insert_text_block(ht_text_editor *te, text_viewer_pos apos, text_viewer_pos bpos, void *block, uint size)
+static text_viewer_pos insert_text_block(ht_text_editor *te, text_viewer_pos apos, text_viewer_pos bpos, void *block, uint size)
 {
 	text_viewer_pos cpos;
 
@@ -675,7 +675,7 @@ text_viewer_pos insert_text_block(ht_text_editor *te, text_viewer_pos apos, text
 	return cpos;
 }
 
-void delete_text_block(ht_text_editor *te, text_viewer_pos apos, text_viewer_pos bpos, text_viewer_pos cpos, text_viewer_pos sel_start, text_viewer_pos sel_end, bool copy, void **block, uint *size)
+static void delete_text_block(ht_text_editor *te, text_viewer_pos apos, text_viewer_pos bpos, text_viewer_pos cpos, text_viewer_pos sel_start, text_viewer_pos sel_end, bool copy, void **block, uint *size)
 {
 	ht_textfile *textfile = te->get_textfile();
 

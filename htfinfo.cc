@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-ht_view *htfinfo_init(Bounds *b, File *file, ht_format_group *group)
+static ht_view *htfinfo_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_finfo_text *v = new ht_finfo_text();
 	v->init(b, file);
@@ -58,7 +58,7 @@ void	ht_finfo_text::done()
 #define FINFO_IDENTIFIER_WIDTH 24
 #define FINFO_IDENTIFIER_WIDTH_STR "24"
 
-int print_time(char *f, int max_len, const char *prefix, time_t time)
+static int print_time(char *f, int max_len, const char *prefix, time_t time)
 {
 	tm tt;
 	memcpy(&tt, localtime(&time), sizeof tt);

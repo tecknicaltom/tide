@@ -45,7 +45,7 @@ struct CPU {
 	sym_bool *flags[X86_FLAGS];
 };
 
-char *srt_x86_idx2reg(uint idx)
+static char *srt_x86_idx2reg(uint idx)
 {
 	if (idx >= 8) {
 		return srt_x86_flags[(idx-8) % X86_FLAGS];
@@ -53,7 +53,7 @@ char *srt_x86_idx2reg(uint idx)
 	return x86_regs[2][idx & 7];
 }
 
-void srt_x86_setreg(CPU *cpu, uint idx, Object *o)
+static void srt_x86_setreg(CPU *cpu, uint idx, Object *o)
 {
 	if (idx >= 8) {
 		sym_bool **k;
@@ -95,7 +95,7 @@ public:
  *	srt_x86
  */
 
-state_mod *srt_x86_flag(uint flagidx, sym_bool_token *value)
+static state_mod *srt_x86_flag(uint flagidx, sym_bool_token *value)
 {
 	state_mod *f = new state_mod();
 	f->ismem = false;
@@ -105,7 +105,7 @@ state_mod *srt_x86_flag(uint flagidx, sym_bool_token *value)
 	return f;
 }
 
-state_mod *srt_x86_reg(uint regidx, sym_int_token *value)
+static state_mod *srt_x86_reg(uint regidx, sym_int_token *value)
 {
 	state_mod *r = new state_mod();
 	r->ismem = false;
@@ -115,7 +115,7 @@ state_mod *srt_x86_reg(uint regidx, sym_int_token *value)
 	return r;
 }
 
-void srt_x86_flags_std(Container *rm, x86dis_insn *insn, sym_int *cond)
+static void srt_x86_flags_std(Container *rm, x86dis_insn *insn, sym_int *cond)
 {
 	state_mod *zf = new state_mod();
 	zf->ismem = false;
@@ -174,7 +174,7 @@ void srt_x86_flags_std(Container *rm, x86dis_insn *insn, sym_int *cond)
 	rm->insert(sf);
 }
 
-void srt_x86_flags_carry(Container *rm, x86dis_insn *insn, sym_int *cond, sym_bool *carry)
+static void srt_x86_flags_carry(Container *rm, x86dis_insn *insn, sym_int *cond, sym_bool *carry)
 {
 	state_mod *cf = new state_mod();
 	cf->ismem = false;
@@ -235,12 +235,12 @@ void srt_x86_flags_carry(Container *rm, x86dis_insn *insn, sym_int *cond, sym_bo
 	}
 }*/
 
-sym_int *srt_x86_mkreg(CPU *cpu, uint regidx)
+static sym_int *srt_x86_mkreg(CPU *cpu, uint regidx)
 {
 	return (sym_int*)cpu->regs[regidx]->clone();
 }
 
-sym_int_token *srt_x86_mkaddr(CPU *cpu, x86_insn_op *o)
+static sym_int_token *srt_x86_mkaddr(CPU *cpu, x86_insn_op *o)
 {
 	sym_int *a = new sym_int();
 	bool first = true;
@@ -264,7 +264,7 @@ sym_int_token *srt_x86_mkaddr(CPU *cpu, x86_insn_op *o)
 	return a;
 }
 
-void srt_x86_mkdest(CPU *cpu, state_mod *m, x86_insn_op *d)
+static void srt_x86_mkdest(CPU *cpu, state_mod *m, x86_insn_op *d)
 {
 	switch (d->type) {
 		case X86_OPTYPE_REG:
@@ -282,7 +282,7 @@ void srt_x86_mkdest(CPU *cpu, state_mod *m, x86_insn_op *d)
 	}
 }
 
-sym_int *srt_x86_mkvalue(CPU *cpu, x86_insn_op *o)
+static sym_int *srt_x86_mkvalue(CPU *cpu, x86_insn_op *o)
 {
 	sym_int *r = new sym_int();
 	switch (o->type) {
@@ -303,7 +303,7 @@ sym_int *srt_x86_mkvalue(CPU *cpu, x86_insn_op *o)
 	return r;
 }
 
-void srt_x86_destmod(CPU *cpu, Container *rm, x86_insn_op *op, sym_int_token *value)
+static void srt_x86_destmod(CPU *cpu, Container *rm, x86_insn_op *op, sym_int_token *value)
 {
 	state_mod *m = new state_mod();
 	srt_x86_mkdest(cpu, m, op);
@@ -316,7 +316,7 @@ void srt_x86_destmod(CPU *cpu, Container *rm, x86_insn_op *op, sym_int_token *va
  *	COMMANDS
  */
 
-void srt_x86_add(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_add(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_add, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -333,7 +333,7 @@ void srt_x86_add(CPU *cpu, Container *rm, x86dis_insn *insn)
 // FIXME: overflow flag
 }
 
-void srt_x86_and(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_and(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_and, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -343,7 +343,7 @@ void srt_x86_and(CPU *cpu, Container *rm, x86dis_insn *insn)
 	srt_x86_flags_std(rm, insn, v);
 }
 
-void srt_x86_cmp(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_cmp(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_sub, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -358,7 +358,7 @@ void srt_x86_cmp(CPU *cpu, Container *rm, x86dis_insn *insn)
 // FIXME: overflow flag
 }
 
-void srt_x86_dec(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_dec(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_sub, new sym_int_const(1));
@@ -368,7 +368,7 @@ void srt_x86_dec(CPU *cpu, Container *rm, x86dis_insn *insn)
 	srt_x86_flags_std(rm, insn, v);
 }
 
-void srt_x86_div(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_div(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 // FIXME: DX:AX / op -> EAX, DX:AX % op -> EDX
 	sym_int *q = srt_x86_mkvalue(cpu, &insn->op[0]);
@@ -396,7 +396,7 @@ void srt_x86_div(CPU *cpu, Container *rm, x86dis_insn *insn)
 	delete carry;*/
 }
 
-void srt_x86_inc(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_inc(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_add, new sym_int_const(1));
@@ -406,7 +406,7 @@ void srt_x86_inc(CPU *cpu, Container *rm, x86dis_insn *insn)
 	srt_x86_flags_std(rm, insn, v);
 }
 
-void srt_x86_lea(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_lea(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	state_mod *m = new state_mod();
 	srt_x86_mkdest(cpu, m, &insn->op[0]);
@@ -416,7 +416,7 @@ void srt_x86_lea(CPU *cpu, Container *rm, x86dis_insn *insn)
 	rm->insert(m);
 }
 
-void srt_x86_mov(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_mov(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	state_mod *m = new state_mod();
 	srt_x86_mkdest(cpu, m, &insn->op[0]);
@@ -425,7 +425,7 @@ void srt_x86_mov(CPU *cpu, Container *rm, x86dis_insn *insn)
 	rm->insert(m);
 }
 
-void srt_x86_mul(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_mul(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 // FIXME: op * AX = DX:AX
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
@@ -450,7 +450,7 @@ void srt_x86_mul(CPU *cpu, Container *rm, x86dis_insn *insn)
 	delete carry;*/
 }
 
-void srt_x86_or(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_or(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_or, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -460,7 +460,7 @@ void srt_x86_or(CPU *cpu, Container *rm, x86dis_insn *insn)
 	srt_x86_flags_std(rm, insn, v);
 }
 
-void srt_x86_pop(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_pop(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 /*	uint32 a;
 	read(context.w.ss, context.d.esp, &a, 4);
@@ -486,7 +486,7 @@ void srt_x86_pop(CPU *cpu, Container *rm, x86dis_insn *insn)
 	rm->insert(m);
 }
 
-void srt_x86_push(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_push(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 /*	context.d.esp -= 4;
 	write(context.w.ss, context.d.esp, &a, 4);*/
@@ -513,7 +513,7 @@ void srt_x86_push(CPU *cpu, Container *rm, x86dis_insn *insn)
 	rm->insert(m);
 }
 
-void srt_x86_sub(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_sub(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_sub, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -530,7 +530,7 @@ void srt_x86_sub(CPU *cpu, Container *rm, x86dis_insn *insn)
 // FIXME: overflow flag
 }
 
-void srt_x86_shl(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_shl(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	sym_int *s = srt_x86_mkvalue(cpu, &insn->op[1]);
@@ -545,7 +545,7 @@ void srt_x86_shl(CPU *cpu, Container *rm, x86dis_insn *insn)
 // FIXME: flags
 }
 
-void srt_x86_shr(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_shr(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	sym_int *s = srt_x86_mkvalue(cpu, &insn->op[1]);
@@ -560,14 +560,14 @@ void srt_x86_shr(CPU *cpu, Container *rm, x86dis_insn *insn)
 // FIXME: flags
 }
 
-void srt_x86_test(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_test(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_and, srt_x86_mkvalue(cpu, &insn->op[1]));
 	srt_x86_flags_std(rm, insn, v);
 }
 
-void srt_x86_xor(CPU *cpu, Container *rm, x86dis_insn *insn)
+static void srt_x86_xor(CPU *cpu, Container *rm, x86dis_insn *insn)
 {
 	sym_int *v = srt_x86_mkvalue(cpu, &insn->op[0]);
 	v->b_operate(b_xor, srt_x86_mkvalue(cpu, &insn->op[1]));
@@ -607,7 +607,7 @@ ecmd ecmds[] = {
 	{NULL, NULL}
 };
 
-Container *srt_x86_single(CPU *cpu, x86dis_insn *i)
+static Container *srt_x86_single(CPU *cpu, x86dis_insn *i)
 {
 	Array *rm = new Array(true);
 
@@ -622,7 +622,7 @@ Container *srt_x86_single(CPU *cpu, x86dis_insn *i)
 	throw ht_io_exception("unsupported cmd: %s", i->name);
 }
 
-void create_cpu(CPU *cpu)
+static void create_cpu(CPU *cpu)
 {
 	for (uint g = 0; g<8; g++) {
 		char s[32];
@@ -641,7 +641,7 @@ void create_cpu(CPU *cpu)
 	}
 }
 
-void destroy_cpu(CPU *cpu)
+static void destroy_cpu(CPU *cpu)
 {
 	for (uint g = 0; g<8; g++) {
 		cpu->regs[g]->done();

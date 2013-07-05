@@ -33,7 +33,7 @@
 #define button_left	100
 #define button_right	101
 
-char *shortcut_str(char *str)
+static char *shortcut_str(char *str)
 {
 	while (*str) {
 		if (*str=='~') {
@@ -45,7 +45,7 @@ char *shortcut_str(char *str)
 	return NULL;
 }
 
-bool execute_submenu(int x, int y, ht_context_menu *m)
+static bool execute_submenu(int x, int y, ht_context_menu *m)
 {
 	int curentry=0;
 	bool term=false;
