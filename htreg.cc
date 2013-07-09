@@ -34,7 +34,7 @@
 #include "store.h"
 #include "tools.h"
 
-ht_registry *registry;
+Registry *registry;
 
 #define ATOM_HT_REGISTRY		MAGIC32("REG\x00")
 #define ATOM_HT_REGISTRY_NODE		MAGIC32("REG\x01")
@@ -52,63 +52,63 @@ ht_registry *registry;
 #define GENERATE_NEW_REGISTRY 0
 
 /*
- *	CLASS ht_registry_data
+ *	CLASS RegistryData
  */
 
-bool ht_registry_data::editdialog(const char *keyname)
+bool RegistryData::editdialog(const char *keyname)
 {
 	return false;
 }
 
-void ht_registry_data::strvalue(char *buf32bytes)
+void RegistryData::strvalue(char *buf32bytes)
 {
 	strcpy(buf32bytes, "<unknown>");
 }
 
 /*
- *	CLASS ht_registry_data_stree
+ *	CLASS RegistryDataSTree
  */
 
-ht_registry_data_stree::ht_registry_data_stree(AVLTree *t)
+RegistryDataSTree::RegistryDataSTree(AVLTree *t)
 {
 	tree = t;
 }
 
-ht_registry_data_stree::~ht_registry_data_stree()
+RegistryDataSTree::~RegistryDataSTree()
 {
 	delete tree;
 }
 
-void ht_registry_data_stree::load(ObjectStream &f)
+void RegistryDataSTree::load(ObjectStream &f)
 {
 	GET_OBJECT(f, tree);
 }
 
-ObjectID ht_registry_data_stree::getObjectID() const
+ObjectID RegistryDataSTree::getObjectID() const
 {
 	return ATOM_HT_REGISTRY_DATA_STREE;
 }
 
-void ht_registry_data_stree::store(ObjectStream &f) const
+void RegistryDataSTree::store(ObjectStream &f) const
 { 
 	PUT_OBJECT(f, tree);
 }
 
-void ht_registry_data_stree::strvalue(char *buf32bytes)
+void RegistryDataSTree::strvalue(char *buf32bytes)
 {
 	*buf32bytes = 0;
 }
 
 /*
- *	CLASS ht_registry_data_dword
+ *	CLASS RegistryDataDword
  */
 
-ht_registry_data_dword::ht_registry_data_dword(uint32 v)
+RegistryDataDword::RegistryDataDword(uint32 v)
 {
 	value = v;
 }
 
-bool ht_registry_data_dword::editdialog(const char *keyname)
+bool RegistryDataDword::editdialog(const char *keyname)
 {
 	// FIXME: use eval instead of strtol
 	char result[32];
@@ -124,31 +124,31 @@ bool ht_registry_data_dword::editdialog(const char *keyname)
 	return false;
 }
 
-void ht_registry_data_dword::load(ObjectStream &f)
+void RegistryDataDword::load(ObjectStream &f)
 {
 	GET_INT32X(f, value);
 }
 
-ObjectID ht_registry_data_dword::getObjectID() const
+ObjectID RegistryDataDword::getObjectID() const
 {
 	return ATOM_HT_REGISTRY_DATA_DWORD;
 }
 
-void ht_registry_data_dword::store(ObjectStream &f) const
+void RegistryDataDword::store(ObjectStream &f) const
 {
 	PUT_INT32X(f, value);
 }
 
-void ht_registry_data_dword::strvalue(char *buf32bytes)
+void RegistryDataDword::strvalue(char *buf32bytes)
 {
 	ht_snprintf(buf32bytes, 32, "%d", value);
 }
 
 /*
- *	CLASS ht_registry_data_raw
+ *	CLASS RegistryDataRaw
  */
 
-ht_registry_data_raw::ht_registry_data_raw(const void *v, uint s)
+RegistryDataRaw::RegistryDataRaw(const void *v, uint s)
 {
 	size = s;
 	if (size) {
@@ -159,12 +159,12 @@ ht_registry_data_raw::ht_registry_data_raw(const void *v, uint s)
 	}
 }
 
-ht_registry_data_raw::~ht_registry_data_raw()
+RegistryDataRaw::~RegistryDataRaw()
 {
 	free(value);
 }
 
-bool ht_registry_data_raw::editdialog(const char *keyname)
+bool RegistryDataRaw::editdialog(const char *keyname)
 {
 	bool r = false;
 	Bounds b;
@@ -185,43 +185,43 @@ bool ht_registry_data_raw::editdialog(const char *keyname)
 	return r;
 }
 
-void ht_registry_data_raw::load(ObjectStream &f)
+void RegistryDataRaw::load(ObjectStream &f)
 {
 	GET_INT32D(f, size);
 	GET_BINARY(f, value, size);
 }
 
-ObjectID ht_registry_data_raw::getObjectID() const
+ObjectID RegistryDataRaw::getObjectID() const
 {
 	return ATOM_HT_REGISTRY_DATA_RAW;
 }
 
-void ht_registry_data_raw::store(ObjectStream &f) const
+void RegistryDataRaw::store(ObjectStream &f) const
 {
 	PUT_INT32D(f, size);
 	PUT_BINARY(f, value, size);
 }
 
-void ht_registry_data_raw::strvalue(char *buf32bytes)
+void RegistryDataRaw::strvalue(char *buf32bytes)
 {
 	strcpy(buf32bytes, "raw");
 }
 
 /*
- *	CLASS ht_registry_data_string
+ *	CLASS RegistryDataString
  */
                                  
-ht_registry_data_string::ht_registry_data_string(const char *s)
+RegistryDataString::RegistryDataString(const char *s)
 {
 	value = ht_strdup(s);
 }
 
-ht_registry_data_string::~ht_registry_data_string()
+RegistryDataString::~RegistryDataString()
 {
 	free(value);
 }
 
-bool ht_registry_data_string::editdialog(const char *keyname)
+bool RegistryDataString::editdialog(const char *keyname)
 {
 	char res[256];
 	ht_strlcpy(res, value, sizeof res);
@@ -233,38 +233,38 @@ bool ht_registry_data_string::editdialog(const char *keyname)
 	return false;
 }
 
-void ht_registry_data_string::load(ObjectStream &f)
+void RegistryDataString::load(ObjectStream &f)
 {
 	GET_STRING(f, value);
 }
 
-ObjectID ht_registry_data_string::getObjectID() const
+ObjectID RegistryDataString::getObjectID() const
 {
 	return ATOM_HT_REGISTRY_DATA_STRING;
 }
 
-void ht_registry_data_string::store(ObjectStream &f) const
+void RegistryDataString::store(ObjectStream &f) const
 {
 	PUT_STRING(f, value);
 }
 
-void ht_registry_data_string::strvalue(char *buf32bytes)
+void RegistryDataString::strvalue(char *buf32bytes)
 {
 	ht_strlcpy(buf32bytes, value, 32);
 }
 
 /*
- *	CLASS ht_registry_node
+ *	CLASS RegistryNode
  */
 
-ht_registry_node::ht_registry_node(ht_registry_node_type aType, const char *aName, ht_registry_data *aData)
+RegistryNode::RegistryNode(ht_registry_node_type aType, const char *aName, RegistryData *aData)
 {
 	type = aType;
 	name = ht_strdup(aName);
 	data = aData;
 }
 
-ht_registry_node::~ht_registry_node()
+RegistryNode::~RegistryNode()
 {
 	if (data) {
 		data->done();
@@ -273,26 +273,26 @@ ht_registry_node::~ht_registry_node()
 	free(name);
 }
 
-int ht_registry_node::compareTo(const Object *o) const
+int RegistryNode::compareTo(const Object *o) const
 {
-	return strcmp(name, ((ht_registry_node*)o)->name);
+	return strcmp(name, ((RegistryNode*)o)->name);
 }
 
-void ht_registry_node::load(ObjectStream &f)
+void RegistryNode::load(ObjectStream &f)
 {
 	GET_INT32X(f, type);
 	GET_STRING(f, name);
 	GET_OBJECT(f, data);
 }
 
-void ht_registry_node::store(ObjectStream &f) const
+void RegistryNode::store(ObjectStream &f) const
 {
 	PUT_INT32X(f, type);
 	PUT_STRING(f, name);
 	PUT_OBJECT(f, data);
 }
 
-ObjectID ht_registry_node::getObjectID() const
+ObjectID RegistryNode::getObjectID() const
 {
 	return ATOM_HT_REGISTRY_NODE;
 }
@@ -301,28 +301,28 @@ ObjectID ht_registry_node::getObjectID() const
  *	create_empty_*
  */
 
-static ht_registry_data *create_empty_symlink()
+static RegistryData *create_empty_symlink()
 {
-	return new ht_registry_data_string("");
+	return new RegistryDataString("");
 }
 
-static ht_registry_data *create_empty_dword()
+static RegistryData *create_empty_dword()
 {
-	return new ht_registry_data_dword(0);
+	return new RegistryDataDword(0);
 }
 
-static ht_registry_data *create_empty_string()
+static RegistryData *create_empty_string()
 {
-	return new ht_registry_data_string("");
+	return new RegistryDataString("");
 }
 
-static ht_registry_data *create_empty_raw()
+static RegistryData *create_empty_raw()
 {
-	return new ht_registry_data_raw(NULL, 0);
+	return new RegistryDataRaw(NULL, 0);
 }
 
 /*
- *	CLASS ht_registry
+ *	CLASS Registry
  */
 ht_registry_node_type_desc::ht_registry_node_type_desc(ht_registry_node_type aType, 
 	const char *aName, create_empty_registry_data_func c)
@@ -366,230 +366,230 @@ void ht_registry_node_type_desc::store(ObjectStream &f) const
 }
 
 
-ht_registry_data *create_empty_palette_entry();
-void ht_registry::init()
+RegistryData *create_empty_palette_entry();
+void Registry::init()
 {
 #if GENERATE_NEW_REGISTRY
 	// build registry root
 	AVLTree *s = new AVLTree(true);
-	root = new ht_registry_node(RNT_SUBDIR, "/", new ht_registry_data_stree(s));
+	root = new RegistryNode(RNT_SUBDIR, "/", new RegistryDataSTree(s));
 	AVLTree *config = new AVLTree(true);
 	AVLTree *palette = new AVLTree(true);
-	s->insert(new ht_registry_node(RNT_SUBDIR, "config", new ht_registry_data_stree(config)));
-	s->insert(new ht_registry_node(RNT_SUBDIR, "palette", new ht_registry_data_stree(palette)));
+	s->insert(new RegistryNode(RNT_SUBDIR, "config", new RegistryDataSTree(config)));
+	s->insert(new RegistryNode(RNT_SUBDIR, "palette", new RegistryDataSTree(palette)));
 	AVLTree *config_misc = new AVLTree(true);
 	AVLTree *config_editor = new AVLTree(true);
-	config->insert(new ht_registry_node(RNT_SUBDIR, "misc", new ht_registry_data_stree(config_misc)));
-	config_misc->insert(new ht_registry_node(RNT_DWORD, "config format", new ht_registry_data_dword(2)));
-	config_misc->insert(new ht_registry_node(RNT_STRING, "statusline", new ht_registry_data_string("%a %L %t %d")));
-	config_misc->insert(new ht_registry_node(RNT_STRING, "vfs display format", new ht_registry_data_string("type,name:20+,|,desc,|,bsize,|,perm,|,rmtime")));
-	config->insert(new ht_registry_node(RNT_SUBDIR, "editor", new ht_registry_data_stree(config_editor)));
-	config_editor->insert(new ht_registry_node(RNT_STRING, "EOF", new ht_registry_data_string("<EOF>")));
-	config_editor->insert(new ht_registry_node(RNT_STRING, "EOL", new ht_registry_data_string(".")));
-	config_editor->insert(new ht_registry_node(RNT_DWORD, "auto indent", new ht_registry_data_dword(1)));
-	config_editor->insert(new ht_registry_node(RNT_DWORD, "scroll offset", new ht_registry_data_dword(3)));
-	config_editor->insert(new ht_registry_node(RNT_DWORD, "tab size", new ht_registry_data_dword(8)));
+	config->insert(new RegistryNode(RNT_SUBDIR, "misc", new RegistryDataSTree(config_misc)));
+	config_misc->insert(new RegistryNode(RNT_DWORD, "config format", new RegistryDataDword(2)));
+	config_misc->insert(new RegistryNode(RNT_STRING, "statusline", new RegistryDataString("%a %L %t %d")));
+	config_misc->insert(new RegistryNode(RNT_STRING, "vfs display format", new RegistryDataString("type,name:20+,|,desc,|,bsize,|,perm,|,rmtime")));
+	config->insert(new RegistryNode(RNT_SUBDIR, "editor", new RegistryDataSTree(config_editor)));
+	config_editor->insert(new RegistryNode(RNT_STRING, "EOF", new RegistryDataString("<EOF>")));
+	config_editor->insert(new RegistryNode(RNT_STRING, "EOL", new RegistryDataString(".")));
+	config_editor->insert(new RegistryNode(RNT_DWORD, "auto indent", new RegistryDataDword(1)));
+	config_editor->insert(new RegistryNode(RNT_DWORD, "scroll offset", new RegistryDataDword(3)));
+	config_editor->insert(new RegistryNode(RNT_DWORD, "tab size", new RegistryDataDword(8)));
 
 	AVLTree *palette_analyser = new AVLTree(true);
 	AVLTree *palette_generic = new AVLTree(true);
 	AVLTree *palette_syntax = new AVLTree(true);
 	AVLTree *palette_tags = new AVLTree(true);
-	palette->insert(new ht_registry_node(RNT_SUBDIR, "analyser", new ht_registry_data_stree(palette_analyser)));
+	palette->insert(new RegistryNode(RNT_SUBDIR, "analyser", new RegistryDataSTree(palette_analyser)));
 	AVLTree *analyser_default = new AVLTree(true);
-	palette_analyser->insert(new ht_registry_node(RNT_SUBDIR, "default", new ht_registry_data_stree(analyser_default)));
-	analyser_default->insert(new ht_registry_node(256, "default", new palette_entry(0, 33288)));
-	analyser_default->insert(new ht_registry_node(256, "comment", new palette_entry(0, 1800)));
-	analyser_default->insert(new ht_registry_node(256, "label", new palette_entry(0, 34312)));
-	analyser_default->insert(new ht_registry_node(256, "number", new palette_entry(0, 776)));
-	analyser_default->insert(new ht_registry_node(256, "string", new palette_entry(0, 33800)));
-	analyser_default->insert(new ht_registry_node(256, "symbol-character", new palette_entry(0, 33544)));
+	palette_analyser->insert(new RegistryNode(RNT_SUBDIR, "default", new RegistryDataSTree(analyser_default)));
+	analyser_default->insert(new RegistryNode(256, "default", new palette_entry(0, 33288)));
+	analyser_default->insert(new RegistryNode(256, "comment", new palette_entry(0, 1800)));
+	analyser_default->insert(new RegistryNode(256, "label", new palette_entry(0, 34312)));
+	analyser_default->insert(new RegistryNode(256, "number", new palette_entry(0, 776)));
+	analyser_default->insert(new RegistryNode(256, "string", new palette_entry(0, 33800)));
+	analyser_default->insert(new RegistryNode(256, "symbol-character", new palette_entry(0, 33544)));
 
-	palette->insert(new ht_registry_node(RNT_SUBDIR, "generic", new ht_registry_data_stree(palette_generic)));
+	palette->insert(new RegistryNode(RNT_SUBDIR, "generic", new RegistryDataSTree(palette_generic)));
 	AVLTree *palette_generic_black = new AVLTree(true);
 	AVLTree *palette_generic_blue = new AVLTree(true);
 	AVLTree *palette_generic_cyan = new AVLTree(true);
 	AVLTree *palette_generic_gray = new AVLTree(true);
 	AVLTree *palette_generic_gray2 = new AVLTree(true);
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "desktop", new ht_registry_data_string("black")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "dialog", new ht_registry_data_string("gray")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "help", new ht_registry_data_string("cyan")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "keyline", new ht_registry_data_string("black")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "menu", new ht_registry_data_string("gray2")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "special", new ht_registry_data_string("cyan")));
-	palette_generic->insert(new ht_registry_node(RNT_SYMLINK, "window", new ht_registry_data_string("blue")));
-	palette_generic->insert(new ht_registry_node(RNT_SUBDIR, "black", new ht_registry_data_stree(palette_generic_black)));
-	palette_generic->insert(new ht_registry_node(RNT_SUBDIR, "blue", new ht_registry_data_stree(palette_generic_blue)));
-	palette_generic->insert(new ht_registry_node(RNT_SUBDIR, "cyan", new ht_registry_data_stree(palette_generic_cyan)));
-	palette_generic->insert(new ht_registry_node(RNT_SUBDIR, "gray", new ht_registry_data_stree(palette_generic_gray)));
-	palette_generic->insert(new ht_registry_node(RNT_SUBDIR, "gray2", new ht_registry_data_stree(palette_generic_gray2)));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "desktop", new RegistryDataString("black")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "dialog", new RegistryDataString("gray")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "help", new RegistryDataString("cyan")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "keyline", new RegistryDataString("black")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "menu", new RegistryDataString("gray2")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "special", new RegistryDataString("cyan")));
+	palette_generic->insert(new RegistryNode(RNT_SYMLINK, "window", new RegistryDataString("blue")));
+	palette_generic->insert(new RegistryNode(RNT_SUBDIR, "black", new RegistryDataSTree(palette_generic_black)));
+	palette_generic->insert(new RegistryNode(RNT_SUBDIR, "blue", new RegistryDataSTree(palette_generic_blue)));
+	palette_generic->insert(new RegistryNode(RNT_SUBDIR, "cyan", new RegistryDataSTree(palette_generic_cyan)));
+	palette_generic->insert(new RegistryNode(RNT_SUBDIR, "gray", new RegistryDataSTree(palette_generic_gray)));
+	palette_generic->insert(new RegistryNode(RNT_SUBDIR, "gray2", new RegistryDataSTree(palette_generic_gray2)));
 	// black
-	palette_generic_black->insert(new ht_registry_node(256, "body", new palette_entry(0, 1792)));
-	palette_generic_black->insert(new ht_registry_node(256, "text focused", new palette_entry(0, 3)));
-	palette_generic_black->insert(new ht_registry_node(256, "text unfocused", new palette_entry(0, 8)));
-	palette_generic_black->insert(new ht_registry_node(256, "text shortcut", new palette_entry(0, 1792)));
-	palette_generic_black->insert(new ht_registry_node(256, "text shortcut selected", new palette_entry(0, 34312)));
-	palette_generic_black->insert(new ht_registry_node(256, "text selected", new palette_entry(0, 0)));
-	palette_generic_black->insert(new ht_registry_node(256, "text disabled", new palette_entry(0, 1795)));
-	palette_generic_black->insert(new ht_registry_node(256, "frame focused", new palette_entry(0, 1800)));
-	palette_generic_black->insert(new ht_registry_node(256, "frame unfocused", new palette_entry(0, 1800)));
-	palette_generic_black->insert(new ht_registry_node(256, "frame move-resize", new palette_entry(0, 33288)));
-	palette_generic_black->insert(new ht_registry_node(256, "frame killer", new palette_entry(0, 520)));
-	palette_generic_black->insert(new ht_registry_node(256, "scrollbar", new palette_entry(0, 7)));
-	palette_generic_black->insert(new ht_registry_node(256, "input focused", new palette_entry(0, 34561)));
-	palette_generic_black->insert(new ht_registry_node(256, "input unfocused", new palette_entry(0, 34561)));
-	palette_generic_black->insert(new ht_registry_node(256, "input selected", new palette_entry(0, 34562)));
-	palette_generic_black->insert(new ht_registry_node(256, "input clip-chars", new palette_entry(0, 33281)));
-	palette_generic_black->insert(new ht_registry_node(256, "button focused", new palette_entry(0, 34562)));
-	palette_generic_black->insert(new ht_registry_node(256, "button unfocused", new palette_entry(0, 2)));
-	palette_generic_black->insert(new ht_registry_node(256, "button shadow", new palette_entry(0, 8)));
-	palette_generic_black->insert(new ht_registry_node(256, "button shortcut", new palette_entry(0, 0)));
-	palette_generic_black->insert(new ht_registry_node(256, "list focused & selected", new palette_entry(0, 34561)));
-	palette_generic_black->insert(new ht_registry_node(256, "list focused & unselected", new palette_entry(0, 1792)));
-	palette_generic_black->insert(new ht_registry_node(256, "list unfocused & selected", new palette_entry(0, 34560)));
-	palette_generic_black->insert(new ht_registry_node(256, "list unfocused & unselected", new palette_entry(0, 0)));
-	palette_generic_black->insert(new ht_registry_node(256, "cluster focused", new palette_entry(0, 34563)));
-	palette_generic_black->insert(new ht_registry_node(256, "cluster unfocused", new palette_entry(0, 3)));
-	palette_generic_black->insert(new ht_registry_node(256, "cluster shortcut", new palette_entry(0, 34307)));
+	palette_generic_black->insert(new RegistryNode(256, "body", new palette_entry(0, 1792)));
+	palette_generic_black->insert(new RegistryNode(256, "text focused", new palette_entry(0, 3)));
+	palette_generic_black->insert(new RegistryNode(256, "text unfocused", new palette_entry(0, 8)));
+	palette_generic_black->insert(new RegistryNode(256, "text shortcut", new palette_entry(0, 1792)));
+	palette_generic_black->insert(new RegistryNode(256, "text shortcut selected", new palette_entry(0, 34312)));
+	palette_generic_black->insert(new RegistryNode(256, "text selected", new palette_entry(0, 0)));
+	palette_generic_black->insert(new RegistryNode(256, "text disabled", new palette_entry(0, 1795)));
+	palette_generic_black->insert(new RegistryNode(256, "frame focused", new palette_entry(0, 1800)));
+	palette_generic_black->insert(new RegistryNode(256, "frame unfocused", new palette_entry(0, 1800)));
+	palette_generic_black->insert(new RegistryNode(256, "frame move-resize", new palette_entry(0, 33288)));
+	palette_generic_black->insert(new RegistryNode(256, "frame killer", new palette_entry(0, 520)));
+	palette_generic_black->insert(new RegistryNode(256, "scrollbar", new palette_entry(0, 7)));
+	palette_generic_black->insert(new RegistryNode(256, "input focused", new palette_entry(0, 34561)));
+	palette_generic_black->insert(new RegistryNode(256, "input unfocused", new palette_entry(0, 34561)));
+	palette_generic_black->insert(new RegistryNode(256, "input selected", new palette_entry(0, 34562)));
+	palette_generic_black->insert(new RegistryNode(256, "input clip-chars", new palette_entry(0, 33281)));
+	palette_generic_black->insert(new RegistryNode(256, "button focused", new palette_entry(0, 34562)));
+	palette_generic_black->insert(new RegistryNode(256, "button unfocused", new palette_entry(0, 2)));
+	palette_generic_black->insert(new RegistryNode(256, "button shadow", new palette_entry(0, 8)));
+	palette_generic_black->insert(new RegistryNode(256, "button shortcut", new palette_entry(0, 0)));
+	palette_generic_black->insert(new RegistryNode(256, "list focused & selected", new palette_entry(0, 34561)));
+	palette_generic_black->insert(new RegistryNode(256, "list focused & unselected", new palette_entry(0, 1792)));
+	palette_generic_black->insert(new RegistryNode(256, "list unfocused & selected", new palette_entry(0, 34560)));
+	palette_generic_black->insert(new RegistryNode(256, "list unfocused & unselected", new palette_entry(0, 0)));
+	palette_generic_black->insert(new RegistryNode(256, "cluster focused", new palette_entry(0, 34563)));
+	palette_generic_black->insert(new RegistryNode(256, "cluster unfocused", new palette_entry(0, 3)));
+	palette_generic_black->insert(new RegistryNode(256, "cluster shortcut", new palette_entry(0, 34307)));
 	// blue
-	palette_generic_blue->insert(new ht_registry_node(256, "body", new palette_entry(0, 769)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text focused", new palette_entry(0, 34305)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text unfocused", new palette_entry(0, 34561)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text shortcut", new palette_entry(0, 1)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text shortcut selected", new palette_entry(0, 1)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text selected", new palette_entry(0, 257)));
-	palette_generic_blue->insert(new ht_registry_node(256, "text disabled", new palette_entry(0, 34305)));
-	palette_generic_blue->insert(new ht_registry_node(256, "frame focused", new palette_entry(0, 34568)));
-	palette_generic_blue->insert(new ht_registry_node(256, "frame unfocused", new palette_entry(0, 1800)));
-	palette_generic_blue->insert(new ht_registry_node(256, "frame move-resize", new palette_entry(0, 33288)));
-	palette_generic_blue->insert(new ht_registry_node(256, "frame killer", new palette_entry(0, 33288)));
-	palette_generic_blue->insert(new ht_registry_node(256, "scrollbar", new palette_entry(0, 259)));
-	palette_generic_blue->insert(new ht_registry_node(256, "input focused", new palette_entry(0, 34561)));
-	palette_generic_blue->insert(new ht_registry_node(256, "input unfocused", new palette_entry(0, 34561)));
-	palette_generic_blue->insert(new ht_registry_node(256, "input selected", new palette_entry(0, 33031)));
-	palette_generic_blue->insert(new ht_registry_node(256, "input clip-chars", new palette_entry(0, 33281)));
-	palette_generic_blue->insert(new ht_registry_node(256, "button focused", new palette_entry(0, 34562)));
-	palette_generic_blue->insert(new ht_registry_node(256, "button unfocused", new palette_entry(0, 2)));
-	palette_generic_blue->insert(new ht_registry_node(256, "button shadow", new palette_entry(0, 8)));
-	palette_generic_blue->insert(new ht_registry_node(256, "button shortcut", new palette_entry(0, 34312)));
-	palette_generic_blue->insert(new ht_registry_node(256, "list focused & selected", new palette_entry(0, 34563)));
-	palette_generic_blue->insert(new ht_registry_node(256, "list focused & unselected", new palette_entry(0, 769)));
-	palette_generic_blue->insert(new ht_registry_node(256, "list unfocused & selected", new palette_entry(0, 3)));
-	palette_generic_blue->insert(new ht_registry_node(256, "list unfocused & unselected", new palette_entry(0, 769)));
-	palette_generic_blue->insert(new ht_registry_node(256, "cluster focused", new palette_entry(0, 34563)));
-	palette_generic_blue->insert(new ht_registry_node(256, "cluster unfocused", new palette_entry(0, 0)));
-	palette_generic_blue->insert(new ht_registry_node(256, "cluster shortcut", new palette_entry(0, 0)));
+	palette_generic_blue->insert(new RegistryNode(256, "body", new palette_entry(0, 769)));
+	palette_generic_blue->insert(new RegistryNode(256, "text focused", new palette_entry(0, 34305)));
+	palette_generic_blue->insert(new RegistryNode(256, "text unfocused", new palette_entry(0, 34561)));
+	palette_generic_blue->insert(new RegistryNode(256, "text shortcut", new palette_entry(0, 1)));
+	palette_generic_blue->insert(new RegistryNode(256, "text shortcut selected", new palette_entry(0, 1)));
+	palette_generic_blue->insert(new RegistryNode(256, "text selected", new palette_entry(0, 257)));
+	palette_generic_blue->insert(new RegistryNode(256, "text disabled", new palette_entry(0, 34305)));
+	palette_generic_blue->insert(new RegistryNode(256, "frame focused", new palette_entry(0, 34568)));
+	palette_generic_blue->insert(new RegistryNode(256, "frame unfocused", new palette_entry(0, 1800)));
+	palette_generic_blue->insert(new RegistryNode(256, "frame move-resize", new palette_entry(0, 33288)));
+	palette_generic_blue->insert(new RegistryNode(256, "frame killer", new palette_entry(0, 33288)));
+	palette_generic_blue->insert(new RegistryNode(256, "scrollbar", new palette_entry(0, 259)));
+	palette_generic_blue->insert(new RegistryNode(256, "input focused", new palette_entry(0, 34561)));
+	palette_generic_blue->insert(new RegistryNode(256, "input unfocused", new palette_entry(0, 34561)));
+	palette_generic_blue->insert(new RegistryNode(256, "input selected", new palette_entry(0, 33031)));
+	palette_generic_blue->insert(new RegistryNode(256, "input clip-chars", new palette_entry(0, 33281)));
+	palette_generic_blue->insert(new RegistryNode(256, "button focused", new palette_entry(0, 34562)));
+	palette_generic_blue->insert(new RegistryNode(256, "button unfocused", new palette_entry(0, 2)));
+	palette_generic_blue->insert(new RegistryNode(256, "button shadow", new palette_entry(0, 8)));
+	palette_generic_blue->insert(new RegistryNode(256, "button shortcut", new palette_entry(0, 34312)));
+	palette_generic_blue->insert(new RegistryNode(256, "list focused & selected", new palette_entry(0, 34563)));
+	palette_generic_blue->insert(new RegistryNode(256, "list focused & unselected", new palette_entry(0, 769)));
+	palette_generic_blue->insert(new RegistryNode(256, "list unfocused & selected", new palette_entry(0, 3)));
+	palette_generic_blue->insert(new RegistryNode(256, "list unfocused & unselected", new palette_entry(0, 769)));
+	palette_generic_blue->insert(new RegistryNode(256, "cluster focused", new palette_entry(0, 34563)));
+	palette_generic_blue->insert(new RegistryNode(256, "cluster unfocused", new palette_entry(0, 0)));
+	palette_generic_blue->insert(new RegistryNode(256, "cluster shortcut", new palette_entry(0, 0)));
 	// cyan
-	palette_generic_cyan->insert(new ht_registry_node(256, "body", new palette_entry(0, 3)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text focused", new palette_entry(0, 8)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text unfocused", new palette_entry(0, 8)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text shortcut", new palette_entry(0, 34312)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text shortcut selected", new palette_entry(0, 34305)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text selected", new palette_entry(0, 8)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "text disabled", new palette_entry(0, 1792)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "frame focused", new palette_entry(0, 34568)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "frame unfocused", new palette_entry(0, 8)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "frame move-resize", new palette_entry(0, 33288)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "frame killer", new palette_entry(0, 33288)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "scrollbar", new palette_entry(0, 769)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "input focused", new palette_entry(0, 34561)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "input unfocused", new palette_entry(0, 34561)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "input selected", new palette_entry(0, 34562)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "input clip-chars", new palette_entry(0, 33281)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "button focused", new palette_entry(0, 34562)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "button unfocused", new palette_entry(0, 2)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "button shadow", new palette_entry(0, 8)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "button shortcut", new palette_entry(0, 34312)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "list focused & selected", new palette_entry(0, 34561)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "list focused & unselected", new palette_entry(0, 3)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "list unfocused & selected", new palette_entry(0, 34563)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "list unfocused & unselected", new palette_entry(0, 3)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "cluster focused", new palette_entry(0, 34563)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "cluster unfocused", new palette_entry(0, 3)));
-	palette_generic_cyan->insert(new ht_registry_node(256, "cluster shortcut", new palette_entry(0, 34307)));
+	palette_generic_cyan->insert(new RegistryNode(256, "body", new palette_entry(0, 3)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text focused", new palette_entry(0, 8)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text unfocused", new palette_entry(0, 8)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text shortcut", new palette_entry(0, 34312)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text shortcut selected", new palette_entry(0, 34305)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text selected", new palette_entry(0, 8)));
+	palette_generic_cyan->insert(new RegistryNode(256, "text disabled", new palette_entry(0, 1792)));
+	palette_generic_cyan->insert(new RegistryNode(256, "frame focused", new palette_entry(0, 34568)));
+	palette_generic_cyan->insert(new RegistryNode(256, "frame unfocused", new palette_entry(0, 8)));
+	palette_generic_cyan->insert(new RegistryNode(256, "frame move-resize", new palette_entry(0, 33288)));
+	palette_generic_cyan->insert(new RegistryNode(256, "frame killer", new palette_entry(0, 33288)));
+	palette_generic_cyan->insert(new RegistryNode(256, "scrollbar", new palette_entry(0, 769)));
+	palette_generic_cyan->insert(new RegistryNode(256, "input focused", new palette_entry(0, 34561)));
+	palette_generic_cyan->insert(new RegistryNode(256, "input unfocused", new palette_entry(0, 34561)));
+	palette_generic_cyan->insert(new RegistryNode(256, "input selected", new palette_entry(0, 34562)));
+	palette_generic_cyan->insert(new RegistryNode(256, "input clip-chars", new palette_entry(0, 33281)));
+	palette_generic_cyan->insert(new RegistryNode(256, "button focused", new palette_entry(0, 34562)));
+	palette_generic_cyan->insert(new RegistryNode(256, "button unfocused", new palette_entry(0, 2)));
+	palette_generic_cyan->insert(new RegistryNode(256, "button shadow", new palette_entry(0, 8)));
+	palette_generic_cyan->insert(new RegistryNode(256, "button shortcut", new palette_entry(0, 34312)));
+	palette_generic_cyan->insert(new RegistryNode(256, "list focused & selected", new palette_entry(0, 34561)));
+	palette_generic_cyan->insert(new RegistryNode(256, "list focused & unselected", new palette_entry(0, 3)));
+	palette_generic_cyan->insert(new RegistryNode(256, "list unfocused & selected", new palette_entry(0, 34563)));
+	palette_generic_cyan->insert(new RegistryNode(256, "list unfocused & unselected", new palette_entry(0, 3)));
+	palette_generic_cyan->insert(new RegistryNode(256, "cluster focused", new palette_entry(0, 34563)));
+	palette_generic_cyan->insert(new RegistryNode(256, "cluster unfocused", new palette_entry(0, 3)));
+	palette_generic_cyan->insert(new RegistryNode(256, "cluster shortcut", new palette_entry(0, 34307)));
 	// gray
-	palette_generic_gray->insert(new ht_registry_node(256, "body", new palette_entry(0, 7)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text focused", new palette_entry(0, 34568)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text unfocused", new palette_entry(0, 8)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text shortcut", new palette_entry(0, 34312)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text shortcut selected", new palette_entry(0, 34312)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text selected", new palette_entry(0, 34561)));
-	palette_generic_gray->insert(new ht_registry_node(256, "text disabled", new palette_entry(0, 32776)));
-	palette_generic_gray->insert(new ht_registry_node(256, "frame focused", new palette_entry(0, 34568)));
-	palette_generic_gray->insert(new ht_registry_node(256, "frame unfocused", new palette_entry(0, 8)));
-	palette_generic_gray->insert(new ht_registry_node(256, "frame move-resize", new palette_entry(0, 33288)));
-	palette_generic_gray->insert(new ht_registry_node(256, "frame killer", new palette_entry(0, 33288)));
-	palette_generic_gray->insert(new ht_registry_node(256, "scrollbar", new palette_entry(0, 769)));
-	palette_generic_gray->insert(new ht_registry_node(256, "input focused", new palette_entry(0, 34561)));
-	palette_generic_gray->insert(new ht_registry_node(256, "input unfocused", new palette_entry(0, 34561)));
-	palette_generic_gray->insert(new ht_registry_node(256, "input selected", new palette_entry(0, 34562)));
-	palette_generic_gray->insert(new ht_registry_node(256, "input clip-chars", new palette_entry(0, 33281)));
-	palette_generic_gray->insert(new ht_registry_node(256, "button focused", new palette_entry(0, 34562)));
-	palette_generic_gray->insert(new ht_registry_node(256, "button unfocused", new palette_entry(0, 2)));
-	palette_generic_gray->insert(new ht_registry_node(256, "button shadow", new palette_entry(0, 8)));
-	palette_generic_gray->insert(new ht_registry_node(256, "button shortcut", new palette_entry(0, 34312)));
-	palette_generic_gray->insert(new ht_registry_node(256, "list focused & selected", new palette_entry(0, 34562)));
-	palette_generic_gray->insert(new ht_registry_node(256, "list focused & unselected", new palette_entry(0, 3)));
-	palette_generic_gray->insert(new ht_registry_node(256, "list unfocused & selected", new palette_entry(0, 34563)));
-	palette_generic_gray->insert(new ht_registry_node(256, "list unfocused & unselected", new palette_entry(0, 3)));
-	palette_generic_gray->insert(new ht_registry_node(256, "cluster focused", new palette_entry(0, 34563)));
-	palette_generic_gray->insert(new ht_registry_node(256, "cluster unfocused", new palette_entry(0, 3)));
-	palette_generic_gray->insert(new ht_registry_node(256, "cluster shortcut", new palette_entry(0, 34307)));
+	palette_generic_gray->insert(new RegistryNode(256, "body", new palette_entry(0, 7)));
+	palette_generic_gray->insert(new RegistryNode(256, "text focused", new palette_entry(0, 34568)));
+	palette_generic_gray->insert(new RegistryNode(256, "text unfocused", new palette_entry(0, 8)));
+	palette_generic_gray->insert(new RegistryNode(256, "text shortcut", new palette_entry(0, 34312)));
+	palette_generic_gray->insert(new RegistryNode(256, "text shortcut selected", new palette_entry(0, 34312)));
+	palette_generic_gray->insert(new RegistryNode(256, "text selected", new palette_entry(0, 34561)));
+	palette_generic_gray->insert(new RegistryNode(256, "text disabled", new palette_entry(0, 32776)));
+	palette_generic_gray->insert(new RegistryNode(256, "frame focused", new palette_entry(0, 34568)));
+	palette_generic_gray->insert(new RegistryNode(256, "frame unfocused", new palette_entry(0, 8)));
+	palette_generic_gray->insert(new RegistryNode(256, "frame move-resize", new palette_entry(0, 33288)));
+	palette_generic_gray->insert(new RegistryNode(256, "frame killer", new palette_entry(0, 33288)));
+	palette_generic_gray->insert(new RegistryNode(256, "scrollbar", new palette_entry(0, 769)));
+	palette_generic_gray->insert(new RegistryNode(256, "input focused", new palette_entry(0, 34561)));
+	palette_generic_gray->insert(new RegistryNode(256, "input unfocused", new palette_entry(0, 34561)));
+	palette_generic_gray->insert(new RegistryNode(256, "input selected", new palette_entry(0, 34562)));
+	palette_generic_gray->insert(new RegistryNode(256, "input clip-chars", new palette_entry(0, 33281)));
+	palette_generic_gray->insert(new RegistryNode(256, "button focused", new palette_entry(0, 34562)));
+	palette_generic_gray->insert(new RegistryNode(256, "button unfocused", new palette_entry(0, 2)));
+	palette_generic_gray->insert(new RegistryNode(256, "button shadow", new palette_entry(0, 8)));
+	palette_generic_gray->insert(new RegistryNode(256, "button shortcut", new palette_entry(0, 34312)));
+	palette_generic_gray->insert(new RegistryNode(256, "list focused & selected", new palette_entry(0, 34562)));
+	palette_generic_gray->insert(new RegistryNode(256, "list focused & unselected", new palette_entry(0, 3)));
+	palette_generic_gray->insert(new RegistryNode(256, "list unfocused & selected", new palette_entry(0, 34563)));
+	palette_generic_gray->insert(new RegistryNode(256, "list unfocused & unselected", new palette_entry(0, 3)));
+	palette_generic_gray->insert(new RegistryNode(256, "cluster focused", new palette_entry(0, 34563)));
+	palette_generic_gray->insert(new RegistryNode(256, "cluster unfocused", new palette_entry(0, 3)));
+	palette_generic_gray->insert(new RegistryNode(256, "cluster shortcut", new palette_entry(0, 34307)));
 	// gray2
-	palette_generic_gray2->insert(new ht_registry_node(256, "body", new palette_entry(0, 7)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text focused", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text unfocused", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text shortcut", new palette_entry(0, 1032)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text shortcut selected", new palette_entry(0, 1032)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text selected", new palette_entry(0, 2)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "text disabled", new palette_entry(0, 1792)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "frame focused", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "frame unfocused", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "frame move-resize", new palette_entry(0, 33288)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "frame killer", new palette_entry(0, 33288)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "scrollbar", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "input focused", new palette_entry(0, 34561)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "input unfocused", new palette_entry(0, 34561)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "input selected", new palette_entry(0, 34562)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "input clip-chars", new palette_entry(0, 33281)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "button focused", new palette_entry(0, 34562)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "button unfocused", new palette_entry(0, 2)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "button shadow", new palette_entry(0, 8)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "button shortcut", new palette_entry(0, 34312)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "list focused & selected", new palette_entry(0, 34562)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "list focused & unselected", new palette_entry(0, 3)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "list unfocused & selected", new palette_entry(0, 34563)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "list unfocused & unselected", new palette_entry(0, 3)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "cluster focused", new palette_entry(0, 34563)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "cluster unfocused", new palette_entry(0, 3)));
-	palette_generic_gray2->insert(new ht_registry_node(256, "cluster shortcut", new palette_entry(0, 0)));
-	palette->insert(new ht_registry_node(RNT_SUBDIR, "syntax", new ht_registry_data_stree(palette_syntax)));
+	palette_generic_gray2->insert(new RegistryNode(256, "body", new palette_entry(0, 7)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text focused", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text unfocused", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text shortcut", new palette_entry(0, 1032)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text shortcut selected", new palette_entry(0, 1032)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text selected", new palette_entry(0, 2)));
+	palette_generic_gray2->insert(new RegistryNode(256, "text disabled", new palette_entry(0, 1792)));
+	palette_generic_gray2->insert(new RegistryNode(256, "frame focused", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "frame unfocused", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "frame move-resize", new palette_entry(0, 33288)));
+	palette_generic_gray2->insert(new RegistryNode(256, "frame killer", new palette_entry(0, 33288)));
+	palette_generic_gray2->insert(new RegistryNode(256, "scrollbar", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "input focused", new palette_entry(0, 34561)));
+	palette_generic_gray2->insert(new RegistryNode(256, "input unfocused", new palette_entry(0, 34561)));
+	palette_generic_gray2->insert(new RegistryNode(256, "input selected", new palette_entry(0, 34562)));
+	palette_generic_gray2->insert(new RegistryNode(256, "input clip-chars", new palette_entry(0, 33281)));
+	palette_generic_gray2->insert(new RegistryNode(256, "button focused", new palette_entry(0, 34562)));
+	palette_generic_gray2->insert(new RegistryNode(256, "button unfocused", new palette_entry(0, 2)));
+	palette_generic_gray2->insert(new RegistryNode(256, "button shadow", new palette_entry(0, 8)));
+	palette_generic_gray2->insert(new RegistryNode(256, "button shortcut", new palette_entry(0, 34312)));
+	palette_generic_gray2->insert(new RegistryNode(256, "list focused & selected", new palette_entry(0, 34562)));
+	palette_generic_gray2->insert(new RegistryNode(256, "list focused & unselected", new palette_entry(0, 3)));
+	palette_generic_gray2->insert(new RegistryNode(256, "list unfocused & selected", new palette_entry(0, 34563)));
+	palette_generic_gray2->insert(new RegistryNode(256, "list unfocused & unselected", new palette_entry(0, 3)));
+	palette_generic_gray2->insert(new RegistryNode(256, "cluster focused", new palette_entry(0, 34563)));
+	palette_generic_gray2->insert(new RegistryNode(256, "cluster unfocused", new palette_entry(0, 3)));
+	palette_generic_gray2->insert(new RegistryNode(256, "cluster shortcut", new palette_entry(0, 0)));
+	palette->insert(new RegistryNode(RNT_SUBDIR, "syntax", new RegistryDataSTree(palette_syntax)));
 	AVLTree *c = new AVLTree(true);
-	palette_syntax->insert(new ht_registry_node(RNT_SUBDIR, "c", new ht_registry_data_stree(c)));
+	palette_syntax->insert(new RegistryNode(RNT_SUBDIR, "c", new RegistryDataSTree(c)));
 	AVLTree *default1 = new AVLTree(true);
-	c->insert(new ht_registry_node(RNT_SUBDIR, "default", new ht_registry_data_stree(default1)));
-	default1->insert(new ht_registry_node(256, "whitespace", new palette_entry(0, 34312)));
-	default1->insert(new ht_registry_node(256, "comment", new palette_entry(0, 1800)));
-	default1->insert(new ht_registry_node(256, "identifier", new palette_entry(0, 34312)));
-	default1->insert(new ht_registry_node(256, "reserved", new palette_entry(0, 34568)));
-	default1->insert(new ht_registry_node(256, "integer number", new palette_entry(0, 34056)));
-	default1->insert(new ht_registry_node(256, "float number", new palette_entry(0, 33032)));
-	default1->insert(new ht_registry_node(256, "string", new palette_entry(0, 33544)));
-	default1->insert(new ht_registry_node(256, "character", new palette_entry(0, 33544)));
-	default1->insert(new ht_registry_node(256, "symbol", new palette_entry(0, 34568)));
-	default1->insert(new ht_registry_node(256, "preprocess", new palette_entry(0, 33288)));
-	default1->insert(new ht_registry_node(256, "meta", new palette_entry(0, 33032)));
-	palette->insert(new ht_registry_node(RNT_SUBDIR, "tags", new ht_registry_data_stree(palette_tags)));
+	c->insert(new RegistryNode(RNT_SUBDIR, "default", new RegistryDataSTree(default1)));
+	default1->insert(new RegistryNode(256, "whitespace", new palette_entry(0, 34312)));
+	default1->insert(new RegistryNode(256, "comment", new palette_entry(0, 1800)));
+	default1->insert(new RegistryNode(256, "identifier", new palette_entry(0, 34312)));
+	default1->insert(new RegistryNode(256, "reserved", new palette_entry(0, 34568)));
+	default1->insert(new RegistryNode(256, "integer number", new palette_entry(0, 34056)));
+	default1->insert(new RegistryNode(256, "float number", new palette_entry(0, 33032)));
+	default1->insert(new RegistryNode(256, "string", new palette_entry(0, 33544)));
+	default1->insert(new RegistryNode(256, "character", new palette_entry(0, 33544)));
+	default1->insert(new RegistryNode(256, "symbol", new palette_entry(0, 34568)));
+	default1->insert(new RegistryNode(256, "preprocess", new palette_entry(0, 33288)));
+	default1->insert(new RegistryNode(256, "meta", new palette_entry(0, 33032)));
+	palette->insert(new RegistryNode(RNT_SUBDIR, "tags", new RegistryDataSTree(palette_tags)));
 	AVLTree *tag_default = new AVLTree(true);
-        palette_tags->insert(new ht_registry_node(RNT_SUBDIR, "default", new ht_registry_data_stree(tag_default)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag cursor select", new palette_entry(0, 34564)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag cursor edit", new palette_entry(0, 34564)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag cursor unfocused", new palette_entry(0, 34568)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag selected", new palette_entry(0, 32775)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag modified", new palette_entry(0, 33800)));
-	tag_default->insert(new ht_registry_node(256, "edit-tag", new palette_entry(0, 1800)));
-	tag_default->insert(new ht_registry_node(256, "sel-tag cursor focused", new palette_entry(0, 34563)));
-	tag_default->insert(new ht_registry_node(256, "sel-tag cursor unfocused", new palette_entry(0, 3)));
-	tag_default->insert(new ht_registry_node(256, "sel-tag", new palette_entry(0, 34568)));
+	palette_tags->insert(new RegistryNode(RNT_SUBDIR, "default", new RegistryDataSTree(tag_default)));
+	tag_default->insert(new RegistryNode(256, "edit-tag cursor select", new palette_entry(0, 34564)));
+	tag_default->insert(new RegistryNode(256, "edit-tag cursor edit", new palette_entry(0, 34564)));
+	tag_default->insert(new RegistryNode(256, "edit-tag cursor unfocused", new palette_entry(0, 34568)));
+	tag_default->insert(new RegistryNode(256, "edit-tag selected", new palette_entry(0, 32775)));
+	tag_default->insert(new RegistryNode(256, "edit-tag modified", new palette_entry(0, 33800)));
+	tag_default->insert(new RegistryNode(256, "edit-tag", new palette_entry(0, 1800)));
+	tag_default->insert(new RegistryNode(256, "sel-tag cursor focused", new palette_entry(0, 34563)));
+	tag_default->insert(new RegistryNode(256, "sel-tag cursor unfocused", new palette_entry(0, 3)));
+	tag_default->insert(new RegistryNode(256, "sel-tag", new palette_entry(0, 34568)));
 
 	// build node_types tree
 	node_types = new AVLTree(true);
@@ -619,47 +619,47 @@ void ht_registry::init()
 #endif
 }
 
-void ht_registry::done()
+void Registry::done()
 {
 	delete node_types;
 	delete root;
 }
 
-int ht_registry::create_node(const char *key, ht_registry_node_type type)
+int Registry::create_node(const char *key, ht_registry_node_type type)
 {
 	const char *name;
-	ht_registry_node *m;
+	RegistryNode *m;
 	if (!splitfind(key, &name, &m)) return EINVAL;
 
 	if (!valid_nodename(name)) return EINVAL;
 
 	ht_registry_node_type_desc *d = get_node_type_desc(type, NULL);
 	if (d && d->create_empty_registry_data) {
-		ht_registry_node t(0, name, NULL);
-		if (((ht_registry_data_stree*)m->data)->tree->find(&t) != invObjHandle) return EEXIST;
+		RegistryNode t(0, name, NULL);
+		if (((RegistryDataSTree*)m->data)->tree->find(&t) != invObjHandle) return EEXIST;
 
-		ht_registry_data *data = d->create_empty_registry_data();
-		ht_registry_node *n=new ht_registry_node(type, name, data);
-		((ht_registry_data_stree*)m->data)->tree->insert(n);
+		RegistryData *data = d->create_empty_registry_data();
+		RegistryNode *n=new RegistryNode(type, name, data);
+		((RegistryDataSTree*)m->data)->tree->insert(n);
 		return 0;
 	}
 
 	return ENOSYS;
 }
 
-int ht_registry::create_subdir(const char *key)
+int Registry::create_subdir(const char *key)
 {
 	const char *name;
-	ht_registry_node *m;
+	RegistryNode *m;
 	if (!splitfind(key, &name, &m)) return EINVAL;
 
 	if (!valid_nodename(name)) return EINVAL;
 
 	AVLTree *s=new AVLTree(true);
 
-	ht_registry_node *n=new ht_registry_node(RNT_SUBDIR, name, new ht_registry_data_stree(s));
+	RegistryNode *n=new RegistryNode(RNT_SUBDIR, name, new RegistryDataSTree(s));
 	bool ins;
-	((ht_registry_data_stree*)m->data)->tree->findOrInsert(n, ins);
+	((RegistryDataSTree*)m->data)->tree->findOrInsert(n, ins);
 	if (!ins) {
 		delete n;
 		return EEXIST;
@@ -667,31 +667,31 @@ int ht_registry::create_subdir(const char *key)
 	return 0;
 }
 
-int ht_registry::delete_node(const char *key)
+int Registry::delete_node(const char *key)
 {
 	Container *dir;
-	ht_registry_node *n = find_entry_i(&dir, key, false);
+	RegistryNode *n = find_entry_i(&dir, key, false);
 	if (!n) return ENOENT;
 	const char *s = strrchr(key, '/');
 	if (s) s++; else s=key;
-	ht_registry_node ss(0, s, NULL);
+	RegistryNode ss(0, s, NULL);
 	return dir->delObj(&ss) ? 0 : ENOENT;
 }
 
-void ht_registry::debug_dump()
+void Registry::debug_dump()
 {
 #if 0
 //	FILE *f=fopen("", "");
-	debug_dump_i(stderr, ((ht_registry_data_stree*)root->data)->tree, 0);
+	debug_dump_i(stderr, ((RegistryDataSTree*)root->data)->tree, 0);
 //	fclose(f);
 #endif
 }
 
-void ht_registry::debug_dump_i(FILE *f, Container *t, int ident)
+void Registry::debug_dump_i(FILE *f, Container *t, int ident)
 {
 #if 0
 	ht_data_string *key=NULL;
-	ht_registry_node *n;
+	RegistryNode *n;
 	while ((key=(ht_data_string*)t->enum_next((ht_data**)&n, key))) {
 		for (int i=0; i<ident; i++) fprintf(f, "     ");
 		fprintf(f, "%s ", key->value);
@@ -707,7 +707,7 @@ void ht_registry::debug_dump_i(FILE *f, Container *t, int ident)
 			break;
 		case RNT_SUBDIR:
 			fprintf(f, "{\n");
-			debug_dump_i(f, ((ht_registry_data_stree*)n->data)->tree, ident+1);
+			debug_dump_i(f, ((RegistryDataSTree*)n->data)->tree, ident+1);
 			for (int i=0; i<ident; i++) fprintf(f, "     ");
 			fprintf(f, "}\n");
 			break;
@@ -725,44 +725,44 @@ void ht_registry::debug_dump_i(FILE *f, Container *t, int ident)
 #endif
 }
 
-ht_registry_node *ht_registry::enum_next(const char *dir, ht_registry_node *prevkey)
+RegistryNode *Registry::enum_next(const char *dir, RegistryNode *prevkey)
 {
 	rec_depth = 0;
-	ht_registry_node *n = find_entry_i(NULL, dir, true);
+	RegistryNode *n = find_entry_i(NULL, dir, true);
 	if (n) {
 		if (n->type != RNT_SUBDIR) return NULL;
-		Container *t = ((ht_registry_data_stree*)n->data)->tree;
+		Container *t = ((RegistryDataSTree*)n->data)->tree;
 
 		if (prevkey) {
-			return (ht_registry_node *)t->get(t->findG(prevkey));
+			return (RegistryNode *)t->get(t->findG(prevkey));
 		} else {
-			return (ht_registry_node *)t->get(t->findFirst());
+			return (RegistryNode *)t->get(t->findFirst());
 		}
 	}
 	return NULL;
 }
 
-ht_registry_node *ht_registry::enum_prev(const char *dir, ht_registry_node *prevkey)
+RegistryNode *Registry::enum_prev(const char *dir, RegistryNode *prevkey)
 {
 	rec_depth = 0;
-	ht_registry_node *n = find_entry_i(NULL, dir, true);
+	RegistryNode *n = find_entry_i(NULL, dir, true);
 	if (n) {
 		if (n->type != RNT_SUBDIR) return NULL;
-		Container *t = ((ht_registry_data_stree*)n->data)->tree;
+		Container *t = ((RegistryDataSTree*)n->data)->tree;
 
 		if (prevkey) {
-			return (ht_registry_node *)t->get(t->findL(prevkey));
+			return (RegistryNode *)t->get(t->findL(prevkey));
 		} else {
-			return (ht_registry_node *)t->get(t->findLast());
+			return (RegistryNode *)t->get(t->findLast());
 		}
 	}
 	return NULL;
 }
 
-bool ht_registry::find_any_entry(const char *key, ht_registry_node **node)
+bool Registry::find_any_entry(const char *key, RegistryNode **node)
 {
 	rec_depth = 0;
-	ht_registry_node *n = find_entry_i(NULL, key, true);
+	RegistryNode *n = find_entry_i(NULL, key, true);
 	if (n) {
 		*node = n;
 		return true;
@@ -770,9 +770,9 @@ bool ht_registry::find_any_entry(const char *key, ht_registry_node **node)
 	return false;
 }
 
-bool ht_registry::find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks, Container **rdir)
+bool Registry::find_data_entry(const char *key, RegistryNode **node, bool follow_symlinks, Container **rdir)
 {
-	ht_registry_node *n = find_entry_i(rdir, key, follow_symlinks);
+	RegistryNode *n = find_entry_i(rdir, key, follow_symlinks);
 	if (n) {
 		if (n->type == RNT_SUBDIR) return false;
 		*node = n;
@@ -781,52 +781,52 @@ bool ht_registry::find_data_entry(const char *key, ht_registry_node **node, bool
 	return false;
 }
 
-ht_registry_node *ht_registry::find_entry_i(Container **rdir, const char *key, bool follow_symlinks)
+RegistryNode *Registry::find_entry_i(Container **rdir, const char *key, bool follow_symlinks)
 {
-	ht_registry_node *dir = root;
+	RegistryNode *dir = root;
 	const char *s;
 	if (key[0]=='/') key++;
 	while (1) {
 		s = strchr(key, '/');
 		if (s) {
 			String t((const byte *)key, s - key);
-			dir = find_entry_get_subdir(((ht_registry_data_stree*)dir->data)->tree, t.contentChar());
+			dir = find_entry_get_subdir(((RegistryDataSTree*)dir->data)->tree, t.contentChar());
 			if (!dir) break;
 			key = s+1;
 		} else {
-			ht_registry_node *n;
+			RegistryNode *n;
 			if (*key==0) {
 				n = dir;
 			} else {
-				n = find_entry_get_data(((ht_registry_data_stree*)dir->data)->tree, key, follow_symlinks);
+				n = find_entry_get_data(((RegistryDataSTree*)dir->data)->tree, key, follow_symlinks);
 			}
-			if (rdir) *rdir=((ht_registry_data_stree*)dir->data)->tree;
+			if (rdir) *rdir=((RegistryDataSTree*)dir->data)->tree;
 			return n;
 		}
 	}
 	return NULL;
 }
 
-ht_registry_node *ht_registry::find_entry_get_node(Container *dir, const char *nodename)
+RegistryNode *Registry::find_entry_get_node(Container *dir, const char *nodename)
 {
 	if (nodename) {
-		ht_registry_node t(0, nodename, NULL);
-		ht_registry_node *n=(ht_registry_node*)dir->get(dir->find(&t));
+		RegistryNode t(0, nodename, NULL);
+		RegistryNode *n=(RegistryNode*)dir->get(dir->find(&t));
 		return n;
 	}
 	return NULL;
 }
 
-ht_registry_node *ht_registry::find_entry_get_subdir(Container *dir, const char *nodename)
+RegistryNode *Registry::find_entry_get_subdir(Container *dir, const char *nodename)
 {
-	ht_registry_node *n=find_entry_get_node(dir, nodename);
+	RegistryNode *n=find_entry_get_node(dir, nodename);
 start:
 	if (!n) return 0;
 	switch (n->type) {
 		case RNT_SYMLINK: {
 			rec_depth++;
 			if (rec_depth > MAX_SYMLINK_REC_DEPTH) return 0;
-			char *sl=((ht_registry_data_string*)n->data)->value;
+			char *sl=((RegistryDataString*)n->data)->value;
 			if (sl[0] == '/') {
 				n = find_entry_i(NULL, sl, true);
 				goto start;
@@ -840,15 +840,15 @@ start:
 	return 0;
 }
 
-ht_registry_node *ht_registry::find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks)
+RegistryNode *Registry::find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks)
 {
-	ht_registry_node *n = find_entry_get_node(dir, nodename);
+	RegistryNode *n = find_entry_get_node(dir, nodename);
 start:
 	if (!n) return NULL;
 	if (follow_symlinks && n->type == RNT_SYMLINK) {
 		rec_depth++;
 		if (rec_depth > MAX_SYMLINK_REC_DEPTH) return NULL;
-		char *sl = ((ht_registry_data_string*)n->data)->value;
+		char *sl = ((RegistryDataString*)n->data)->value;
 		if (sl[0] == '/') {
 			n = find_entry_i(NULL, sl, true);
 			goto start;
@@ -859,20 +859,20 @@ start:
 	return n;
 }
 
-ht_registry_node_type ht_registry::have_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data)
+ht_registry_node_type Registry::have_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data)
 {
 	ht_registry_node_type t=lookup_node_type(identifier);
 	if (!t) t=register_node_type(identifier, create_empty_registry_data);
 	return t;
 }
 
-void ht_registry::load(ObjectStream &f)
+void Registry::load(ObjectStream &f)
 {
 	GET_OBJECT(f, node_types);
 	GET_OBJECT(f, root);
 }
 
-ht_registry_node_type_desc *ht_registry::get_node_type_desc(ht_registry_node_type t, const char **identifier)
+ht_registry_node_type_desc *Registry::get_node_type_desc(ht_registry_node_type t, const char **identifier)
 {
 	ht_registry_node_type_desc *data = NULL;
 	firstThat(ht_registry_node_type_desc, data, *node_types, t == data->type);
@@ -880,19 +880,19 @@ ht_registry_node_type_desc *ht_registry::get_node_type_desc(ht_registry_node_typ
 	return data;
 }
 
-ht_registry_node_type ht_registry::lookup_node_type(const char *identifier)
+ht_registry_node_type Registry::lookup_node_type(const char *identifier)
 {
 	ht_registry_node_type_desc s(0, identifier, NULL);
 	ht_registry_node_type_desc *d=(ht_registry_node_type_desc*)node_types->get(node_types->find(&s));
 	return d ? d->type : 0;
 }
 
-ObjectID ht_registry::getObjectID() const
+ObjectID Registry::getObjectID() const
 {
 	return ATOM_HT_REGISTRY;
 }
 
-ht_registry_node_type ht_registry::register_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data)
+ht_registry_node_type Registry::register_node_type(const char *identifier, create_empty_registry_data_func create_empty_registry_data)
 {
 //	ht_registry_node_type t = RNT_USER;
 	ht_registry_node_type t = 0;
@@ -914,19 +914,19 @@ ht_registry_node_type ht_registry::register_node_type(const char *identifier, cr
 	}
 }
 
-int ht_registry::set_dword(const char *key, uint32 d)
+int Registry::set_dword(const char *key, uint32 d)
 {
-	return set_node(key, RNT_DWORD, new ht_registry_data_dword(d));
+	return set_node(key, RNT_DWORD, new RegistryDataDword(d));
 }
 
-int ht_registry::set_raw(const char *key, const void *data, uint size)
+int Registry::set_raw(const char *key, const void *data, uint size)
 {
-	return set_node(key, RNT_RAW, new ht_registry_data_raw(data, size));
+	return set_node(key, RNT_RAW, new RegistryDataRaw(data, size));
 }
 
-int ht_registry::set_node(const char *key, ht_registry_node_type type, ht_registry_data *data)
+int Registry::set_node(const char *key, ht_registry_node_type type, RegistryData *data)
 {
-	ht_registry_node *n = find_entry_i(NULL, key, false);
+	RegistryNode *n = find_entry_i(NULL, key, false);
 	if (!n) return ENOENT;
 
 	if (n->type == type) {
@@ -940,17 +940,17 @@ int ht_registry::set_node(const char *key, ht_registry_node_type type, ht_regist
 	return EPERM;
 }
 
-int ht_registry::set_string(const char *key, const char *string)
+int Registry::set_string(const char *key, const char *string)
 {
-	return set_node(key, RNT_STRING, new ht_registry_data_string(string));
+	return set_node(key, RNT_STRING, new RegistryDataString(string));
 }
 
-int ht_registry::set_symlink(const char *key, const char *dest)
+int Registry::set_symlink(const char *key, const char *dest)
 {
-	return set_node(key, RNT_SYMLINK, new ht_registry_data_string(dest));
+	return set_node(key, RNT_SYMLINK, new RegistryDataString(dest));
 }
 
-bool ht_registry::splitfind(const char *key, const char **name, ht_registry_node **node)
+bool Registry::splitfind(const char *key, const char **name, RegistryNode **node)
 {
 	char dir[256]; /* FIXME: possible buffer overflow */
 	const char *n = strrchr(key, '/');
@@ -962,7 +962,7 @@ bool ht_registry::splitfind(const char *key, const char **name, ht_registry_node
 		n=key;
 	}
 
-	ht_registry_node *m = find_entry_i(NULL, dir, true);
+	RegistryNode *m = find_entry_i(NULL, dir, true);
 	if (!m) return 0;
 	if (m->type != RNT_SUBDIR) return 0;
 	*node = m;
@@ -970,7 +970,7 @@ bool ht_registry::splitfind(const char *key, const char **name, ht_registry_node
 	return 1;
 }
 
-void ht_registry::store(ObjectStream &f) const
+void Registry::store(ObjectStream &f) const
 {
 	PUT_OBJECT(f, node_types);
 	PUT_OBJECT(f, root);
@@ -1035,7 +1035,7 @@ static bool valid_char(unsigned char *bitmap, char c)
 	return BITBIT(bitmap[o], p);
 }
 
-bool ht_registry::valid_nodename(const char *nodename)
+bool Registry::valid_nodename(const char *nodename)
 {
 	if ((strcmp(nodename, "..")==0) || (strcmp(nodename, ".")==0)) {
 		return false;
@@ -1054,11 +1054,11 @@ uint32 get_config_dword(const char *ident, uint32 def)
 	String e;
 	e = "/config/";
 	e.append(ident);
-	ht_registry_node *n;
+	RegistryNode *n;
 	Container *dir;
 	if (registry->find_data_entry(e.contentChar(), &n, true, &dir)) {
 		if (n->type == RNT_DWORD) {
-			ht_registry_data_dword *s = (ht_registry_data_dword *)n->data;
+			RegistryDataDword *s = (RegistryDataDword *)n->data;
 			return s->value;
 		} else {
 			const char *q = "?";
@@ -1069,7 +1069,7 @@ uint32 get_config_dword(const char *ident, uint32 def)
 		String f(ident);
 		String dirname, filename;
 		f.rightSplit('/', dirname, filename);
-		dir->insert(new ht_registry_node(RNT_DWORD, filename.contentChar(), new ht_registry_data_dword(def)));
+		dir->insert(new RegistryNode(RNT_DWORD, filename.contentChar(), new RegistryDataDword(def)));
 		LOG_EX(LOG_ERROR, "registry key '%y' not found", &e);
 	}
 	return def;
@@ -1080,10 +1080,10 @@ char *get_config_string(const char *ident)
 	String e;
 	e = "/config/";
 	e.append(ident);
-	ht_registry_node *n;
+	RegistryNode *n;
 	if (registry->find_data_entry(e.contentChar(), &n, true)) {
 		if (n->type == RNT_STRING) {
-			ht_registry_data_string *s = (ht_registry_data_string *)n->data;
+			RegistryDataString *s = (RegistryDataString *)n->data;
 			return ht_strdup(s->value);
 		} else {
 			const char *q = "?";
@@ -1094,12 +1094,12 @@ char *get_config_string(const char *ident)
 	return NULL;
 }
 
-BUILDER(ATOM_HT_REGISTRY, ht_registry, Object);
-BUILDER(ATOM_HT_REGISTRY_NODE, ht_registry_node, Object);
-BUILDER(ATOM_HT_REGISTRY_DATA_STREE, ht_registry_data_stree, ht_registry_data);
-BUILDER(ATOM_HT_REGISTRY_DATA_DWORD, ht_registry_data_dword, ht_registry_data);
-BUILDER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw, ht_registry_data);
-BUILDER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string, ht_registry_data);
+BUILDER(ATOM_HT_REGISTRY, Registry, Object);
+BUILDER(ATOM_HT_REGISTRY_NODE, RegistryNode, Object);
+BUILDER(ATOM_HT_REGISTRY_DATA_STREE, RegistryDataSTree, RegistryData);
+BUILDER(ATOM_HT_REGISTRY_DATA_DWORD, RegistryDataDword, RegistryData);
+BUILDER(ATOM_HT_REGISTRY_DATA_RAW, RegistryDataRaw, RegistryData);
+BUILDER(ATOM_HT_REGISTRY_DATA_STRING, RegistryDataString, RegistryData);
 BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc, Object);
 	
 /*
@@ -1109,12 +1109,12 @@ BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc, Object);
 #include "cstream.h"
 bool init_registry()
 {
-	REGISTER(ATOM_HT_REGISTRY, ht_registry);
-	REGISTER(ATOM_HT_REGISTRY_NODE, ht_registry_node);
-	REGISTER(ATOM_HT_REGISTRY_DATA_STREE, ht_registry_data_stree);
-	REGISTER(ATOM_HT_REGISTRY_DATA_DWORD, ht_registry_data_dword);
-	REGISTER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw);
-	REGISTER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string);
+	REGISTER(ATOM_HT_REGISTRY, Registry);
+	REGISTER(ATOM_HT_REGISTRY_NODE, RegistryNode);
+	REGISTER(ATOM_HT_REGISTRY_DATA_STREE, RegistryDataSTree);
+	REGISTER(ATOM_HT_REGISTRY_DATA_DWORD, RegistryDataDword);
+	REGISTER(ATOM_HT_REGISTRY_DATA_RAW, RegistryDataRaw);
+	REGISTER(ATOM_HT_REGISTRY_DATA_STRING, RegistryDataString);
 	REGISTER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc);
 //	registerAtom(ATOM_HT_CREATE_EMPTY_SUBDIR, (void*));
 	registerAtom(ATOM_HT_CREATE_EMPTY_SYMLINK, (void*)create_empty_symlink);
@@ -1132,7 +1132,7 @@ bool init_registry()
 
 	GET_OBJECT(o, registry);
 #else
-	registry = new ht_registry;
+	registry = new Registry;
 	registry->init();
 
 	LocalFile f("ht.reg", IOAM_WRITE, FOM_CREATE);
@@ -1151,12 +1151,12 @@ bool init_registry()
 
 void done_registry()
 {
-	UNREGISTER(ATOM_HT_REGISTRY, ht_registry);
-	UNREGISTER(ATOM_HT_REGISTRY_NODE, ht_registry_node);
-	UNREGISTER(ATOM_HT_REGISTRY_DATA_STREE, ht_registry_data_stree);
-	UNREGISTER(ATOM_HT_REGISTRY_DATA_DWORD, ht_registry_data_dword);
-	UNREGISTER(ATOM_HT_REGISTRY_DATA_RAW, ht_registry_data_raw);
-	UNREGISTER(ATOM_HT_REGISTRY_DATA_STRING, ht_registry_data_string);
+	UNREGISTER(ATOM_HT_REGISTRY, Registry);
+	UNREGISTER(ATOM_HT_REGISTRY_NODE, RegistryNode);
+	UNREGISTER(ATOM_HT_REGISTRY_DATA_STREE, RegistryDataSTree);
+	UNREGISTER(ATOM_HT_REGISTRY_DATA_DWORD, RegistryDataDword);
+	UNREGISTER(ATOM_HT_REGISTRY_DATA_RAW, RegistryDataRaw);
+	UNREGISTER(ATOM_HT_REGISTRY_DATA_STRING, RegistryDataString);
 	UNREGISTER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc);
 //	unregisterAtom(ATOM_HT_CREATE_EMPTY_SUBDIR);
 	unregisterAtom(ATOM_HT_CREATE_EMPTY_SYMLINK);

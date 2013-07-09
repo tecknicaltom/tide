@@ -40,8 +40,8 @@ protected:
 	uint open_mode;
 
 /* overwritten */
-		   int		load_node(ObjectStream &s, ht_registry_node **node);
-		   void		store_node(ObjectStream &s, ht_registry_node *node);
+		   int		load_node(ObjectStream &s, RegistryNode **node);
+		   void		store_node(ObjectStream &s, RegistryNode *node);
 public:
 		RegNodeFile(const char *nodename, uint am, uint om);
 	virtual ~RegNodeFile();
@@ -109,12 +109,12 @@ public:
 
 class RegistryFs: public Vfs {
 protected:
-	ht_registry_node *enum_last;
+	RegistryNode *enum_last;
 	char *enum_dir;
 
 /* new */
-		void		create_pfind_t(pfind_t *f, const ht_registry_node *node);
-		void		create_pstat_t(pstat_t *s, ht_registry_data *data, ht_registry_node_type type);
+		void		create_pfind_t(pfind_t *f, const RegistryNode *node);
+		void		create_pstat_t(pstat_t *s, RegistryData *data, ht_registry_node_type type);
 public:
 		void		init();
 	virtual	void		done();

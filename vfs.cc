@@ -177,7 +177,7 @@ RegNodeFile::RegNodeFile(const char *nn, uint am, uint om)
 		throw IOException(EINVAL);
 	}
 	
-	ht_registry_node *node;
+	RegistryNode *node;
 	if (!(om & FOM_CREATE)) {
 		if (!registry->find_data_entry(nodename, &node, false)) {
 			throw IOException(ENOENT);
@@ -198,7 +198,7 @@ RegNodeFile::RegNodeFile(const char *nn, uint am, uint om)
 RegNodeFile::~RegNodeFile()
 {
 	if (getAccessMode() & IOAM_WRITE) {
-		ht_registry_node *node;
+		RegistryNode *node;
 
 		seek(0);
 
@@ -223,11 +223,11 @@ RegNodeFile::~RegNodeFile()
 	free(nodename);
 }
 
-int RegNodeFile::load_node(ObjectStream &s, ht_registry_node **node)
+int RegNodeFile::load_node(ObjectStream &s, RegistryNode **node)
 {
 	byte magic[4];
 	ht_registry_node_type type;
-	ht_registry_data *data;
+	RegistryData *data;
 	int n = s.read(magic, sizeof magic);
 	if (n != sizeof magic || memcmp(magic, REGNODE_FILE_MAGIC, 4)==0) {
 		type = s.getInt(4, NULL);
@@ -236,19 +236,19 @@ int RegNodeFile::load_node(ObjectStream &s, ht_registry_node **node)
 		MemoryFile g;
 		g.write(magic, n);
 		s.copyAllTo(&g);
-		ht_registry_data_raw *d = new ht_registry_data_raw(g.getBufPtr(), g.getSize());
+		RegistryDataRaw *d = new RegistryDataRaw(g.getBufPtr(), g.getSize());
 
 		type = RNT_RAW;
 		data = d;
 	}
-	*node = new ht_registry_node(type, NULL, data);
+	*node = new RegistryNode(type, NULL, data);
 	return 0;
 }
 
-void	RegNodeFile::store_node(ObjectStream &s, ht_registry_node *node)
+void	RegNodeFile::store_node(ObjectStream &s, RegistryNode *node)
 {
 	if (node->type == RNT_RAW) {
-		ht_registry_data_raw *d = (ht_registry_data_raw*)node->data;
+		RegistryDataRaw *d = (RegistryDataRaw*)node->data;
 		s.write(d->value, d->size);
 	} else {
 		s.write((void*)REGNODE_FILE_MAGIC, 4);
@@ -278,11 +278,11 @@ int RegistryFs::canonicalize(String &result, const char *filename, const char *c
 	char res[HT_NAME_MAX];
 	sys_common_canonicalize(res, sizeof res, filename, cwd, unix_is_path_delim);
 	result.assign(res);
-	ht_registry_node *node;
+	RegistryNode *node;
 	return registry->find_data_entry(result.contentChar(), &node, 0);
 }
 
-void RegistryFs::create_pfind_t(pfind_t *f, const ht_registry_node *node)
+void RegistryFs::create_pfind_t(pfind_t *f, const RegistryNode *node)
 {
 	f->name = node->name;
 	f->stat.caps = pstat_mode_type | pstat_desc;
@@ -290,7 +290,7 @@ void RegistryFs::create_pfind_t(pfind_t *f, const ht_registry_node *node)
 	node->data->strvalue(f->stat.desc);		/* FIXME: possible buffer overflow !!! only 32 bytes... */
 }
 
-void RegistryFs::create_pstat_t(pstat_t *s, ht_registry_data *data, ht_registry_node_type type)
+void RegistryFs::create_pstat_t(pstat_t *s, RegistryData *data, ht_registry_node_type type)
 {
 	s->caps = pstat_mode_type | pstat_desc;
 	s->mode = 0;
@@ -303,7 +303,7 @@ void RegistryFs::create_pstat_t(pstat_t *s, ht_registry_data *data, ht_registry_
 			break;
 		case RNT_RAW:
 			s->caps |= pstat_size;
-			s->size = ((ht_registry_data_raw *)data)->size;
+			s->size = ((RegistryDataRaw *)data)->size;
 		default:
 			s->mode |= HT_S_IFREG;
 	}
@@ -354,7 +354,7 @@ int RegistryFs::compareFilenames(const char *a, const char *b)
 
 bool RegistryFs::findFirst(const char *dirname, pfind_t *f)
 {
-	ht_registry_node *node;
+	RegistryNode *node;
 	
 	free(enum_dir);
 	enum_last = NULL;
@@ -378,7 +378,7 @@ bool RegistryFs::findFirst(const char *dirname, pfind_t *f)
 
 bool RegistryFs::findNext(pfind_t *f)
 {
-	ht_registry_node *node;
+	RegistryNode *node;
 	
 	if ((node = registry->enum_next(enum_dir, enum_last))) {
 		enum_last = node;
@@ -415,7 +415,7 @@ int RegistryFs::makeDir(const char *dirname)
 
 int RegistryFs::open(const char *filename, bool edit)
 {
-	ht_registry_node *node;
+	RegistryNode *node;
 	
 	if (registry->find_data_entry(filename, &node, false)) {
 		if (node->data->editdialog(filename)) {
@@ -431,7 +431,7 @@ int RegistryFs::open(const char *filename, bool edit)
 
 int RegistryFs::pstat(pstat_t *s, const char *filename)
 {
-	ht_registry_node *node;
+	RegistryNode *node;
 
 	char key[VFS_DIR_MAX];
 	ht_snprintf(key, sizeof key, "%s", filename);

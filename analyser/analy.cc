@@ -1035,7 +1035,7 @@ void	Analyser::dataAccess(const Address *Addr, taccess access)
 	if (validAddress(Addr, scinitialized)) {
 		uint bz = bufPtr(Addr, buffer, sizeof buffer);
 		if (bz > 2) {
-			analy_string *str = string_test(buffer, bz);
+			AnalyString *str = string_test(buffer, bz);
 			if (str) {
 				char string1[128], string2[128];
 				str->render_string(string2, sizeof string2);

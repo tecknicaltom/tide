@@ -106,52 +106,52 @@ static int analy_string__raw_test(const byte *s, int len)
 }
 
 /*
- *	CLASS analy_string
+ *	CLASS AnalyString
  */
-void analy_string::init(const byte *s, int Len)
+void AnalyString::init(const byte *s, int Len)
 {
 	string = ht_malloc(Len);
 	memcpy(string, s, Len);
 	len = Len;
 }
 
-void analy_string::done()
+void AnalyString::done()
 {
 	free(string);
 }
 
-int  analy_string::length()
+int  AnalyString::length()
 {
 	return len;
 }
 
-void analy_string::set_len(int Len)
+void AnalyString::set_len(int Len)
 {
 	len = Len;
 }
 
 /*
- *	CLASS analy_raw_string
+ *	CLASS AnalyRawString
  */
-void analy_raw_string::render_string(char *result, int maxlen)
+void AnalyRawString::render_string(char *result, int maxlen)
 {
 }
 
-int analy_raw_string::string_test(const byte *s, int testlen, int &foundlen)
+int AnalyRawString::string_test(const byte *s, int testlen, int &foundlen)
 {
 	foundlen = 0;
 	return 0;
 }
 
-const char *analy_raw_string::name()
+const char *AnalyRawString::name()
 {
 	return "raw";
 }
 
 /*
- *	CLASS analy_c_string
+ *	CLASS AnalyCString
  */
-void analy_c_string::render_string(char *result, int maxlen)
+void AnalyCString::render_string(char *result, int maxlen)
 {
 	assert(maxlen);
 	maxlen--;
@@ -161,7 +161,7 @@ void analy_c_string::render_string(char *result, int maxlen)
 	result[Len]=0;          
 }
 
-int analy_c_string::string_test(const byte *s, int testlen, int &foundlen)
+int AnalyCString::string_test(const byte *s, int testlen, int &foundlen)
 {
 	// search for \0
 	byte *np = (byte *)memchr(s, 0, testlen);
@@ -171,20 +171,20 @@ int analy_c_string::string_test(const byte *s, int testlen, int &foundlen)
 	return analy_string__raw_test(s, len-1);
 }
 
-const char *analy_c_string::name()
+const char *AnalyCString::name()
 {
 	return "strz";
 }
 
 /*
- *	CLASS analy_unicode_string
+ *	CLASS AnalyUnicodeString
  */
-void analy_unicode_string::render_string(char *result, int maxlen)
+void AnalyUnicodeString::render_string(char *result, int maxlen)
 {
 	wide_char_to_multi_byte(result, string, maxlen);
 }
 
-int analy_unicode_string::string_test(const byte *s, int testlen, int &foundlen)
+int AnalyUnicodeString::string_test(const byte *s, int testlen, int &foundlen)
 {
 	// this is not good
 	byte *a = ht_malloc(testlen/2+1);
@@ -202,15 +202,15 @@ int analy_unicode_string::string_test(const byte *s, int testlen, int &foundlen)
 	return res;
 }
 
-const char *analy_unicode_string::name()
+const char *AnalyUnicodeString::name()
 {
 	return "strw";
 }
 
 /*
- *	CLASS analy_pascal_string
+ *	CLASS AnalyPascalString
  */
-void analy_pascal_string::render_string(char *result, int maxlen)
+void AnalyPascalString::render_string(char *result, int maxlen)
 {
 	assert(maxlen);
 	maxlen--;
@@ -219,7 +219,7 @@ void analy_pascal_string::render_string(char *result, int maxlen)
 	result[Len]=0;
 }
 
-int analy_pascal_string::string_test(const byte *s, int testlen, int &foundlen)
+int AnalyPascalString::string_test(const byte *s, int testlen, int &foundlen)
 {
 	int len = *s;
 	if (len>testlen) return -1;
@@ -227,35 +227,35 @@ int analy_pascal_string::string_test(const byte *s, int testlen, int &foundlen)
 	return analy_string__raw_test(s+1, len);
 }
 
-const char *analy_pascal_string::name()
+const char *AnalyPascalString::name()
 {
 	return "strp";
 }
 
 #define STRING_TESTS 2
-analy_string *string_test(const byte *s, int testlen)
+AnalyString *string_test(const byte *s, int testlen)
 {
 	if (!testlen) return NULL;     
 	int p[STRING_TESTS+1];
 	int len[STRING_TESTS];
-	p[0] = analy_c_string::string_test(s, testlen, len[0]);
-	p[1] = analy_unicode_string::string_test(s, testlen, len[1]);
-//	p[2] = analy_pascal_string::string_test(s, testlen, len[2]);
+	p[0] = AnalyCString::string_test(s, testlen, len[0]);
+	p[1] = AnalyUnicodeString::string_test(s, testlen, len[1]);
+//	p[2] = AnalyPascalString::string_test(s, testlen, len[2]);
 	p[STRING_TESTS] = 5;
 	int j = STRING_TESTS;
 	for (int i=0; i < STRING_TESTS; i++) {
 		if (p[i] > p[j]) j = i;
 	}
-	analy_string *as = NULL;;
+	AnalyString *as = NULL;;
 	switch (j) {
 		case 0:
-			as = new analy_c_string();
+			as = new AnalyCString();
 			break;
 		case 1:
-			as = new analy_unicode_string();
+			as = new AnalyUnicodeString();
 			break;
 /*		case 2:
-			as = new analy_pascal_string();
+			as = new AnalyPascalString();
 			break;*/
 		default:
 			break;

@@ -195,7 +195,7 @@ bool load_pal(const char *pal_class, const char *pal_flavour, palette *p)
 
 	for (int i=0; i < psize; i++) p->data[i] = VCP(VC_WHITE, VC_RED);
 
-	ht_registry_node *n = NULL;
+	RegistryNode *n = NULL;
 	ht_registry_node_type rnt_pal = registry->lookup_node_type(rnt_palette_name);
 	while ((n = registry->enum_next(dir, n))) {
 		if (n->type == rnt_pal) {
@@ -310,7 +310,7 @@ void palette_entry::strvalue(char *buf32bytes)
 	*p = 0;
 }
 
-ht_registry_data *create_empty_palette_entry()
+RegistryData *create_empty_palette_entry()
 {
 	return new palette_entry();
 }
@@ -319,7 +319,7 @@ ht_registry_data *create_empty_palette_entry()
  *	INIT
  */
 
-BUILDER(ATOM_PALETTE_ENTRY, palette_entry, ht_registry_data);
+BUILDER(ATOM_PALETTE_ENTRY, palette_entry, RegistryData);
 
 bool init_pal()
 {

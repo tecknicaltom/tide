@@ -37,13 +37,13 @@ struct defpal {
  *	CLASS palette_entry
  */
 
-class palette_entry: public ht_registry_data {
+class palette_entry: public RegistryData {
 public:
 	uint idx;
 	vcp color;
 
 		palette_entry(uint idx=0, vcp color=0);
-		palette_entry(BuildCtorArg&a): ht_registry_data(a) {};
+		palette_entry(BuildCtorArg&a): RegistryData(a) {};
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);

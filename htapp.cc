@@ -2668,7 +2668,7 @@ void	ht_app::insert_window(ht_window *window, uint type, bool minimized, bool is
 
 void ht_app::load(ObjectStream &f)
 {
-	ht_registry *tmp = registry;
+	Registry *tmp = registry;
 	GET_OBJECT(f, registry);
 
 	if (tmp) {

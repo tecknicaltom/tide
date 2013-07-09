@@ -27,12 +27,11 @@
 
 #define NL 10
 #define WHITESPACE ' '
-#define COMMENT '#'
 #define INV 255
 
 extern byte mapchar[];
 
-class analy_string: public Object {
+class AnalyString: public Object {
 protected:
 	byte *string;
 	int len;
@@ -45,28 +44,28 @@ public:
 	virtual const char *name() = 0;
 };
 
-class analy_raw_string: public analy_string {
+class AnalyRawString: public AnalyString {
 public:
 	virtual	void	render_string(char *result, int maxlen);
 	static	int	string_test(const byte *s, int testlen, int &foundlen);
 	virtual	const char *name();
 };
 
-class analy_c_string: public analy_string {
+class AnalyCString: public AnalyString {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
 	virtual const char *name();
 };
 
-class analy_unicode_string: public analy_string {
+class AnalyUnicodeString: public AnalyString {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
 	virtual const char *name();
 };
 
-class analy_pascal_string: public analy_string {
+class AnalyPascalString: public AnalyString {
 public:
 	virtual void render_string(char *result, int maxlen);
 	static	int string_test(const byte *s, int testlen, int &foundlen);
@@ -74,6 +73,6 @@ public:
 };
 
 
-analy_string *string_test(const byte *s, int testlen);
+AnalyString *string_test(const byte *s, int testlen);
 
 #endif

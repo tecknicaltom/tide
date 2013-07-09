@@ -25,29 +25,29 @@
 #include "strtools.h"
 
 /*
- *	CLASS ht_registry_data
+ *	CLASS RegistryData
  */
 
-class ht_registry_data: public Object {
+class RegistryData: public Object {
 public:
 /* new */
-		ht_registry_data() {};
-		ht_registry_data(BuildCtorArg&a): Object(a) {};
+		RegistryData() {};
+		RegistryData(BuildCtorArg&a): Object(a) {};
 	virtual	bool editdialog(const char *keyname);
 	virtual void strvalue(char *buf32bytes);
 };
 
 /*
- *	CLASS ht_registry_data_stree
+ *	CLASS RegistryDataSTree
  */
 
-class ht_registry_data_stree: public ht_registry_data {
+class RegistryDataSTree: public RegistryData {
 public:
 	Container *tree;
 
-			ht_registry_data_stree(AVLTree *aTree);
-			ht_registry_data_stree(BuildCtorArg&a): ht_registry_data(a) {};
-			~ht_registry_data_stree();
+			RegistryDataSTree(AVLTree *aTree);
+			RegistryDataSTree(BuildCtorArg&a): RegistryData(a) {};
+			~RegistryDataSTree();
 /* overwritten */
 	virtual	void load(ObjectStream &f);
 	virtual	ObjectID getObjectID() const;
@@ -56,15 +56,15 @@ public:
 };
 
 /*
- *	CLASS ht_registry_data_dword
+ *	CLASS RegistryDataDword
  */
 
-class ht_registry_data_dword: public ht_registry_data {
+class RegistryDataDword: public RegistryData {
 public:
 	uint32 value;
 
-		ht_registry_data_dword(uint32 value);
-		ht_registry_data_dword(BuildCtorArg&a): ht_registry_data(a) {};
+		RegistryDataDword(uint32 value);
+		RegistryDataDword(BuildCtorArg&a): RegistryData(a) {};
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -74,17 +74,17 @@ public:
 };
 
 /*
- *	CLASS ht_registry_data_raw
+ *	CLASS RegistryDataRaw
  */
 
-class ht_registry_data_raw: public ht_registry_data {
+class RegistryDataRaw: public RegistryData {
 public:
 	void *value;
 	uint size;
 
-			ht_registry_data_raw(const void *value, uint size);
-			ht_registry_data_raw(BuildCtorArg&a): ht_registry_data(a) {};
-			~ht_registry_data_raw();
+			RegistryDataRaw(const void *value, uint size);
+			RegistryDataRaw(BuildCtorArg&a): RegistryData(a) {};
+			~RegistryDataRaw();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -94,16 +94,16 @@ public:
 };
 
 /*
- *	CLASS ht_registry_data_string
+ *	CLASS RegistryDataString
  */
 
-class ht_registry_data_string: public ht_registry_data {
+class RegistryDataString: public RegistryData {
 public:
 	char *value;
 
-		ht_registry_data_string(const char *s);
-		ht_registry_data_string(BuildCtorArg&a): ht_registry_data(a) {};
-		~ht_registry_data_string();
+		RegistryDataString(const char *s);
+		RegistryDataString(BuildCtorArg&a): RegistryData(a) {};
+		~RegistryDataString();
 /* overwritten */
 	virtual	bool editdialog(const char *keyname);
 	virtual	void load(ObjectStream &f);
@@ -112,11 +112,7 @@ public:
 	virtual	void strvalue(char *buf32bytes);
 };
 
-/*
- *	CLASS ht_registry_node
- */
-
-typedef ht_registry_data* (*create_empty_registry_data_func)();
+typedef RegistryData* (*create_empty_registry_data_func)();
 
 typedef uint ht_registry_node_type;
 
@@ -146,15 +142,19 @@ public:
 #define RNT_USER    	0x100
 // the rest may be allocated dynamically
 
-class ht_registry_node: public Object {
+/*
+ *	CLASS RegistryNode
+ */
+
+class RegistryNode: public Object {
 public:
 	char *name;
 	ht_registry_node_type type;
-	ht_registry_data *data;
+	RegistryData *data;
 
-	ht_registry_node(ht_registry_node_type type, const char *name, ht_registry_data *data);
-	ht_registry_node(BuildCtorArg&a): Object(a) {};
-	virtual ~ht_registry_node();
+	RegistryNode(ht_registry_node_type type, const char *name, RegistryData *data);
+	RegistryNode(BuildCtorArg&a): Object(a) {};
+	virtual ~RegistryNode();
 /* overwritten */
 	virtual int compareTo(const Object *) const;
 	virtual	void load(ObjectStream &f);
@@ -163,37 +163,37 @@ public:
 };
 
 /*
- *	CLASS ht_registry
+ *	CLASS Registry
  */
 
 #define MAX_SYMLINK_REC_DEPTH 20
 
-class ht_registry: public Object {
+class Registry: public Object {
 protected:
-	ht_registry_node *root;
+	RegistryNode *root;
 	uint rec_depth;
 
-			ht_registry_node *find_entry_i(Container **dir, const char *key, bool follow_symlinks);
-			ht_registry_node *find_entry_get_node(Container *dir, const char *nodename);
-			ht_registry_node *find_entry_get_subdir(Container *dir, const char *nodename);
-			ht_registry_node *find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks);
-			bool splitfind(const char *key, const char **name, ht_registry_node **node);
+			RegistryNode *find_entry_i(Container **dir, const char *key, bool follow_symlinks);
+			RegistryNode *find_entry_get_node(Container *dir, const char *nodename);
+			RegistryNode *find_entry_get_subdir(Container *dir, const char *nodename);
+			RegistryNode *find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks);
+			bool splitfind(const char *key, const char **name, RegistryNode **node);
 public:
 	Container *node_types;
 
-		ht_registry() {};
-		ht_registry(BuildCtorArg&a): Object(a) {};
+		Registry() {};
+		Registry(BuildCtorArg&a): Object(a) {};
 		void init();
 	virtual	void done();
 /* new */
 		int create_node(const char *key, ht_registry_node_type type);
 		int create_subdir(const char *key);
 		int delete_node(const char *key);
-		ht_registry_node *enum_next(const char *dir, ht_registry_node *prevkey);
-		ht_registry_node *enum_prev(const char *dir, ht_registry_node *nextkey);
+		RegistryNode *enum_next(const char *dir, RegistryNode *prevkey);
+		RegistryNode *enum_prev(const char *dir, RegistryNode *nextkey);
 			
-		bool find_any_entry(const char *key, ht_registry_node **node);
-		bool find_data_entry(const char *key, ht_registry_node **node, bool follow_symlinks, Container **dir = NULL);
+		bool find_any_entry(const char *key, RegistryNode **node);
+		bool find_data_entry(const char *key, RegistryNode **node, bool follow_symlinks, Container **dir = NULL);
 		/* node type*/
 		ht_registry_node_type lookup_node_type(const char *identifier);
 		ht_registry_node_type_desc *get_node_type_desc(ht_registry_node_type t, const char **identifier);
@@ -202,7 +202,7 @@ public:
 		/**/
 		int set_dword(const char *key, uint32 d);
 		int set_raw(const char *key, const void *data, uint size);
-		int set_node(const char *key, ht_registry_node_type type, ht_registry_data *data);
+		int set_node(const char *key, ht_registry_node_type type, RegistryData *data);
 		int set_string(const char *key, const char *string);
 		int set_symlink(const char *key, const char *dest);
 		bool valid_nodename(const char *nodename);
@@ -218,7 +218,7 @@ public:
 uint32 get_config_dword(const char *ident, uint32 default_value=0);
 char *get_config_string(const char *ident);
 
-extern ht_registry *registry;
+extern Registry *registry;
 
 /*
  *	INIT
