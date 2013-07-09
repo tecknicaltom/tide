@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htxbe.h
  *
@@ -72,7 +72,7 @@ struct ht_xbe_shared_data {
 	UiView *v_dimports;
 	UiView *v_resources;
 	UiView *v_il;
-	UiFormatViewer *v_image;	
+	UiFormatViewer *v_image;
 };
 
 /*

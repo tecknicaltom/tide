@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpefimp.h
  *
@@ -68,7 +68,7 @@ protected:
 	bool grouplib;
 	uint sortby;
 	/* new */
-    
+
 		void	dosort();
 public:
 		void	init(Bounds *b, const char *desc, UiFormatGroup *fg);

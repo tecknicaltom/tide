@@ -66,5 +66,5 @@ public:
 	virtual	ObjectID	getObjectID() const;
 	virtual	bool		validInsn(const dis_insn *disasm_insn);
 };
-								
-#endif 
+
+#endif

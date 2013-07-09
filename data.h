@@ -42,7 +42,7 @@ template <typename T1, typename T2>
 inline bool instanceOf(const T2 *o)
 {
 	return (dynamic_cast<const T1*>(o) != NULL);
-} 
+}
 
 /*
  *	C style malloc support
@@ -303,7 +303,7 @@ public:
  *
  *	@param i index of object to find
  *	@returns object handle of found object or <i>invObjHandle</i> if not found
- */	
+ */
 	virtual	ObjHandle	findByIdx(int i) const = 0;
 /**
  *	Find (logically) last element's object handle.
@@ -420,7 +420,7 @@ protected:
 public:
 				Container(BuildCtorArg&a): Enumerator(a) {};
 				Container();
-				
+
 	/* extends Enumerator */
 	virtual Container *	clone() const = 0;
 
@@ -512,7 +512,7 @@ public:
 				List() {};
 	/* extends Enumerator */
 	virtual List *		clone() const = 0;
-	
+
 	/* new */
 
 /**

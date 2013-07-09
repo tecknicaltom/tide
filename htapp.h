@@ -162,13 +162,13 @@ class ht_file_window: public ht_window {
 protected:
 	Array vstate_history;
 	int vstate_history_pos;
-	
+
 		void add_vstate_history(ht_vstate_history_entry *e);
 public:
 	File	*file;
 
 		ht_file_window();
-		
+
 		void init(Bounds *b, const char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
 	/* overwritten */
@@ -224,10 +224,10 @@ class UiProjectListbox: public UiListbox {
 protected:
 	ht_project *project;
 	uint colwidths[4];
-	
+
 public:
 		void	init(Bounds *b, ht_project *project);
-			
+
 	virtual	int	calcCount();
 	virtual	void	draw();
 	virtual	void *	getFirst();
@@ -300,22 +300,22 @@ protected:
 	UiDesktop *desktop;
 
 	UiGroup *battlefield;
-	
+
 	bool exit_program;
 
 /* new */
 			ht_window *create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile);
 			ht_window *create_window_file_text(Bounds *b, FileLayer *file, const char *title, bool isfile);
-			
+
 			bool accept_close_all_windows();
 			uint find_free_window_number();
-			
+
 			uint get_window_number(ht_window *window);
 			ObjHandle get_window_listindex(ht_window *window);
 
 			void get_stdbounds_file(Bounds *b);
 			void get_stdbounds_tool(Bounds *b);
-			
+
 			int popup_view_list_dump(UiView *view, UiTextListbox *listbox, List *structure, int depth, int *currenti, UiView *currentv);
 /* overwritten */
 	virtual	const char *defaultpalette();

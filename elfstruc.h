@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	elfstruc.h
  *
@@ -327,7 +327,7 @@ struct ELF_SECTION_HEADER32 {
 	elf32_word sh_name;
 	elf32_word sh_type;
 	elf32_word sh_flags;
-	elf32_addr sh_addr;     
+	elf32_addr sh_addr;
 	elf32_off sh_offset;
 	elf32_word sh_size;
 	elf32_word sh_link;
@@ -364,7 +364,7 @@ struct ELF_SECTION_HEADER64 {
 #define ELF_PT_NUM		8          /* Number of defined types       */
 #define ELF_PT_GNU_EH_FRAME	0x6474e550 /* GCC .eh_frame_hdr segment     */
 #define ELF_PT_GNU_STACK	0x6474e551 /* Indicates stack executability */
-#define ELF_PT_GNU_RELRO	0x6474e552 /* Read-only after relocation    */ 
+#define ELF_PT_GNU_RELRO	0x6474e552 /* Read-only after relocation    */
 #define ELF_PT_PAX_FLAGS	0x65041580 /* Indicates PaX flag markings */
 
 struct ELF_PROGRAM_HEADER32 {

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	httext.h
  *
@@ -41,7 +41,7 @@ public:
 /*
  *	CLASS ht_text_sub
  */
- 
+
 class ht_text_sub: public ht_linear_sub {
 protected:
 /* new */

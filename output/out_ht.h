@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	out_ht.h
  *

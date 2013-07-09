@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	xbe_analy.h
  *

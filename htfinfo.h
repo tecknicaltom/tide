@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htfinfo.h
  *
@@ -33,12 +33,12 @@ extern format_viewer_if htfinfo_if;
 /*
  *   UiFInfoText
  */
- 
+
 class UiFInfoText: public UiStaticText {
 protected:
 	File *file;
 	const char *olddesc;
-	
+
 public:
 		void	init(Bounds *b, File *file);
 	virtual	void	done();

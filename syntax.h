@@ -104,7 +104,7 @@ protected:
 	uint c_reserved_count;
 
 	palette c_pal;
-	
+
 	virtual	void config_changed();
 			void reloadpalette();
 public:
@@ -130,7 +130,7 @@ protected:
 	uint html_reserved_count;
 
 	palette html_pal;
-	
+
 	virtual	void config_changed();
 			void reloadpalette();
 public:

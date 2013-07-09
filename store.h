@@ -72,7 +72,7 @@ protected:
 	int		errorline;
 	int		indent;
 public:
-	   
+
 				ObjectStreamText(Stream *s, bool own_stream);
 	/* extends ObjectStreamInter */
 	virtual Object *	getObjectInternal(const char *name, ObjectID id = OBJID_INVALID);
@@ -83,7 +83,7 @@ public:
 	virtual uint64		getInt(uint size, const char *desc);
 	virtual char *		getString(const char *desc);
 	virtual byte *		getLenString(int &length, const char *desc);
-	
+
 	virtual void		putBinary(const void *mem, uint size, const char *desc);
 	virtual void		putBool(bool b, const char *desc);
 	virtual void		putComment(const char *comment);
@@ -103,7 +103,7 @@ private:
 		   char	readChar();
 		   void	readDesc(const char *desc);
 
-		   
+
 		   void	putDesc(const char *desc);
 		   void	putIndent();
 		   void	putChar(char c);

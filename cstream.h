@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	cstream.cc
  *
@@ -26,7 +26,7 @@
 /*
  *	NEVER use ht_compressed_stream for both reading and writing!
  */
- 
+
 #define COMPRESSED_STREAM_DEFAULT_GRANULARITY 10240
 
 class CompressedStream: public StreamLayer {

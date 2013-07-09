@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	hthist.h
  *
@@ -48,7 +48,7 @@ public:
 	char *desc;
 	ObjectStreamBin *data;
 	MemoryFile *datafile;
-	
+
 	ht_history_entry(const char *str = NULL, ObjectStreamBin *data = NULL, MemoryFile *datafile = NULL);
 	ht_history_entry(BuildCtorArg &a): Object(a) {};
 	~ht_history_entry();

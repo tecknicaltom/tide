@@ -184,7 +184,7 @@ public:
 			ClassMethod(char *name, char *type, ClassAddress start, uint length, int flags,
 				int exctbl_len, exception_info *exctbl);
 	virtual int	compareTo(const Object *obj) const;
-		void	addsig(const char *s) { type = s; } 
+		void	addsig(const char *s) { type = s; }
 };
 
 class ClassField: public Object {
@@ -194,7 +194,7 @@ public:
 	int flags;
 
 			ClassField(char *name, char *type, int flags);
-		void	addsig(const char *s) { type = s; } 
+		void	addsig(const char *s) { type = s; }
 };
 
 

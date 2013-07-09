@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htneimg.h
  *
@@ -35,7 +35,7 @@ class ht_ne_aviewer: public ht_aviewer {
 public:
 	ht_ne_shared_data *ne_shared;
 	File *file;
-	
+
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analyser, ht_ne_shared_data *ne_shared);
 /* overwritten */
 	virtual const char *func(uint i, bool execute);

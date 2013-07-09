@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	data_analy.h
  *
@@ -94,7 +94,7 @@ struct Location;
 class DataAnalyser: public Object	{
 public:
 	Analyser		*analy;
-	
+
 				DataAnalyser();
 				DataAnalyser(BuildCtorArg&a): Object(a) {};
 		void		init(Analyser *Analy);

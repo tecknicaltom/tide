@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	x86opc.h
  *
@@ -82,7 +82,7 @@ struct x86_insn_op {
 		struct {
 			uint32 seg;
 			uint32 offset;
-		} farptr;			
+		} farptr;
 		uint64 imm;
 		int reg;
 		int seg;
@@ -111,7 +111,7 @@ struct x86_insn_op {
 };
 
 enum {
-	TYPE_0 = 0,		
+	TYPE_0 = 0,
 	TYPE_A,		/* direct address without ModR/M (generally */
 			/* like imm, but can be 16:32 = 48 bit) */
 	TYPE_C,		/* reg of ModR/M picks control register */
@@ -158,14 +158,14 @@ enum {
 enum X86_VEX {
 	W0    = 0x00,
 	W1    = 0x80,
-	
+
 	_128  = 0x00,
 	_256  = 0x40,
-	
+
 	_66   = 0x01,
 	_f3   = 0x02,
 	_f2   = 0x03,
-	
+
 	_0f   = 0x04,  // mmmm = 1
 	_0f38 = 0x08,  // mmmm = 2
 	_0f3a = 0x0c,  // mmmm = 3

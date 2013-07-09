@@ -104,4 +104,4 @@ private:
 		uint64		signExtend(uint64 a, int length);
 };
 
-#endif 
+#endif

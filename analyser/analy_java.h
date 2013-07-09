@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy_java.h
  *

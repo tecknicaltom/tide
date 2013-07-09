@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	code_analy.h
  *
@@ -29,9 +29,9 @@
 class Analyser;
 
 class CodeAnalyser: public Object {
-public:	
+public:
 	Analyser	*a;
-	
+
 				CodeAnalyser();
 				CodeAnalyser(BuildCtorArg&a): Object(a) {};
 		void      	init(Analyser *A);

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	x86dis.h
  *
@@ -138,7 +138,7 @@ public:
 
 class x86_64dis: public x86dis {
 	static x86opc_insn (*x86_64_insns)[256];
-public:	
+public:
 				x86_64dis();
 				x86_64dis(BuildCtorArg&a): x86dis(a) {};
 	virtual	void		checkInfo(x86opc_insn *xinsn);
@@ -148,7 +148,7 @@ public:
 	virtual	void		filloffset(CPU_ADDR &addr, uint64 offset);
 		void		load(ObjectStream &f);
 	virtual ObjectID	getObjectID() const;
-	
+
 			void	prepInsns();
 };
 

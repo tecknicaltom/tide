@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpef.h
  *
@@ -56,9 +56,9 @@ struct ht_pef_shared_data {
 	PEF_ARCH arch;
 	FileOfs loader_info_header_ofs; 	// 0 if not loader_info_header
 	PEF_LOADER_INFO_HEADER loader_info_header;
-	
+
 	ht_pef_import imports;
-	
+
 	UiFormatViewer *v_header;
 	UiView *v_imports;
 	UiFormatViewer *v_image;

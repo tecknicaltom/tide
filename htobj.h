@@ -118,7 +118,7 @@ void clearmsg(htmsg *msg);
 class UiView: public Object {
 protected:
 		bool view_is_dirty;
-			
+
 		void cleanview();
 	virtual	const char *defaultpalette();
 	virtual	const char *defaultpaletteclass();
@@ -411,7 +411,7 @@ protected:
 	uint number;
 
 	int action_state;
-	
+
 		bool next_action_state();
 public:
 		ht_window() {}

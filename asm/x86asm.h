@@ -1,4 +1,4 @@
-/* 
+/*
  *	The HT Editor
  *	x86asm.h
  *
@@ -136,7 +136,7 @@ public:
 class x86_64asm: public x86asm {
 	static x86opc_insn (*x86_64_insns)[256];
 public:
-	
+
 		x86_64asm();
 	virtual bool opreg(x86_insn_op *op, const char *xop);
 	virtual bool opxmm(x86_insn_op *op, const char *xop);

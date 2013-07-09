@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	eval.h
  *
@@ -184,7 +184,7 @@ extern int debug_dump_ident;
 	printf(text);\
 	printf("\n");\
 }
-	
+
 #define DEBUG_DUMP_SCALAR(scalarptr, text...) {\
 	DEBUG_DUMP_INDENT;\
 	printf(text);\

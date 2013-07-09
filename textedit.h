@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	textedit.h
  *
@@ -165,7 +165,7 @@ public:
  */
 class ht_undo_data_join_line: public ht_undo_data {
 	text_viewer_pos apos;
-	text_viewer_pos bpos;     
+	text_viewer_pos bpos;
 	text_viewer_pos cpos;
 public:
 	ht_undo_data_join_line(text_viewer_pos *apos, text_viewer_pos *bpos);
@@ -182,7 +182,7 @@ public:
 
 class ht_undo_data_insert_block: public ht_undo_data {
 	text_viewer_pos apos;
-	text_viewer_pos bpos;     
+	text_viewer_pos bpos;
 	text_viewer_pos cpos;
 	text_viewer_pos sel_start;
 	text_viewer_pos sel_end;
@@ -204,7 +204,7 @@ public:
 
 class ht_undo_data_delete_block: public ht_undo_data {
 	text_viewer_pos apos;
-	text_viewer_pos bpos;     
+	text_viewer_pos bpos;
 	text_viewer_pos cpos;
 	text_viewer_pos sel_start;
 	text_viewer_pos sel_end;
@@ -223,7 +223,7 @@ public:
 /*
  *	CLASS ht_text_editor_undo
  */
- 
+
 class ht_text_editor_undo: public Array {
 public:
 	uint size, max_size;
@@ -268,7 +268,7 @@ protected:
 	bool own_textfile;
 
 	Container *lexers;
-	
+
 	ht_syntax_lexer *lexer;
 	bool own_lexer;
 
@@ -369,7 +369,7 @@ protected:
 	ht_text_editor_undo *undo_list;
 	bool	auto_indent;
 	bool overwrite_mode;
-	
+
 /* new */
 			void clipboard_cut_cmd();
 			void clipboard_delete_cmd();

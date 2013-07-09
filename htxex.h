@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htxex.h
  *
@@ -48,7 +48,7 @@ class XEXLoaderRawSection: public Object {
 public:
 	uint32 raw;
 	uint32 pad;
-	
+
 	XEXLoaderRawSection(uint32 aRaw, uint32 aPad)
 	    : raw(aRaw), pad(aPad) {}
 };
@@ -85,7 +85,7 @@ struct XexPage {
 
 struct XexPages {
 	uint32 page_shift;
-	XexPage *page;	
+	XexPage *page;
 };
 
 struct ht_xex_shared_data {
@@ -97,7 +97,7 @@ struct ht_xex_shared_data {
 	xex_loader_info loader_info;
 	XexImports imports;
 	XexPages pages;
-	
+
 	uint32 original_base_address;
 	uint32 image_base;
 	uint32 image_size;
@@ -107,7 +107,7 @@ struct ht_xex_shared_data {
 
 	UiFormatViewer *v_header;
 	UiView *v_imports;
-	UiFormatViewer *v_image;	
+	UiFormatViewer *v_image;
 };
 
 /*

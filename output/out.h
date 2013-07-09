@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	out.h
  *
@@ -42,7 +42,7 @@ public:
 	Container	*lines;
 	int		size;                     // size in memory
 	int		bytes;                    // bytes of address in file
-	
+
 			OutAddr(Address *Addr, uint Time);
 			~OutAddr();
 	void     	appendLine(OutLine *l);
@@ -87,7 +87,7 @@ public:
 	int		bytes_line;               // bytes of current line in file
 	int		want_bytes_line;
 	int		bytes_addr;               // bytes of current addr in file
-		
+
 	Container	*out_addrs;
 
 	byte		*work_buffer_start;
@@ -95,12 +95,12 @@ public:
 	byte		*work_buffer;
 
 	byte		*temp_buffer;
-		
+
 	uint		current_time;
 	int		size;
-		
+
 	int		dis_style;
-		
+
 		void			init(Analyser *analy);
 	virtual	void			done();
 	virtual	void			beginAddr();

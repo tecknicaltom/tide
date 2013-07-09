@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htreg.h
  *
@@ -121,7 +121,7 @@ public:
 	char *name;
 	ht_registry_node_type type;
 	create_empty_registry_data_func create_empty_registry_data;
-	
+
 	ht_registry_node_type_desc(ht_registry_node_type t, const char *name, create_empty_registry_data_func c);
 	ht_registry_node_type_desc(BuildCtorArg&a): Object(a) {};
 	virtual ~ht_registry_node_type_desc();
@@ -191,7 +191,7 @@ public:
 		int delete_node(const char *key);
 		RegistryNode *enum_next(const char *dir, RegistryNode *prevkey);
 		RegistryNode *enum_prev(const char *dir, RegistryNode *nextkey);
-			
+
 		bool find_any_entry(const char *key, RegistryNode **node);
 		bool find_data_entry(const char *key, RegistryNode **node, bool follow_symlinks, Container **dir = NULL);
 		/* node type*/

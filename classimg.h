@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	classimg.h
  *

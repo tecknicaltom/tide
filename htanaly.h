@@ -65,7 +65,7 @@ class ht_aviewer;
  */
 
 class AnalyserInformation: public UiStaticText {
-	ht_aviewer	*analy;     
+	ht_aviewer	*analy;
 	int		addrs, labels;
 	const char	*atype, *adis;
 	String		aname;
@@ -166,7 +166,7 @@ public:
 	Address        *lowestaddress, *highestaddress;
 	AnalyserOutput *output;
 	ht_aviewer	*aviewer;
-	
+
 		void	init(File *file, ht_aviewer *A, Analyser *analyser, Address *Lowestaddress, Address *Highestaddress);
 	virtual	void	done();
 	virtual	bool	convert_ofs_to_id(const FileOfs offset, LINE_ID *line_id);

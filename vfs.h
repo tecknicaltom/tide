@@ -101,7 +101,7 @@ public:
 	virtual	int		renameFile(const char *filename, const char *newname);
 	virtual	int		fileClose(File *f);
 	virtual	int		fileOpen(const char *filename, IOAccessMode access_mode, FileOpenMode open_mode, File **f);
-};                      
+};
 
 /*
  *	class RegistryFs
@@ -136,6 +136,6 @@ public:
 	virtual	int		renameFile(const char *filename, const char *newname);
 	virtual	int		fileClose(File *f);
 	virtual	int		fileOpen(const char *filename, IOAccessMode access_mode, FileOpenMode open_mode, File **f);
-};                      
+};
 #endif /* __VFS_H__ */
 

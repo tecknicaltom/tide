@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	textfile.h
  *
@@ -28,7 +28,7 @@
 /*
  *	CLASS ht_textfile
  */
- 
+
 class ht_textfile: public FileLayer {
 public:
 			ht_textfile(File *file, bool own_file);
@@ -51,7 +51,7 @@ public:
 /*
  *	CLASS ht_layer_textfile
  */
- 
+
 class ht_layer_textfile: public ht_textfile {
 public:
 			ht_layer_textfile(ht_textfile *textfile, bool own_textfile);
@@ -97,7 +97,7 @@ public:
 /*
  *	CLASS ht_ltextfile
  */
- 
+
 class ht_ltextfile: public ht_textfile {
 protected:
 	FileOfs ofs;

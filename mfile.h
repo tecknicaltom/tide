@@ -96,7 +96,7 @@ public:
  *	Whenever an attempt is made to <b>write()</b> to a page, it is made sure
  *	that this page is modified. If it is not modified, "page-size" bytes of
  *	memory are allocated and filled with the corresponding bytes from the
- *	underlying file. The write is then performed in memory. 
+ *	underlying file. The write is then performed in memory.
  *	<b>read()</b>s are served from modified pages if possible.
  *	<b>extend()</b> and <b>truncate()</b> are treated like writes with zeros.
  *	But they must create new pages and/or change the size of the last page

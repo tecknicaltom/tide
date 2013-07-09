@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	srt_x86.h
  *

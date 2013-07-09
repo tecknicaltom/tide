@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	symmath.h
  *
@@ -118,7 +118,7 @@ public:
 		   void set(sym_int_token *t);
 		   void u_operate(u_op uop);
 		   void replace(sym_int_token *token, sym_int_token *by);
-}; 
+};
 
 /*
  *	CLASS sym_int_symbol
@@ -212,7 +212,7 @@ public:
 	sym_int_token *int2;
 
 	sym_bool_intcmp(sym_int_token *int1, c_op cop, sym_int_token *int2);
-/* overwritten */	
+/* overwritten */
 	virtual bool compare_eq(sym_bool_token *t);
 	virtual Object *clone() const;
 	virtual bool evaluate(bool *i);
@@ -244,6 +244,6 @@ public:
 		   void l_operate(l_op l, sym_bool_token *t);
 		   void set(sym_bool_token *t);
 		   void n_operate(n_op n);
-}; 
+};
 
 #endif /* __SYMMATH_H__ */

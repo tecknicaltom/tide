@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	xbestruct.h
  *
@@ -106,7 +106,7 @@ struct XBE_CERTIFICATE {
     uint32	version;
     byte	lan_key[XBE_LAN_KEY_LENGTH];
     byte	signature_key[XBE_SIGNATURE_KEY_LENGTH];
-    byte	alternate_signature_keys[XBE_NUM_ALTERNATE][XBE_SIGNATURE_KEY_LENGTH];    
+    byte	alternate_signature_keys[XBE_NUM_ALTERNATE][XBE_SIGNATURE_KEY_LENGTH];
 } PACKED;
 
 

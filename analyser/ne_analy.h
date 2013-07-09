@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	ne_analy.h
  *

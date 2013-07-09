@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	ilstruct.h
  *
@@ -39,11 +39,11 @@ struct IL_METADATA_SECTION {
 	uint16 minor_version PACKED;
 	// if (minor_version==1) {
 	//    uint32 unkown PACKED;
-	//    uint32 version_string_length PACKED;	
+	//    uint32 version_string_length PACKED;
 	//    char version_string[align(version_string_length, 4)];
 	// }
-	// byte zero1, zero2; 
-	// uint16 number_of_entries; 
+	// byte zero1, zero2;
+	// uint16 number_of_entries;
 };
 
 struct IL_METADATA_SECTION_ENTRY {

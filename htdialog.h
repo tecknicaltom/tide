@@ -187,7 +187,7 @@ class UiStrInputfield: public UiInputfield {
 protected:
 	bool is_virgin;		/* untouched except for cursor keys */
 	bool selectmode;
-	
+
 	/* new */
 		void correct_viewpoint();
 		void history_dialog();
@@ -267,7 +267,7 @@ protected:
 	/* overwritten */
 	virtual	const char *defaultpalette();
 public:
-		void init(Bounds *b);               
+		void init(Bounds *b);
 	virtual	void done();
 	/* overwritten */
 	virtual	void draw();
@@ -307,7 +307,7 @@ public:
 
 	int	cols;
 	int	*widths;
-	
+
 	ht_scrollbar *scrollbar;
 	bool	mScrollbarEnabled;
 	ht_listbox_title *title;
@@ -429,7 +429,7 @@ enum statictext_align {
 #define ALIGN_CHAR_LEFT		'l'
 #define ALIGN_CHAR_CENTER	'c'
 #define ALIGN_CHAR_RIGHT	'r'
- 
+
 struct ht_statictext_linedesc {
 	int ofs;
 	int len;
@@ -464,7 +464,7 @@ struct ht_listpopup_dialog_data {
 	DDECL_UINT(cursor_pos);
 	DDECL_PTR(char, cursor_string);
 };
- 
+
 class ht_listpopup_dialog: public ht_dialog {
 protected:
 	UiListbox *listbox;
@@ -485,13 +485,13 @@ public:
 /*
  *	CLASS UiListPopup
  */
- 
+
 #define ht_listpopup_data ht_listpopup_dialog_data
 
 class UiListPopup: public UiStaticText {
 protected:
 	ht_listpopup_dialog *listpopup;
-	/* new */	
+	/* new */
 		int	run_listpopup();
 public:
 		void	init(Bounds *b);
@@ -572,7 +572,7 @@ protected:
 	virtual	const char *defaultpalette();
 public:
 	UiStaticText *text;
-	
+
 		void init(Bounds *b, const char *hint);
 	/* new */
 		void settext(const char *text);

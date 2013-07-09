@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	le_analy.h
  *

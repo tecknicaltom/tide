@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	srt.h
  *
@@ -24,7 +24,7 @@
 #include "analy.h"
 #include "symmath.h"
 
-enum srt_endian { srte_be, srte_le }; 
+enum srt_endian { srte_be, srte_le };
 
 /*
  *	CLASS state_mod
@@ -43,7 +43,7 @@ public:
 			sym_int_token *addr;
 			uint size;
 			srt_endian endian;
-		} mem;		    
+		} mem;
 	} dest;
 
 	bool isbool;
@@ -70,12 +70,12 @@ public:
 	virtual bool evaluate(uint *i);
 	virtual int nstrfy(char *buf, int n);
 	virtual ObjectID getObjectID() const;
-}; 
+};
 
 /*
  *	CLASS sym_int_mem
  */
- 
+
 class sym_int_mem: public sym_int_token {
 public:
 	sym_int_token *addr;

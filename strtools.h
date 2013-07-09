@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	strtools.h
  *
@@ -38,7 +38,7 @@ int ht_stricmp(const char *s1, const char *s2);
 size_t ht_strcicomm(const char *s1, const char *s2);
 size_t ht_strccomm(const char *s1, const char *s2);
 
-static inline char *ht_strend(char *s) 
+static inline char *ht_strend(char *s)
 {
 	return s+strlen(s);
 }

@@ -112,7 +112,7 @@ public:
 	inline	String &	operator +=(const String &s);
 	inline	String &	operator +=(const char *s);
 		String &	operator +=(char c);
-			
+
 	inline	bool		operator < (const String &s) const;
 	inline	bool		operator > (const String &s) const;
 	inline	bool		operator <=(const String &s) const;
@@ -183,7 +183,7 @@ inline const byte *String::content() const
 {
 	return mContent;
 }
- 
+
 /**
  *	@returns a string content ptr (as char*)
  */
@@ -194,7 +194,7 @@ inline const char *String::contentChar() const
 
 /**
  *	@returns true iff string contains |c|
- */ 
+ */
 inline  bool String::containsChar(char c) const
 {
 	return findCharFwd(c) >= 0;

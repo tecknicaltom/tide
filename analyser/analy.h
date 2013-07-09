@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy.h
  *
@@ -145,7 +145,7 @@ class Segment: public Object {
 	Address *start, *end;
 	char *name;
 	int caps;
-	
+
 					Segment(const char *n, Address *s, Address *e, int c, int address_size);
 	virtual	bool			containsAddress(Address *addr) = 0;
 	virtual	String &		getName(String &res);
@@ -444,5 +444,5 @@ public:
 #define MAX_OPS_PER_CONTINUE 10
 
 extern int global_analyser_address_string_format;
- 
+
 #endif

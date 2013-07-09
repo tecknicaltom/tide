@@ -32,7 +32,7 @@ protected:
 public:
 	ArmDisassembler();
 	ArmDisassembler(BuildCtorArg&a): Disassembler(a) {};
-    
+
 	void load(ObjectStream &f);
 };
 

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	stream.h
  *
@@ -129,7 +129,7 @@ public:
 class GetObject {
 private:
 	friend GetObject ObjectStream::getObject(const char *name, ObjectID id);
-	
+
 	ObjectStream &mO;
 	const char *mName;
 	ObjectID mId;
@@ -302,7 +302,7 @@ public:
 	virtual FileOfs			tell() const;
 	virtual void			truncate(FileOfs newsize);
 	virtual int			vcntl(uint cmd, va_list vargs);
-	
+
 		void			move(FileOfs src, FileOfs dest, FileOfs size);
 		char *			fgetstrz();
 };

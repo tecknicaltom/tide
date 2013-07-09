@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htsearch.h
  *
@@ -42,7 +42,7 @@ extern "C" {
 #define ST_FXBIN		0		// search using fixed binary pattern
 	#define SF_FXBIN_CASEINSENSITIVE		1
 	#define SF_FXBIN_IDLE				2
-	
+
 #define ST_REGEX		1         // search using regular expression
 	#define SF_REGEX_CASEINSENSITIVE		1
 	#define SF_REGEX_IDLE				2
@@ -59,7 +59,7 @@ class ht_fxbin_search_request: public ht_search_request {
 public:
 	uint data_size;
 	byte *data;
-	
+
 			ht_fxbin_search_request(uint search_class, uint flags, uint data_size, const byte *data);
 	virtual		~ht_fxbin_search_request();
 	/* overwritten */
@@ -72,7 +72,7 @@ public:
 class ht_regex_search_exception: public Exception {
 protected:
 	char rxerr[128];
-public:	
+public:
 	ht_regex_search_exception(int e, regex_t *r);
 	virtual String &reason(String &) const;
 };
@@ -221,7 +221,7 @@ protected:
 	void select_search_mode_bymodeidx();
 public:
 	ht_xgroup *search_mode_xgroup;
-	
+
 			void	init(Bounds *b, const char *title);
 	virtual	void	done();
 	/* overwritten */
@@ -250,7 +250,7 @@ protected:
 	void select_replace_mode_bymodeidx();
 public:
 	ht_xgroup *replace_mode_xgroup;
-	
+
 			void	init(Bounds *b);
 	virtual	void	done();
 	/* overwritten */
@@ -279,7 +279,7 @@ public:
 	File *file;
 	bool file_end;
 	uint flags;
-	
+
 	FileOfs ofs;
 	FileOfs len;
 
@@ -288,13 +288,13 @@ public:
 
 	FileOfs o;
 	uint c;
-	
+
 	byte *buf;
 	byte *bufptr;
 
 	bool *return_success;
 	FileOfs *return_ofs;
-	
+
 	~ht_search_bin_context();
 };
 
@@ -316,19 +316,19 @@ public:
 
 	FileOfs ofs;
 	FileOfs len;
-	
+
 	FileOfs repllen;
 	byte *repl;
 
 	FileOfs o;
 	FileOfs z;
 	byte *buf;
-	
+
 	FileOfs *return_repllen;
 
 	~ht_replace_bin_context();
 };
- 
+
 Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, const byte *repl, FileOfs repllen, FileOfs *return_repllen);
 bool replace_bin_process(Object *context, UiText *progress_indicator);
 

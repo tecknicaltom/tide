@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	peffstruc.h
  *
@@ -74,12 +74,12 @@ struct PEF_SECTION_HEADER {
 #define PEF_SHK_ProtectedShare	5
 
 struct PEF_LOADER_INFO_HEADER {
-	sint32	mainSection;          
-	uint32	mainOffset;           
-	sint32	initSection;          
-	uint32	initOffset;           
-	sint32	termSection;          
-	uint32	termOffset;           
+	sint32	mainSection;
+	uint32	mainOffset;
+	sint32	initSection;
+	uint32	initOffset;
+	sint32	termSection;
+	uint32	termOffset;
 	uint32	importedLibraryCount;
 	uint32	totalImportedSymbolCount;
 	uint32	relocSectionCount;

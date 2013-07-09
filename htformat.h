@@ -62,13 +62,13 @@ union viewer_pos {
 /*
  *	CLASS ht_search_request
  */
- 
+
 class ht_search_request: public Object {
 public:
 	uint search_class;
 	uint type;
 	uint flags;
-	
+
 		ht_search_request(uint search_class, uint type, uint flags);
 	virtual ht_search_request *clone() const = 0;
 };
@@ -76,7 +76,7 @@ public:
 /*
  *	CLASS ht_search_result
  */
- 
+
 class ht_search_result: public Object {
 public:
 	uint search_class;
@@ -87,25 +87,25 @@ public:
 /*
  *	CLASS ht_physical_search_result
  */
- 
+
 class ht_physical_search_result: public ht_search_result {
 public:
 	FileOfs offset;
 	uint size;
-	
+
 	ht_physical_search_result(): ht_search_result(SC_PHYSICAL) {}
 };
 
 /*
  *	CLASS ht_visual_search_result
  */
- 
+
 class ht_visual_search_result: public ht_search_result {
 public:
 	viewer_pos pos;
 	uint xpos;
 	uint length;
-	
+
 	ht_visual_search_result(): ht_search_result(SC_VISUAL) {}
 };
 
@@ -164,7 +164,7 @@ protected:
 
 	virtual	void vstate_restore(Object *view_state);
 	virtual	Object *vstate_create();
-	
+
 	virtual	bool next_logical_pos(viewer_pos pos, viewer_pos *npos);
 	virtual	bool next_logical_offset(FileOfs ofs, FileOfs *nofs);
 public:
@@ -241,10 +241,10 @@ protected:
 /* new */
 		void init_ifs(format_viewer_if **ifs);
 		void done_ifs();
-			
+
 		bool init_if(format_viewer_if *i);
 		bool done_if(format_viewer_if *i, UiView *v);
-			
+
 		bool edit();
 public:
 		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, UiFormatGroup *format_group);
@@ -386,7 +386,7 @@ protected:
 	void update_ypos();
 public:
 	uint search_caps;
-	
+
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group);
 	virtual	void done();
 /* overwritten */
@@ -494,14 +494,14 @@ struct ht_mask_ptable {
 	const char *desc;
 	const char *fields;
 };
- 
+
 class ht_mask_sub: public ht_sub {
 protected:
 	Array masks;
 	uint uid;
 public:
 		ht_mask_sub(): masks(true) {}
- 
+
 		void init(File *file, uint uid);
 /* overwritten */
 	virtual	void first_line_id(LINE_ID *line_id);

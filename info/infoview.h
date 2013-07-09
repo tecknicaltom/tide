@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	infoview.h
  *
@@ -35,7 +35,7 @@ public:
 	FileOfs start;
 	uint len;
 	Container *xrefs;
-	
+
 	info_node(FileOfs start);
 	~info_node();
 };
@@ -49,7 +49,7 @@ public:
 	Container *xrefs;
 	uint cx, cy;
 	UiView *pal_from;
-	
+
 		void init(UiView *pal_from);
 /* overwritten */
 	virtual	vcp getcolor_syntax(uint pal_index);
@@ -66,7 +66,7 @@ public:
 /*
  *	CLASS ht_info_textfile
  */
- 
+
 class ht_info_textfile: public ht_ltextfile {
 protected:
 	uint start, end;
@@ -76,7 +76,7 @@ public:
 		ht_info_textfile(File *streamfile, bool own_streamfile, ht_syntax_lexer *lexer);
 /* overwritten */
 	virtual	uint linecount() const;
-/* new */	
+/* new */
 			void set_node(uint ofs, uint len);
 };
 
@@ -103,7 +103,7 @@ public:
 	virtual	const char *defaultpalette();
 	virtual int get_pindicator_str(char *buf, int max_len);
 	virtual	void handlemsg(htmsg *msg);
-/* new */	
+/* new */
 	virtual	bool gotonode(const char *file, const char *node);
 };
 

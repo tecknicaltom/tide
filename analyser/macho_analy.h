@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	macho_analy.h
  *

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	bounds.h - Bounds for rectangular objects
  *

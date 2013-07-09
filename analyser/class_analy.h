@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	class_analy.h
  *

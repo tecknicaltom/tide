@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	vfsview.h
  *

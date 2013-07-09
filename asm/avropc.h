@@ -59,9 +59,9 @@ struct avr_operand
 
 	/* How far the operand is left shifted in the instruction.  */
 	byte shift;
-	
+
 	byte add;
-	
+
 	byte scale;
 
 	/* Extraction function.  This is used by the disassembler.  To

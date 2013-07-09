@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	machostruc.h
  *
@@ -88,7 +88,7 @@ struct MACHO_HEADER64 {
                                            all two-level namespace modules of
 					   its dependent libraries. only used
 					   when MH_PREBINDABLE and MH_TWOLEVEL
-					   are both set. */ 
+					   are both set. */
 #define MH_SUBSECTIONS_VIA_SYMBOLS 0x2000/* safe to divide up the sections into
 					    sub-sections via symbols for dead
 					    code stripping */
@@ -99,19 +99,19 @@ struct MACHO_HEADER64 {
 #define MH_BINDS_TO_WEAK 0x10000	/* the final linked image uses
 					   weak symbols */
 
-#define MH_ALLOW_STACK_EXECUTION 0x20000/* When this bit is set, all stacks 
+#define MH_ALLOW_STACK_EXECUTION 0x20000/* When this bit is set, all stacks
 					   in the task will be given stack
 					   execution privilege.  Only used in
 					   MH_EXECUTE filetypes. */
-#define MH_ROOT_SAFE 0x40000           /* When this bit is set, the binary 
+#define MH_ROOT_SAFE 0x40000           /* When this bit is set, the binary
 					  declares it is safe for use in
 					  processes with uid zero */
-                                         
-#define MH_SETUID_SAFE 0x80000         /* When this bit is set, the binary 
+
+#define MH_SETUID_SAFE 0x80000         /* When this bit is set, the binary
 					  declares it is safe for use in
 					  processes when issetugid() is true */
 
-#define MH_NO_REEXPORTED_DYLIBS 0x100000 /* When this bit is set on a dylib, 
+#define MH_NO_REEXPORTED_DYLIBS 0x100000 /* When this bit is set on a dylib,
 					  the static linker does not need to
 					  examine dependent dylibs to see
 					  if any are re-exported */
@@ -286,7 +286,7 @@ struct MACHO_SECTION_U {
 						   interposing */
 #define	MACHO_S_16BYTE_LITERALS		0xe	/* section with only 16 byte
 						   literals */
-#define	MACHO_S_DTRACE_DOF			0xf	/* section contains 
+#define	MACHO_S_DTRACE_DOF			0xf	/* section contains
 						   DTrace Object Format */
 /*
  * Constants for the section attributes part of the flags field of a section
@@ -449,7 +449,7 @@ struct MACHO_SYMTAB_NLIST_64 {
 /*
  *	Machine types known by all.
  */
- 
+
 #define MACHO_CPU_TYPE_ANY		-1
 
 #define MACHO_CPU_TYPE_VAX		1
@@ -493,7 +493,7 @@ struct MACHO_SYMTAB_NLIST_64 {
  *	ID assigned by DEC available via the SID register.
  */
 
-#define	MACHO_CPU_SUBTYPE_VAX_ALL	0 
+#define	MACHO_CPU_SUBTYPE_VAX_ALL	0
 #define MACHO_CPU_SUBTYPE_VAX780	1
 #define MACHO_CPU_SUBTYPE_VAX785	2
 #define MACHO_CPU_SUBTYPE_VAX750	3
@@ -513,7 +513,7 @@ struct MACHO_SYMTAB_NLIST_64 {
  * The subtype definitions here are unusual for historical reasons.
  * NeXT used to consider 68030 code as generic 68000 code.  For
  * backwards compatability:
- * 
+ *
  *	MACHO_CPU_SUBTYPE_MC68030 symbol has been preserved for source code
  *	compatability.
  *
@@ -526,7 +526,7 @@ struct MACHO_SYMTAB_NLIST_64 {
 
 #define	MACHO_CPU_SUBTYPE_MC680x0_ALL		1
 #define MACHO_CPU_SUBTYPE_MC68030		1 /* compat */
-#define MACHO_CPU_SUBTYPE_MC68040		2 
+#define MACHO_CPU_SUBTYPE_MC68040		2
 #define	MACHO_CPU_SUBTYPE_MC68030_ONLY		3
 
 /*
@@ -571,7 +571,7 @@ struct MACHO_SYMTAB_NLIST_64 {
 
 /*
  *	HPPA subtypes for Hewlett-Packard HP-PA family of
- *	risc processors. Port by NeXT to 700 series. 
+ *	risc processors. Port by NeXT to 700 series.
  */
 
 #define	MACHO_CPU_SUBTYPE_HPPA_ALL		0

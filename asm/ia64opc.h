@@ -1924,7 +1924,7 @@ struct IA64OpcodeEntry {
 	IA64Operand			op5;
 	IA64Operand			op6;
 };
-																						  
+
 extern IA64Template IA64Templates[];
 extern IA64DecisionTreeEntry IA64DecisionTree[];
 extern IA64OpcodeEntry IA64OpcodeTable[];

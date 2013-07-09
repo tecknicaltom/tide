@@ -108,9 +108,9 @@ struct ILOpcodeTabEntry {
 	byte		op;
 	byte		size;
 };
-								
+
 extern ILOpcodeTabEntry il_opcode_table[MAX_IL_OPCODE];
 extern ILOpcodeTabEntry il_prefix_opcode_table[MAX_IL_OPCODE_PREFIX];
 
 #endif
- 
+

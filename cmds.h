@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	cmds.h
  *
@@ -79,7 +79,7 @@
 /*
  *	htformat 1000- 1499
  */
- 
+
 #define cmd_view_mode				HT_COMMAND(1000)
 #define cmd_edit_mode				HT_COMMAND(1001)
 #define cmd_view_mode_i				HT_COMMAND(1002)
@@ -95,7 +95,7 @@
 /*
  *	hex 1500 - 1999
  */
- 
+
 #define cmd_hex_entropy				HT_COMMAND(1500)
 #define cmd_hex_display_bytes			HT_COMMAND(1501)
 #define cmd_hex_display_disp			HT_COMMAND(1502)
@@ -103,7 +103,7 @@
 /*
  *	disasm 2000 - 2499
  */
- 
+
 #define cmd_disasm_call_assembler		HT_COMMAND(2000)
 #define cmd_disasm_toggle1632			HT_COMMAND(2001)
 
