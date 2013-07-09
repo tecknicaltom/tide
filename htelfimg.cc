@@ -115,7 +115,7 @@ static UiView *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 		delete low;
 		return NULL;
 	}
-	
+
 	delete high;
 	delete low;
 

@@ -68,7 +68,7 @@ format_viewer_if htdisasm_if = {
 /*
  *	dialog_assemble
  */
- 
+
 static int opcode_compare(const char *a, const char *b)
 {
 	int al = strlen(a);
@@ -201,7 +201,7 @@ int ht_disasm_viewer::get_pindicator_str(char *buf, int max_len)
 		return ht_snprintf(buf, max_len, " ? ");
 	}
 }
-	
+
 bool ht_disasm_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
 	FileOfs s=file->getSize();
@@ -254,11 +254,11 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			m.msg=msg_filesize_changed;
 			m.type=mt_broadcast;
 			sendsubmsg(&m);
-			
+
 			// FIXME: hack
 			uf_initialized=false;
 			complete_init();
-			
+
 			dirtyview();
 			return;
 		}

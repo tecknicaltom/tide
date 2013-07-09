@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	display.cc
  *
@@ -38,7 +38,7 @@ static vc gInverseColors[8] = {
 static inline vc mixSingleColor(vc base, vc layer)
 {
 	if (VC_GET_BASECOLOR(base) > 7) return layer;
-	
+
 	switch (VC_GET_BASECOLOR(layer)) {
 	case VC_TRANSPARENT_EXCLUSIVE_DOM:
 	case VC_TRANSPARENT_EXCLUSIVE:
@@ -64,7 +64,7 @@ static inline vc mixSingleColor(vc base, vc layer)
 	}
 	case VC_INVERSE:	return VC_GET_INVERSE(VC_GET_BASECOLOR(base));
 	}
-	
+
 	return layer;
 }
 

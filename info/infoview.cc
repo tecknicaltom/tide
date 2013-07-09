@@ -33,7 +33,7 @@ class info_pos: public Object {
 public:
 	uint line;
 	uint ofs;
-	
+
 	info_pos(uint l, uint o) {
 		line = l;
 		ofs = o;
@@ -56,7 +56,7 @@ class info_xref: public Object {
 public:
 	char *target;
 	uint len;
-	
+
 	info_xref(const char *t, uint l) {
 		target = ht_strdup(t);
 		len = l;
@@ -122,7 +122,7 @@ static bool parse_xref_body(File *f, Container *t, const char *&n, uint *o, uint
 	while (*ttt) {
 		if (*ttt == '\n') *ttt = ' ';
 		ttt++;
-	}		
+	}
 
 	const char *p = name;
 	info_xref *x = new info_xref(thetarget, *o);
@@ -319,7 +319,7 @@ void ht_info_lexer::set_xrefs(Container *x)
 /*
  *	CLASS ht_info_textfile
  */
- 
+
 class info_history_entry: public Object {
 public:
 	char *cwd;
@@ -348,7 +348,7 @@ public:
 		free(node);
 	}
 };
- 
+
 ht_info_textfile::ht_info_textfile(File *s, bool own_s, ht_syntax_lexer *l)
 	:ht_ltextfile(s, own_s, l)
 {
@@ -467,7 +467,7 @@ uint ht_info_viewer::readfile(char *fn, char **text)
 {
 	FILE *f = fopen(fn, "r");
 	if (!f) return 0;
-	
+
 	fseek(f, 0, SEEK_END);
 	int size = ftell(f);
 	fseek(f, 0, SEEK_SET);
@@ -516,7 +516,7 @@ bool ht_info_viewer::igotonode(const char *f, const char *n, bool add2hist)
 		}
 
 		MemoryFile *m = new MemoryFile();
-		
+
 		Container *x = parse_info_node(m, infotext+o);
 		if (x == NULL) {
 			delete m;
@@ -528,9 +528,9 @@ bool ht_info_viewer::igotonode(const char *f, const char *n, bool add2hist)
 		if (add2hist && cwd && file && node) {
 //			fprintf(stderr, "histhist: c:%s, f:%s, n:%s\n", cwd, file, node);
 			history->insert(new info_history_entry(
-				cwd, file, node, cursorx, cursory, 
+				cwd, file, node, cursorx, cursory,
 				xofs, top_line));
-		}			
+		}
 		/* now modify text_viewer's state */
 		delete xrefs;
 		xrefs = x;
@@ -628,14 +628,14 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 						top_line = e->top_line;
 					} else {
 						errorbox("help topic '(%s)%s' not found", e->file, e->node);
-					}						
+					}
 					*history -= c-1;
 					clearmsg(msg);
 					dirtyview();
 					return;
-				}						
+				}
 			}
-			break;					
+			break;
 		}
 		case K_Tab: {
 			if (xrefs) {
@@ -646,7 +646,7 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 					goto_line(q->line);
 					cursor_pput(q->ofs);
 				}
-			}					
+			}
 			clearmsg(msg);
 			dirtyview();
 			return;
@@ -660,7 +660,7 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 					goto_line(q->line);
 					cursor_pput(q->ofs);
 				}
-			}					
+			}
 			clearmsg(msg);
 			dirtyview();
 			return;

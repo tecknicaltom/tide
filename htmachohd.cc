@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htmachohd.cc
  *
@@ -236,7 +236,7 @@ static ht_mask_ptable macho_i386_thread_state[]=
 static UiView *htmachoheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_macho_shared_data *macho_shared=(ht_macho_shared_data *)group->get_shared_data();
-	
+
 	ht_uformat_viewer *v=new ht_uformat_viewer();
 	v->init(b, DESC_MACHO_HEADER, VC_EDIT, file, group);
 	ht_mask_sub *m = new ht_mask_sub();

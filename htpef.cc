@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpef.cc
  *
@@ -73,7 +73,7 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 
 	ht_pef_shared_data *pef_shared = ht_malloc(sizeof(ht_pef_shared_data));
 	memset(pef_shared, 0, sizeof *pef_shared);
-	
+
 	shared_data = pef_shared;
 	/* always big-endian */
 	pef_shared->byte_order = big_endian;
@@ -85,7 +85,7 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	pef_shared->imports.libs = new Array(true);
 
 	pef_shared->v_imports = NULL;
-	
+
 	/* read (container) header */
 	file->seek(header_ofs);
 	file->read(&pef_shared->contHeader, sizeof pef_shared->contHeader);
@@ -127,7 +127,7 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 void ht_pef::done()
 {
 	ht_format_group::done();
-	
+
 	ht_pef_shared_data *pef_shared = (ht_pef_shared_data*)shared_data;
 	delete pef_shared->imports.funcs;
 	delete pef_shared->imports.libs;
@@ -137,7 +137,7 @@ void ht_pef::done()
 #define RELOC_BASE		0x10000000
 #define RELOC_STEPPING	0x100000
 #define RELOC_LIMIT		0xffffffff
-			
+
 /*static uint32 pef_invent_reloc_address(uint si, PEF_SECTION_HEADER *s, uint scount)
 {
 	elf32_addr a=RELOC_BASE;
@@ -249,7 +249,7 @@ bool pef_ofs_to_section(pef_section_headers *section_headers, uint32 ofs, int *s
 #include "relfile.h"
 class ht_pef_reloc_entry: public Object {
 public:
-	
+
 //	ht_elf32_reloc_entry(uint symtabidx, elf32_addr offset, uint type, uint symbolidx, elf32_addr addend, ht_elf_shared_data *data, File *file);
 };
 

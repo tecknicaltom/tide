@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	relfile.cc
  *
@@ -138,7 +138,7 @@ uint ht_reloc_file::write(const void *buf, uint size)
 		uint c = size;
 		ObjHandle oh;
 		if ((MAX_RELOC_ITEM_LEN+1) <= o) {
-			KeyValue kv(new UInt64(o - (MAX_RELOC_ITEM_LEN+1)), NULL); 
+			KeyValue kv(new UInt64(o - (MAX_RELOC_ITEM_LEN+1)), NULL);
 			oh = relocs->findG(&kv);
 		} else {
 			oh = relocs->findFirst();

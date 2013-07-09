@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	clipboard.cc - Win32-specific (windows-)clipboard functions
  *
@@ -50,7 +50,7 @@ int sys_native_clipboard_get_size()
 	if (h) {
 		void *mem = GlobalLock(h);
 		len = strlen((char*)mem);
-		GlobalUnlock(h);		
+		GlobalUnlock(h);
 	}
 	CloseClipboard();
 	return len;

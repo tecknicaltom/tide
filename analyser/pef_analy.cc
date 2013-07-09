@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	pef_analy.cc
  *
@@ -73,7 +73,7 @@ void PEFAnalyser::beginAnalysis()
 	 *	entrypoint
 	 */
 //	pushAddress(entry, entry);
-	
+
 	/*
 	 *	give all sections a descriptive comment:
 	 */
@@ -127,7 +127,7 @@ void PEFAnalyser::beginAnalysis()
 	setLocationTreeOptimizeThreshold(1000);
 	setSymbolTreeOptimizeThreshold(1000);
 //	delete entry;
-	
+
 	Analyser::beginAnalysis();
 }
 
@@ -217,9 +217,9 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 						if (validAddress(address, scvalid)) {
 
 							char *demangled = cplus_demangle(label, DMGL_PARAMS | DMGL_ANSI);
-					
+
 							make_valid_name(label, label);
-					
+
 							ht_snprintf(pef_buffer, sizeof pef_buffer, "; data object %s, size %d (%s)", (demangled) ? demangled : label, sym.st_size, bind);
 
 							if (demangled) free(demangled);
@@ -309,7 +309,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 						addComment(address, 0, ";********************************************************");
 						pushAddress(address, address);
 						assignSymbol(address, label, label_func);
-						
+
 						delete address;
 					}
 					break;
@@ -320,9 +320,9 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 						Address *address = createAddress64(sym.st_value);
 
 						char *demangled = cplus_demangle(label, DMGL_PARAMS | DMGL_ANSI);
-					
+
 						make_valid_name(label, label);
-					
+
 						ht_snprintf(pef_buffer, sizeof pef_buffer, "; data object %s, size %d (%s)", (demangled) ? demangled : label, sym.st_size.lo, bind);
 
 						if (demangled) free(demangled);
@@ -332,7 +332,7 @@ void PEFAnalyser::initInsertSymbols(int shidx)
 						addComment(address, 0, pef_buffer);
 						addComment(address, 0, ";********************************************************");
 						assignSymbol(address, label, label_data);
-						
+
 						delete address;
 					}
 					break;

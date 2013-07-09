@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	data_analy.cc
  *
@@ -54,7 +54,7 @@ void analyser_put_addrtype(ObjectStream &f, const taddr_type *at)
 			f.putInt(at->array_subtype, 1, "type");
 			f.putInt(at->length, 1, "length");
 			break;
-	}     
+	}
 }
 
 void analyser_get_addrtype(ObjectStream &f, taddr_type *at)

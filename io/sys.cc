@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	sys.cc
  *
@@ -148,11 +148,11 @@ int sys_ht_mode(int mode)
 	if (mode & S_IRUSR) m |= HT_S_IRUSR;
 	if (mode & S_IRGRP) m |= HT_S_IRGRP;
 	if (mode & S_IROTH) m |= HT_S_IROTH;
-	
+
 	if (mode & S_IWUSR) m |= HT_S_IWUSR;
 	if (mode & S_IWGRP) m |= HT_S_IWGRP;
 	if (mode & S_IWOTH) m |= HT_S_IWOTH;
-	
+
 	if (mode & S_IXUSR) m |= HT_S_IXUSR;
 	if (mode & S_IXGRP) m |= HT_S_IXGRP;
 	if (mode & S_IXOTH) m |= HT_S_IXOTH;

@@ -586,7 +586,7 @@ void UiInputfield::init(Bounds *b, int Maxtextlen, List *hist)
 	history = hist;
 	maxtextlenv = Maxtextlen;
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
-	
+
 	textv = ht_malloc(maxtextlenv+1);
 	curcharv = textv;
 	textlenv = 0;
@@ -716,14 +716,14 @@ void UiInputfield::setdata(ObjectStream &s)
 	if (!attachedto) {
 		textlen=&textlenv;
 		GET_INT32D(s, *textlen);
-		
+
 		if (*textlen > *maxtextlen) *textlen = *maxtextlen;
-		
+
 		GET_BINARY(s, *text, *textlen);
-		
+
 		curchar = &curcharv;
 		*curchar = *text + *textlen;
-		
+
 		if (*textlen) {
 			*selstart = *text;
 			*selend = *text+*textlen;
@@ -734,7 +734,7 @@ void UiInputfield::setdata(ObjectStream &s)
 
 		ofs = 0;
 	}
-	
+
 //	s->recordEnd(h);
 	dirtyview();
 }
@@ -759,7 +759,7 @@ void UiStrInputfield::done()
 void UiStrInputfield::correct_viewpoint()
 {
 	if (*curchar - *text < ofs) {
-		ofs = *curchar-*text; 
+		ofs = *curchar-*text;
 	} else {
 		if (*curchar - *text - (size.w-2)*size.h+1 > ofs) {
 			ofs = *curchar-*text-(size.w-2)*size.h+1;
@@ -851,12 +851,12 @@ void UiStrInputfield::handlemsg(htmsg *msg)
 					if ((k==K_Shift_Left) != selectmode) {
 						select_add(*curchar, *curchar+1);
 					}
-				}				    
+				}
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
 				return;
-			case K_Shift_Right:				
+			case K_Shift_Right:
 			case K_Right:
 				is_virgin = false;
 				if (*curchar-*text<*textlen) {
@@ -864,7 +864,7 @@ void UiStrInputfield::handlemsg(htmsg *msg)
 					if ((k==K_Shift_Right) != selectmode) {
 						select_add(*curchar-1, *curchar);
 					}
-				}					
+				}
 				correct_viewpoint();
 				dirtyview();
 				clearmsg(msg);
@@ -925,7 +925,7 @@ void UiStrInputfield::handlemsg(htmsg *msg)
 				is_virgin = false;
 				if ((k == K_Shift_Home) != selectmode) {
 					select_add(*curchar, *text);
-				}					
+				}
 				*curchar = *text;
 				correct_viewpoint();
 				dirtyview();
@@ -936,7 +936,7 @@ void UiStrInputfield::handlemsg(htmsg *msg)
 				is_virgin = false;
 				if ((k == K_Shift_End) != selectmode) {
 					select_add(*curchar, *text+*textlen);
-				}						
+				}
 				*curchar = *text + *textlen;
 				correct_viewpoint();
 				dirtyview();
@@ -1089,7 +1089,7 @@ void UiHexInputfield::done()
 void UiHexInputfield::correct_viewpoint()
 {
 	if (*curchar-*text<ofs) {
-		ofs = *curchar-*text; 
+		ofs = *curchar-*text;
 	} else if ((*curchar-*text)*3-(size.w-2)*size.h+5>ofs*3) {
 		ofs = ((*curchar-*text)*3-(size.w-2)*size.h+5) / 3;
 	}
@@ -1396,7 +1396,7 @@ void ht_listbox_title::draw()
 	clear(color);
 	if (!texts || !listbox) return;
 	int x = 0;
-	for (int i=0; i < cols; i++) {     
+	for (int i=0; i < cols; i++) {
 		buf->nprint(x, 0, color, texts[i], size.w - x);
 		x += listbox->widths[i];
 		if (i+1 < cols) {
@@ -1976,7 +1976,7 @@ void UiListbox::update()
 	}
 	if (!e_top) {
 		e_top = getFirst();
-	}     
+	}
 	if (!e_cursor) e_cursor = e_top;
 	entry = e_top;
 	cursor = 0;
@@ -2005,7 +2005,7 @@ void UiListbox::updateCursor()
 		} else {
 			hidecursor();
 		}
-	}		
+	}
 }
 
 /*
@@ -2042,7 +2042,7 @@ void UiTextListbox::clearAll()
 		temp = temp2;
 	}
 	first = last = NULL;
-	
+
 	pos = 0;
 	cursor = 0;
 	e_top = getFirst();
@@ -2089,7 +2089,7 @@ uint UiTextListbox::getID(void *entry)
 		return ((ht_text_listbox_item *)entry)->id;
 	} else {
 		return 0;
-	}	    
+	}
 }
 
 void *UiTextListbox::getExtra(void *entry)
@@ -2098,7 +2098,7 @@ void *UiTextListbox::getExtra(void *entry)
 		return ((ht_text_listbox_item *)entry)->extra_data;
 	} else {
 		return NULL;
-	}	    
+	}
 }
 
 void *UiTextListbox::getLast()
@@ -2288,7 +2288,7 @@ void UiTextListbox::sort(int count, ht_text_listbox_sort_order *so)
 	int cnt = calcCount();
 
 	if (cnt < 2) return;
-	
+
 	list = ht_malloc(cnt*sizeof(void *));
 	tmp = first;
 	while (tmp) {
@@ -2418,7 +2418,7 @@ void UiStaticText::draw()
 	if (gettext(text, size.w*size.h) <= 0) return;
 	char *t = text;
 	if (breaklines) {
-		/* format string... */	
+		/* format string... */
 		ht_statictext_linedesc *orig_d = ht_malloc(sizeof (ht_statictext_linedesc)*size.h);
 		ht_statictext_linedesc *d = orig_d;
 		statictext_align lalign = align;
@@ -2603,7 +2603,7 @@ void	UiListPopup::init(Bounds *b)
 	c.x=0;
 	c.y=0;
 	c.h=5;
-	
+
 	listpopup = new ht_listpopup_dialog();
 	listpopup->init(&c, 0);
 }
@@ -2612,7 +2612,7 @@ void	UiListPopup::done()
 {
 	listpopup->done();
 	delete listpopup;
-	
+
 	UiView::done();
 }
 
@@ -2668,7 +2668,7 @@ void UiListPopup::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			if (!r) listpopup->databuf_set(&d, sizeof d);
 			return;
-		}				
+		}
 		}
 	}
 	UiStaticText::handlemsg(msg);
@@ -2801,7 +2801,7 @@ void UiColorBlock::init(Bounds *b, int selected, int Flags)
 	UiView::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
 	VIEW_DEBUG_NAME("UiColorBlock");
 	flags = Flags;
-	
+
 	ht_color_block_data d;
 	d.color = selected;
 	databuf_set(&d, sizeof d);
@@ -2886,7 +2886,7 @@ void UiColorBlock::setdata(ObjectStream &s)
 {
 	int c = GETX_INT32D(s, NULL);
 	if (c == VC_TRANSPARENT) {
-		color = -1; 
+		color = -1;
 	} else {
 		for (int i=0; i<16; i++) if (vcs[i]==c) {
 			color=i;
@@ -2901,5 +2901,5 @@ void center_bounds(Bounds *b)
 	Bounds c;
 	app->getbounds(&c);
 	b->x = (c.w - b->w) / 2;
-	b->y = (c.h - b->h) / 2;     
+	b->y = (c.h - b->h) / 2;
 }

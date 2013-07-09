@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	hthist.cc
  *
@@ -53,7 +53,7 @@ bool insert_history_entry(List *history, const char *name, UiView *view)
 		}
 		/* limit number of history entries to MAX_HISTORY_ENTRY_COUNT */
 		while (history->count() > MAX_HISTORY_ENTRY_COUNT) {
-			history->del(history->findLast());			
+			history->del(history->findLast());
 		}
 		return true;
 	}
@@ -199,7 +199,7 @@ bool init_hist()
  */
 
 void done_hist()
-{	
+{
 	UNREGISTER(ATOM_HT_HISTORY_ENTRY, ht_history_entry);
 
 	for (uint i=0; i<sizeof hist_atoms / sizeof hist_atoms[0]; i++) {

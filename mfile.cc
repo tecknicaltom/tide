@@ -146,7 +146,7 @@ void FileModificator::checkSanity()
 			throw MsgfException("mfile-sanity: area at 0x%qx, has size %qd (must be <= %d)", x->start, x->size, MAX_MFA_SIZE);
 		// rule (5)
 /*		if (prevx && (dynamic_cast<ModifiedFileArea*>(prevx) != NULL)
-		 && ismod && (((ModifiedFileArea*)prevx)->size + 
+		 && ismod && (((ModifiedFileArea*)prevx)->size +
 		((ModifiedFileArea*)x)->size <= MAX_MFA_SIZE))
 			throw MsgException("mfile-sanity: two adjacent MFAs with sum of sizes <= MAX_MFA_SIZE = %d", MAX_MFA_SIZE);
 */		s += x->size;
@@ -301,7 +301,7 @@ void FileModificator::cut(FileOfs size)
 			h = findArea(o);
 		} else {
 			h = hnext;
-		}			
+		}
 	}
 	while (h != invObjHandle) {
 		FileArea *a = (FileArea*)mods.get(h);
@@ -462,7 +462,7 @@ void FileModificator::insert(const void *buf, FileOfs size)
 			start += k;
 		}
 	}
-	
+
 	// (2) write data
 	const byte *b = (const byte*)buf;
 	FileOfs o = t;
@@ -542,7 +542,7 @@ void FileModificator::makeAreaModified(ObjHandle h, FileOfs rstart, FileOfs size
 			csize -= rstart;
 		} else {
 			mods -= h;
-		}			
+		}
 		if (next_m && !have_tail_gap) {
 			// merge with next MFA (successor)
 			FileOfs nnsize = next_m->size + size;
@@ -817,7 +817,7 @@ int FileModificator::vcntl(uint cmd, va_list vargs)
 		int *mc = va_arg(vargs, int *);
 		*mc = mcount;
 		return 0;
-	}		
+	}
 	}
 	return mFile->vcntl(cmd, vargs);
 }

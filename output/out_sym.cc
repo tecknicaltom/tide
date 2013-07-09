@@ -122,10 +122,10 @@ static void g(Stream &stream, Symbol *s, uint *bytes_written, uint *symbols_writ
 	} else {
 		addr = 0;
 	}
-	
+
 	ptr_table[*symbols_written] = *bytes_written;
 	write_sym(stream, addr, s->name, bytes_written);
-	
+
 	(*symbols_written) ++;
 }
 
@@ -137,7 +137,7 @@ static void align16(File *file, uint *bytes_written)
 		(*bytes_written) ++;
 	}
 }
- 
+
 int export_to_sym(Analyser *analy, File *file)
 {
 	if ((!analy) || (!file)) return /*HTML_OUTPUT_ERR_GENERIC*/1;
@@ -168,7 +168,7 @@ int export_to_sym(Analyser *analy, File *file)
 	while ((sym = analy->enumSymbols(sym))) {
 		g(*file, sym, &bytes_written, &symbols_written, ptr_table);
 	}
-	
+
 	uint sym_ptr_table_ptr = bytes_written;
 
 	// FIXME: endianess !
@@ -193,7 +193,7 @@ int export_to_sym(Analyser *analy, File *file)
 	seg_head.seg_size = 0x0000ffff;
 	// FIXME: endianess !
 	file->write(&seg_head, sizeof seg_head);
-	
+
 /* } */
 
 

@@ -71,7 +71,7 @@ alpha_opcode_tab_entry alpha_instr_tbl[] =
 	{0x1d,"pal1d",		ALPHA_ERROR},
 	{0x1e,"pal1e",		ALPHA_ERROR},
 	{0x1f,"pal1f",		ALPHA_ERROR},
-    
+
 	{0x20,"ldf",		ALPHA_GROUP_FLD},
 	{0x21,"ldg",		ALPHA_GROUP_FLD},
 	{0x22,"lds",		ALPHA_GROUP_FLD},
@@ -80,7 +80,7 @@ alpha_opcode_tab_entry alpha_instr_tbl[] =
 	{0x25,"stg",		ALPHA_GROUP_FST},
 	{0x26,"sts",		ALPHA_GROUP_FST},
 	{0x27,"stt",		ALPHA_GROUP_FST},
-    
+
 	{0x28,"ldl",		ALPHA_GROUP3},
 	{0x29,"ldq",		ALPHA_GROUP3},
 	{0x2a,"ldl_l",		ALPHA_GROUP3},
@@ -98,7 +98,7 @@ alpha_opcode_tab_entry alpha_instr_tbl[] =
 	{0x35,"fbne",		ALPHA_GROUP_FBR},
 	{0x36,"fbge",		ALPHA_GROUP_FBR},
 	{0x37,"fbgt",		ALPHA_GROUP_FBR},
-    
+
 	{0x38,"blbc",		ALPHA_GROUP_BRA},
 	{0x39,"beq",		ALPHA_GROUP_BRA},
 	{0x3a,"blt",		ALPHA_GROUP_BRA},
@@ -373,7 +373,7 @@ alpha_opcode_tab_entry alpha_instr_tbl_ext15[] =
 	{0xfff,"",		ALPHA_ERROR}
 };
 
-/* table16 */ 
+/* table16 */
 alpha_opcode_tab_entry alpha_instr_tbl_ext16[] =
 {
 	{0x000,"adds/c",	ALPHA_GROUP2},
@@ -567,7 +567,7 @@ alpha_opcode_tab_entry alpha_instr_tbl_ext16[] =
 
 /* table17 */
 alpha_opcode_tab_entry alpha_instr_tbl_ext17[] =
-{    
+{
 	{0x000,"",		ALPHA_ERROR},
 	{0x010,"cvtlq",	ALPHA_GROUP2},
 	{0x020,"cpys",		ALPHA_GROUP2},
@@ -586,7 +586,7 @@ alpha_opcode_tab_entry alpha_instr_tbl_ext17[] =
 	{0x530,"cvtql/sv",	ALPHA_GROUP2},
 	{0xfff,"",		ALPHA_ERROR}
 };
-    
+
 /* table18 */
 alpha_opcode_tab_entry alpha_instr_tbl_ext18[] =
 {
@@ -606,7 +606,7 @@ alpha_opcode_tab_entry alpha_instr_tbl_ext18[] =
 
 /* table1a */
 alpha_opcode_tab_entry alpha_instr_tbl_ext1a[] =
-{    
+{
 	{0x0,"jmp",		ALPHA_GROUP_JMP},
 	{0x1,"jsr",		ALPHA_GROUP_JMP},
 	{0x2,"ret",		ALPHA_GROUP_JMP},

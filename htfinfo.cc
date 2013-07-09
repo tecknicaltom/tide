@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htfinfo.cc
  *
@@ -39,7 +39,7 @@ format_viewer_if htfinfo_if = {
 /*
  *   UiFInfoText
  */
- 
+
 void	UiFInfoText::init(Bounds *b, File *f)
 {
 	UiStaticText::init(b, FINFO_DESC, align_left, 1);
@@ -72,7 +72,7 @@ int UiFInfoText::gettext(char *text, int max_len)
 	char *t = text;
 	pstat_t s;
 	file->pstat(s);
-	
+
 	if (s.caps & pstat_ctime) t += print_time(t, max_len-(t-text), "time of creation", s.ctime);
 	if (s.caps & pstat_mtime) t += print_time(t, max_len-(t-text), "time of modification", s.mtime);
 	if (s.caps & pstat_atime) t += print_time(t, max_len-(t-text), "time of last access", s.atime);
@@ -83,42 +83,42 @@ int UiFInfoText::gettext(char *text, int max_len)
 		t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s%qd (%.2f KiB, %.2f MiB)"
 		" / 0x%08qx\n", "size", s.size, ((float)s.size)/1024,
 		((float)s.size)/1024/1024, s.size);
-	}	    
+	}
 
 	if (s.caps & pstat_inode) t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s%d\n", "inode", s.fsid);
 	else if (s.caps & pstat_cluster) t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s%d\n", "cluster (?)", s.fsid);
 	else if (s.caps & pstat_fsid) t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s%d\n", "fsid", s.fsid);
-	
+
 	if (s.caps & pstat_mode_all) {
 		uint32 am[3][3]={
 			{HT_S_IRUSR, HT_S_IWUSR, HT_S_IXUSR},
 			{HT_S_IRGRP, HT_S_IWGRP, HT_S_IXGRP},
 			{HT_S_IROTH, HT_S_IWOTH, HT_S_IXOTH}
 		};
-	
+
 		uint32 ulm[3]={pstat_mode_usr, pstat_mode_grp, pstat_mode_oth};
 		const char *uls[3]={"user", "group", "world"};
-	
+
 		uint32 alm[3]={pstat_mode_r, pstat_mode_w, pstat_mode_x};
 		const char *als[3]={"read", "write", "execute"};
-		
+
 		if (max_len-(t-text) > 1) *t++ = '\n';
 
-		int cols=0;	
+		int cols=0;
 		t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s", "");
 		for (int u=0; u<3; u++) {
 			if (s.caps & ulm[u]) {
 				t += ht_snprintf(t, max_len-(t-text), " %-8s", uls[u]);
 				cols++;
 			}
-		}		
+		}
 		if (max_len-(t-text) > 1) *t++ = '\n';
-		
+
 		for (int q=0; q < FINFO_IDENTIFIER_WIDTH+cols*9; q++) if (max_len-(t-text) > 1) *t++ = '-';
 
 		if (max_len-(t-text) > 1) *t++ = '\n';
 
-				
+
 		for (int a=0; a<3; a++) {
 			if (s.caps & alm[a]) {
 				t += ht_snprintf(t, max_len-(t-text), "%-"FINFO_IDENTIFIER_WIDTH_STR"s", als[a]);
@@ -132,7 +132,7 @@ int UiFInfoText::gettext(char *text, int max_len)
 		}
 		*t = 0;
 	}
-	
+
 	return t-text;
 }
 

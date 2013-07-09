@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy_avr.cc
  *

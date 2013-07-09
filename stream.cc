@@ -211,7 +211,7 @@ uint	Stream::read(void *buf, uint size)
  *	@param size number of bytes to read
  *	@throws IOException
  */
-//#include "snprintf.h" 
+//#include "snprintf.h"
 void	Stream::readx(void *buf, uint size)
 {
 //	File *f = dynamic_cast<File*>(this);
@@ -220,7 +220,7 @@ void	Stream::readx(void *buf, uint size)
 //		FileOfs sz = f ? f->getSize() : mkfofs(0);
 //		ht_printf("readx failed, ofs = 0x%qx, size = %d (file size 0x%qx)\n", &t, size, &sz);
 		throw EOFException();
-	}	    
+	}
 }
 /*
 void Stream::removeEventListener(StreamEventListener *l)
@@ -263,7 +263,7 @@ void	Stream::writex(const void *buf, uint size)
 
 // FIXME: more dynamical solution appreciated
 #define REASONABLE_STRING_LIMIT	1024
- 
+
 char *Stream::readstrz()
 {
 	/* get string size */
@@ -340,7 +340,7 @@ char *Stream::readstrl()
 		if (!(b & 0x80)) break;
 	}
 	char *str = ht_malloc(l+1);
-	if (!str) throw std::bad_alloc();	
+	if (!str) throw std::bad_alloc();
 	try {
 		readx(str, l);
 	} catch (...) {
@@ -974,7 +974,7 @@ uint LocalFileFD::read(void *buf, uint size)
 	} else {
 		offset += r;
 		return r;
-	}		
+	}
 }
 
 void LocalFileFD::seek(FileOfs o)
@@ -1093,7 +1093,7 @@ uint LocalFileFD::write(const void *buf, uint size)
 	} else {
 		offset += r;
 		return r;
-	}		
+	}
 }
 
 /*
@@ -1540,7 +1540,7 @@ void MemoryFile::truncate(FileOfs newsize)
 
 	uint s = ibufsize;
 	while (s<dsize) s = extendBufSize(s);
-	
+
 	resizeBuf(s);
 	mcount++;
 }

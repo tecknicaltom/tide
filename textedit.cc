@@ -48,9 +48,9 @@ static ht_search_request* create_request_hexascii(text_search_pos *start, text_s
 	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
-	
+
 	ht_fxbin_search_request *request;
-	
+
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "hex/ascii");
 	}
@@ -113,9 +113,9 @@ static ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint s
 		q++;
 		i++;
 	}
-	
+
 //	dialog->select_search_mode(lastsearchmodeid);
-	
+
 	if (dialog->run(false)) {
 		int modeid = dialog->get_search_modeid();
 //		lastsearchmodeid = modeid;
@@ -392,7 +392,7 @@ void ht_undo_data_insert_string::apply(ht_text_editor *te)
 		uint l = te->get_line_length(apos.line);
 		cpos.line = apos.line;
 		if (apos.pofs > l) {
-			uint k = apos.pofs - l;               
+			uint k = apos.pofs - l;
 			te->indent(apos.line, l, k);
 			cpos.pofs = l;
 		} else {
@@ -502,7 +502,7 @@ void ht_undo_data_overwrite_string::apply(ht_text_editor *te)
 		uint l = te->get_line_length(apos.line);
 		cpos.line = apos.line;
 		if (apos.pofs > l) {
-			uint k = apos.pofs - l;               
+			uint k = apos.pofs - l;
 			te->indent(apos.line, l, k);
 			cpos.pofs = l;
 		} else {
@@ -614,7 +614,7 @@ void ht_undo_data_join_line::apply(ht_text_editor *te)
 	} else {
 		cpos.pofs = apos.pofs;
 	}
-	    
+
 	te->concat_lines(bpos.line);
 	te->goto_line(bpos.line);
 	te->cursor_pput(bpos.pofs);
@@ -625,7 +625,7 @@ void ht_undo_data_join_line::unapply(ht_text_editor *te, bool *goto_only)
 	if (*goto_only && (bpos.line != te->top_line + te->cursory || te->physical_cursorx()!=bpos.pofs)) {
 		te->goto_line(bpos.line);
 		te->cursor_pput(bpos.pofs);
-		return;     
+		return;
 	}
 	*goto_only = false;
 	te->split_line(bpos.line, bpos.pofs);
@@ -647,7 +647,7 @@ static text_viewer_pos insert_text_block(ht_text_editor *te, text_viewer_pos apo
 
 	ht_textfile *textfile = te->get_textfile();
 	FileOfs o;
-	
+
 	textfile->convert_line2ofs(apos.line, apos.pofs, &o);
 
 	uint l = te->get_line_length(apos.line);
@@ -966,7 +966,7 @@ void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, Container *l)
 	select_clear();
 
 	selectcursor = false;
-	
+
 	EOL_string = NULL;
 	EOF_string = NULL;
 
@@ -1049,7 +1049,7 @@ bool ht_text_viewer::continue_search()
 		} catch (const Exception &e) {
 			errorbox("error: %y", &e);
 		}
-		
+
 		if (r) return show_search_result(r);
 	}
 	return false;
@@ -1330,7 +1330,7 @@ uint ht_text_viewer::get_line_indent(uint line)
 {
 	char s[1024];
 	uint i, r, j;
-	textfile->getline(line, 0, s, 1024, &i, NULL);     
+	textfile->getline(line, 0, s, 1024, &i, NULL);
 	if (i==0) return 0xffffffff;
 	j = r = 0;
 	while (i && (s[j]==' ' || s[j]=='\t')) {
@@ -1340,7 +1340,7 @@ uint ht_text_viewer::get_line_indent(uint line)
 	}
 
 	if (i==0) return 0xffffffff;
-	
+
 	return r;
 }
 
@@ -1357,9 +1357,9 @@ uint ht_text_viewer::get_line_vlength(uint line)
 
 	uint linelen;
 	if (!textfile->getline(line, 0, l, sizeof l, &linelen, NULL)) return 0;
-	
+
 	while (linelen--) vl+=char_vsize(*(linep++), vl);
-	
+
 	return vl;
 }
 
@@ -1608,7 +1608,7 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			return;
 		}
-		case cmd_text_viewer_goto: {          
+		case cmd_text_viewer_goto: {
 			char line[1024];
 			line[0]=0;
 			if (inputbox("goto", "line", line, 1024)) {
@@ -1699,7 +1699,7 @@ uint ht_text_viewer::physical_cursorx()
 
 	uint linelen;
 	if (!textfile->getline(top_line+cursory, 0, line, sizeof line, &linelen, NULL)) return 0;
-	
+
 	while (linelen--) {
 		int k=char_vsize(*(linep++), vx);
 		vx+=k;
@@ -1708,27 +1708,27 @@ uint ht_text_viewer::physical_cursorx()
 		px++;
 	}
 	if (v>0) px+=v;
-	
+
 	return px;
 }
 
 void ht_text_viewer::popup_change_highlight()
 {
 	Bounds b, c;
-	
+
 	app->getbounds(&b);
 
 	b.x = (b.w - 40) / 2,
 	b.y = (b.h - 8) / 2;
 	b.w = 40;
 	b.h = 8;
-	
+
 	ht_dialog *d = new ht_dialog();
 	d->init(&b, "change highlighting mode", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
-	
+
 	b.x = 0;
 	b.y = 0;
-		
+
 	/* mode (input) */
 	c = b;
 	c.x = 0;
@@ -1738,7 +1738,7 @@ void ht_text_viewer::popup_change_highlight()
 
 	UiITextListbox *mode_input = new UiITextListbox();
 	mode_input->init(&c);
-	
+
 	mode_input->insert_str(-1, "no highlighting");
 	uint lc = lexers->count();
 	int selected = -1;
@@ -1752,7 +1752,7 @@ void ht_text_viewer::popup_change_highlight()
 	mode_input->update();
 	if (selected >= 0) mode_input->gotoItemByPosition(selected);
 	d->insert(mode_input);
-	
+
 	/* mode (text) */
 	c = b;
 	c.x = 0;
@@ -1764,7 +1764,7 @@ void ht_text_viewer::popup_change_highlight()
 	mode_text->init(&c, "choose ~highlighting mode", mode_input);
 
 	d->insert(mode_text);
-	
+
 	if (d->run(false)) {
 		ht_listbox_data type;
 
@@ -1774,7 +1774,7 @@ void ht_text_viewer::popup_change_highlight()
 			mode_input->getID(type.data->cursor_ptr)];
 		set_lexer(l, false);
 	}
-	
+
 	d->done();
 	delete d;
 }
@@ -2074,7 +2074,7 @@ bool ht_text_editor::concat_lines(uint a)
 		char *aline = ht_malloc(alen+1);
 		uint alinelen;
 		textfile->getline(a, 0, aline, alen+1, &alinelen, NULL);
-	
+
 		text_viewer_pos ss, se;
 
 		ss=sel_start;
@@ -2083,7 +2083,7 @@ bool ht_text_editor::concat_lines(uint a)
 		insert_chars(b, 0, aline, alinelen);
 
 		free(aline);
-	
+
 		delete_lines(a, 1);
 
 		if (b > ss.line) {
@@ -2220,7 +2220,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 					uint indent = bpos.pofs;
 					if (px >= get_line_length(top_line+cursory)) indent = 0;
 					textoperation_apply(new ht_undo_data_split_line(&apos, &bpos, indent));
-					
+
 					dirtyview();
 					clearmsg(msg);
 					return;
@@ -2266,7 +2266,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 						} else {
 							// place cursor only
 							cursor_pput(cx-1);
-						}               
+						}
 					} else {
 						if (top_line+cursory) {
 							uint px=physical_cursorx();
@@ -2334,7 +2334,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 						dirtyview();
 						clearmsg(msg);
 						return;
-					}							
+					}
 				}
 			}
 			break;
@@ -2351,7 +2351,7 @@ void ht_text_editor::handlemsg(htmsg *msg)
 				}*/
 				buf2[0] = 0;
 				ht_snprintf(buf, sizeof buf, "~Undo %s", buf2);
-			
+
 				m->insert_entry(buf, "Alt+U", cmd_text_editor_undo, 0, 1);
 				m->insert_entry("~Redo", "Alt+R", cmd_text_editor_redo, 0, 1);
 				m->insert_entry("~Protocol", "Alt+P", cmd_text_editor_protocol, K_Meta_P, 1);
@@ -2394,13 +2394,13 @@ void ht_text_editor::handlemsg(htmsg *msg)
 			dirtyview();
 			clearmsg(msg);
 			return;
-		}          
+		}
 		case cmd_text_editor_redo: {
 			redo();
 			dirtyview();
 			clearmsg(msg);
 			return;
-		}          
+		}
 		case cmd_text_editor_protocol: {
 			show_protocol();
 			dirtyview();
@@ -2498,7 +2498,7 @@ bool ht_text_editor::save()
 
 
 	old->setAccessMode(IOAM_WRITE);
-	
+
 	File *f = old->getLayered();
 	f->truncate(0);
 	temp.seek(0);
@@ -2594,7 +2594,7 @@ void ht_text_editor::split_line(uint a, uint pos)
 
 	delete_chars(a+1, 0, pos);
 	free(aline);
-	
+
 	if (text_viewer_pos_compare(&p, &ss)>0) {
 		if (text_viewer_pos_compare(&p, &se)<0) {
 			if (se.line==p.line) {

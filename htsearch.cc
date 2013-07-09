@@ -104,9 +104,9 @@ ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, U
 	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
-	
+
 	ht_fxbin_search_request *request;
-	
+
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "hex/ascii");
 	}
@@ -169,9 +169,9 @@ static ht_search_request* create_request_evalstr(search_pos *start, search_pos *
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
 	ht_evalstr_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
-	
+
 	ht_fxbin_search_request *request = NULL;
-		
+
 	if (!d.str.textlen) {
 		throw MsgfException("%s: string is empty", "eval str");
 	} else if (d.str.textlen<=EVALSTR_MAXSTRLEN) {
@@ -257,7 +257,7 @@ ht_fxbin_search_request *ht_fxbin_search_request::clone() const
 /*
  *	CLASS ht_regex_search_request
  */
- 
+
 static UiView* create_form_vregex(Bounds *b, uint histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
@@ -347,14 +347,14 @@ ht_regex_search_request *ht_regex_search_request::clone() const
 /*
  *	CLASS ht_regex_search_request
  */
- 
+
 ht_regex_search_exception::ht_regex_search_exception(int e, regex_t *r)
 {
 	char s[128];
 	regerror(e, r, s, sizeof s);
 	ht_snprintf(rxerr, sizeof rxerr, "error compiling regex: %s", s);
 }
-	
+
 String &ht_regex_search_exception::reason(String &s) const
 {
 	return s = rxerr;
@@ -377,7 +377,7 @@ static ht_search_request* create_request_expr(search_pos *start, search_pos *end
 	ht_expr_search_form *form=(ht_expr_search_form*)f;
 	ht_expr_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
-	
+
 	ht_expr_search_request *request = NULL;
 
 	if (!d.str.textlen) {
@@ -469,7 +469,7 @@ ht_search_bin_context::~ht_search_bin_context()
 Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success)
 {
 	if (patlen > SEARCH_BUF_SIZE) return NULL;
-	
+
 	ht_search_bin_context *ctx = new ht_search_bin_context();
 	ctx->file = file;
 	ctx->file_end = false;
@@ -872,9 +872,9 @@ Object* create_replace_hexascii_context(File *file, FileOfs ofs, FileOfs len, Ui
 {
 	ht_replace_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
-	
+
 	ht_replace_bin_context *ctx = (ht_replace_bin_context*)
-	
+
 	create_replace_bin_context(file, ofs, len, d.str.text, d.str.textlen, return_repllen);
 
 	return ctx;
@@ -967,9 +967,9 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 		q++;
 		i++;
 	}
-	
+
 	dialog->select_search_mode(lastsearchmodeid);
-	
+
 	if (dialog->run(false)) {
 		int modeid = dialog->get_search_modeid();
 		lastsearchmodeid = modeid;
@@ -1096,7 +1096,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 		search_pos start, end;
 
 		ht_search_request *request = NULL;
-		
+
 		try {
 			/* create history entry */
 			if (s->create_desc) {
@@ -1113,13 +1113,13 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 		} catch (const Exception &e) {
 			errorbox("error: %y", &e);
 		}
-		
+
 		if (request) {
 			FileOfs so = start.offset, eo = end.offset;
 			ht_physical_search_result *result;
 
 			format->vstate_save();
-				
+
 			try {
 				bool replace_all = false;
 				while ((result = (ht_physical_search_result*)format->psearch(request, so, eo))) {
@@ -1172,7 +1172,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 
 			app->sendmsg(cmd_vstate_restore);
 		}
-				
+
 		delete request;
 	}
 	dialog->done();
@@ -1205,13 +1205,13 @@ Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, const b
 bool replace_bin_process(Object *context, UiText *progress_indicator)
 {
 	progress_indicator->settext("replacing...\n");
-	
+
 	ht_replace_bin_context *c = (ht_replace_bin_context*)context;
 	if (c->repllen > c->len) {
 		/* grow */
 		uint size = c->file->getSize();
 		c->file->extend(size + c->repllen - c->len);
-		
+
 		if (c->o > c->z) {
 			c->o -= c->z;
 		} else {
@@ -1226,9 +1226,9 @@ bool replace_bin_process(Object *context, UiText *progress_indicator)
 		c->file->readx(c->buf, c->z);
 		c->file->seek(c->o + c->repllen - c->len);
 		c->file->writex(c->buf, c->z);
-			
+
 		if (c->o > c->ofs + c->len) return true;
-		
+
 		c->file->seek(c->ofs);
 		c->file->writex(c->repl, c->repllen);
 
@@ -1240,7 +1240,7 @@ bool replace_bin_process(Object *context, UiText *progress_indicator)
 			c->file->seek(c->ofs);
 			c->file->writex(c->repl, c->repllen);
 		}
-		
+
 		if (c->z > size - c->o) {
 			c->z = size - c->o;
 		}
@@ -1249,9 +1249,9 @@ bool replace_bin_process(Object *context, UiText *progress_indicator)
 		c->file->seek(c->o - (c->len - c->repllen));
 		c->file->writex(c->buf, c->z);
 		c->o += REPLACE_COPY_BUF_SIZE;
-		
+
 		if (c->z == REPLACE_COPY_BUF_SIZE) return true;
-		
+
 		c->file->truncate(size - (c->len - c->repllen));
 		free(c->buf);
 	} else {
@@ -1485,11 +1485,11 @@ void ht_replace_dialog::select_replace_mode_bymodeidx()
 /*
  *
  */
- 
+
 ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize)
 {
 	ht_fxbin_search_request *s = (ht_fxbin_search_request*)search;
-		
+
 	int fl = (search->flags & SFBIN_CASEINSENSITIVE) ? SFBIN_CASEINSENSITIVE : 0;
 	if (start < fofs) start = fofs;
 	if (end > fofs+fsize) end = fofs+fsize;

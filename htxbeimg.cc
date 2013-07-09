@@ -68,13 +68,13 @@ static UiView *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 	h+=xbe_shared->header.base_address;
 	low = p->createAddress32(l);
 	high = p->createAddress32(h);
-	
+
 	ht_analy_sub *analy=new ht_analy_sub();
 	analy->init(file, v, p, low, high);
-	
+
 	delete low;
 	delete high;
-	
+
 	v->analy_sub = analy;
 	v->insertsub(analy);
 
@@ -85,7 +85,7 @@ static UiView *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 
 	v->gotoAddress(tmpaddr, NULL);
 	delete tmpaddr;
-	
+
 	g->insert(head);
 	g->insert(v);
 
@@ -142,7 +142,7 @@ static int xbe_viewer_func_section_int(eval_scalar *result, eval_int *q)
 			return 1;
 		} else {
 //			set_eval_error("invalid file offset or no corresponding RVA for '0%xh'", rva);
-		}     
+		}
 	} else {
 		set_eval_error("no section number %qd", &q->value);
 	}

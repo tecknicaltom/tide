@@ -158,7 +158,7 @@ void AnalyCString::render_string(char *result, int maxlen)
 	int Len = MIN(len, maxlen);
 	if (Len) Len--;
 	memcpy(result, string, Len);
-	result[Len]=0;          
+	result[Len]=0;
 }
 
 int AnalyCString::string_test(const byte *s, int testlen, int &foundlen)
@@ -235,7 +235,7 @@ const char *AnalyPascalString::name()
 #define STRING_TESTS 2
 AnalyString *string_test(const byte *s, int testlen)
 {
-	if (!testlen) return NULL;     
+	if (!testlen) return NULL;
 	int p[STRING_TESTS+1];
 	int len[STRING_TESTS];
 	p[0] = AnalyCString::string_test(s, testlen, len[0]);

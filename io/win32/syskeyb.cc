@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	syskeyb.cc - keyboard access functions for Win32
  *
@@ -349,7 +349,7 @@ bool init_keyb()
 #endif
 
 	int i;
-	
+
 	for (i=0; i<K_COUNT; i++) {
 		keyb_setkey((ht_key)i, -1);
 	}
@@ -357,7 +357,7 @@ bool init_keyb()
 	for (i=0; ht_win32_key_defs[i].key!=K_INVALID; i++) {
 		keyb_setkey(ht_win32_key_defs[i].key, ht_win32_key_defs[i].keycode);
 	}
-	
+
 	return true;
 }
 

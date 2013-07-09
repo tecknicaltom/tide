@@ -452,7 +452,7 @@ void ht_menu::delete_local_menu()
 			last_context_menu_hack = NULL;
 		}
 		menu->del(menu->findByIdx(localmenu));
-	}		
+	}
 }
 
 void ht_menu::insert_local_menu()
@@ -483,7 +483,7 @@ bool ht_menu::set_local_menu(ht_context_menu *m)
 	} else {
 		ht_context_menu *p = (ht_context_menu*)(*menu)[localmenu-1];
 		if (p) {
-			lastmenux = p->xpos + strlen(p->get_name()) + 1; 
+			lastmenux = p->xpos + strlen(p->get_name()) + 1;
 		} else {
 			lastmenux = 1;
 		}
@@ -668,7 +668,7 @@ void UiContextMenuWindowBody::handlemsg(htmsg *msg)
 						clearmsg(msg);
 						return;
 					}
-				}					
+				}
 				e = context_menu->enum_entry_next();
 			}
 //		}

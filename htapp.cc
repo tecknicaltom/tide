@@ -97,28 +97,28 @@ void ht_help_window::handlemsg(htmsg *msg)
 			((ht_app*)app)->queuemsg(app, m);
 			clearmsg(msg);
 			return;
-		}				
-		}				
+		}
+		}
 	}
 }
 
 static bool file_new_dialog(uint *mode)
 {
 	Bounds b, c;
-	
+
 	app->getbounds(&b);
 
 	b.x = (b.w - 40) / 2,
 	b.y = (b.h - 8) / 2;
 	b.w = 40;
 	b.h = 8;
-	
+
 	ht_dialog *d=new ht_dialog();
 	d->init(&b, "create new file", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
-	
+
 	b.x=0;
 	b.y=0;
-		
+
 	/* mode (input) */
 	c=b;
 	c.x=0;
@@ -128,13 +128,13 @@ static bool file_new_dialog(uint *mode)
 
 	UiTextListbox *mode_input = new UiTextListbox();
 	mode_input->init(&c);
-	
+
 	mode_input->insert_str(FOM_TEXT, "text");
 	mode_input->insert_str(FOM_BIN, "binary");
 	mode_input->update();
 
 	d->insert(mode_input);
-	
+
 	/* mode (text) */
 	c=b;
 	c.x=0;
@@ -154,7 +154,7 @@ static bool file_new_dialog(uint *mode)
 		ViewDataBuf vdb(mode_input, &type, sizeof type);
 
 		*mode = mode_input->getID(type.data->cursor_ptr);
-		
+
 		retval = true;
 	}
 
@@ -166,7 +166,7 @@ static bool file_new_dialog(uint *mode)
 /*
  *	class FileBrowserVfsListbox
  */
- 
+
 class FileBrowser;
 
 #define FileBrowserVfsListboxData VfsListboxData
@@ -183,7 +183,7 @@ public:
 /*
  *	class FileBrowser
  */
- 
+
 struct FileBrowserData {
 	ht_strinputfield_data name;
 	ht_listbox_data listbox;
@@ -228,12 +228,12 @@ void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const c
 	c.h = 1;
 
 	List *hist = (List*)getAtomValue(HISTATOM_FILE);
-	
+
 	name_input = new UiStrInputfield();
 	name_input->init(&c, 128, hist);
 
 	insert(name_input);
-	
+
 	/* name (text) */
 	c = b;
 	c.x = 1;
@@ -312,7 +312,7 @@ void FileBrowser::setstate(int state, int return_val)
 			listbox->changeURL(fn.contentChar());
 			return;
 		}
-	} 
+	}
 	ht_dialog::setstate(state, return_val);
 }
 
@@ -321,7 +321,7 @@ void FileBrowser::setstate(int state, int return_val)
 static bool file_chooser(const char *title, char *buf, int bufsize)
 {
 	Bounds b, c;
-	
+
 	app->getbounds(&b);
 
 	c = b;
@@ -372,7 +372,7 @@ static bool file_chooser(const char *title, char *buf, int bufsize)
 static bool file_open_dialog(char **name, uint *mode)
 {
 	Bounds b, c;
-	
+
 	app->getbounds(&b);
 
 	c = b;
@@ -396,9 +396,9 @@ static bool file_open_dialog(char **name, uint *mode)
 
 	FileBrowser *d = new FileBrowser();
 	d->init(&b, &c, "open file", cwd);
-	
+
 	List *hist = (List*)getAtomValue(HISTATOM_FILE);
-	
+
 	/* mode (input) */
 	c = b;
 	c.x = 6;
@@ -408,15 +408,15 @@ static bool file_open_dialog(char **name, uint *mode)
 
 	UiListPopup *mode_input = new UiListPopup();
 	mode_input->init(&c);
-	
+
 	mode_input->insertstring("autodetect");
 	mode_input->insertstring("binary");
 	mode_input->insertstring("text");
-	
+
 	mode_input->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
-	
+
 	d->insert(mode_input);
-	
+
 	/* mode (text) */
 	c = b;
 	c.x = 1;
@@ -501,13 +501,13 @@ static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 	ht_file_window *w = (ht_file_window*)context;
 
 	pstat_t p;
-	
+
 	FileOfs oldsize = GETX_INT64D(f, "filesize");
 	uint32 oldtime = GETX_INT32X(f, "filetime");
 	FileOfs newsize = w->file->getSize();
 	w->file->pstat(p);
 	uint32 newtime = (p.caps & pstat_mtime) ? p.mtime : 0;
-	
+
 	if (newsize != oldsize || newtime != oldtime) {
 		char s_oldtime[64], s_newtime[64];
 		struct tm *t;
@@ -550,7 +550,7 @@ static void file_window_store_fcfg_func(ObjectStream &f, void *context)
 		uint32 t = (s.caps & pstat_mtime) ? s.mtime : 0;
 		PUTX_INT64D(f, w->file->getSize(), "filesize");
 		PUTX_INT32X(f, t, "filetime");
-		
+
 		Analyser *a = (Analyser*)m.data1.ptr;
 		f.putObject(a, "analyser");
 	}
@@ -740,7 +740,7 @@ void UiProjectListbox::draw()
 	if (project) {
 		UiListbox::draw();
 	} else {
-	
+
 		vcp fc = focused ? getcolor(palidx_generic_list_focused_unselected) :
 			getcolor(palidx_generic_list_unfocused_unselected);
 
@@ -945,7 +945,7 @@ void ht_project_window::handlemsg(htmsg *msg)
 		case msg_project_changed: {
 			const char *t = *project ? (*project)->get_filename() : NULL;
 			if (t) {
-				ht_snprintf(wtitle, sizeof wtitle, "project '%s'", t); 
+				ht_snprintf(wtitle, sizeof wtitle, "project '%s'", t);
 			} else {
 				strcpy(wtitle, "project window");
 			}
@@ -981,11 +981,11 @@ void ht_status::init(Bounds *b)
 	analy_ani = 0;
 	clear_len = 0;
 	format = get_config_string("misc/statusline");
-	
+
 	if (!format) {
 		format = strdup(STATUS_DEFAULT_FORMAT);
 	}
-	
+
 	render();
 	register_idle_object(this);
 }
@@ -1038,7 +1038,7 @@ bool ht_status::idle()
 			screen->show();
 		}
 		free(oldstatus);
-		
+
 		analy_ani++;
 		analy_ani &= 7;
 	}
@@ -1172,7 +1172,7 @@ void UiDesktop::draw()
 /*
  *	CLASS ht_log_msg
  */
- 
+
 ht_log_msg::ht_log_msg(vcp Color, char *Msg)
 {
 	color = Color;
@@ -1414,7 +1414,7 @@ void ht_app::init(Bounds *pq)
 	Bounds b;
 
 	windows = new AVLTree(true);
-	
+
 	syntax_lexers = new Array(true);
 
 	ht_c_syntax_lexer *c_lexer = new ht_c_syntax_lexer();
@@ -1500,14 +1500,14 @@ void ht_app::init(Bounds *pq)
 
 	menu = m;
 	insert(menu);
-	
+
 	/* create status */
 	/* the status should have the same Bounds as the menu */
 	ht_status *status = new ht_status();
 	status->init(&b);
 	status->setpalette(menu->getpalette());
 	insert(status);
-	
+
 	/* create desktop */
 	getbounds(&b);
 	b.x = 0;
@@ -1516,7 +1516,7 @@ void ht_app::init(Bounds *pq)
 	desktop = new UiDesktop();
 	desktop->init(&b);
 	insert(desktop);
-	
+
 	/* create keyline */
 	getbounds(&b);
 	b.x = 0;
@@ -1574,7 +1574,7 @@ ht_window *ht_app::create_window_log()
 
 		ht_window *logwindow=new ht_window();
 		logwindow->init(&b, "log window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
-		
+
 		Bounds k=b;
 		k.x=b.w-2;
 		k.y=0;
@@ -1592,7 +1592,7 @@ ht_window *ht_app::create_window_log()
 		ht_logviewer *logviewer=new ht_logviewer();
 		logviewer->init(&b, logwindow, loglines, false);
 		logwindow->insert(logviewer);
-		
+
 		insert_window(logwindow, AWT_LOG, 0, false, NULL);
 	}
 	return w;
@@ -1611,7 +1611,7 @@ ht_window *ht_app::create_window_clipboard()
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, clipboard);*/
 		ht_window *window = new ht_window();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
-		
+
 /*		Bounds k=b;
 		k.x=b.w-2;
 		k.y=0;
@@ -1793,7 +1793,7 @@ ht_window *ht_app::create_window_file_text(const char *filename, bool allow_dupl
 	}
 	String f(fullfilename);
 	free(fullfilename);
-	
+
 	ht_window *w;
 	if (!allow_duplicates && ((w = get_window_by_filename(f.contentChar())))) {
 		focus(w);
@@ -1830,7 +1830,7 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *
 	Bounds b=*c;
 
 	ht_layer_textfile *file = (ht_layer_textfile *)f;
-	
+
 	ht_file_window *window = new ht_file_window();
 	window->init(&b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
@@ -1871,7 +1871,7 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *
 	k.y=k.h-2;
 	k.w-=7;
 	k.h=1;
-	
+
 	UiStaticText *ind=new UiStaticText();
 	ind->init(&k, NULL, align_left, false, true);
 	ind->disable_buffering();
@@ -1944,7 +1944,7 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 		}
 		if (infoviewer->gotonode(ff, node)) {
 			insert_window(window, AWT_HELP, 0, false, NULL);
-			
+
 			window->setpalette(palkey_generic_cyan);
 			return window;
 		}
@@ -1987,7 +1987,7 @@ ht_window *ht_app::create_window_project()
 		project_window->insert(project_viewer);*/
 
 		insert_window(project_window, AWT_PROJECT, 0, false, NULL);
-		
+
 		project_window->setpalette(palkey_generic_cyan);
 		return project_window;
 	}
@@ -2002,19 +2002,19 @@ UiView *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
 	g->init(&b, VO_SELECTABLE, 0);
 
 	Bounds d=b;
-	
+
 	b.x=0;
 	b.y=0;
 	b.h=1;
 	ht_vfs_viewer_status *vst=new ht_vfs_viewer_status();
 	vst->init(&b);
-	   
+
 	d.x=0;
 	d.y=1;
 	d.h--;
 	ht_vfs_viewer *v=new ht_vfs_viewer();
 	v->init(&d, "vfs viewer", 0, 0, 0, vst);
-	   
+
 	g->insert(v);
 
 	g->insert(vst);
@@ -2374,7 +2374,7 @@ void ht_app::handlemsg(htmsg *msg)
 						return;
 					}
 					break;
-/*					
+/*
 				case K_Meta_R: {
 					const char *n = "ht.reg";
 					LocalFile f(n, IOAM_WRITE, FOM_CREATE);
@@ -2385,7 +2385,7 @@ void ht_app::handlemsg(htmsg *msg)
 					b.putObject(registry, NULL);
 
 					infobox("registry dumped to '%s'", n);
-					
+
 					clearmsg(msg);
 					return;
 				}
@@ -2475,9 +2475,9 @@ void ht_app::handlemsg(htmsg *msg)
 		case cmd_file_new: {
 			Bounds b;
 			get_stdbounds_file(&b);
-			
+
 			uint mode;
-			
+
 			if (file_new_dialog(&mode)) {
 				MemoryFile *mfile = new MemoryFile();
 				switch (mode) {
@@ -2675,9 +2675,9 @@ void ht_app::load(ObjectStream &f)
 		tmp->done();
 		delete tmp;
 	}
-	
+
 	load_history(f);
-	
+
 	htmsg m;
 	m.msg = msg_config_changed;
 	m.type = mt_broadcast;
@@ -2729,7 +2729,7 @@ UiView *ht_app::popup_view_list(const char *dialog_title)
 	so[0].compare_func = my_compare_func;
 /*	so[1].col = 1;
 	so[1].compare_func = my_compare_func;*/
-	
+
 //	listbox->sort(1, so);
 
 	dialog->insert(listbox);
@@ -2807,7 +2807,7 @@ ht_window *ht_app::popup_window_list(const char *dialog_title)
 	foreach(ht_app_window_entry, e, *windows, {
 		char l[16];	/* secure */
 		ht_snprintf(l, sizeof l, " %2d", e->number);
-		listbox->insert_str(e->number, l, e->window->desc);		
+		listbox->insert_str(e->number, l, e->window->desc);
 	});
 	listbox->update();
 	if (battlefield->current) listbox->gotoItemByPosition(battlefield->current->getnumber()-1);
@@ -2972,7 +2972,7 @@ void ht_app::tile(bool vertical)
 		} else {
 			int leftOver = numTileable % numCols;
 			int tileNum = numTileable - 1;
-			
+
 			foreachbwd(ht_app_window_entry, e, *windows, {
 				if (e->isfile) {
 					Bounds nb, ob;
@@ -3100,7 +3100,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 		String fn;
 		if (file->getFilename(fn).isEmpty()) {
 			modified = true;
-		} else {			
+		} else {
 			FileOfs start = 0;
 			file->cntl(FCNTL_MODS_IS_DIRTY, start, file->getSize(), &modified);
 		}
@@ -3260,7 +3260,7 @@ void done_app()
 	UNREGISTER(ATOM_HT_APP, ht_app);
 	UNREGISTER(ATOM_HT_PROJECT, ht_project);
 	UNREGISTER(ATOM_HT_PROJECT_ITEM, ht_project_item);
-	
+
 	out_of_memory_func = &out_of_memory;
 	free(app_memory_reserve);
 
@@ -3273,7 +3273,7 @@ void done_app()
 		app->done();
 		delete app;
 	}
-	
+
 	delete screen;
 }
 

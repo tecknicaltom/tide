@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	hthex.cc
  *
@@ -77,7 +77,7 @@ int ht_hex_viewer::get_pindicator_str(char *buf, int max_len)
 		return ht_snprintf(buf, max_len, " ? ");
 	}
 }
-	
+
 bool ht_hex_viewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
 	FileOfs s = file->getSize();
@@ -238,7 +238,7 @@ static bool readao(eval_scalar *result, ht_hex_viewer *h, int size, Endianess e,
 		case 4: v = sint64(sint32(v));
 		}
 	}
-	scalar_create_int_q(result, v);	
+	scalar_create_int_q(result, v);
 	return true;
 }
 

@@ -392,7 +392,7 @@ int AddressFlat64::stringSize() const
 /*
  *
  */
- 
+
 AddrXRef::AddrXRef(const Address *a, xref_enum_t Type)
 {
 	addr = a->clone();
@@ -490,7 +490,7 @@ void CommentList::appendPostComment(int special)
 const char *CommentList::getName(uint i)
 {
 	Object *d = get(findByIdx(i));
-//	return d ? ((d->getObjectID()==OBJID_UINT) ? comment_lookup(((UInt*)d)->value): 
+//	return d ? ((d->getObjectID()==OBJID_UINT) ? comment_lookup(((UInt*)d)->value):
 	return d ? ((String*)d)->contentChar() : NULL;
 }
 
@@ -544,10 +544,10 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 
 	// xrefs
 	loc->xrefs = GETX_OBJECT(st, "xrefs");
-	
+
 	// comments
 	loc->comments = GETX_OBJECT(st, "comments");
-	
+
 	analyser_get_addrtype(st, &loc->type);
 
 	// must be resolved later (thisfunc is of type Location not Address)
@@ -574,7 +574,7 @@ static void loadsymbols(Analyser *analy, ObjectStream &st, Symbol *&symbol, int 
 
 	(symbol->location = analy->newLocation(a))->label = symbol;
 	delete a;
-	
+
 	symbol->name = st.getString("name");
 
 	symbol->type = (labeltype)GETX_INT(st, 1, "type");
@@ -635,7 +635,7 @@ void Analyser::load(ObjectStream &st)
 	loadsymbols(this, st, symbols, 0, symbol_count-1);
 
 	GET_OBJECT(st, analy_disasm);
-	GET_OBJECT(st, disasm);     
+	GET_OBJECT(st, disasm);
 	if (analy_disasm) {
 		analy_disasm->analy = this;
 		analy_disasm->disasm = disasm;
@@ -657,7 +657,7 @@ void Analyser::load(ObjectStream &st)
 	} else {
 		cur_func = NULL;
 	}
-	
+
 	dirty = false;
 }
 
@@ -808,7 +808,7 @@ bool Analyser::addXRef(const Address *from, const Address *to, xref_enum_t actio
 		a->xrefs = x;
 	}
 	x->insert(new AddrXRef(to, action));
-	
+
 	DPRINTF("xref %y->%y\n", from, to);
 	return true;
 }
@@ -855,7 +855,7 @@ bool Analyser::assignSymbol(Address *Addr, const char *label, labeltype type, Lo
 				break;
 		}
 	}
-	
+
 	if (a->label) {
 		// overwrite
 		if (a->label != l) {
@@ -893,7 +893,7 @@ void Analyser::assignXRef(const Address *from, const Address *to, xref_enum_t ac
 		a->xrefs = x;
 	}
 	x->insert(new AddrXRef(to, action));
-	
+
 	DPRINTF("xref %y->%y\n", from, to);
 }
 
@@ -927,7 +927,7 @@ bool	Analyser::continueAnalysis()
 
 	if (!active) return	false;
 	do {
-	
+
 		int diff;
 //		char tbuf[100];
 //		char tbuf2[100];
@@ -940,14 +940,14 @@ bool	Analyser::continueAnalysis()
 			if (!gotoAddress(addr, invalid_addr)) {
 				finish();
 				return false;
-			}               
+			}
 		}
 
 		int bz = bufPtr(addr, buf, max_opcode_length);
 
 		instr = disasm->decode(buf, bz, mapAddr(addr));
 		instr = disasm->duplicateInsn(instr);
-		
+
 		ops_parsed++;
 		num_ops_parsed++;
 
@@ -994,7 +994,7 @@ void Analyser::continueAnalysisAt(const Address *Addr)
 		DPRINTF("continueing analysis at %y\n", Addr);
 		if (active || disasm) {
 			data->setCodeAddressType(Addr, dst_function);
-			pushAddress(Addr, Addr);               
+			pushAddress(Addr, Addr);
 		}
 		if (!active) {
 			if (disasm) {
@@ -1125,7 +1125,7 @@ bool Analyser::deleteXRef(const Address *from, const Address *to)
 	if (!x) return false;
 
 	DPRINTF("deleted xref %y->%y\n", from, to);
-	
+
 	AddrXRef tmp(to);
 	return x->delObj(&tmp);
 }
@@ -1198,7 +1198,7 @@ void	Analyser::doBranch(branch_enum_t branch, OPCODE *opcode, int len)
 				int bz = bufPtr(branch_addr, buf, sizeof(buf));
 				OPCODE *instr = disasm->decode(buf, MIN(bz, max_opcode_length), mapAddr(branch_addr));
 				branch_enum_t bt = analy_disasm->isBranch(instr);
-				
+
 				if (bt == br_return) {
 					lprfx = LPRFX_STUB;
 				} else if (bt == br_jump) {
@@ -1598,7 +1598,7 @@ CommentList *Analyser::getComments(const Address *Addr)
 
 static char *analy_addr_sym_func2(CPU_ADDR Addr, int *symstrlen, void *analy)
 {
-	Address *a = ((Analyser*)analy)->createAddress();     
+	Address *a = ((Analyser*)analy)->createAddress();
 	a->getFromCPUAddress(&Addr);
 	Location *loc = ((Analyser*)analy)->getLocationByAddress(a);
 	delete a;
@@ -1750,7 +1750,7 @@ bool	Analyser::gotoAddress(Address *aAddr, Address *func)
 {
 	DPRINTF("goto(%y, %y)\n", aAddr, func);
 	int diff;
-	
+
 	if (first_explored->difference(diff, last_explored) && diff < 0) {
 		DPRINTF("explored->add(%y - %y)\n", first_explored, last_explored);
 		explored->add(first_explored, last_explored);
@@ -1760,7 +1760,7 @@ bool	Analyser::gotoAddress(Address *aAddr, Address *func)
 	delete last_explored;
 	delete next_explored;
 	func = func->clone();
-	
+
 	if (!validCodeAddress(aAddr) || explored->contains(aAddr)) {
 		DPRINTF("Address: %y Valid: %d Explored: %d\n", addr, validCodeAddress(addr), explored->contains(addr));
 		do {
@@ -1775,7 +1775,7 @@ bool	Analyser::gotoAddress(Address *aAddr, Address *func)
 			}
 
 			DPRINTF("pop %y   (Valid: %d  Explored: %d)\n", addr, validCodeAddress(addr), explored->contains(addr));
-		} while ((explored->contains(addr)) || (!validCodeAddress(addr)));          
+		} while ((explored->contains(addr)) || (!validCodeAddress(addr)));
 	} else {
 		if (addr != aAddr) {
 			delete addr;
@@ -1997,9 +1997,9 @@ static void saveaddrs(ObjectStream &st, Location *addr)
 			PUTX_OBJECT(st, addr->addr, "addr");
 			PUTX_OBJECT(st, addr->xrefs, "xrefs");
 			PUTX_OBJECT(st, addr->comments, "comments");
-			
+
 			analyser_put_addrtype(st, &addr->type);
-			
+
 			if (addr->thisfunc) {
 				PUTX_OBJECT(st, addr->thisfunc->addr, "func");
 			} else {
@@ -2039,7 +2039,7 @@ static void savelabels(ObjectStream &st, Symbol *label)
 void Analyser::store(ObjectStream &st) const
 {
 	PUT_OBJECT(st, addr);
-	
+
 	PUT_OBJECT(st, addr_queue);
 	PUT_INT32D(st, ops_parsed);
 	PUT_BOOL(st, active);
@@ -2067,13 +2067,13 @@ void Analyser::store(ObjectStream &st) const
 	PUT_INT32D(st, symbol_threshold);
 
 	PUT_INT32D(st, max_opcode_length);
-	
+
 	if (cur_func) {
 		PUTX_OBJECT(st, cur_func->addr, "cur_func");
 	} else {
 		PUTX_OBJECT(st, NULL, "cur_func");
 	}
-	
+
 	dirty = false;
 }
 

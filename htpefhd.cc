@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpefhd.cc
  *
@@ -146,7 +146,7 @@ static UiView *htpefheader_init(Bounds *b, File *file, ht_format_group *group)
 	m->add_mask(info);
 	m->add_staticmask_ptable(pef_header, pef_shared->header_ofs, true);
 	v->insertsub(m);
-	
+
 	for (int i=0; i < pef_shared->contHeader.sectionCount; i++) {
 		m = new ht_mask_sub();
 		m->init(file, 1);
@@ -171,7 +171,7 @@ static UiView *htpefheader_init(Bounds *b, File *file, ht_format_group *group)
 //		pef_shared->loader_info_header_ofs + sizeof pef_shared->loader_info_header
 //			+ pef_shared->loader_info_header.importedLibraryCount*sizeof(PEF_ImportedLibrary)
 	}
-	
+
 	return v;
 }
 

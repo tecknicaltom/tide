@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	pestruct.cc
  *
@@ -149,7 +149,7 @@ byte PE_RESOURCE_DATA_ENTRY_struct[] = {
 	STRUCT_ENDIAN_32 | STRUCT_ENDIAN_HOST,
 	STRUCT_ENDIAN_32 | STRUCT_ENDIAN_HOST,
 	0
-};	
+};
 
 byte PE_IL_DIRECTORY_struct[] = {
 	STRUCT_ENDIAN_32 | STRUCT_ENDIAN_HOST,

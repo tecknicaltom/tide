@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htleent.cc
  *
@@ -82,7 +82,7 @@ static UiView *htleentrypoints_init(Bounds *b, File *file, ht_format_group *grou
 	registerAtom(ATOM_LE_ENTRY_FLAGS, le_entry_flags);
 	registerAtom(ATOM_LE_ENTRY_BUNDLE_FLAGS, le_entry_bundle_flags);
 	char info[128];
-	
+
 	ht_snprintf(info, sizeof info, "* LE entry header at offset 0x%08qx", h+le_shared->hdr.enttab);
 
 	/* FIXME: false */
@@ -122,7 +122,7 @@ static UiView *htleentrypoints_init(Bounds *b, File *file, ht_format_group *grou
 			v->insertsub(cs);
 		}
 	}
-	
+
 	return v;
 }
 

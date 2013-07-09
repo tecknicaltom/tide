@@ -143,7 +143,7 @@ static uint32 extract_bo(uint32 insn, bool *invalid)
 /* The BO field in a B form instruction when the + or - modifier is
    used.  This is like the BO field, but it must be even.  When
    extracting it, we force it to be even.  */
-   
+
 static uint32 extract_boe(uint32 insn, bool *invalid)
 {
 	uint32 value;
@@ -2963,8 +2963,8 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 { "dctfix",  XRC(59,290,0), X_MASK,	POWER6,		{ FRT, FRB } },
 { "dctfix.", XRC(59,290,1), X_MASK,	POWER6,		{ FRT, FRB } },
 
-{ "ddedpd",  XRC(59,322,0), X_MASK,	POWER6,		{ SP, FRT, FRB } }, 
-{ "ddedpd.", XRC(59,322,1), X_MASK,	POWER6,		{ SP, FRT, FRB } }, 
+{ "ddedpd",  XRC(59,322,0), X_MASK,	POWER6,		{ SP, FRT, FRB } },
+{ "ddedpd.", XRC(59,322,1), X_MASK,	POWER6,		{ SP, FRT, FRB } },
 
 { "dxex",    XRC(59,354,0), X_MASK,	POWER6,		{ FRT, FRB } },
 { "dxex.",   XRC(59,354,1), X_MASK,	POWER6,		{ FRT, FRB } },

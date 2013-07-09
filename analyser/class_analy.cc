@@ -62,7 +62,7 @@ void	ClassAnalyser::init(ht_class_shared_data *Class_shared, File *File)
 void ClassAnalyser::beginAnalysis()
 {
 	char buffer[1024];
-	
+
 	String b;
 	*java_demangle_flags(buffer, class_shared->flags) = 0;
 	b.assignFormat("; %s%s %s", buffer, (class_shared->flags & jACC_INTERFACE)?"interface":"class", class_shared->classinfo.thisclass);

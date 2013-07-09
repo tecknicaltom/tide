@@ -306,10 +306,10 @@ void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_o
 		const char *atypes[] = {"boolean", "char", "float", "double", "byte", "short", "int", "long"};
 		strcpy(opstr, cs_comment); opstr += strlen(cs_comment);
 		if (op->imm >= 4 && op->imm <= 11) {
-			*(opstr++) = '<'; 
+			*(opstr++) = '<';
 			opstr += ht_strlcpy(opstr, atypes[op->imm - 4], 8);
-			*(opstr++) = '>'; 
-			*(opstr++) = 0; 
+			*(opstr++) = '>';
+			*(opstr++) = 0;
 		} else {
 			strcpy(opstr, "<?>");
 		}
@@ -322,7 +322,7 @@ void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_o
 }
 
 void javadis::str_format(char **str, const char **format, const char *p, const char *n, char *op[3], int oplen[3], char stopchar, int print)
-{	
+{
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_symbol = get_cs(e_cs_symbol);
 

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htleobj.cc
  *
@@ -91,7 +91,7 @@ static UiView *htleobjects_init(Bounds *b, File *file, ht_format_group *group)
 
 		char n[5];
 		m->add_staticmask_ptable(leobj, h+le_shared->hdr.objtab+i*24, le_bigendian);
-		
+
 		memcpy(&n, le_shared->objmap.header[i].name, 4);
 		n[4]=0;
 

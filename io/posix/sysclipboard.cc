@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	clipboard.cc - POSIX-specific (OS-)clipboard functions
  *

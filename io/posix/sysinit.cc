@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	sysinit.cc - POSIX-specific initialization
  *

@@ -307,7 +307,7 @@ void x86dis::decode_vex_insn(x86opc_vex_insn *xinsn)
 		while (xinsn->name) {
 			if (xinsn->vex == vex) {
 				insn.name = xinsn->name;
-				
+
 				for (int i = 0; i < 5; i++) {
 					x86opc_insn_op *op = &x86_op_type[xinsn->op[i]];
 					switch (op->type) {
@@ -316,13 +316,13 @@ void x86dis::decode_vex_insn(x86opc_vex_insn *xinsn)
 					case TYPE_W:
 					case TYPE_X:
 						/* get whole modrm/sib/disp stuff first
-						 * (otherwise a TYPE_VI immediate might 
+						 * (otherwise a TYPE_VI immediate might
 						 * get fetched fetched before the modrm stuff)
 						 */
 						getdisp();
 					}
 				}
-				
+
 				for (int i = 0; i < 5; i++) {
 					decode_op(&insn.op[i], &x86_op_type[xinsn->op[i]]);
 				}
@@ -438,7 +438,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 				if (addrsize != X86_ADDRSIZE64) {
 					insn.rexprefix = 0;
 				}
-				
+
 				insn.opcode = getbyte();
 				decode_vex_insn(x86_vex_insns[insn.opcode]);
 				break;
@@ -487,7 +487,7 @@ void x86dis::decode_insn(x86opc_insn *xinsn)
 		}
 	} else {
 		checkInfo(xinsn);
-		
+
 		insn.name = xinsn->name;
 		for (int i = 0; i < 4; i++) {
 			decode_op(&insn.op[i], &x86_op_type[xinsn->op[i]]);
@@ -819,7 +819,7 @@ void x86dis::decode_op(x86_insn_op *op, x86opc_insn_op *xop)
 		op->size = 16;
 		op->reg = drexdest(getdrex());
 		break;
-	case TYPE_VS: 
+	case TYPE_VS:
 		if (xop->info && oc0(getdrex())) {
 			invalidate();
 		}
@@ -1175,7 +1175,7 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
 	const char *cs_symbol = get_cs(e_cs_symbol);
-	
+
 	*opstrlen=0;
 	switch (op->type) {
 	case X86_OPTYPE_IMM: {
@@ -1237,8 +1237,8 @@ void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *
 		break;
 	case X86_OPTYPE_STX:
 		if (op->stx) {
-			sprintf(opstr, "st%s(%s%d%s)%s", 
-				cs_symbol, cs_number, op->stx, 
+			sprintf(opstr, "st%s(%s%d%s)%s",
+				cs_symbol, cs_number, op->stx,
 				cs_symbol, cs_default);
 		} else {
 			strcpy(opstr, "st");
@@ -1590,7 +1590,7 @@ const char *x86dis::strf(const dis_insn *disasm_insn, int opt, const char *forma
 		str_op(op[i], &oplen[i], insn, &insn->op[i], explicit_params);
 	}
 	char *s=insnstr;
-	
+
 	if (iname[0] == '~') iname++;
 	char n[32];
 	switch (iname[0]) {
@@ -1600,7 +1600,7 @@ const char *x86dis::strf(const dis_insn *disasm_insn, int opt, const char *forma
 	case '?':
 	case '&':
 		switch (insn->eopsize) {
-		case X86_OPSIZE16: 
+		case X86_OPSIZE16:
 			pickname(n, iname, 0);
 			break;
 		case X86_OPSIZE32:
@@ -1614,7 +1614,7 @@ const char *x86dis::strf(const dis_insn *disasm_insn, int opt, const char *forma
 		break;
 	case '*':
 		switch (insn->eaddrsize) {
-		case X86_ADDRSIZE16: 
+		case X86_ADDRSIZE16:
 			pickname(n, iname, 0);
 			break;
 		case X86_ADDRSIZE32:
@@ -1663,7 +1663,7 @@ void x86_64dis::prepInsns()
 	if (!x86_64_insns) {
 		x86_64_insns = ht_malloc(sizeof *x86_64_insns);
 		memcpy(x86_64_insns, x86_32_insns, sizeof x86_32_insns);
-	
+
 		int i = 0;
 		while (x86_64_insn_patches[i].opc != -1) {
 			(*x86_64_insns)[x86_64_insn_patches[i].opc] = x86_64_insn_patches[i].insn;
@@ -1762,7 +1762,7 @@ void x86_64dis::prefixes()
 			continue;
 		case 0x65:
 			insn.segprefix = X86_PREFIX_GS;
-			continue;                	
+			continue;
 		case 0x66:
 			insn.opsizeprefix = X86_PREFIX_OPSIZE;
 			insn.eopsize = X86_OPSIZE16;

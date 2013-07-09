@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	elfstruc.cc
  *
@@ -82,7 +82,7 @@ byte ELF_SECTION_HEADER64_struct[]= {
 	STRUCT_ENDIAN_64 | STRUCT_ENDIAN_HOST,
 	0
 };
- 
+
 byte ELF_PROGRAM_HEADER32_struct[]= {
 	STRUCT_ENDIAN_32 | STRUCT_ENDIAN_HOST,
 	STRUCT_ENDIAN_32 | STRUCT_ENDIAN_HOST,

@@ -452,7 +452,7 @@ static UiView *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
     		xbe_shared->imports.funcs->insert(func);
 		function_count++;
 	}
-	
+
 
 	char iline[256];
 	ht_snprintf(iline, sizeof iline, "* XBE kernel thunk table at offset %08x (%d functions)", xbe_shared->header.kernel_image_thunk_address, function_count);

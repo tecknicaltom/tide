@@ -186,7 +186,7 @@ int VfsListbox::changeURL(const char *url)
 		}
 		p--;
 	}
-	
+
 	/* everything ok, set current to this */
 	ht_strlcpy(cproto, newVfs->getProtoName(), sizeof cproto);
 	ht_strlcpy(cdir, path, sizeof cdir);
@@ -202,7 +202,7 @@ int VfsListbox::changeURL(const char *url)
 		so[0].compare_func = vfslistbox_fncmp;
 		sort(1, so);
 	} /*else update();*/
-	
+
 	gotoItemByPosition(0);
 	/* code to position cursor when doing "cd .." (part II) */
 	if (cdpp) {
@@ -539,7 +539,7 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 				}
 				tm c = *pc;
 				char *line = buf;
-									   
+
 				const char *months[12] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
 				if ((reltime) && ((uint)ct-q<=60*60*24*28)) {
 					if ((uint)ct-q<=60*60*24) {
@@ -575,19 +575,19 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 				if (stat.caps & pstat_mode_type) {
 					*(line++)=HT_S_ISDIR(stat.mode) ? 'd' : '-';
 				}
-					
+
 				if (stat.caps & pstat_mode_oth) {
 					*(line++)=(stat.mode & HT_S_IROTH) ? 'r' : '-';
 					*(line++)=(stat.mode & HT_S_IWOTH) ? 'w' : '-';
 					*(line++)=(stat.mode & HT_S_IXOTH) ? 'x' : '-';
 				}
-					
+
 				if (stat.caps & pstat_mode_grp) {
 					*(line++)=(stat.mode & HT_S_IRGRP) ? 'r' : '-';
 					*(line++)=(stat.mode & HT_S_IWGRP) ? 'w' : '-';
 					*(line++)=(stat.mode & HT_S_IXGRP) ? 'x' : '-';
 				}
-					
+
 				if (stat.caps & pstat_mode_usr) {
 					*(line++)=(stat.mode & HT_S_IRUSR) ? 'r' : '-';
 					*(line++)=(stat.mode & HT_S_IWUSR) ? 'w' : '-';

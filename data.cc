@@ -356,7 +356,7 @@ void Array::load(ObjectStream &s)
 			elems[i] = obj;
 		}
 	} else {
-		hom_objid = OBJID_TEMP;	
+		hom_objid = OBJID_TEMP;
 	}
 }
 
@@ -412,7 +412,7 @@ void Array::checkShrink()
 }
 
 void Array::freeObj(Object *obj)
-{              	
+{
 	if (own_objects && obj) {
 		obj->done();
 		delete obj;
@@ -849,7 +849,7 @@ void SLinkedList::insertAt(ObjHandle h, Object *obj)
 	} else {
 		insert(obj);
 		return;
-	}		
+	}
 	SLinkedListNode *m = allocNode();
 	m->obj = obj;
 	if (n) {
@@ -2778,8 +2778,8 @@ bool init_data()
 	REGISTER(OBJID_STRING, String);
 	REGISTER(OBJID_ISTRING, IString);
 	return true;
-} 
- 
+}
+
 void done_data()
 {
 	unregisterAtom(OBJID_AUTO_COMPARE);

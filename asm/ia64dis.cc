@@ -63,7 +63,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 		slot->next = 1;
 	}
 	role >>= 4;
-	
+
 	uint32 major_opcode = (slot->data >> 37) & 0x0f;
 	IA64DecisionTreeEntry dtree_entry = IA64DecisionTree[major_opcode * IA64_INST_ROLE_COUNT + role];
 
@@ -84,7 +84,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 		dtree_entry = IA64DecisionTree[next];
 	}
 	uint16 inst_id = dtree_entry.next_node;
-	
+
 	if (inst_id >= IA64_OPCODE_INST_LAST || inst_id == IA64_OPCODE_ILLOP) {
 		// FIXME: ..
 		slot->valid = false;
@@ -218,7 +218,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 				slot->op[0].imm = ((slot->data >> 6) & ((1<<20)-1))
 							  |(((slot->data >> 36) & (1)) << 20);
 				break;
-			case IA64_FORMAT_F2:               
+			case IA64_FORMAT_F2:
 				slot->op[0].type = IA64_OPERAND_FREG;
 				slot->op[0].reg = ((slot->data >> 6) & (0x7f));
 				slot->op[2].type = IA64_OPERAND_FREG;
@@ -368,7 +368,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 				slot->op[0].type = IA64_OPERAND_REG_FILE;
 				slot->op[0].regfile.db = slot->opcode->op1.type - IA64_OPTYPE_PMC;
 				slot->op[0].regfile.idx = ((slot->data >> 20) & (0x7f));
-				
+
 				slot->op[2].type = IA64_OPERAND_REG;
 				slot->op[2].reg = ((slot->data >> 13) & (0x7f));
 				break;
@@ -395,7 +395,7 @@ void IA64Disassembler::decodeSlot(int slot_nb)
 				break;
 		}
 	}
-	
+
 }
 
 dis_insn *IA64Disassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
@@ -418,7 +418,7 @@ dis_insn *IA64Disassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 		if (insn.tmplt->slot[0] == IA64_SLOT_INVALID) {
 			insn.valid = false;
 		} else {
-			insn.slot[0].data = 
+			insn.slot[0].data =
 				  (uint32(code[0]) >> 5)
 				| (uint32(code[1]) << 3)
 				| (uint32(code[2]) << 11)
@@ -428,7 +428,7 @@ dis_insn *IA64Disassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 				  ((uint64(code[4] >> 5)
 				| (uint64(code[5] & 0x3f) << 3)) << 32);  // +9 = 41 bits
 
-			insn.slot[1].data = 
+			insn.slot[1].data =
 				  (uint32(code[5]) >> 6)
 				| (uint32(code[6]) << 2)
 				| (uint32(code[7]) << 10)
@@ -438,7 +438,7 @@ dis_insn *IA64Disassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 				  ((uint64(code[9] >> 6)
 				| (uint64(code[10] & 0x7f) << 2)) << 32);    // +9 = 41 bits
 
-			insn.slot[2].data = 
+			insn.slot[2].data =
 				  (uint32(code[10]) >> 7)
 				| (uint32(code[11]) << 1)
 				| (uint32(code[12]) << 9)
@@ -533,13 +533,13 @@ const char *IA64Disassembler::strf(const dis_insn *disasm_insn, int style, const
 					break;
 				case IA64_OPERAND_REG:
 					is += ht_snprintf(is, 256, "%sr%d", cs_default, slot->op[i].reg);
-					break;                              
+					break;
 				case IA64_OPERAND_BREG:
 					is += ht_snprintf(is, 256, "%sbr%d", cs_default, slot->op[i].reg);
-					break;                              
+					break;
 				case IA64_OPERAND_FREG:
 					is += ht_snprintf(is, 256, "%sf%d", cs_default, slot->op[i].reg);
-					break;                              
+					break;
 				case IA64_OPERAND_PREG:
 					is += ht_snprintf(is, 256, "%sp%d", cs_default, slot->op[i].reg);
 					break;
@@ -560,10 +560,10 @@ const char *IA64Disassembler::strf(const dis_insn *disasm_insn, int style, const
 					break;
 				case IA64_OPERAND_MEM_REG:
 					is += ht_snprintf(is, 256, "%s[%sr%d%s]", cs_symbol, cs_default, slot->op[i].reg, cs_symbol);
-					break;                              
+					break;
 				case IA64_OPERAND_IMM:
 					is += ht_snprintf(is, 256, "%s%qx", cs_number, slot->op[i].imm);
-					break;                              
+					break;
 				case IA64_OPERAND_ADDRESS: {
 					CPU_ADDR caddr;
 					caddr.flat64.addr = slot->op[i].ofs;
@@ -588,7 +588,7 @@ const char *IA64Disassembler::strf(const dis_insn *disasm_insn, int style, const
 		} else {
 			is += ht_snprintf(is, 256, "%s%d       %-20s", cs_comment, dis_insn->selected, "invalid");
 		}
-		
+
 		char tmplt_str[100];
 		tmplt_str[0] = 0;
 		char *t = tmplt_str;
@@ -625,9 +625,9 @@ const char *IA64Disassembler::strf(const dis_insn *disasm_insn, int style, const
 			if (i==7) is += sprintf(is, "-");
 		}*/
 	}
-	
+
 	disable_highlighting();
-	return insnstr;     
+	return insnstr;
 }
 
 ObjectID IA64Disassembler::getObjectID() const

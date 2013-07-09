@@ -211,7 +211,7 @@ bool load_pal(const char *pal_class, const char *pal_flavour, palette *p)
 /*
  *	CLASS palette_entry
  */
- 
+
 palette_entry::palette_entry(uint _idx, vcp _color)
 {
 	idx=_idx;
@@ -225,13 +225,13 @@ bool palette_entry::editdialog(const char *keyname)
 	b.h = 15;
 	b.x = (screen->w - b.w)/2;
 	b.y = (screen->h - b.h)/2;
-	
+
 	ht_dialog *d=new ht_dialog();
 	d->init(&b, "edit palette entry", FS_TITLE | FS_KILLER);
-	
+
 	UiColorBlock *fgc, *bgc;
 	UiLabel *l1, *l2;
-	
+
 	b.assign(2, 1, 16, 5);
 	fgc = new UiColorBlock();
 	fgc->init(&b, VCP_FOREGROUND(color), cf_transparent | cf_light);
@@ -241,12 +241,12 @@ bool palette_entry::editdialog(const char *keyname)
 	l1 = new UiLabel();
 	l1->init(&b, "~foreground", fgc);
 	d->insert(l1);
-	
+
 	b.assign(20, 1, 16, 5);
 	bgc = new UiColorBlock();
 	bgc->init(&b, VCP_BACKGROUND(color), cf_transparent | cf_light);
 	d->insert(bgc);
-	
+
 	b.assign(20, 0, 16, 1);
 	l2 = new UiLabel();
 	l2->init(&b, "~background", bgc);
@@ -260,7 +260,7 @@ bool palette_entry::editdialog(const char *keyname)
 		color = VCP(fgd.color, bgd.color);
 		r = true;
 	}
-	
+
 	d->done();
 	delete d;
 	return r;

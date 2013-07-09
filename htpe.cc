@@ -52,7 +52,7 @@ static UiView *htpe_init(Bounds *b, File *file, ht_format_group *format_group)
 	FileOfs h = get_newexe_header_ofs(file);
 	file->seek(h);
 	;
-	if (file->read(pemagic, 4) != 4 
+	if (file->read(pemagic, 4) != 4
 	 || pemagic[0] != PE_MAGIC0 || pemagic[1] != PE_MAGIC1
 	 || pemagic[2] != PE_MAGIC2 || pemagic[3] != PE_MAGIC3) return 0;
 
@@ -203,7 +203,7 @@ bool ht_pe::loc_enum_next(ht_format_loc *loc)
 			l=MAX(k, l);
 		}
 		loc->length=l;
-		
+
 		loc_enum=0;
 		return true;
 	}
@@ -320,7 +320,7 @@ static bool pe_ofs_is_valid(pe_section_headers *section_headers, FileOfs ofs)
 /*
  *
  */
- 
+
 bool pe_section_name_to_section(pe_section_headers *section_headers, const char *name, int *section)
 {
 	COFF_SECTION_HEADER *s = section_headers->sections;

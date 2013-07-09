@@ -51,7 +51,7 @@ state_mod::~state_mod()
 /*
  *	CLASS sym_int_reg
  */
- 
+
 sym_int_reg::sym_int_reg(uint r)
 {
 	regidx = r;
@@ -86,7 +86,6 @@ ObjectID sym_int_reg::getObjectID() const
 /*
  *	CLASS sym_int_mem
  */
- 
 
 sym_int_mem::sym_int_mem(sym_int_token *a, uint s, srt_endian e)
 {

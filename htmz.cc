@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htmz.cc
  *
@@ -37,7 +37,7 @@ static UiView *htmz_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte magic[2];
 	file->seek(0);
-	if (file->read(magic, 2) != 2 
+	if (file->read(magic, 2) != 2
 	 || magic[0] != IMAGE_MZ_MAGIC0 || magic[1] != IMAGE_MZ_MAGIC1)
 		return NULL;
 

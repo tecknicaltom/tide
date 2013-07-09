@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 #endif
 
 	params(argc, argv, false);
-	
+
 	if (!init()) {
 		int init_failed = htstate;
 		done();

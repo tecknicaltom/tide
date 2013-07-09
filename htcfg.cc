@@ -17,7 +17,7 @@
  *	along with this program; if not, write to the Free Software
  *	Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
- 
+
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,7 +39,7 @@
 
 /* NOTE: as of Version 2 ALL integers in HT config-files are
    stored in big-endian format... (non-intel) */
-   
+
 #define object_stream_bin			0
 #define object_stream_txt			1
 #define object_stream_bin_compressed		2
@@ -83,7 +83,7 @@ loadstore_result save_systemconfig(String &error_info)
 {
 	try {
 		LocalFile f((String)systemconfig_file, IOAM_WRITE, FOM_CREATE);
-	
+
 		/* write project config header */
 		config_header h;
 
@@ -103,7 +103,7 @@ loadstore_result save_systemconfig(String &error_info)
 
 		/* write object stream type */
 		std::auto_ptr<ObjectStream> d(create_object_stream(f, system_ostream_type));
-	   
+
 		switch (system_ostream_type) {
 		case object_stream_bin:
 			break;
@@ -135,7 +135,7 @@ bool load_systemconfig(loadstore_result *result, int *error_info)
 			*result = LS_ERROR_MAGIC;
 			return false;
 		}
-	
+
 
 		uint16 readver;
 		if (!hexw_ex(readver, (char*)h.version) || (readver != ht_systemconfig_fileversion)) {
@@ -185,7 +185,7 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 {
 	try {
 		LocalFile f((String)fileconfig_file, IOAM_WRITE, FOM_CREATE);
-	
+
 		/* write file config header */
 		config_header h;
 
@@ -194,7 +194,7 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 		char q[16];
 
 		int file_ostream_type = get_config_dword("misc/config format");
-	
+
 		sprintf(q, "%04x", version);
 		memcpy(h.version, q, sizeof h.version);
 
@@ -205,7 +205,7 @@ loadstore_result save_fileconfig(const char *fileconfig_file, const char *magic,
 
 		/* object stream type */
 		std::auto_ptr<ObjectStream> d(create_object_stream(f, file_ostream_type));
-	   
+
 		switch (file_ostream_type) {
 		case object_stream_bin:
 			break;
@@ -232,11 +232,11 @@ loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic,
 		/* read file config header */
 		config_header h;
 
-		if (f.read(&h, sizeof h) != sizeof h 
+		if (f.read(&h, sizeof h) != sizeof h
 		 || memcmp(h.magic, magic, sizeof h.magic) != 0) {
 			return LS_ERROR_MAGIC;
 		}
-	
+
 
 		uint16 readver;
 		if (!hexw_ex(readver, (char*)h.version) || readver != version) {
@@ -253,10 +253,10 @@ loadstore_result load_fileconfig(const char *fileconfig_file, const char *magic,
 
 		if (!d.get()) {
 			return LS_ERROR_FORMAT;
-		}		
+		}
 
 		load_func(*d.get(), context);
-		
+
 	} catch (const ObjectNotRegisteredException &e) {
 		e.reason(error_info);
 		if (object_stream_type==object_stream_txt && d.get()) {

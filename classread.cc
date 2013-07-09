@@ -328,8 +328,8 @@ ht_class_shared_data *class_read(File *htio)
 			for (int j=0; j < acount; j++) {
 				attrib_info *ai = m->attribs[j];
 				if (ai->tag == ATTRIB_Code) {
-					cm = new ClassMethod(m->name, m->desc, 
-						ai->code.start, ai->code.len, m->flags, 
+					cm = new ClassMethod(m->name, m->desc,
+						ai->code.start, ai->code.len, m->flags,
 						ai->code.exctbl_len, ai->code.exctbl);
 					shared->methods->insert(cm);
 					AddressFlat32 a1(ai->code.start);
@@ -455,7 +455,7 @@ static int java_demangle_generic(char *result, const char **type)
 			return result-old;
 		case '*':
 			(*type)++;
-			*result++ = '?'; 
+			*result++ = '?';
 			break;
 		case '+':
 		case '-':

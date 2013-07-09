@@ -220,7 +220,7 @@ void	ObjectStreamBin::corrupt()
 /*
  *	ObjectStreamText
  */
- 
+
 ObjectStreamText::ObjectStreamText(Stream *s, bool own_s)
  : ObjectStreamInter(s, own_s)
 {

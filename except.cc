@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	except.cc
  *
@@ -90,7 +90,7 @@ String &IOException::reason(String &result) const
  */
 EOFException::EOFException()
 	: IOException(0)
-{	
+{
 }
 
 String &EOFException::reason(String &result) const
@@ -114,7 +114,7 @@ String &NotImplementedException::reason(String &result) const
 {
 	result = "Function not implemented";
 	if (!location.isEmpty()) {
-		result += ": "; 
+		result += ": ";
 		result += location;
 	}
 	return result;

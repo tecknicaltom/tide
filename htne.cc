@@ -139,7 +139,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 			if (e.seg_index==0) {
 			} else if (e.seg_index==0xff) {
 				o+=sizeof (NE_ENTRYPOINT_MOVABLE);
-				
+
 				NE_ENTRYPOINT_MOVABLE me;
 				file->readx(&me, sizeof me);
 				createHostStruct(&me, NE_ENTRYPOINT_MOVABLE_struct, little_endian);
@@ -147,7 +147,7 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 				ep->forceSetByIdx(index, new ht_ne_entrypoint(index, me.seg, me.offset, 0));
 			} else {
 				o+=sizeof (NE_ENTRYPOINT_FIXED);
-				
+
 				NE_ENTRYPOINT_FIXED fe;
 				file->seek(o);
 				file->readx(&fe, sizeof fe);
@@ -207,14 +207,14 @@ void ht_ne::done()
 	if (ne_shared->segments.segments) {
 		free(ne_shared->segments.segments);
 	}
-	
+
 	if (ne_shared->modnames) {
 		for (uint i=0; i<ne_shared->modnames_count; i++) {
 			free(ne_shared->modnames[i]);
 		}
 		free(ne_shared->modnames);
 	}
-	
+
 	delete ne_shared->entrypoints;
 	delete ne_shared->imports;
 
@@ -234,7 +234,7 @@ bool ht_ne::loc_enum_next(ht_format_loc *loc)
 		loc->name="ne";
 		loc->start=sh->hdr_ofs;
 		loc->length=file->get_size()-loc->start;	/* FIXME: ENOTOK */
-		
+
 		loc_enum=false;
 		return true;
 	}
@@ -410,7 +410,7 @@ ht_ne_reloc_entry::ht_ne_reloc_entry(uint Mode, bool Add, uint16 Seg, uint16 Ofs
 
 ht_ne_reloc_file::ht_ne_reloc_file(File *s, bool os, ht_ne_shared_data *d)
 	: ht_reloc_file(s, os)
-	
+
 {
 	data = d;
 }

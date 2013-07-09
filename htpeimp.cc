@@ -81,7 +81,7 @@ static UiView *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 	FileOfs dofs;
 	uint dll_index;
 	char iline[256];
-	
+
 	/* get import directory offset */
 	/* 1. get import directory rva */
 	FileOfs iofs;
@@ -210,7 +210,7 @@ static UiView *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 						file->seek(function_desc_ofs);
 					} else {
 						if (thunk.function_desc_address >= file->getSize()) goto pe_read_error;
-						file->seek(thunk.function_desc_address); 
+						file->seek(thunk.function_desc_address);
 					}
 					file->readx(&hint, 2);
 					hint = createHostInt(&hint, 2, little_endian);
@@ -257,7 +257,7 @@ static UiView *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
 			free(thunk_table);
 		} else {
 			free(thunk_table64);
-		}			
+		}
 	}
 
 	ht_snprintf(iline, sizeof iline, "* PE import directory at offset %08qx (%d functions from %d libraries)", iofs, function_count, dll_count);

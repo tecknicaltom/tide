@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpeexp.cc
  *
@@ -66,7 +66,7 @@ static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	Bounds c;
 	UiStaticText *head;
 	ht_pe_export_viewer *v = NULL;
-	
+
 	file->getFilename(filename);
 
 	/* get export directory offset */
@@ -74,7 +74,7 @@ static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	FileOfs eofs;
 	uint32 erva=pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_EXPORT].address;
 	uint32 esize=pe_shared->pe32.header_nt.directory[PE_DIRECTORY_ENTRY_EXPORT].size;
-	
+
 	/* 2. transform it into an offset */
 	if (!pe_rva_to_ofs(&pe_shared->sections, erva, &eofs)) goto pe_read_error;
 	LOG("%y: PE: reading export directory at offset 0x%08qx, rva %08x, size %08x...", &filename, eofs, erva, esize);
@@ -86,7 +86,7 @@ static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 
 	efile = new ConstMemMapFile(esectionbuf, esize, eofs);
 	file = efile;
-	
+
 	/* read export directory header */
 	PE_EXPORT_DIRECTORY edir;
 	file->seek(eofs);
@@ -168,7 +168,7 @@ static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 			ht_pe_export_function *efd = new ht_pe_export_function(f, i+edir.ordinal_base);
 			pe_shared->exports.funcs->insert(efd);
 		}
-	}	
+	}
 // sdgfdg
 	c = *b;
 	c.x = 0;

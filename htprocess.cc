@@ -28,13 +28,13 @@ bool execute_process(process_func pp, Object *context)
 {
 	Bounds b;
 	get_std_progress_indicator_metrics(&b);
-	
+
 	ht_progress_indicator pi;
 	pi.init(&b, "ESC to cancel");
 
 	bool cancelled=false;
 	bool p=true;
-	
+
 	while (p) {
 		p = pp(context, pi.text);
 		if (keyb_keypressed()) {

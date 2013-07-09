@@ -76,9 +76,9 @@ uint mapToGraphical(char chr)
 uint mapCharToSystemCP(char chr, Codepage codepage)
 {
 	switch (codepage) {
-	case CP_WINDOWS: 
+	case CP_WINDOWS:
 	case CP_UNICODE: return chr;
-	case CP_DEVICE: 
+	case CP_DEVICE:
 		if (byte(chr) > 127)  {
 			char in[2] = {chr, 0};
 			WCHAR out[2];
@@ -330,7 +330,7 @@ void Win32SystemDisplay::show()
 			}
 		}
 	}
-	
+
 	COORD xy, xy2;
 
 	if (cursor_mode != CURSOR_OFF) {
@@ -431,7 +431,7 @@ uint Win32SystemDisplay::vcpToSystem(vcp vc)
 }
 
 static int sysdisplay_count = 0;
-	
+
 SystemDisplay *allocSystemDisplay(const char *title)
 {
 	if (sysdisplay_count) return NULL;

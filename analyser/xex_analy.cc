@@ -71,7 +71,7 @@ void	XEXAnalyser::done()
 void XEXAnalyser::beginAnalysis()
 {
 	char	buffer[1024];
-	
+
 	Address *entry = createAddress32(xex_shared->entrypoint);
 	pushAddress(entry, entry);
 
@@ -93,13 +93,13 @@ void XEXAnalyser::beginAnalysis()
 				addComment(faddr, 0, "");
 				assignSymbol(faddr, s, label_func);
 				delete faddr;
-				faddr = createAddress32(func->patch+12);				
+				faddr = createAddress32(func->patch+12);
 				Address *faddr2 = createAddress32(func->ia);
 				addXRef(faddr2, faddr, xrefijump);
 				delete faddr;
-				delete faddr2;				
+				delete faddr2;
 //				printf("xref 0x%08x -> 0x%08x\n", ia, imports[i].func[j].patch + 12);
-				
+
 			} else {
 				char s[200];
 				ord &= 0x7fff;
@@ -108,10 +108,10 @@ void XEXAnalyser::beginAnalysis()
 				addComment(faddr, 0, "");
 				assignSymbol(faddr, s, label_func);
 				data->setIntAddressType(faddr, dst_idword, 4);
-				delete faddr;				
+				delete faddr;
 //				printf("function_ptr 0x%08x name '%s'\n", imports[i].func[j].patch, s);
 			}
-			
+
 		}
 	}
 

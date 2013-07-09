@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	sysfile.cc - file system functions for Win32
  *
@@ -146,7 +146,7 @@ int sys_findfirst(pfind_t &pfind, const char *dirname)
 int sys_findnext(pfind_t &pfind)
 {
 	winfindstate *wfs = (winfindstate*)pfind.findstate;
-	
+
 	if (!FindNextFile(wfs->fhandle, &wfs->find_data)) {
 		return ENOENT;
 	}

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	hteval.cc
  *
@@ -52,7 +52,7 @@ static bool symbol_eval(eval_scalar *r, char *symbol)
 		} else {
 			set_eval_error("no previous result...");
 			return false;
-		}		
+		}
 	}
 	return real_symbol_handler ? real_symbol_handler(r, symbol) : false;
 }
@@ -248,10 +248,10 @@ static void do_eval(UiStrInputfield *s, UiStaticText *t, const char *b, eval_fun
 {
 	eval_scalar r;
 	String x;
-	
+
 	real_func_handler = func_handler;
 	real_symbol_handler = symbol_handler;
-	
+
 	if (eval(&r, b, func_eval, symbol_eval, context)) {
 		switch (r.type) {
 			case SCALAR_INT: {
@@ -328,7 +328,7 @@ static void do_eval(UiStrInputfield *s, UiStaticText *t, const char *b, eval_fun
 		if (have_last_result) scalar_destroy(&last_result);
 		scalar_clone(&last_result, &r);
 		have_last_result = true;
-		
+
 		scalar_destroy(&r);
 	} else {
 		const char *str="?";

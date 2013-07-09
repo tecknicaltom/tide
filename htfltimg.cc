@@ -72,7 +72,7 @@ static UiView *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
 		delete analy;
 		v->done();
 		delete v;
-		head->done();          
+		head->done();
 		delete head;
 		g->done();
 		delete g;
@@ -80,13 +80,13 @@ static UiView *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
 		delete low;
 		return NULL;
 	}
-	
+
 	delete high;
 	delete low;
 
 	v->sendmsg(msg_complete_init, 0);
 
-	Address *tmpaddr = p->createAddress32(flt_shared->header.entry);	
+	Address *tmpaddr = p->createAddress32(flt_shared->header.entry);
 	v->gotoAddress(tmpaddr, NULL);
 	delete tmpaddr;
 

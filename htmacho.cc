@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htmacho.cc
  *
@@ -78,7 +78,7 @@ void ht_macho::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group 
 	String fn;
 	file->getFilename(fn);
 	LOG("%y: Mach-O: found header at %08qx", &fn, header_ofs);
-	
+
 	ht_macho_shared_data *macho_shared = ht_malloc(sizeof(ht_macho_shared_data));
 
 	shared_data = macho_shared;
@@ -237,13 +237,13 @@ bool macho_addr_to_ofs(MACHO_SECTION_U *s, uint section_count, MACHOAddress addr
 	for (uint i=0; i < section_count; i++) {
 		if (macho_phys_and_mem_section(s)) {
 			if (s->_64) {
-				if (addr >= s->s64.vmaddr 
+				if (addr >= s->s64.vmaddr
 				 && addr < s->s64.vmaddr + s->s64.vmsize) {
 					*ofs = addr - s->s64.vmaddr + s->s64.fileoff;
 					return true;
 				}
 			} else {
-				if (addr >= s->s.vmaddr 
+				if (addr >= s->s.vmaddr
 				 && addr < s->s.vmaddr + s->s.vmsize) {
 					*ofs = addr - s->s.vmaddr + s->s.fileoff;
 					return true;

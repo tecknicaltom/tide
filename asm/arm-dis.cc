@@ -1147,7 +1147,7 @@ static void arm_decode_shift(long given, fprintf_ftype func, void *stream)
 		if ((given & 0x10) == 0) {
 			int amount = (given & 0xf80) >> 7;
 			int shift = (given & 0x60) >> 5;
-			
+
 			if (amount == 0) {
 				if (shift == 3) {
 					func(stream, ", rrx");
@@ -1158,7 +1158,7 @@ static void arm_decode_shift(long given, fprintf_ftype func, void *stream)
 			}
 
 			func(stream, ", %s #%d", arm_shift[shift], amount);
-		} else { 
+		} else {
 			func(stream, ", %s %s", arm_shift[(given & 0x60) >> 5], arm_regnames[(given & 0xf00) >> 8]);
 		}
 	}
@@ -1215,8 +1215,8 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 							int offset = given & 0xff;
 
 							if (offset) {
-								func(stream, ", #%s%d]%s", 
-									((given & 0x00800000) == 0 ? "-" : ""), 
+								func(stream, ", #%s%d]%s",
+									((given & 0x00800000) == 0 ? "-" : ""),
 									offset * 4,
 									((given & 0x00200000) != 0 ? "!" : ""));
 							} else {
@@ -1318,7 +1318,7 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 						while (*c >= '0' && *c <= '9') {
 							bitstart = (bitstart * 10) + *c++ - '0';
 						}
-						
+
 						switch (*c) {
 						case '-':
 							c++;
@@ -1343,7 +1343,7 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 
 								reg = given >> bitstart;
 								reg &= (2 << (bitend - bitstart)) - 1;
-								
+
 								func(stream, "%ld", reg);
 								break;
 							}
@@ -1399,7 +1399,7 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 						case 'z': {
 							int single = *c == 'y';
 							int regno;
-							
+
 							switch (bitstart) {
 							case 4: /* Sm pair */
 								func(stream, "{");
@@ -1441,7 +1441,7 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 
 							if (bitstart == 3) {
 								int count = given & 0xff;
-								
+
 								if (single == 0) count >>= 1;
 
 								if (--count) {
@@ -1523,7 +1523,7 @@ static bool print_insn_coprocessor(struct disassemble_info *info, long given,
 				} // if
 			} // for
 			return true;
-		} // if 
+		} // if
 	} // for
 	return false;
 }
@@ -1605,7 +1605,7 @@ static void print_insn_arm(bfd_vma pc, struct disassemble_info *info, long given
 		if (insn->value == FIRST_IWMMXT_INSN
 		  && info->mach != bfd_mach_arm_XScale
 		  && info->mach != bfd_mach_arm_iWMMXt) {
-		  
+
 			insn = insn + IWMMXT_INSN_COUNT;
 		}
 		if ((given & insn->mask) == insn->value
@@ -1615,7 +1615,7 @@ static void print_insn_arm(bfd_vma pc, struct disassemble_info *info, long given
 		    && ((given & 0xF0000000) != 0xF0000000
 		    || (insn->mask & 0xF0000000) == 0xF0000000
 		    || (insn->mask == 0 && insn->value == 0))) {
-		    
+
 			const char *c;
 
 			for (c = insn->assembler; *c; c++) {
@@ -1785,7 +1785,7 @@ static void print_insn_arm(bfd_vma pc, struct disassemble_info *info, long given
 						while (*c >= '0' && *c <= '9') {
 							bitstart = (bitstart * 10) + *c++ - '0';
 						}
-						
+
 						switch (*c) {
 						case '-':
 							c++;
@@ -1793,7 +1793,7 @@ static void print_insn_arm(bfd_vma pc, struct disassemble_info *info, long given
 							while (*c >= '0' && *c <= '9') {
 								bitend = (bitend * 10) + *c++ - '0';
 							}
-							
+
 							if (!bitend) abort();
 
 							switch (*c) {
@@ -1914,10 +1914,10 @@ static void print_insn_arm(bfd_vma pc, struct disassemble_info *info, long given
 				} else {
 					func(stream, "%c", *c);
 				} // if
-			} // for 
+			} // for
 			return;
-		} // if 
-	} // for 
+		} // if
+	} // for
 	abort();
 }
 
@@ -2686,9 +2686,9 @@ static int print_insn(bfd_vma pc, struct disassemble_info *info, bool little)
 		printer = print_insn_arm;
 		info->bytes_per_chunk = 4;
 		size = 4;
-		
+
 		status = info->read_memory_func(pc, (bfd_byte *)b, 4, info);
-		
+
 		if (little) {
 			given = (b[0]) | (b[1] << 8) | (b[2] << 16) | (b[3] << 24);
 		} else {
@@ -2721,7 +2721,7 @@ static int print_insn(bfd_vma pc, struct disassemble_info *info, bool little)
 				} else {
 					given = (b[1]) | (b[0] << 8) | (given << 16);
 				}
-				
+
 				printer = print_insn_thumb32;
 				size = 4;
 			}
@@ -2740,7 +2740,7 @@ static int print_insn(bfd_vma pc, struct disassemble_info *info, bool little)
 		   addresses, since the addend is not currently pc-relative.  */
 		   pc = 0;
 	}
-	
+
 	printer (pc, info, given);
 	return size;
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy_java.cc
  *
@@ -86,7 +86,7 @@ void AnalyJavaDisassembler::examineOpcode(OPCODE *opcode)
 				uint32 default_ofs = read4(analy, iofs, buf);
 				analy->data->setIntAddressType(&iofs, dst_idword, 4);
 				uint32 n = read4(analy, iofs, buf);
-			
+
 				for (uint32 i=0; i < n; i++) {
 					char buffer[100];
 					analy->data->setIntAddressType(&iofs, dst_idword, 4);
@@ -133,7 +133,7 @@ void AnalyJavaDisassembler::examineOpcode(OPCODE *opcode)
 				sint32 low = read4(analy, iofs, buf);
 				analy->data->setIntAddressType(&iofs, dst_idword, 4);
 				sint32 high = read4(analy, iofs, buf);
-			
+
 				for (sint32 i=low; i <= high; i++) {
 					char buffer[100];
 					analy->data->setIntAddressType(&iofs, dst_idword, 4);

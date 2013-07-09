@@ -55,7 +55,7 @@ void sys_get_driver_desc(char *buf)
 	sprintf(buf, "POSIX/NCurses/X11 (X server %sconnected)", Xdisplay ? "" : "NOT ");
 #else
 	sprintf(buf, "POSIX/NCurses");
-#endif	
+#endif
 }
 
 static int get_modifier(int key)

@@ -226,7 +226,7 @@ void x86asm::prepInsns()
 	if (!x86_32a_insns) {
 		x86_32a_insns = ht_malloc(sizeof *x86_32a_insns);
 		memcpy(x86_32a_insns, x86_32_insns, sizeof x86_32_insns);
-	
+
 		(*x86_32a_insns)[0xc4] = x86_les;
 		(*x86_32a_insns)[0xc5] = x86_lds;
 	}
@@ -276,7 +276,7 @@ static bool cmp_insn_normal(byte *p, int sizep, byte *q, int sizeq, int addrsize
 	d = dis->decode(q, sizeq, addr);
 	if (strcmp(s, dis->str(d, X86DIS_STYLE_EXPLICIT_MEMSIZE))) return false;
 	// different disassembly --> not the same
-		
+
 	// compare opcodes (w/o prefixes)
 	skip_prefixes(&p, sizep, addrsize);
 	skip_prefixes(&q, sizeq, addrsize);
@@ -380,7 +380,7 @@ asm_code *x86asm::encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_add
 {
 	Assembler::encode(asm_insn, options, cur_address);
 	x86asm_insn *insn = (x86asm_insn*)asm_insn;
-		
+
 	newcode();
 	namefound = false;
 	if (addrsize == X86_ADDRSIZE64) {
@@ -429,7 +429,7 @@ asm_code *x86asm::encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_add
 }
 
 bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, int additional_opcode, int prefix, int eopsize, int eaddrsize)
-{	
+{
 	rexprefix = 0;
 	disppos = 0;
 
@@ -446,7 +446,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	}
 
 	code.context = (void*)opsize_depend;
-	
+
 	/* test rex thingies */
 	for (int i=0; i < 4; i++) {
 		if (insn->op[i].need_rex) {
@@ -500,7 +500,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 		}
 		if (eaddrsize != addrsize) emitbyte(0x67);
 	}
-	
+
 	if ((rexprefix & 0xc0) == 0xc0) {
 		// can't combine insns which simultaneously need REX and forbid REX
 		clearcode();
@@ -540,7 +540,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	 && prefix != X86ASM_PREFIX_0F25) {
 		emitbyte(0xff); // dummy value
 	}
-	
+
 	/* write opcodeprefixes and opcode */
 	switch (prefix) {
 	case X86ASM_PREFIX_0F0F:
@@ -602,7 +602,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	/* write the rest */
 	if (modrmv != -1) emitbyte(modrmv);
 	if (sibv != -1) emitbyte(sibv);
-	
+
 	if (drexdest != -1) {
 		byte oc0 = 0;
 		if (drexoc0 != -1) {
@@ -659,7 +659,7 @@ bool x86asm::encode_insn(x86asm_insn *insn, x86opc_insn *opcode, int opcodeb, in
 	if (rexprefix & 0x40) {
 		code.data[rexpos] = rexprefix;
 	}
-	
+
 	return true;
 }
 
@@ -678,13 +678,13 @@ bool x86asm::encode_vex_insn(x86asm_insn *insn, x86opc_vex_insn *opcode, int opc
 	}
 
 	switch (insn->lockprefix) {
-	case X86_PREFIX_LOCK: 
+	case X86_PREFIX_LOCK:
 		clearcode();
 		return false;
 	}
 	switch (insn->repprefix) {
 	case X86_PREFIX_REPNZ:
-	case X86_PREFIX_REPZ: 
+	case X86_PREFIX_REPZ:
 		clearcode();
 		return false;
 	}
@@ -720,7 +720,7 @@ bool x86asm::encode_vex_insn(x86asm_insn *insn, x86opc_vex_insn *opcode, int opc
 		emitbyte(0xc5);
 		byte vex = (~rexprefix & 4) << 5
 			| ((~vexvvvv & 0xf) << 3)
-			| (opcode->vex & _256) >> 4 
+			| (opcode->vex & _256) >> 4
 			| (opcode->vex & 0x3);
 		emitbyte(vex);
 	} else {
@@ -732,8 +732,8 @@ bool x86asm::encode_vex_insn(x86asm_insn *insn, x86opc_vex_insn *opcode, int opc
 		}
 		byte vex = (~rexprefix & 7) << 5 | ((opcode->vex & 0x3c) >> 2);
 		emitbyte(vex);
-		vex = (opcode->vex & W1) | ((~vexvvvv & 0xf) << 3) 
-			| (opcode->vex & _256) >> 4 
+		vex = (opcode->vex & W1) | ((~vexvvvv & 0xf) << 3)
+			| (opcode->vex & _256) >> 4
 			| (opcode->vex & 0x3);
 		emitbyte(vex);
 	}
@@ -918,7 +918,7 @@ bool x86asm::encode_op(x86_insn_op *op, x86opc_insn_op *xop, int *esize, int eop
 	case TYPE_G:
 		/* reg of ModR/M picks general register */
 		emitmodrm_reg(op->reg);
-		if (op->reg > 7) rexprefix |= rexr;		
+		if (op->reg > 7) rexprefix |= rexr;
 		break;
 	case TYPE_Is: {
 		/* signed immediate */
@@ -1415,12 +1415,12 @@ bool x86asm::match_size(x86_insn_op *op, x86opc_insn_op *xop, int opsize)
 	if (op->type == X86_OPTYPE_EMPTY && xop->type == TYPE_0) return true;
 	if (!op->size && xop->type != TYPE_0) return true;
 	const char *hsz = NULL;
-	
+
 	byte xopsize = xop->size;
 	if (op->type == X86_OPTYPE_REG && xop->type == TYPE_MR) {
 		xopsize = xop->extra;
 	}
-	
+
 	if ((op->type == X86_OPTYPE_MEM && op->mem.floatptr)
 	 ||  op->type == X86_OPTYPE_STX) {
 		return xop->size == flsz2hsz(op->size);
@@ -1511,7 +1511,7 @@ int x86asm::match_opcode_name(const char *input_name, const char *opcodelist_nam
 		}
 	}
 	return MATCHOPNAME_NOMATCH;
-}	
+}
 
 static void swap(char &a, char &b)
 {
@@ -1528,14 +1528,14 @@ void x86asm::match_opcode(x86opc_insn *opcode, x86asm_insn *insn, int prefix, by
 	insn->opsizeprefix = X86_PREFIX_NO;
 	char opsizes[] = {X86_OPSIZE16, X86_OPSIZE32, X86_OPSIZE64};
 	char addrsizes[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
-		
+
 	switch (addrsize) {
 	case X86_ADDRSIZE32: swap(addrsizes[0], addrsizes[1]); break;
 	case X86_ADDRSIZE64: swap(addrsizes[0], addrsizes[2]); break;
 	case X86_ADDRSIZE16:
 	case X86_ADDRSIZEUNKNOWN:;
 	}
-		
+
 	bool done1 = false;
 	int o = 0;
 	/*
@@ -1581,7 +1581,7 @@ void x86asm::match_vex_opcode(x86opc_vex_insn *opcode, x86asm_insn *insn, byte o
 	if (n == MATCHOPNAME_NOMATCH) return;
 
 	char addrsizes[] = {X86_ADDRSIZE16, X86_ADDRSIZE32, X86_ADDRSIZE64};
-		
+
 	switch (addrsize) {
 	case X86_ADDRSIZE32: swap(addrsizes[0], addrsizes[1]); break;
 	case X86_ADDRSIZE64: swap(addrsizes[0], addrsizes[2]); break;
@@ -1825,7 +1825,7 @@ bool x86asm::opfarptr(x86_insn_op *op, const char *xop)
 FIXME:
 	uint64 seg, offset;
 	char *x = xop;
-	
+
 	if (!fetch_number(&x, &seg)) return false;
 	if (*x != ':') return false;
 	x++;
@@ -1845,11 +1845,11 @@ bool x86asm::opimm(x86_insn_op *op, const char *xop)
 	if (!str2int(xop, i)) return false;
 	op->type = X86_OPTYPE_IMM;
 	if (i > 0xffffffffULL) {
-		op->size = 8; 
+		op->size = 8;
 	} else if (i > 0xffff) {
-		op->size = 4; 
+		op->size = 4;
 	} else if (i > 0xff) {
-		op->size = 2; 
+		op->size = 2;
 	} else {
 		op->size = 1;
 	}
@@ -1863,11 +1863,11 @@ bool x86asm::opplugimm(x86_insn_op *op, const char *xop)
 	if (imm_eval_proc && imm_eval_proc(imm_eval_context, xop, d)) {
 		op->type = X86_OPTYPE_IMM;
 		if (d > 0xffffffff) {
-			op->size = 8; 
+			op->size = 8;
 		} else if (d > 0xffff) {
-			op->size = 4; 
+			op->size = 4;
 		} else if (d > 0xff) {
-			op->size = 2; 
+			op->size = 2;
 		} else {
 			op->size = 1;
 		}
@@ -1886,7 +1886,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 	const char *sep = "[]()*+-:";
 
 	tok(&s, token, sizeof token, sep);
-	
+
 	static const char *types[] = {"byte", "word", "dword", "pword", "qword", "oword", "xmmword", "ymmword", "single", "double", "extended"};
 	static byte type_size[] = {1, 2, 4, 6, 8, 16, 16, 32, 4, 8, 10};
 	// typecast
@@ -1898,7 +1898,7 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 		}
 	}
 	if (hsize) {
-		tok(&s, token, sizeof token, sep);		
+		tok(&s, token, sizeof token, sep);
 		if (!(strcmp(token, "ptr") == 0)) return false;
 		opsize = hsize;
 		tok(&s, token, sizeof token, sep);
@@ -1908,11 +1908,11 @@ bool x86asm::opmem(x86asm_insn *asm_insn, x86_insn_op *op, const char *s)
 	for (int i = 0; i < 8; i++) {
 		if (x86_segs[i]) {
 			if (strcmp(x86_segs[i], token)==0) {
-				tok(&s, token, sizeof token, sep);				
+				tok(&s, token, sizeof token, sep);
 				if (!(strcmp(token, ":") == 0)) return false;
 				static const int c2p[8] = {X86_PREFIX_ES, X86_PREFIX_CS, X86_PREFIX_SS, X86_PREFIX_DS, X86_PREFIX_FS, X86_PREFIX_GS, 0, 0};
 				asm_insn->segprefix = c2p[i];
-				tok(&s, token, sizeof token, sep);				
+				tok(&s, token, sizeof token, sep);
 				break;
 			}
 		}
@@ -1950,7 +1950,7 @@ cont:
 		if (strcmp(token, "*") == 0) {
 			tok(&s, token, sizeof token, sep);
 			if (lasttokenreg == X86_REG_NO) {
-				/* FIXME: case "imm*reg" not yet supported! 
+				/* FIXME: case "imm*reg" not yet supported!
 				cleaner implementation needed! */
 				return false;
 			} else {
@@ -2049,9 +2049,9 @@ bool x86asm::opspecialregs(x86_insn_op *op, const char *xop)
 		return 1;
 	}
 
-	/* FIXME: do we need this? 
-	 * strtol sets e to next untranslatable char, 
-	 * this case is caught below... 
+	/* FIXME: do we need this?
+	 * strtol sets e to next untranslatable char,
+	 * this case is caught below...
 	 */
 	if (strlen(xop) != 3) return 0;
 
@@ -2218,7 +2218,7 @@ void x86_64asm::prepInsns()
 	if (!x86_64_insns) {
 		x86_64_insns = ht_malloc(sizeof *x86_64_insns);
 		memcpy(x86_64_insns, x86_32_insns, sizeof x86_32_insns);
-	
+
 		int i = 0;
 		while (x86_64_insn_patches[i].opc != -1) {
 			(*x86_64_insns)[x86_64_insn_patches[i].opc] = x86_64_insn_patches[i].insn;

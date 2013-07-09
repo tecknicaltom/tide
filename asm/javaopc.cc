@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	javaopc.cc
  *
@@ -73,7 +73,7 @@ javaopc_insn java_insns[256] = {
 {"lload_3"},
 {"fload_0"},
 {"fload_1"},
-{"fload_2"},  
+{"fload_2"},
 {"fload_3"},
 {"dload_0"},
 {"dload_1"},

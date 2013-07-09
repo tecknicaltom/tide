@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	code_analy.cc
  *

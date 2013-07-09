@@ -87,8 +87,8 @@ restart:
 	case IL_OPCODE_ARGS_UINT16:
 	case IL_OPCODE_ARGS_LONG_ARG:
 	case IL_OPCODE_ARGS_LONG_VAR:
-	case IL_OPCODE_ARGS_ANN_ARG: 
-	case IL_OPCODE_ARGS_ANN_DEAD: 
+	case IL_OPCODE_ARGS_ANN_ARG:
+	case IL_OPCODE_ARGS_ANN_DEAD:
 	case IL_OPCODE_ARGS_ANN_LIVE: {
 		uint16 w = createHostInt(code+1, 2, little_endian);
 		insn.data.ui = w;
@@ -128,7 +128,7 @@ restart:
 		// FIXME: hack
 		insn.data.q = createHostInt64(code+5, 8, little_endian);
 		break;
-		
+
 	// variable length opcodes
 
 	case IL_OPCODE_ARGS_SWITCH: {
@@ -203,7 +203,7 @@ const char *ILDisassembler::strf(const dis_insn *disasm_insn, int style, const c
 	const char *cs_string = get_cs(e_cs_string);
 
 	ILDisInsn *dis_insn = (ILDisInsn *) disasm_insn;
-	
+
 	if (!dis_insn->valid) {
 //		is_invalid:
 //          assert(dis_insn->size==1);
@@ -217,8 +217,8 @@ const char *ILDisassembler::strf(const dis_insn *disasm_insn, int style, const c
 		case IL_OPCODE_ARGS_UINT16:
 		case IL_OPCODE_ARGS_LONG_ARG:
 		case IL_OPCODE_ARGS_LONG_VAR:
-		case IL_OPCODE_ARGS_ANN_ARG: 
-		case IL_OPCODE_ARGS_ANN_DEAD: 
+		case IL_OPCODE_ARGS_ANN_ARG:
+		case IL_OPCODE_ARGS_ANN_DEAD:
 		case IL_OPCODE_ARGS_ANN_LIVE:  {
 			sprintf(insnstr, "%-15s %s%u", dis_insn->opcode->name, cs_number, dis_insn->data.ui);
 			break;
@@ -234,7 +234,7 @@ const char *ILDisassembler::strf(const dis_insn *disasm_insn, int style, const c
 		}
 		case IL_OPCODE_ARGS_INT64:
 			ht_snprintf(insnstr, 100, "%-15s %s%qd", dis_insn->opcode->name, cs_number, &dis_insn->data.q);
-			break;                    
+			break;
 		case IL_OPCODE_ARGS_CALL:
 		case IL_OPCODE_ARGS_CALLI:
 		case IL_OPCODE_ARGS_CALLVIRT:
@@ -294,9 +294,9 @@ const char *ILDisassembler::strf(const dis_insn *disasm_insn, int style, const c
 			sprintf(insnstr, "%-15s [unsupported paramtype]", dis_insn->opcode->name);
 		}
 	}
-	
+
 	disable_highlighting();
-	return insnstr;     
+	return insnstr;
 }
 
 ObjectID ILDisassembler::getObjectID() const

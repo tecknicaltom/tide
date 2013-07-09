@@ -88,14 +88,14 @@ static UiView *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 	ht_pe_il_viewer *v;
 
 	if (!pe_rva_to_ofs(&pe_shared->sections, sec_rva, &sec_ofs)) goto read_error;
-		
+
 	file->seek(sec_ofs);
 	if (file->read(&dir, sizeof dir) != sizeof dir) goto read_error;
 
 	createHostStruct(&dir, PE_IL_DIRECTORY_struct, little_endian);
-	
+
 	if (sec_size != dir.size) goto read_error;
-	
+
 	pe_shared->il = new ht_pe_il();
 	pe_shared->il->dir = dir;
 
@@ -104,7 +104,7 @@ static UiView *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 	pe_shared->v_il = v;
 	ht_mask_sub *s;
 //	ht_collapsable_sub *cs;
-	
+
 	s = new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
@@ -113,12 +113,12 @@ static UiView *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 	v->insertsub(s);
 
 	/* FIXME: */
-	
+
 	s=new ht_mask_sub();
 	s->init(file, 1);
 	s->add_staticmask_ptable(il_directory, sec_ofs, pe_bigendian);
 	v->insertsub(s);
-	
+
 	FileOfs metadata_ofs;
 	if (pe_rva_to_ofs(&pe_shared->sections, dir.metadata_section_rva, &metadata_ofs)) {
 		/* read metadata section*/
@@ -177,9 +177,9 @@ static UiView *htpeil_init(Bounds *b, File *file, ht_format_group *group)
 					pe_shared->il->string_pool_size = file->read(pe_shared->il->string_pool, entry->size);
 				}
 			}
-		}		
+		}
 	}
-	
+
 	return v;
 
 read_error:

@@ -209,7 +209,7 @@ TAGSTRING *tag_make_edit_time(TAGSTRING *buf, int maxlen, FileOfs ofs, tag_endia
 	if (maxlen <= (signed)sizeof (ht_tag_edit_time)) return tag_error(buf, maxlen);
 	ht_tag_edit_time *tag = (ht_tag_edit_time*)buf;
 	tag->escape = '\e';
-	byte m = 0xff;	
+	byte m = 0xff;
 	switch (e) {
 	case tag_endian_big:
 		m = HT_TAG_EDIT_TIME_BE;
@@ -349,7 +349,7 @@ void statictag_to_tag(const char *statictag_str, TAGSTRING *tag_str, int maxlen,
 	}
 	FileOfs ofs = 0;
 	ID id;
-	TAGSTRING *tag_str_end = tag_str + maxlen - 1; 
+	TAGSTRING *tag_str_end = tag_str + maxlen - 1;
 	while (*statictag_str) {
 		if (*statictag_str == '\e') {
 			switch ((byte)*(statictag_str+1)) {

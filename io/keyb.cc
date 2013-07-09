@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	keyb.cc
  *
@@ -226,7 +226,7 @@ bool keyb_getkeydesc(char *buf, int bufsize, ht_key k)
 				}
 				r = false;
 			}
-		}			
+		}
 	}
 	if (bufsize > 0) {
 		ht_strlcpy(buf, b, bufsize);

@@ -148,7 +148,7 @@ static ht_mask_ptable xbecertificate[] = {
 	{"",			STATICTAG_EDIT_BYTE("000001b0") STATICTAG_EDIT_BYTE("000001b1") STATICTAG_EDIT_BYTE("000001b2") STATICTAG_EDIT_BYTE("000001b3") STATICTAG_EDIT_BYTE("000001b4") STATICTAG_EDIT_BYTE("000001b5") STATICTAG_EDIT_BYTE("000001b6") STATICTAG_EDIT_BYTE("000001b7") STATICTAG_EDIT_BYTE("000001b8") STATICTAG_EDIT_BYTE("000001b9") STATICTAG_EDIT_BYTE("000001ba") STATICTAG_EDIT_BYTE("000001bb") STATICTAG_EDIT_BYTE("000001bc") STATICTAG_EDIT_BYTE("000001bd") STATICTAG_EDIT_BYTE("000001be") STATICTAG_EDIT_BYTE("000001bf")},
 	{"",			STATICTAG_EDIT_BYTE("000001c0") STATICTAG_EDIT_BYTE("000001c1") STATICTAG_EDIT_BYTE("000001c2") STATICTAG_EDIT_BYTE("000001c3") STATICTAG_EDIT_BYTE("000001c4") STATICTAG_EDIT_BYTE("000001c5") STATICTAG_EDIT_BYTE("000001c6") STATICTAG_EDIT_BYTE("000001c7") STATICTAG_EDIT_BYTE("000001c8") STATICTAG_EDIT_BYTE("000001c9") STATICTAG_EDIT_BYTE("000001ca") STATICTAG_EDIT_BYTE("000001cb") STATICTAG_EDIT_BYTE("000001cc") STATICTAG_EDIT_BYTE("000001cd") STATICTAG_EDIT_BYTE("000001ce") STATICTAG_EDIT_BYTE("000001cf")},
 
-	{0, 0}	
+	{0, 0}
 };
 
 static ht_tag_flags_s xbe_section_flags[] =
@@ -208,7 +208,7 @@ static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs;
-	
+
 	s = new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
@@ -218,11 +218,11 @@ static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	/* FIXME: */
 	bool xbe_bigendian = false;
-	
+
 	s = new ht_mask_sub();
 	s->init(file, 1);
 	s->add_staticmask_ptable(xbemagic, 0x0, xbe_bigendian);
-	
+
 	/* image header */
 	s->add_staticmask_ptable(xbeimageheader, 0x0, xbe_bigendian);
 	cs = new ht_collapsable_sub();
@@ -236,9 +236,9 @@ static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 	cs = new ht_collapsable_sub();
 	cs->init(file, s, 1, "certificate", 1);
 	v->insertsub(cs);
-	
+
 	/* library versions */
-	
+
 	for (uint i=0; i < xbe_shared->header.number_of_library_versions; i++) {
 		s = new ht_mask_sub();
 		s->init(file, 50+i);
@@ -250,23 +250,23 @@ static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 		cs=new ht_collapsable_sub();
 		cs->init(file, s, 1, t, 1);
-	
+
 		v->insertsub(cs);
 	}
-	
+
 	/* section headers */
 
 	for (uint i=0; i<xbe_shared->sections.number_of_sections; i++) {
 		const char *name;
 //		uint ofs;
-	
+
 		s=new ht_mask_sub();
 		s->init(file, 100+i);
 
 		s->add_staticmask_ptable(xbesectionheader, xbe_shared->header.section_header_address-xbe_shared->header.base_address+i*sizeof *xbe_shared->sections.sections, xbe_bigendian);
 
 		if (xbe_shared->sections.sections[i].section_name_address) {
-		
+
 			name = (char *)xbe_shared->sections.sections[i].section_name_address;
 
 		} else {
@@ -278,7 +278,7 @@ static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 		cs=new ht_collapsable_sub();
 		cs->init(file, s, 1, t, 1);
-	
+
 		v->insertsub(cs);
 	}
 	return v;

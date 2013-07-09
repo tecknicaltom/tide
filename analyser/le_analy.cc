@@ -118,7 +118,7 @@ void LEAnalyser::beginAnalysis()
 			pmcontrol = createAddressFlat32(a);
 			le_shared->best_entrypoint = a;
 		}
-		
+
 		addr = le_shared->vxd_desc.ctrl_ofs;
 		if (LE_addr_to_segment(le_shared, addr, &temp)) {
 			a = LE_MAKE_ADDR(le_shared, LE_ADDR_SEG(le_shared, addr),

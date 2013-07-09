@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	analy_x86.cc
  *
@@ -518,7 +518,7 @@ Address *AnalyX86Disassembler::branchAddr(OPCODE *opcode, branch_enum_t branchty
 	x86dis_insn *o = (x86dis_insn*)opcode;
 	assert(o->op[1].type == X86_OPTYPE_EMPTY);
 	switch (o->op[0].type) {
-		case X86_OPTYPE_IMM: {			
+		case X86_OPTYPE_IMM: {
 			uint16 seg = 0;
 			if (flags & ANALYX86DISASSEMBLER_FLAGS_SEGMENTED) {
 				seg = getSegment(analy->addr);

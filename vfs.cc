@@ -23,7 +23,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-	
+
 #include "htctrl.h"
 #include "htiobox.h"
 #include "keyb.h"
@@ -160,7 +160,7 @@ int LocalFs::fileOpen(const char *filename, IOAccessMode access_mode, FileOpenMo
 		return EIO;
 	}
 }
-	
+
 /*
  *	class RegNodeFile
  */
@@ -176,7 +176,7 @@ RegNodeFile::RegNodeFile(const char *nn, uint am, uint om)
 	if ((am & IOAM_READ) && (am & IOAM_WRITE)) {
 		throw IOException(EINVAL);
 	}
-	
+
 	RegistryNode *node;
 	if (!(om & FOM_CREATE)) {
 		if (!registry->find_data_entry(nodename, &node, false)) {
@@ -205,7 +205,7 @@ RegNodeFile::~RegNodeFile()
 		ObjectStreamBin o(this, false);
 
 		int e = load_node(o, &node);
-		
+
 		if (e==0) {
 			if (open_mode & FOM_CREATE) {
 				if ((e = registry->create_node(nodename, node->type))) {
@@ -355,7 +355,7 @@ int RegistryFs::compareFilenames(const char *a, const char *b)
 bool RegistryFs::findFirst(const char *dirname, pfind_t *f)
 {
 	RegistryNode *node;
-	
+
 	free(enum_dir);
 	enum_last = NULL;
 	enum_dir = NULL;
@@ -379,7 +379,7 @@ bool RegistryFs::findFirst(const char *dirname, pfind_t *f)
 bool RegistryFs::findNext(pfind_t *f)
 {
 	RegistryNode *node;
-	
+
 	if ((node = registry->enum_next(enum_dir, enum_last))) {
 		enum_last = node;
 		create_pfind_t(f, node);
@@ -416,7 +416,7 @@ int RegistryFs::makeDir(const char *dirname)
 int RegistryFs::open(const char *filename, bool edit)
 {
 	RegistryNode *node;
-	
+
 	if (registry->find_data_entry(filename, &node, false)) {
 		if (node->data->editdialog(filename)) {
 			htmsg m;

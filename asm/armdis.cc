@@ -71,7 +71,7 @@ public:
 
 ArmDisassembler::ArmDisassembler()
 {
-	bfdif = new BFDInterface;	
+	bfdif = new BFDInterface;
 }
 
 void ArmDisassembler::load(ObjectStream &f)
@@ -187,7 +187,7 @@ const char *ArmDisassembler::strf(const dis_insn *disasm_insn, int style, const 
         	}
         }
 	}
-	
+
 strfend:
 	*out = 0;
 	disable_highlighting();

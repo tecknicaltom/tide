@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htpedimp.cc
  *
@@ -145,7 +145,7 @@ static UiView *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gro
 	g->insert(v);
 //
 	for (uint i=0; i < pe_shared->dimports.funcs->count(); i++) {
-	
+
 		ht_pe_import_function *func = (ht_pe_import_function*)(*pe_shared->dimports.funcs)[i];
 		assert(func);
 		ht_pe_import_library *lib = (ht_pe_import_library*)(*pe_shared->dimports.libs)[func->libidx];

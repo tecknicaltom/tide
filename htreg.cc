@@ -90,7 +90,7 @@ ObjectID RegistryDataSTree::getObjectID() const
 }
 
 void RegistryDataSTree::store(ObjectStream &f) const
-{ 
+{
 	PUT_OBJECT(f, tree);
 }
 
@@ -172,14 +172,14 @@ bool RegistryDataRaw::editdialog(const char *keyname)
 	b.h = 15;
 	b.x = (screen->w-b.w)/2;
 	b.y = (screen->h-b.h)/2;
-	
+
 	ht_dialog *d = new ht_dialog();
 	d->init(&b, "edit data_raw", FS_TITLE | FS_KILLER);
-	
+
 	if (d->run(false)) {
 		r = true;
 	}
-	
+
 	d->done();
 	delete d;
 	return r;
@@ -210,7 +210,7 @@ void RegistryDataRaw::strvalue(char *buf32bytes)
 /*
  *	CLASS RegistryDataString
  */
-                                 
+
 RegistryDataString::RegistryDataString(const char *s)
 {
 	value = ht_strdup(s);
@@ -324,7 +324,7 @@ static RegistryData *create_empty_raw()
 /*
  *	CLASS Registry
  */
-ht_registry_node_type_desc::ht_registry_node_type_desc(ht_registry_node_type aType, 
+ht_registry_node_type_desc::ht_registry_node_type_desc(ht_registry_node_type aType,
 	const char *aName, create_empty_registry_data_func c)
 {
 	type = aType;
@@ -902,7 +902,7 @@ ht_registry_node_type Registry::register_node_type(const char *identifier, creat
 		firstThat(ht_registry_node_type_desc, nt, *node_types, t == nt->type);
 	} while (nt != NULL);
 
-	ht_registry_node_type_desc *v = new ht_registry_node_type_desc(t, 
+	ht_registry_node_type_desc *v = new ht_registry_node_type_desc(t,
 		identifier, create_empty_registry_data);
 
 	if (node_types->find(v) != invObjHandle) {
@@ -1101,7 +1101,7 @@ BUILDER(ATOM_HT_REGISTRY_DATA_DWORD, RegistryDataDword, RegistryData);
 BUILDER(ATOM_HT_REGISTRY_DATA_RAW, RegistryDataRaw, RegistryData);
 BUILDER(ATOM_HT_REGISTRY_DATA_STRING, RegistryDataString, RegistryData);
 BUILDER(ATOM_HT_REGISTRY_NODE_TYPE_DESC, ht_registry_node_type_desc, Object);
-	
+
 /*
  *	INIT
  */
@@ -1163,7 +1163,7 @@ void done_registry()
 	unregisterAtom(ATOM_HT_CREATE_EMPTY_DWORD);
 	unregisterAtom(ATOM_HT_CREATE_EMPTY_STRING);
 	unregisterAtom(ATOM_HT_CREATE_EMPTY_RAW);
-	
+
 	registry->done();
 	delete registry;
 }

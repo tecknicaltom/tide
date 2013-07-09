@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	cstream.cc
  *
@@ -61,7 +61,7 @@ void CompressedStream::flush_compressed()
 		lzo_uint cbuf_len;
 		byte n[4];
 
-		memset(workbuf, 0, sizeof workbuf);		
+		memset(workbuf, 0, sizeof workbuf);
 		lzo1x_1_compress(buffer, bufferpos, cbuf, &cbuf_len, workbuf);
 
 		createForeignInt(n, bufferpos, 4, big_endian);
@@ -88,7 +88,7 @@ void CompressedStream::flush_uncompressed()
 		uncompressed_len = createHostInt(n, 4, big_endian);
 		mStream->readx(n, 4);
 		cbuf_len = createHostInt(n, 4, big_endian);
-		
+
 		if (!uncompressed_len || uncompressed_len > COMPRESSED_STREAM_DEFAULT_GRANULARITY
 		 || !cbuf_len || cbuf_len > 2*COMPRESSED_STREAM_DEFAULT_GRANULARITY) throw IOException(EIO);
 
@@ -97,12 +97,12 @@ void CompressedStream::flush_uncompressed()
 
 		mStream->readx(cbuf, cbuf_len);
 		lzo_uint dummy = uncompressed_len;
-		
+
 		lzo1x_decompress_safe(cbuf, cbuf_len, buffer, &dummy, NULL);
 		if (dummy != uncompressed_len) throw IOException(EIO);
 
 		buffersize = uncompressed_len;
-		bufferpos = uncompressed_len;          
+		bufferpos = uncompressed_len;
 	}
 }
 

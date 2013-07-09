@@ -93,7 +93,7 @@ static UiView *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
 		delete analy;
 		v->done();
 		delete v;
-		head->done();          
+		head->done();
 		delete head;
 		g->done();
 		delete g;
@@ -101,7 +101,7 @@ static UiView *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
 		delete low;
 		return NULL;
 	}
-	
+
 	delete high;
 	delete low;
 

@@ -76,7 +76,7 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	file->seek(0);
 	file->read(&xbe_shared->header, sizeof xbe_shared->header);
 	createHostStruct(&xbe_shared->header.base_address, XBE_IMAGE_HEADER_struct, little_endian);
-	
+
 	/* decode entrypoint - XXX: only RETAILs*/
 	xbe_shared->header.entry_point ^= 0xA8FC57AB;
 	xbe_shared->header.kernel_image_thunk_address ^= 0x5B6D40B6;
@@ -90,14 +90,14 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers+2]=0;
 	xbe_shared->headerspace[xbe_shared->header.size_of_headers+3]=0;
 
-	/* read certificate */	
+	/* read certificate */
 	file->seek(xbe_shared->header.certificate_address-xbe_shared->header.base_address);
 	file->read(&xbe_shared->certificate, sizeof xbe_shared->certificate);
 	createHostStruct(&xbe_shared->certificate, XBE_CERTIFICATE_struct, little_endian);
 
 	/* read library versions */
 	file->seek(xbe_shared->header.library_versions_address-xbe_shared->header.base_address);
-	
+
 	xbe_shared->libraries = ht_malloc(xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
 	file->read(xbe_shared->libraries, xbe_shared->header.number_of_library_versions * sizeof *xbe_shared->libraries);
 
@@ -107,7 +107,7 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 
 	/* read section headers */
 	file->seek(xbe_shared->header.section_header_address-xbe_shared->header.base_address);
-	
+
 	xbe_shared->sections.sections = ht_malloc(xbe_shared->header.number_of_sections * sizeof *xbe_shared->sections.sections);
 	file->read(xbe_shared->sections.sections, xbe_shared->header.number_of_sections * sizeof *xbe_shared->sections.sections);
 
@@ -116,14 +116,14 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 
 	for (uint i=0; i<xbe_shared->header.number_of_sections; i++) {
 		createHostStruct(&xbe_shared->sections.sections[i], XBE_SECTION_HEADER_struct, little_endian);
-		
+
 		// XXX: this is crashable!!!
 		xbe_shared->sections.sections[i].section_name_address += (unsigned long) xbe_shared->headerspace - xbe_shared->header.base_address;
 		xbe_shared->sections.sections[i].virtual_address -= xbe_shared->header.base_address;
 	}
 
 	shared_data = xbe_shared;
-	
+
 	xbe_shared->header.tls_address -= xbe_shared->header.base_address;
 
 	ht_format_group::init_ifs(ifs);
@@ -186,7 +186,7 @@ bool ht_xbe::loc_enum_next(ht_format_loc *loc)
 bool xbe_rva_to_ofs(xbe_section_headers *section_headers, RVA rva, FileOfs *ofs)
 {
 	XBE_SECTION_HEADER *s=section_headers->sections;
-	
+
 	for (uint i=0; i<section_headers->number_of_sections; i++) {
 		if ((rva>=s->virtual_address) &&
 		(rva<s->virtual_address+s->raw_size)) {
@@ -290,7 +290,7 @@ static bool xbe_ofs_is_valid(xbe_section_headers *section_headers, FileOfs ofs)
 /*
  *
  */
- 
+
 bool xbe_section_name_to_section(xbe_section_headers *section_headers, const char *name, int *section)
 {
 	XBE_SECTION_HEADER *s = section_headers->sections;

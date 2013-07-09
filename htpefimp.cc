@@ -42,12 +42,12 @@ static UiView *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
-	if (!pef_shared->loader_info_header_ofs 
-	|| !pef_shared->loader_info_header.importedLibraryCount 
+	if (!pef_shared->loader_info_header_ofs
+	|| !pef_shared->loader_info_header.importedLibraryCount
 	|| !pef_shared->loader_info_header.totalImportedSymbolCount) return NULL;
-	
+
 	FileOfs nametable = pef_shared->loader_info_header_ofs + pef_shared->loader_info_header.loaderStringsOffset;
-	FileOfs functions_offset = pef_shared->loader_info_header_ofs 
+	FileOfs functions_offset = pef_shared->loader_info_header_ofs
 			+ sizeof pef_shared->loader_info_header
 			+ pef_shared->loader_info_header.importedLibraryCount
 				* sizeof(PEF_ImportedLibrary);
@@ -91,7 +91,7 @@ static UiView *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 			uint32 entry;
 			file->read(&entry, 4);
 			entry = createHostInt(&entry, 4, pef_shared->byte_order);
-			
+
 			uint32 symbol_ofs = entry & 0x00ffffff;
 			uint32 symbol_class = entry >> 24;
 
@@ -104,15 +104,15 @@ static UiView *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 			free(symbol_name);
 			symbol_num++;
 		}
-		
+
 		free(libname);
 	}
 
 	char iline[1024];
-	ht_snprintf(iline, sizeof iline, "* PEF import library description at offset %08qx (%d functions from %d libraries)", 
-		pef_shared->loader_info_header_ofs + sizeof pef_shared->loader_info_header, 
+	ht_snprintf(iline, sizeof iline, "* PEF import library description at offset %08qx (%d functions from %d libraries)",
+		pef_shared->loader_info_header_ofs + sizeof pef_shared->loader_info_header,
 		function_count, lib_count);
-		
+
 	head=new UiStaticText();
 	head->init(&c, iline, align_left);
 

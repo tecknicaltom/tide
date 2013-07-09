@@ -462,9 +462,9 @@ const char *x86_segs[8] = {
 
 /*
 
-	Opcode name modifiers 
+	Opcode name modifiers
 	~ ambigous size (need explicit "size ptr")
-	
+
 	first char after ~:
 	|    alternative mnemonics with same semantic (|je|jz)
 	?    different name depending on opsize    (?16bit|32bit|64bit)
@@ -2172,7 +2172,7 @@ x86opc_insn x86_opc_group_insns[X86_OPC_GROUPS][256] = {
 {0},
 {0},
 {0},
-{0}, 
+{0},
 {0},
 {0},
 {0},
@@ -2486,7 +2486,7 @@ x86opc_insn x86_opc_group_insns[X86_OPC_GROUPS][256] = {
 {"pmacsww", {VD, VS00o, VS1o, VD}},
 {"pmacswd", {VD, VS00o, VS1o, VD}},
 {"pmacsdql", {VD, VS00o, VS1o, VD}},
-/* 98 */                   
+/* 98 */
 {0},
 {0},
 {0},
@@ -3431,7 +3431,7 @@ x86opc_finsn x86_float_group_insns[8][8] = {
 
 #define E0(e) static x86opc_vex_insn v##e[] = {
 #define E(e) {0}}; static x86opc_vex_insn v##e[] = {
-#define Elast {0}}; 
+#define Elast {0}};
 E0(00)
 {"vpshufb", _128|_66|_0f38, {Vo, VVo, Wo}},
 {"vpshufb", _256|_66|_0f38, {Yy, YVy, Xy}},

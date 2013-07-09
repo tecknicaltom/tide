@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	macho_analy.cc
  *
@@ -46,7 +46,7 @@ extern "C" {
 /*
  *
  */
- 
+
 void MachoAnalyser::init(ht_macho_shared_data *Macho_shared, File *File)
 {
 	macho_shared = Macho_shared;
@@ -107,7 +107,7 @@ void MachoAnalyser::beginAnalysis()
 		}
 		pp++;
 	}
-	
+
 	/*
 	 *	give all sections a descriptive comment:
 	 */
@@ -270,7 +270,7 @@ Address *MachoAnalyser::createAddress()
 			return new AddressFlat64();
 		} else {
 			return new AddressFlat32();
-		}		
+		}
 	}
 }
 

@@ -80,7 +80,7 @@ int AnalyserInformation::gettext(char *buf, int maxlen)
 {
 	return ht_snprintf(buf, maxlen,
 		"Analyser statistics:\n"
-		"====================\n\n"          
+		"====================\n\n"
 		"Type: %s\nFile: %y\n"
 		"Using disassembler: %s\n\n"
 		"Known locations: %d\n"
@@ -353,10 +353,10 @@ char *CallChain::get_text(void *node)
 		sign = '-';
 	}
 	global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT | ADDRESS_STRING_FORMAT_ADD_0X;
-	ht_snprintf(stupid, sizeof stupid, "%s%c%x (%y)", 
-		n->faddr->label ? n->faddr->label->name : "unknown", 
-		sign, 
-		d, 
+	ht_snprintf(stupid, sizeof stupid, "%s%c%x (%y)",
+		n->faddr->label ? n->faddr->label->name : "unknown",
+		sign,
+		d,
 		n->xa
 	);
 	return stupid;
@@ -505,7 +505,7 @@ void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, ht_form
 	if (Analy) {
 		analy->setDisplayMode(ANALY_SHOW_ADDRESS | ANALY_SHOW_COMMENTS
 			| ANALY_SHOW_LABELS | ANALY_SHOW_XREFS
-			| ANALY_TRANSLATE_SYMBOLS | ANALY_COLLAPSE_XREFS, 
+			| ANALY_TRANSLATE_SYMBOLS | ANALY_COLLAPSE_XREFS,
 			ANALY_EDIT_BYTES);
 	}
 	analy_sub = NULL;
@@ -611,7 +611,7 @@ const char *ht_aviewer::func(uint i, bool execute)
 static int aviewer_func_addr(eval_scalar *result, eval_str *str)
 {
 	ht_aviewer *aviewer = (ht_aviewer*)eval_get_context();
-	
+
 	Address *addr = aviewer->analy->createAddress();
 	int l = addr->parseString(str->value, str->len, aviewer->analy);
 	if (l) {
@@ -828,7 +828,7 @@ void ht_aviewer::generateOutputDialog()
 			errorbox("invalid address");
 			continue;
 		}
-		
+
 		try {
 			String name(filename);
 			LocalFile s(name, IOAM_WRITE, FOM_CREATE);
@@ -878,7 +878,7 @@ void ht_aviewer::dataIntDialog(taddr_int_subtype subtype, int length)
 		delete current_address;
 		return;
 	}
-	
+
 	if (analy->validAddress(current_address, scinitialized)) {
 		analy->data->setIntAddressType(current_address, subtype, length);
 	}
@@ -901,12 +901,12 @@ void ht_aviewer::dataStringDialog()
 	center_bounds(&b);
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "interprete data as string", FS_KILLER | FS_TITLE | FS_MOVE);
-	
+
 	while (dialog->run(false)==button_ok) {
 	}
 	dialog->done();
 	delete dialog;*/
-	
+
 	if (analy->validAddress(current_address, scinitialized)) {
 		byte buffer[1024];
 		Location *a = analy->enumLocations(current_address);
@@ -972,7 +972,7 @@ void ht_aviewer::exportFileDialog()
 	b.assign(2, 4, 25, 1);
 	NEW_OBJECT(v2, UiLabel, &b, "~export format:", v1);
 	dialog->insert(v2);
-	
+
 	b.assign(13, 8, 9, 2);
 	NEW_OBJECT(v1, UiButton, &b, "O~k", button_ok);
 	dialog->insert(v1);
@@ -984,7 +984,7 @@ void ht_aviewer::exportFileDialog()
 		export_dialog_data edd;
 		ViewDataBuf vdb(dialog, &edd, sizeof edd);
 		getdatastr(&edd.id1, filename);
-		
+
 		String name(filename);
 		LocalFile s(name, IOAM_WRITE, FOM_CREATE);
 		try {
@@ -1213,7 +1213,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 			analy->getDisasmStr(current_address, want_length);
 			dialog_assemble(this, current_pos, analy->mapAddr(current_address), a, analy->disasm, analy->getDisasmStrFormatted(current_address), want_length);
 			delete current_address;
-		}			
+		}
 		a->done();
 		delete a;
 		clearmsg(msg);
@@ -1433,7 +1433,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 			delete current_address;
 		}
 		dirtyview();
-		clearmsg(msg);               
+		clearmsg(msg);
 		return;
 	case cmd_analyser_symbols: {
 		Address *current_address;
@@ -1504,7 +1504,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 	}
 
 	ht_uformat_viewer::handlemsg(msg);
-	
+
 	switch (msg->msg) {
 	case msg_draw:
 		if (infoline) {
@@ -1679,10 +1679,10 @@ void ht_aviewer::showComments(Address *Addr)
 			if (i+1<c1) mem_file->write((void*)"\n", 1);
 		}
 	}
-	
+
 /*     ht_c_syntax_lexer *lexer = new ht_c_syntax_lexer();
 	lexer->init();*/
-	
+
 	// prepare textfile
 	ht_ltextfile text_file(mem_file, true, NULL);
 
@@ -1702,7 +1702,7 @@ void ht_aviewer::showComments(Address *Addr)
 	/* FIXME: scrollbar
 	BOUNDS_ASSIGN(b, 56, 1, 1, 10);
 	*/
-	
+
 	UiButton *b1;
 	b.assign(18, 12, 9, 2);
 	NEW_OBJECT(b1, UiButton, &b, "O~k", button_ok);
@@ -1754,9 +1754,9 @@ void ht_aviewer::showInfo(Address *Addr)
 	AnalyserInformation *text = new AnalyserInformation();
 	text->init(&b, this);
 	dialog->insert(text);
-	
+
 	dialog->run(false);
-	
+
 	dialog->done();
 	delete dialog;
 }
@@ -1764,9 +1764,9 @@ void ht_aviewer::showInfo(Address *Addr)
 void ht_aviewer::showSymbols(Address *addr)
 {
 	if (!analy) return;
-	
+
 	Location *loc = analy->getPreviousSymbolByAddress(addr);
-				
+
 	Bounds b;
 	b.w = 60;
 	b.h = 15;
@@ -1838,7 +1838,7 @@ void ht_aviewer::showXRefs(Address *Addr)
 		ht_listbox_title *text = new ht_listbox_title();
 		text->init(&b);
 		text->setText(3, "xref to", "type", "from function");
-		b.y = 1;          
+		b.y = 1;
 		b.h = bh-6;
 		UiTextListbox *list;
 		NEW_OBJECT(list, UiTextListbox, &b, 3, 2);
@@ -1989,7 +1989,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 	}
 	return ht_uformat_viewer::symbol_handler(result, name);
 }
-	
+
 bool ht_aviewer::qword_to_pos(uint64 q, viewer_pos *pos)
 {
 	if (!analy) return false;
@@ -2115,7 +2115,7 @@ int ht_analy_sub::prev_line_id(LINE_ID *line_id, int n)
 
 ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
 {
-	// FIXME: viewer pos     
+	// FIXME: viewer pos
 	Address *st = NULL;
 	ht_search_result *r = NULL;
 	while (!r) {

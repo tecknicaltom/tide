@@ -133,7 +133,7 @@ public:
 		interface(aIf)
 	{
 	}
-		
+
 };
 
 /*
@@ -179,7 +179,7 @@ bool ht_format_group::done_if(format_viewer_if *i, UiView *v)
 {
 	remove(v);
 	if (i->done) {
-		i->done(v); 
+		i->done(v);
 	} else {
 		v->done();
 		delete v;
@@ -321,7 +321,7 @@ bool ht_format_group::init_if(format_viewer_if *i)
 	getbounds(&b);
 	b.x = 0;
 	b.y = 0;
-	
+
 	if (i->init) {
 		try {
 			UiView *v = i->init(&b, file, this);
@@ -422,7 +422,7 @@ void ht_viewer::init(Bounds *b, const char *desc, uint c)
 {
 	UiView::init(b, VO_OWNBUFFER | VO_BROWSABLE | VO_SELECTABLE | VO_MOVE | VO_RESIZE, desc);
 	caps = c;
-	
+
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
@@ -550,7 +550,7 @@ bool ht_format_viewer::continue_search()
 				}
 			}
 		}
-		
+
 		if (r) return show_search_result(r);
 	}
 	return false;
@@ -931,7 +931,7 @@ public:
 
 	ht_uformat_viewer_vstate() { resolve = false; };
 	ht_uformat_viewer_vstate(BuildCtorArg&a): Object(a) {};
-	
+
 	virtual	void load(ObjectStream &s)
 	{
 		resolve = true;
@@ -943,7 +943,7 @@ public:
 		GET_INT64D(s, sel_start);
 		GET_INT64D(s, sel_end);
 	}
-	
+
 	virtual	void store(ObjectStream &s) const
 	{
 		PUT_BOOL(s, edit);
@@ -1059,7 +1059,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	UiButton *bhelp = new UiButton();
 	bhelp->init(&b2, "~Functions", 100);
 	dialog->insert(bhelp);
-	
+
 	int r;
 	bool run = true;
 	int retval = button_cancel;
@@ -1538,7 +1538,7 @@ int ht_uformat_viewer::cursormicroedit_forward()
 				} else if (tag_get_offset(t) == cursor_tag_offset) {
 					byte *tb = (byte*)t;
 					if ( ( tb[1] == HT_TAG_EDIT_BIT &&
-					 ((ht_tag_edit_bit*)t)->bitidx == cursor_tag_bitidx ) 
+					 ((ht_tag_edit_bit*)t)->bitidx == cursor_tag_bitidx )
 					|| tb[1] != HT_TAG_EDIT_BIT) {
 						cursor_found = true;
 						char *t = tag_get_selectable_tag(c_line, p.tag_idx, p.tag_group);
@@ -1724,7 +1724,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 		case HT_TAG_EDIT_QWORD_BE: {
 			int nibval = edit_input_c2h(b);
 			if (nibval == -1) break;
-			
+
 			int size = 0;
 			bool bigendian = true;
 			switch (t[1]) {
@@ -1736,7 +1736,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 				case HT_TAG_EDIT_DWORD_BE: size = 4; bigendian=true; break;
 				case HT_TAG_EDIT_QWORD_BE: size = 8; bigendian=true; break;
 			}
-			
+
 			uint shift = 4 - (cursor_tag_micropos&1)*4;
 			uint m = ~(0xf << shift);
 			uint o = nibval << shift;
@@ -1747,7 +1747,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 			} else {
 				b = size - cursor_tag_micropos/2 - 1;
 			}
-			
+
 			byte buf;
 			pread(cursor_tag_offset + b, &buf, 1);
 			buf &= m;
@@ -1794,7 +1794,7 @@ bool ht_uformat_viewer::edit_input(byte b)
 		case HT_TAG_EDIT_TIME_LE: {
 			uint32 d;
 			int h = edit_input_c2d(b);
-					
+
 			byte buf[4];
 			if (pread(cursor_tag_offset, &buf, 4)==4 && h!=-1) {
 				if (t[1] == HT_TAG_EDIT_TIME_LE) {
@@ -2116,7 +2116,7 @@ const char *ht_uformat_viewer::func(uint i, bool execute)
 					if (execute) {
 						FileOfs start = 0;
 						FileOfs size = file->getSize();
-						bool isdirty = false;						
+						bool isdirty = false;
 						file->cntl(FCNTL_MODS_IS_DIRTY, start, size, &isdirty);
 						char q[1024];
 						String fn;
@@ -2354,7 +2354,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					return;
 				case K_Backspace: {
 					FileOfs f;
-					if (edit() 
+					if (edit()
 					 && cursor_tag_class == tag_class_edit
 					 && get_current_offset(&f)) {
 						file->cntl(FCNTL_MODS_CLEAR_DIRTY_RANGE, f, 1ULL);
@@ -2362,7 +2362,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 						focus_cursor();
 						dirtyview();
 						clearmsg(msg);
-					}                         
+					}
 					return;
 				}
 				case K_Tab: {
@@ -2450,10 +2450,10 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 							update_visual_info();
 							check_cursor_visibility();
 						}
-						
+
 						cursor_up(size.h);
 						cursor_down(size.h);
-						
+
 						select_mode_post(0);
 					}
 					clearmsg(msg);
@@ -2473,7 +2473,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (s != -1ULL) {
 						if (cursor_tag_class == tag_class_edit) {
 							pselect_add(s, cursor_tag_offset);
-						} else if (cursor_tag_class == tag_class_sel 
+						} else if (cursor_tag_class == tag_class_sel
 						       && e != -1ULL) {
 							pselect_add(s, e);
 						}
@@ -2677,7 +2677,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					if (caps & VC_EDIT) {
 						baseview->sendmsg(cmd_view_mode_i, file, NULL);
 						return;
-					}						
+					}
 					break;
 				default: {
 					if (((uint32)msg->data1.integer<=255) && (edit())) {
@@ -2860,7 +2860,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 					} else if (o>s) {
 						/* extend */
 						htmsg m;
-			
+
 						m.msg = cmd_file_extend;
 						m.type = mt_broadcast;
 						m.data1.ptr = file;
@@ -3098,7 +3098,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 		int l = 0;
 		while (n[l] && n[l] != '\e') l++;
 		c += render_tagstring_single(chars, colors, maxlen, c, n, l, color_normal);
-		
+
 		n += l;
 		is_cursor = cursor_in_line && i == cursor.tag_idx;
 		if (*n == '\e') {
@@ -3108,7 +3108,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 			switch (n[1]) {
 			case HT_TAG_EDIT_BYTE: {
 				byte d;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 1, focused && (g==cursor.tag_group), is_cursor);
 
@@ -3117,9 +3117,9 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				} else {
 					strcpy(str, "??");
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, str, 2, tag_color);
-		
+
 				n += HT_TAG_EDIT_BYTE_LEN;
 				break;
 			}
@@ -3128,7 +3128,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 2, (g==cursor.tag_group), is_cursor);
-					
+
 				byte buf[2];
 				if (pread(tag_offset, &buf, 2) == 2) {
 					/* little endian */
@@ -3137,14 +3137,14 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				} else {
 					strcpy(str, "????");
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, str, 4, tag_color);
 				n += HT_TAG_EDIT_WORD_LE_LEN;
 				break;
 			}
 			case HT_TAG_EDIT_DWORD_LE: {
 				uint32 d;
-					
+
 				tag_offset=tag_get_offset(n);
 				tag_color=get_tag_color_edit(tag_offset, 4, (g==cursor.tag_group), is_cursor);
 
@@ -3183,10 +3183,10 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 			}
 			case HT_TAG_EDIT_WORD_BE: {
 				uint16 d;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 2, (g==cursor.tag_group), is_cursor);
-					
+
 				byte buf[2];
 				if (pread(tag_offset, &buf, 2)==2) {
 					/* big endian */
@@ -3195,17 +3195,17 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				} else {
 					strcpy(str, "????");
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, str, 4, tag_color);
 				n += HT_TAG_EDIT_WORD_BE_LEN;
 				break;
 			}
 			case HT_TAG_EDIT_DWORD_BE: {
 				uint32 d;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 4, (g==cursor.tag_group), is_cursor);
-					
+
 				byte buf[4];
 				if (pread(tag_offset, &buf, 4) == 4) {
 					/* big endian */
@@ -3220,10 +3220,10 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 			}
 			case HT_TAG_EDIT_QWORD_BE: {
 				uint64 q;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 8, (g==cursor.tag_group), is_cursor);
-					
+
 				byte buf[8];
 				if (pread(tag_offset, &buf, 8) == 8) {
 					/* big endian */
@@ -3240,7 +3240,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 			case HT_TAG_EDIT_TIME_LE:
 			case HT_TAG_EDIT_TIME_BE: {
 				uint32 d;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 4, (g==cursor.tag_group), is_cursor);
 
@@ -3257,21 +3257,21 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				} else {
 					strcpy(str, "?");
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, str, strlen(str), tag_color);
 				n += HT_TAG_EDIT_TIME_LE_LEN;
 				break;
 			}
 			case HT_TAG_EDIT_CHAR: {
 				char d;
-					
+
 				tag_offset = tag_get_offset(n);
 				tag_color = get_tag_color_edit(tag_offset, 1, (g==cursor.tag_group), is_cursor);
-					
+
 				if (pread(tag_offset, &d, 1) != 1) {
 					d = '?';
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, &d, 1, tag_color);
 				n += HT_TAG_EDIT_CHAR_LEN;
 				break;
@@ -3296,7 +3296,7 @@ uint ht_uformat_viewer::render_tagstring(char *chars, vcp *colors, uint maxlen, 
 				} else {
 					strcpy(str, "?");
 				}
-					
+
 				c += render_tagstring_single(chars, colors, maxlen, c, str, 1, tag_color);
 				n += HT_TAG_EDIT_BIT_LEN;
 				break;
@@ -3481,9 +3481,9 @@ void ht_uformat_viewer::select_mode_pre()
 		if (!get_current_tag_size(&cursor_select_cursor_length)) {
 			cursor_select_cursor_length = -1;
 		}
-	}		
-}	
-	
+	}
+}
+
 void ht_uformat_viewer::select_mode_post(bool lastpos)
 {
 	if (cursor_select) {
@@ -3570,7 +3570,7 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 		int i = 0;
 		int d = 0;
 
-		
+
 		switch (size) {
 			case 1: d = buf[0]; break;
 			case 2:
@@ -3728,7 +3728,7 @@ ht_search_result *ht_uformat_viewer::psearch(ht_search_request *request, FileOfs
 	}
 	last_search_physical = true;
 	last_search_end_ofs = end;
-	
+
 	ht_sub *sub=first_sub;
 	while (sub) {
 		ht_search_result *r = sub->search(request, start, end);
@@ -3746,7 +3746,7 @@ ht_search_result *ht_uformat_viewer::vsearch(ht_search_request *request, viewer_
 	}
 	last_search_physical = false;
 	last_search_end_pos = end;
-	
+
 	if (request->search_class == SC_VISUAL && request->type == ST_REGEX) {
 		if (!cursor.sub) return 0;
 		ht_regex_search_request *s=(ht_regex_search_request*)request;
@@ -3879,7 +3879,7 @@ bool ht_uformat_viewer::compeq_viewer_pos(viewer_pos *a, viewer_pos *b)
 {
 	return compeq_viewer_pos(&a->u, &b->u);
 }
-	
+
 bool ht_uformat_viewer::compeq_viewer_pos(uformat_viewer_pos *a, uformat_viewer_pos *b)
 {
 	return (a->sub == b->sub
@@ -4352,7 +4352,7 @@ static bool process_search_expr(Object *ctx, UiText *progress_indicator)
 		}
 		c->i++;
 		c->o++;
-		
+
 		if (!--w) {
 			char text[64];
 			if (c->end > c->start) {
@@ -4361,7 +4361,7 @@ static bool process_search_expr(Object *ctx, UiText *progress_indicator)
 				strcpy(text, "? % done");
 			}
 			progress_indicator->settext(text);
-	
+
 			return true;
 		}
 	}
@@ -4472,7 +4472,7 @@ bool ht_hex_sub::getline(char *line, int maxlen, const LINE_ID line_id)
 	FileOfs ofs = (uint64(line_id.id1) << 32) + line_id.id2;
 	uint c = MIN(uint64(line_length), fsize - ofs);
 	if (c <= 0) return false;
-	
+
 	char *l = line;
 	char *l_end = line+maxlen-1;
 	l += ht_snprintf(l, l_end - l, "%08qx ", ofs + fofs);
@@ -4481,7 +4481,7 @@ bool ht_hex_sub::getline(char *line, int maxlen, const LINE_ID line_id)
 	if (ofs < disp) {
 		start = line_length - disp;
 	}
-	
+
 	uint end = line_length;
 	if (c < line_length - start) {
 		end = start + c;
@@ -4699,7 +4699,7 @@ void ht_mask_sub::add_staticmask_ptable(ht_mask_ptable *statictag_ptable, FileOf
 		if (statictag_ptable->fields) strcat(s, statictag_ptable->fields);
 
 		add_staticmask(s, reloc, std_bigendian);
-		
+
 		statictag_ptable++;
 	}
 }
@@ -5006,7 +5006,7 @@ int ht_group_sub::prev_line_id(LINE_ID *line_id, int n)
 
 bool ht_group_sub::ref(LINE_ID *id)
 {
-	foreach(ht_sub, s, *subs, 
+	foreach(ht_sub, s, *subs,
 		if (s->ref(id)) return true;
 	);
 	return false;

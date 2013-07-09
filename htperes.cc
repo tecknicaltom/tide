@@ -132,7 +132,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 			peresource_file->seek(peresource_dir_ofs+entry.offset_to_directory);
 			peresource_file->read(&data, sizeof data);
 			createHostStruct(&data, PE_RESOURCE_DATA_ENTRY_struct, little_endian);
-			
+
 			ht_pe_resource_leaf *xdata = NULL;
 			FileOfs dofs=0;
 			if (pe_rva_to_ofs(peresource_section_headers, data.offset_to_data, &dofs)) {

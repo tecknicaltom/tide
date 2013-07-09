@@ -98,9 +98,9 @@ void NEAnalyser::beginAnalysis()
 	/*
 	 *	entrypoint
 	 */
-	 
+
 	Address *entry = createAddress1616(NE_ADDR_SEG(ne_shared->hdr.csip), NE_ADDR_OFS(ne_shared->hdr.csip));
-	
+
 	if (ne_shared->hdr.flags & NE_FLAGS_SELFLOAD) {
 		// bound as family app (needs loader)
 		struct bla {
@@ -138,7 +138,7 @@ void NEAnalyser::beginAnalysis()
 	} else {
 		pushAddress(entry, entry);
 	}
-	
+
 	/*
 	 * give all sections a descriptive comment:
 	 */
@@ -264,7 +264,7 @@ void NEAnalyser::beginAnalysis()
 	setLocationTreeOptimizeThreshold(1000);
 	setSymbolTreeOptimizeThreshold(1000);
 	delete entry;
-	
+
 	Analyser::beginAnalysis();
 }
 

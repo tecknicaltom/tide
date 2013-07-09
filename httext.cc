@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	httext.cc
  *
@@ -110,7 +110,7 @@ static const void *ht_memrchr(const void *string, int ch, size_t num)
 	}
 	return NULL;
 }
- 
+
 
 #define TEXT_SUB_READSIZE		256
 #define TEXT_SUB_MAX_LINELEN		512
@@ -268,7 +268,7 @@ void ht_text_sub::last_line_id(LINE_ID *line_id)
 byte *ht_text_sub::match_lineend_forwd(byte *buf, uint buflen, int *le_len)
 {
 	byte *result=NULL;
-	
+
 	byte *n=(byte*)memchr(buf, '\n', buflen);
 	if (n) {
 		if ((n>buf) && (n[-1] == '\r')) {
@@ -285,7 +285,7 @@ byte *ht_text_sub::match_lineend_forwd(byte *buf, uint buflen, int *le_len)
 byte *ht_text_sub::match_lineend_backwd(byte *buf, uint buflen, int *le_len)
 {
 	byte *result=NULL;
-	
+
 	byte *n=(byte*)ht_memrchr(buf, '\n', buflen);
 	if (n) {
 		if ((n>buf) && (n[-1] == '\r')) {

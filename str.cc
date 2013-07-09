@@ -513,7 +513,7 @@ void String::load(ObjectStream &s)
 #else
 	GET_LSTRING(s, mContent, mLength);
 	realloc(mLength);
-#endif	
+#endif
 }
 
 ObjectID String::getObjectID() const

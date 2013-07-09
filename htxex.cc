@@ -156,7 +156,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		xex_shared->image_size = 0;
 		xex_shared->image_base = 0;
 	}
-	
+
 	xex_shared->imports.lib_count = 0;
 	xex_shared->imports.libs = NULL;
 	try {
@@ -178,14 +178,14 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 					file->readStringz(s);
 					libs[i].name = strdup(s.contentChar());
 				}
-				
+
 				// patch table
-				for (uint i=0; i < l; i++) {				
+				for (uint i=0; i < l; i++) {
 					file->seek(ofs);
 					file->readx(&sizen, 4);
 					sizen = createHostInt(&sizen, 4, big_endian);
 					ofs += sizen;
-					
+
 					file->seek(36 + file->tell()); // skip garbage
 					int count = (sizen - 40) / 4;
 					libs[i].func_count = count;
@@ -200,13 +200,13 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 						libs[i].funcs[j].patch = createHostInt(&patch, 4, big_endian);
 						libs[i].funcs[j].ord = libs[i].funcs[j].ia = 0;
 					}
-				}				
+				}
 			}
 			xex_shared->imports.libs = libs;
 			xex_shared->imports.lib_count = l;
 		}
 	} catch (...) {}
-	
+
 	xex_shared->image = new MemoryFile(0, xex_shared->image_size);
 
 	try {
@@ -262,21 +262,21 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 					continue;
 				}
 				uint32 ia = iat[ord];
-				
+
 				// patch it
 				uint32 lis_r11 = (0x3d600000 | (ia >> 16)) + !!(ia & 0x8000);
 				uint32 lwz_r11 = (0x816b0000 | (ia & 0xffff));
-				
+
 				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base], lis_r11, 4, big_endian);
 				createForeignInt(&image_ptr[lib->funcs[j].patch-xex_shared->image_base+4], lwz_r11, 4, big_endian);
-				
-				lib->funcs[j].ia = ia; 
+
+				lib->funcs[j].ia = ia;
 /*				char s[100];
 				snprintf(s, sizeof s, "wrapper_import_%s_%d", imports[i].lib, ord);
 				printf("function 0x%08x name '%s'\n", imports[i].func[j].patch, s);
-				
+
 				printf("xref 0x%08x -> 0x%08x\n", ia, imports[i].func[j].patch + 12);*/
-				
+
 			} else {
 /*				ord &= 0x7fff;
 				char s[100];
@@ -286,7 +286,7 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 		}
 	}
 	delete[] iat;
-	
+
 	ht_format_group::init_ifs(ifs);
 }
 

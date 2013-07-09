@@ -177,7 +177,7 @@ static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs;
-	
+
 	s=new ht_mask_sub();
 	s->init(file, 0);
 	char info[128];
@@ -187,17 +187,17 @@ static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 	/* FIXME: */
 	bool pe_bigendian = false;
-	
+
 	s=new ht_mask_sub();
 	s->init(file, 1);
 	s->add_staticmask_ptable(pemagic, h, pe_bigendian);
-	
+
 	/* COFF header */
 	s->add_staticmask_ptable(coffheader, h+4, pe_bigendian);
 	cs=new ht_collapsable_sub();
 	cs->init(file, s, 1, "COFF header", 1);
 	v->insertsub(cs);
-	
+
 	/* optional header */
 	s=new ht_mask_sub();
 	s->init(file, 2);
@@ -213,14 +213,14 @@ static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 			cs=new ht_collapsable_sub();
 			cs->init(file, s, 1, "optional header", 1);
 			v->insertsub(cs);
-			
+
 			s=new ht_mask_sub();
 			s->init(file, 3);
 			s->add_staticmask_ptable(pe32?pe32header_nt:pe64header_nt, h+4, pe_bigendian);
 			cs=new ht_collapsable_sub();
 			cs->init(file, s, 1, "optional header: NT fields", 1);
 			v->insertsub(cs);
-			
+
 			s=new ht_mask_sub();
 			s->init(file, 4);
 			s->add_staticmask_ptable(pe32header_nt_dirs, h+4+(pe32?0x74:0x84), pe_bigendian);
@@ -239,9 +239,9 @@ static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 			v->insertsub(cs);
 		}
 	}
-	
+
 	/* section headers */
-	
+
 	for (uint i=0; i<pe_shared->sections.section_count; i++) {
 		s=new ht_mask_sub();
 		s->init(file, 100+i);
@@ -257,7 +257,7 @@ static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 
 		cs=new ht_collapsable_sub();
 		cs->init(file, s, 1, t, 1);
-	
+
 		v->insertsub(cs);
 	}
 	return v;
@@ -318,7 +318,7 @@ bool ht_pe_header_viewer::ref_sel(LINE_ID *id)
 				} else errorbox("Can't follow: directory RVA %08x is not valid!", rva);
 			}
 			break;
-		}			
+		}
 		case 1:
 			if (pe_shared->v_exports) {
 				vstate_save();

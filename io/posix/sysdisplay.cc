@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	sysdisplay.cc - screen access functions for POSIX
  *
@@ -156,17 +156,17 @@ uint mapCharToSystemCP(char chr, Codepage cp)
 /*
  *	Class CursesSystemDisplay
  */
- 
+
 struct CursesChar {
 	uint rawchar;
 	vcp color;
-}; 
+};
 
 class CursesSystemDisplay: public SystemDisplay {
 protected:
 	CursorMode cursor_mode;
-	int cursorx, cursory; 
-	
+	int cursorx, cursory;
+
 	CursesChar *buf;
 	WINDOW *win;
 	SCREEN *terminal;
@@ -193,7 +193,7 @@ public:
 	virtual	void			setCursorMode(CursorMode mode = CURSOR_NORMAL);
 	/* extends SystemDisplay */
 	virtual	void			show();
-	/* debug */	
+	/* debug */
 		void			doShowCursor();
 		void			term_on();
 		void			term_off();
@@ -497,7 +497,7 @@ void CursesSystemDisplay::show()
 	case CURSOR_NORMAL:
 		::curs_set(1); break;
 	case CURSOR_BOLD:
-		if (::curs_set(2) == ERR) ::curs_set(1); 
+		if (::curs_set(2) == ERR) ::curs_set(1);
 		break;
 	}
 	::refresh();
@@ -518,7 +518,7 @@ void CursesSystemDisplay::putChar(CursesChar *dest, uint rawchar, vcp vc)
 }
 
 static int sysdisplay_count = 0;
-	
+
 SystemDisplay *allocSystemDisplay(const char *title)
 {
 	if (sysdisplay_count) return NULL;

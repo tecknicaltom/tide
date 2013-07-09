@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	sysfile.cc - file system functions for POSIX
  *
@@ -181,7 +181,7 @@ void sys_suspend()
 	timeval tm;
 	fd_set zerofds;
 	FD_ZERO(&zerofds);
-	
+
 	tm.tv_sec = 0;
 	tm.tv_usec = 100;
 	select(0, &zerofds, &zerofds, &zerofds, &tm);

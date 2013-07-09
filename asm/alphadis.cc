@@ -280,13 +280,13 @@ const char *Alphadis::str(const dis_insn *disasm_insn, int style)
 const char *Alphadis::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	
+
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
 	const char *cs_symbol = get_cs(e_cs_symbol);
 
 	alphadis_insn *alpha_insn = (alphadis_insn *) disasm_insn;
-	
+
 	if (!alpha_insn->valid) {
 		is_invalid:
 		switch (alpha_insn->size) {
@@ -370,7 +370,7 @@ const char *Alphadis::strf(const dis_insn *disasm_insn, int style, const char *f
 			goto is_invalid;
 	}
 	disable_highlighting();
-	return insnstr;     
+	return insnstr;
 }
 
 bool	Alphadis::validInsn(const dis_insn *disasm_insn)

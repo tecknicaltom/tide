@@ -45,7 +45,7 @@ ht_textfile::ht_textfile(File *file, bool own_file)
 /*
  *	CLASS ht_layer_textfile
  */
- 
+
 ht_layer_textfile::ht_layer_textfile(ht_textfile *textfile, bool own_textfile)
 	: ht_textfile(textfile, own_textfile)
 {
@@ -131,7 +131,7 @@ ht_ltextfile_line::~ht_ltextfile_line()
 /*
  *	CLASS ht_ltextfile
  */
- 
+
 ht_ltextfile::ht_ltextfile(File *streamfile, bool own_streamfile, ht_syntax_lexer *l)
 	: ht_textfile(streamfile, own_streamfile)
 {
@@ -195,7 +195,7 @@ bool ht_ltextfile::convert_ofs2line(FileOfs o, uint *line, uint *pofs) const
 		if ((x->nofs < o) && ((y && (y->nofs <= o)) || !y)) l=m+1; else
 		if (x->nofs > o) r=m-1; else break;
 	}
-	
+
 	/* FIXME: debug */
 	x=fetch_line_nofs_ok(m);
 	if (x) assert(o>=x->nofs);
@@ -204,7 +204,7 @@ bool ht_ltextfile::convert_ofs2line(FileOfs o, uint *line, uint *pofs) const
 	/**/
 
 	x=fetch_line_nofs_ok(m);
-	
+
 	*line=m;
 	*pofs=o - x->nofs;
 	return true;
@@ -243,7 +243,7 @@ void ht_ltextfile::delete_chars(uint line, uint ofs, uint count)
 	if (e) {
 		char *ostr = e->in_memory.data;
 		uint olen = e->in_memory.len;
-		
+
 		if (ofs < olen) {
 			if (ofs+count>olen) count=olen-ofs;
 			char *nstr = ht_malloc(olen-count);
@@ -295,14 +295,14 @@ ht_ltextfile_line *ht_ltextfile::fetch_line_nofs_ok(uint line) const
 	if (is_dirty_nofs(line)) update_nofs(line);
 	return fetch_line(line);
 }
-			
+
 uint ht_ltextfile::find_linelen_forwd(byte *buf, uint maxbuflen, FileOfs ofs, int *le_len)
 {
 	uint readlen=(maxbuflen>TEXTFILE_READSIZE) ? TEXTFILE_READSIZE : maxbuflen;
 	byte *bufp;
 	uint s;
 	uint len = 0;
-	
+
 	if (le_len) *le_len = 0;
 	do {
 		mFile->seek(ofs);
@@ -497,7 +497,7 @@ void ht_ltextfile::insert_chars(uint line, uint ofs, void *chars, uint len)
 			dirty_nofs(line+1);
 			dirty=true;
 			free(ostr);
-		}			
+		}
 	}
 }
 
@@ -524,7 +524,7 @@ uint ht_ltextfile::linecount() const
 byte *ht_ltextfile::match_lineend_forwd(byte *buf, uint buflen, int *le_len)
 {
 	byte *result=NULL;
-	
+
 	byte *n=(byte*)memchr(buf, '\n', buflen);
 	if (n) {
 		if ((n>buf) && (n[-1] == '\r')) {
@@ -546,7 +546,7 @@ lexer_state ht_ltextfile::next_instate(uint line)
 	uint buflen;
 	if (!getline(line, 0, buf, TEXTFILE_MAX_LINELEN, &buflen, &state)) return state;
 	buf[buflen] = 0;
-	
+
 	if (lexer) {
 		text_pos p;
 		char *bufp = (char*)buf;
@@ -590,7 +590,7 @@ uint	ht_ltextfile::read(void *buf, uint size)
 	uint pofs;
 	uint c=0;
 	byte *b=(byte*)buf;
-	
+
 	if (convert_ofs2line(o, &line, &pofs)) while (size) {
 		ht_ltextfile_line *l=fetch_line(line);
 		if (!l)
@@ -718,7 +718,7 @@ void ht_ltextfile::split_line(uint a, uint pos, void *line_end, int line_end_len
 		char *aline = ht_malloc(pos+1);
 		uint alinelen;
 		getline(a, 0, aline, pos+1, &alinelen, NULL);
-	
+
 		insert_lines(a, 1, &line_end, &line_end_len);
 		insert_chars(a, 0, aline, alinelen);
 

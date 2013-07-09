@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htelf.cc
  *
@@ -248,7 +248,7 @@ void ht_elf::done()
 		for (uint i=0; i < elf_shared->sheaders.count; i++)
 			free(elf_shared->shnames[i]);
 		free(elf_shared->shnames);
-	}		
+	}
 	free(elf_shared->shrelocs);
 	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
 	case ELFCLASS32:

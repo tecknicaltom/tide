@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	atom.cc
  *
@@ -42,12 +42,12 @@ public:
 		Atom *a = (Atom*)obj;
 		return id - a->id;
 	}
-	
+
 	int toString(char *buf, int buflen) const
 	{
 		return ht_snprintf(buf, buflen, "[%08x, %p]\n", id, value);
 	}
-	
+
 };
 
 void *getAtomValue(uint id)
@@ -93,12 +93,12 @@ bool unregisterAtom(uint id)
 /*
  *	Module Init/Done
  */
- 
+
 bool init_atom()
 {
 	return true;
-} 
- 
+}
+
 void done_atom()
 {
 	atoms.delAll();

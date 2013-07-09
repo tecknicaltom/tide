@@ -51,7 +51,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	UiStaticText *text;
 
 	UiLabel *s;
-	
+
 	List *addrhist = (List*)getAtomValue(HISTATOM_GOTO);
 	/* start */
 	c = *b;
@@ -77,7 +77,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	s = new UiLabel();
 	s->init(&c, "~start", start);
 	insert(s);
-	
+
 	/* end */
 	c = *b;
 	c.h = 1;
@@ -136,7 +136,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	text = new UiStaticText();
 	text->init(&c, "set each element to", align_left);
 	insert(text);
-	
+
 	/* action */
 	List *ehist = (List*)getAtomValue(HISTATOM_EVAL_EXPR);
 
@@ -219,7 +219,7 @@ static bool blockop_symbol_eval(eval_scalar *r, char *symbol)
 }
 
 static int func_readint(eval_scalar *result, eval_int *offset, int size, Endianess e)
-{	
+{
 	File *f = (File*)eval_get_context();
 	byte buf[8];
 	try {
@@ -313,9 +313,9 @@ static bool blockop_func_eval(eval_scalar *result, char *name, eval_scalarlist *
 		{"readstring", (void*)&func_readstring, {SCALAR_INT, SCALAR_INT}, "read string (offset, length)"},
 		{NULL}
 	};
-	
+
 	blockop_expr_is_const = false;
-		
+
 	return std_eval_func_handler(result, name, params, myfuncs);
 }
 
@@ -396,7 +396,7 @@ static bool blockop_str_process(Object *context, UiText *progress_indicator)
 		if (ctx->o < ctx->ofs + ctx->len) {
 			uint s = ctx->v.len;
 			if (ctx->o + s > ctx->ofs + ctx->len) s = ctx->ofs + ctx->len - ctx->o;
-			
+
 			ctx->file->seek(ctx->o);
 			ctx->file->writex(ctx->v.value, s);
 /*			!=s) {
@@ -499,7 +499,7 @@ static Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uin
 	}
 
 	ctx->expr_const = blockop_expr_is_const;
-	
+
 	if (ctx->expr_const) {
 		scalar_context_int(&r, &ir);
 		ctx->v = ir.value;
@@ -513,7 +513,7 @@ static bool blockop_int_process(Object *context, UiText *progress_indicator)
 {
 	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
 	char status[64];
-	if (ctx->expr_const) {		
+	if (ctx->expr_const) {
 		ht_snprintf(status, sizeof status, "operating (constant integer)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));
 		progress_indicator->settext(status);
 		byte ibuf[8];
@@ -529,7 +529,7 @@ static bool blockop_int_process(Object *context, UiText *progress_indicator)
 				return false;
 			}
 		}
-		
+
 	} else {
 		ht_snprintf(status, sizeof status, "operating (variable integer)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));
 		progress_indicator->settext(status);
@@ -579,8 +579,8 @@ bool format_string_to_offset_if_avail(ht_format_viewer *format, const byte *stri
 	}
 	return false;
 }
-		
-		
+
+
 void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 {
 	Bounds b;
@@ -588,7 +588,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 	b.h = 15;
 	b.x = (screen->w - b.w)/2;
 	b.y = (screen->h - b.h)/2;
-	
+
 	ht_blockop_dialog *d=new ht_blockop_dialog();
 	d->init(&b, pstart, pend, 0);
 	bool run = true;
@@ -598,15 +598,15 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 		case 100:
 			dialog_eval_help(blockop_func_eval, blockop_symbol_eval, NULL);
 			break;
-		default: 
+		default:
 		{
 		ht_blockop_dialog_data t;
 		ViewDataBuf vdb(d, &t, sizeof t);
-		
+
 		File *file = format->get_file();
 
 		baseview->sendmsg(cmd_edit_mode_i, file, NULL);
-		
+
 		if (file->getAccessMode() & IOAM_WRITE) {
 			FileOfs start = pstart, end = pend;
 
@@ -627,13 +627,13 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 							char a[4096];
 							bin2str(a, t.action.text, MIN(sizeof a, t.action.textlen));
 							insert_history_entry((List*)getAtomValue(HISTATOM_EVAL_EXPR), a, NULL);
-						
+
 							char addr[128];
 							bin2str(addr, t.start.text, MIN(sizeof addr, t.start.textlen));
 							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
 							bin2str(addr, t.end.text, MIN(sizeof addr, t.end.textlen));
 							insert_history_entry((List*)getAtomValue(HISTATOM_GOTO), addr, NULL);
-						
+
 							esize = esizes[esize];
 							Object *ctx = NULL;
 							try {
@@ -673,7 +673,7 @@ void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
 						}
 						default:
 							errorbox("mode %d not supported", t.mode.cursor_pos);
-					}							
+					}
 				} else {
 					errorbox("end offset must be greater than start offset");
 				}

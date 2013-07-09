@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htelfphs.cc
  *
@@ -89,75 +89,75 @@ static UiView *htelfprogramheaders_init(Bounds *b, File *file, ht_format_group *
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS32) {
 		v = new ht_uformat_viewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
-	
+
 		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);
 		registerAtom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
-	
+
 		FileOfs h = elf_shared->header32.e_phoff;
-	
+
 		ht_mask_sub *m = new ht_mask_sub();
 		m->init(file, 0);
-	
+
 		char info[128];
 		ht_snprintf(info, sizeof info, "* ELF program headers at offset %08qx", h);
-	
+
 		m->add_mask(info);
 
 		v->insertsub(m);
 		for (uint i=0; i < elf_shared->pheaders.count; i++) {
-		
+
 			ht_mask_sub *n = new ht_mask_sub();
 			n->init(file, i);
-		
+
 			char t[32];
 			const char *etype = matchhash(elf_shared->pheaders.pheaders32[i].p_type, elf_ph_type);
 			if (!etype) etype = "?";
 			ht_snprintf(t, sizeof t, "entry %d (%s)", i, etype);
-		
+
 			n->add_staticmask_ptable(elfprogramheader32, h+i*elf_shared->header32.e_phentsize, elf_bigendian);
-		
+
 			ht_collapsable_sub *cn=new ht_collapsable_sub();
 			cn->init(file, n, 1, t, 1);
-	
+
 			v->insertsub(cn);
 		}
 	} else if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS64) {
 		v = new ht_uformat_viewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
-	
+
 		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);
 		registerAtom(ATOM_ELF_PH_FLAGS, elf_ph_flags);
 
 		FileOfs h = elf_shared->header64.e_phoff;
-	
+
 		ht_mask_sub *m=new ht_mask_sub();
 		m->init(file, 0);
-	
+
 		char info[128];
 		ht_snprintf(info, sizeof info, "* ELF program headers at offset 0x%08qx", h);
-	
+
 		m->add_mask(info);
 
 		v->insertsub(m);
 		for (uint i=0; i<elf_shared->pheaders.count; i++) {
-		
+
 			ht_mask_sub *n=new ht_mask_sub();
 			n->init(file, i);
-		
+
 			char t[32];
 			const char *etype=matchhash(elf_shared->pheaders.pheaders64[i].p_type, elf_ph_type);
 			if (!etype) etype="?";
 			ht_snprintf(t, sizeof t, "entry %d (%s)", i, etype);
-		
+
 			n->add_staticmask_ptable(elfprogramheader64, h+i*elf_shared->header64.e_phentsize, elf_bigendian);
-		
+
 			ht_collapsable_sub *cn=new ht_collapsable_sub();
 			cn->init(file, n, 1, t, 1);
-	
+
 			v->insertsub(cn);
 		}
 	}
-	
+
 	return v;
 }
 

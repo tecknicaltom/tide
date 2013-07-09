@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	file.cc
  *
@@ -155,7 +155,7 @@ static char *_substr_replace(char *s, unsigned int s_len, char *r, unsigned int 
 	if (at > s_len) at = 0;
 	unsigned int nlen = s_len + r_len - len;
 	char *out = ht_malloc(nlen+1);
-	out[nlen] = 0; 
+	out[nlen] = 0;
 	memcpy(out, s, at);
 	memcpy(out+at, r, r_len);
 	while (s_len-- > (at + len)) {
@@ -202,7 +202,7 @@ static char *_env_replace(char *str, unsigned int len)
 	}
 	if (prt == NULL) {
 		prt = ht_malloc(len+1);
-		prt[len] = 0;	
+		prt[len] = 0;
 		memcpy(prt, str, len);
 	}
 	return prt;
@@ -293,7 +293,7 @@ char *sys_get_home_dir(void)
 	if (RegOpenKeyEx(HKEY_CURRENT_USER,
 		"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\User Shell Folders",
                 0, KEY_QUERY_VALUE, &hKey ) == ERROR_SUCCESS) {
-		
+
 		if (RegQueryValueEx(hKey, "Personal", NULL, NULL, (LPBYTE)path, &len) ==
                                                                 ERROR_SUCCESS) {
 			RegCloseKey(hKey);
@@ -304,7 +304,7 @@ char *sys_get_home_dir(void)
 			}
 		}
 	}
-#else 
+#else
 	char *path = getenv("HOME");
 	if (path) return _env_replace(path, strlen(path));
 #endif
@@ -332,11 +332,11 @@ int sys_file_mode(int mode)
 	if (mode & S_IRUSR) m |= HT_S_IRUSR;
 	if (mode & S_IRGRP) m |= HT_S_IRGRP;
 	if (mode & S_IROTH) m |= HT_S_IROTH;
-	
+
 	if (mode & S_IWUSR) m |= HT_S_IWUSR;
 	if (mode & S_IWGRP) m |= HT_S_IWGRP;
 	if (mode & S_IWOTH) m |= HT_S_IWOTH;
-	
+
 	if (mode & S_IXUSR) m |= HT_S_IXUSR;
 	if (mode & S_IXGRP) m |= HT_S_IXGRP;
 	if (mode & S_IXOTH) m |= HT_S_IXOTH;

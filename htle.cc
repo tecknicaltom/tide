@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htle.cc
  *
@@ -53,8 +53,8 @@ static UiView *htle_init(Bounds *b, File *file, ht_format_group *format_group)
 	byte lemagic[2];
 	FileOfs h=get_newexe_header_ofs(file);
 	file->seek(h);
-	
-	if (file->read(lemagic, 2) != 2 
+
+	if (file->read(lemagic, 2) != 2
 	 || lemagic[0] != LE_MAGIC0 || lemagic[1] != LE_MAGIC1) return 0;
 
 	ht_le *g=new ht_le();
@@ -94,7 +94,7 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	file->readx(&le_shared->hdr, sizeof le_shared->hdr);
 	createHostStruct(&le_shared->hdr, LE_HEADER_struct, le_shared->byteorder);
 
-	le_shared->is_vxd = le_shared->hdr.winresoff 
+	le_shared->is_vxd = le_shared->hdr.winresoff
 		|| le_shared->hdr.winreslen
 		|| le_shared->hdr.devid
 		|| le_shared->hdr.ddkver;
@@ -102,7 +102,7 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	read_pagemap();
 	read_objects();
 
-	ht_le_page_file *lfile = new ht_le_page_file(file, false, &le_shared->pagemap, 
+	ht_le_page_file *lfile = new ht_le_page_file(file, false, &le_shared->pagemap,
 		le_shared->pagemap.count, le_shared->hdr.pagesize);
 	le_shared->linear_file = lfile;
 
@@ -117,11 +117,11 @@ void ht_le::done()
 	ht_format_group::done();
 
 	ht_le_shared_data *le_shared=(ht_le_shared_data*)shared_data;
-	
+
 	free(le_shared->objmap.header);
 	free(le_shared->objmap.vsize);
 	free(le_shared->objmap.psize);
-	
+
 	free(le_shared->pagemap.offset);
 	free(le_shared->pagemap.vsize);
 	free(le_shared->pagemap.psize);
@@ -152,7 +152,7 @@ void ht_le::do_fixups()
 		page_fixup_size[i] = page_fixup_ofs[i+1] - page_fixup_ofs[i];
 	}
 
-	ht_le_reloc_file *rfile = new ht_le_reloc_file(le_shared->linear_file, 
+	ht_le_reloc_file *rfile = new ht_le_reloc_file(le_shared->linear_file,
 					false, le_shared);
 
 	le_shared->reloc_file = rfile;
@@ -328,7 +328,7 @@ void ht_le::read_pagemap()
 		file->seek(h+le_shared->hdr.pagemap+i*4);
 		file->readx(&e, sizeof e);
 		createHostStruct(&e, LE_PAGE_MAP_ENTRY_struct, le_shared->byteorder);
-		
+
 		/* FIXME: is this formula correct ? it comes straight from my docs... */
 		uint32 eofs=(e.high+e.low-1)*le_shared->hdr.pagesize+le_shared->hdr.datapage;
 		le_shared->pagemap.offset[i] = eofs;
@@ -405,11 +405,11 @@ bool ht_le::loc_enum_next(ht_format_loc *loc)
 		loc->name="le";
 		loc->start=sh->hdr_ofs;
 		loc->length=file->get_size()-loc->start;	/* FIXME: ENOTOK */
-		
+
 		loc_enum=false;
 		return true;
 	}
-#endif	
+#endif
 	return false;
 }
 

@@ -70,7 +70,7 @@ static UiView *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
 	v->insertsub(analy);
 
 	v->sendmsg(msg_complete_init, 0);
-	
+
 	viewer_pos entrypoint;
 	if (v->string_to_pos("entrypoint", &entrypoint)) {
 		v->goto_pos(entrypoint, false);
@@ -103,7 +103,7 @@ void ht_class_aviewer::init(Bounds *b, const char *desc, int caps, File *File, h
 void ht_class_aviewer::setAnalyser(Analyser *a)
 {
 	((ClassAnalyser *)a)->reinit(class_shared, file);
-	
+
 	analy = a;
 	analy_sub->setAnalyser(a);
 }

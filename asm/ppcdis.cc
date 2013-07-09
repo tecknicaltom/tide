@@ -45,7 +45,7 @@ dis_insn *PPCDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 	int dialect = -1;
 
 	insn.data = createHostInt(code, 4, big_endian);
-	
+
 	if (maxlen < 4) {
 		insn.valid = false;
 		insn.size = maxlen;
@@ -60,7 +60,7 @@ dis_insn *PPCDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 	/* Find the first match in the opcode table.  We could speed this up
 	   a bit by doing a binary search on the major opcode.  */
 	opcode_end = powerpc_opcodes + powerpc_num_opcodes;
-	
+
 	for (opcode = powerpc_opcodes; opcode < opcode_end; opcode++) {
 		uint32 table_op;
 		const byte *opindex;
@@ -186,7 +186,7 @@ const char *PPCDisassembler::str(const dis_insn *disasm_insn, int style)
 const char *PPCDisassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	
+
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
 	const char *cs_symbol = get_cs(e_cs_symbol);
@@ -267,7 +267,7 @@ const char *PPCDisassembler::strf(const dis_insn *disasm_insn, int style, const 
 					is += sprintf(is, "%s%s", cs_default, cbnames[cc]);
 				}
 			}
-		
+
 			if (need_paren) {
 				is += sprintf(is, "%s)", cs_symbol);
 				need_paren = false;
@@ -282,7 +282,7 @@ const char *PPCDisassembler::strf(const dis_insn *disasm_insn, int style, const 
 		}
 	}
 	disable_highlighting();
-	return insnstr;     
+	return insnstr;
 }
 
 ObjectID PPCDisassembler::getObjectID() const

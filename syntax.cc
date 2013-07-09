@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	syntax.cc
  *
@@ -52,9 +52,9 @@ bool match_sorted_stringtable(char *s, uint slen, const char **strings, uint str
 		if (slen > x) x = slen;
 		int d = ht_strncmp(s, strings[m], x);
 		if (d < 0) {
-			b = m-1; 
+			b = m-1;
 		} else if (d > 0) {
-			a = m+1; 
+			a = m+1;
 		} else {
 			return true;
 		}
@@ -215,7 +215,7 @@ lexer_token ht_lang_syntax_lexer::gettoken(void *b, uint buflen, text_pos p, boo
 void ht_lang_syntax_lexer::set_lexer_rules(syntax_lexer_rule *lr)
 {
 	lexer_rules=lr;
-	
+
 	lexer_rules_count=0;
 	while (lexer_rules[lexer_rules_count].needstate) {
 		lexer_rules_count++;
@@ -230,12 +230,12 @@ void ht_lang_syntax_lexer::set_lexer_rules(syntax_lexer_rule *lr)
 			char *regex = ht_malloc(1+rl);
 			*regex='^';
 			memcpy(regex+1, lexer_rules[i].string, rl);
-			
+
 			if (regcomp(preg, regex, REG_EXTENDED))
 				throw Exception();
-				
+
 			free(regex);
-			
+
 			lexer_rules_precompiled[i]=preg;
 		} else {
 			lexer_rules_precompiled[i]=NULL;
@@ -352,7 +352,7 @@ void ht_c_syntax_lexer::init()
 	c_reserved_sorted = create_sorted_stringtable(c_reserved);
 
 	const char **table=c_reserved;
-	
+
 	const char **x=table;
 	while (*x) x++;
 	c_reserved_count=x-table;
@@ -428,7 +428,7 @@ void ht_c_syntax_lexer::reloadpalette()
 	if (c_pal.data) {
 	    free(c_pal.data);
 	    c_pal.data = NULL;
-	}	    
+	}
 	load_pal(palclasskey_syntax, palkey_syntax_c_default, &c_pal);
 }
 
@@ -562,7 +562,7 @@ void ht_html_syntax_lexer::init()
 	ht_lang_syntax_lexer::init(html_syntax_lexer_rules);
 /*	html_reserved_sorted=create_sorted_stringtable(html_reserved);
 	char **table=c_reserved;
-	
+
 	char **x=table;
 	while (*x) x++;
 	c_reserved_count=x-table;
@@ -638,7 +638,7 @@ void ht_html_syntax_lexer::reloadpalette()
 /*	if (c_pal.data) {
 	    free(c_pal.data);
 	    c_pal.data = NULL;
-	}	    
+	}
 	load_pal(palclasskey_syntax, palkey_syntax_c_default, &c_pal);*/
 }
 #endif
@@ -651,14 +651,14 @@ static int qsort_stringlist(const void *e1, const void *e2)
 {
 	return strcmp(*(char **)e1, *(char **)e2);
 }
-	
+
 const char **create_sorted_stringtable(const char **table)
 {
 	const char **x=table;
 	while (*x) x++;
 	const char **stab = ht_malloc(sizeof (char*) * (x-table+1));
 	memcpy(stab, table, sizeof (char*) * (x-table+1));
-	
+
 	qsort(stab, x-table, sizeof(char*), qsort_stringlist);
 	return stab;
 }

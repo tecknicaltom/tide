@@ -98,7 +98,7 @@ void UiView::init(Bounds *b, int o, const char *d)
 	enabled = true;
 
 	growmode = MK_GM(GMH_LEFT, GMV_TOP);
-	
+
 //	Bounds rel(0, 0, b->w, b->h);
 	if (options & VO_OWNBUFFER) {
 		buf = new BufferedRDisplay(size);
@@ -412,7 +412,7 @@ struct databufdup_s {
 
 void UiView::databuf_free(void *handle)
 {
-	databufdup_s *s = (databufdup_s*)handle;	
+	databufdup_s *s = (databufdup_s*)handle;
 	delete s->s;
 	delete s->f;
 	delete s;
@@ -420,9 +420,9 @@ void UiView::databuf_free(void *handle)
 
 void *UiView::databuf_get(void *buf, int bufsize)
 {
-	MemMapFile *f = new MemMapFile(buf, bufsize);	
+	MemMapFile *f = new MemMapFile(buf, bufsize);
 	ObjectStreamNative *s = new ObjectStreamNative(f, false, true);
-	
+
 	getdata(*s);
 
 	databufdup_s *q = new databufdup_s;
@@ -435,7 +435,7 @@ void UiView::databuf_set(void *buf, int bufsize)
 {
 	ConstMemMapFile f(buf, bufsize);
 	ObjectStreamNative s(&f, false, true);
-	setdata(s);	
+	setdata(s);
 }
 
 void UiView::getdata(ObjectStream &s)
@@ -581,7 +581,7 @@ void UiView::reloadpalette()
 	if (pal.data) {
 		free(pal.data);
 		pal.data=0;
-	}	    
+	}
 	load_pal(pal_class, pal_name, &pal);
 }
 
@@ -1101,11 +1101,11 @@ void UiGroup::remove(UiView *view)
 		releasefocus();
 		current = NULL;
 	}
-	
+
 	Bounds c;
 	getbounds(&c);
 	view->move(-c.x, -c.y);
-	
+
 	if (view->prev) view->prev->next = view->next;
 	if (view->next) view->next->prev = view->prev;
 	if (first == view) first = first->next;
@@ -1130,7 +1130,7 @@ void UiGroup::reorder_view(UiView *v, int rx, int ry)
 		sx = rx;
 		break;
 	}
-	
+
 	switch (gmv) {
 	case GMV_TOP:
 		/* do nothing */
@@ -1155,7 +1155,7 @@ void UiGroup::resize(int sx, int sy)
 	if (size.h+sy <= min_height) sy = min_height - size.h;
 
 	UiView::resize(sx, sy);
-	
+
 	UiView *v = first;
 	while (v) {
 		reorder_view(v, sx, sy);
@@ -1329,7 +1329,7 @@ void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 {
 	UiView::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_scrollbar");
-	
+
 	pstart = 0;
 	psize = 0;
 
@@ -1421,7 +1421,7 @@ void UiFrame::init(Bounds *b, const char *desc, uint s, uint n)
 	number = n;
 	style = s;
 	framestate = FST_UNFOCUSED;
-	
+
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
@@ -1436,7 +1436,7 @@ void UiFrame::draw()
 	int lineh, linev;
 	ht_window *w = (ht_window*)group;
 	if (framestate != FST_MOVE && framestate != FST_RESIZE) {
-		setframestate(w->focused ? FST_FOCUSED : FST_UNFOCUSED); 
+		setframestate(w->focused ? FST_FOCUSED : FST_UNFOCUSED);
 	}
 	if (style & FS_THICK) {
 		cornerul = GC_2CORNER3;
@@ -1805,11 +1805,11 @@ void ht_window::receivefocus()
 void ht_window::redraw()
 {
 	htmsg m;
-	
+
 	if (pindicator) {
 		char buf[256];
 		buf[0] = 0;
-	
+
 		m.msg = msg_get_pindicator;
 		m.type = mt_empty;
 		m.data1.integer = sizeof buf;

@@ -53,11 +53,11 @@ dis_insn *AVRDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 	} else {
 		insn.size = 2;
 	}
-	
+
 	op = insn.data;
 
 	opcode_end = avr_opcodes + avr_num_opcodes;
-	
+
 	for (opcode = avr_opcodes; opcode < opcode_end; opcode++) {
 		const byte *opindex;
 		const struct avr_operand *operand;
@@ -164,7 +164,7 @@ const char *AVRDisassembler::str(const dis_insn *disasm_insn, int style)
 const char *AVRDisassembler::strf(const dis_insn *disasm_insn, int style, const char *format)
 {
 	if (style & DIS_STYLE_HIGHLIGHT) enable_highlighting();
-	
+
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
 	const char *cs_symbol = get_cs(e_cs_symbol);
@@ -276,7 +276,7 @@ const char *AVRDisassembler::strf(const dis_insn *disasm_insn, int style, const 
 		}
 	}
 	disable_highlighting();
-	return insnstr;     
+	return insnstr;
 }
 
 ObjectID AVRDisassembler::getObjectID() const

@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htelfhd.cc
  *
@@ -200,7 +200,7 @@ static int_hash elf_machine[] =
 static UiView *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
-	
+
 	ht_uformat_viewer *v = new ht_uformat_viewer();
 	v->init(b, DESC_ELF_HEADER, VC_EDIT, file, group);
 	ht_mask_sub *m = new ht_mask_sub();
@@ -215,7 +215,7 @@ static UiView *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
 	m->add_mask(info);
 	m->add_staticmask_ptable(elfheader, elf_shared->header_ofs, true);
 	bool elf_bigendian = (elf_shared->ident.e_ident[ELF_EI_DATA] == ELFDATA2MSB);
-	
+
 	switch (elf_shared->ident.e_ident[ELF_EI_CLASS]) {
 	case ELFCLASS32:
 		m->add_staticmask_ptable(elfheader32, elf_shared->header_ofs, elf_bigendian);
@@ -224,7 +224,7 @@ static UiView *htelfheader_init(Bounds *b, File *file, ht_format_group *group)
 		m->add_staticmask_ptable(elfheader64, elf_shared->header_ofs, elf_bigendian);
 		break;
 	}
-	
+
 	v->insertsub(m);
 	return v;
 }

@@ -89,7 +89,7 @@ public:
 	{
 		return sprintf(buf,"%s", srt_x86_idx2reg(regidx));
 	}
-}; 
+};
 
 /*
  *	srt_x86
@@ -502,7 +502,7 @@ static void srt_x86_push(CPU *cpu, Container *rm, x86dis_insn *insn)
 	m->isbool = false;
 	m->value.integer = sp;
 	rm->insert(m);
-	
+
 	m = new state_mod();
 	m->ismem = true;
 	m->dest.mem.addr = (sym_int*)sp->clone();

@@ -37,9 +37,9 @@ bool output_map_file(ht_stream *s, Analyser *analy)
 	s->write(&c, 1);
 	STREAM_WRITE_STR(s, " Start         Length     Name\n");
 	STREAM_WRITE_STR(s, " 0000:00000000 00004800H CODE\n\n");
-	
+
 	tlabel *sym = analy->enum_labels(NULL);
 	STREAM_WRITE_STR(s, "  Address         Publics by Value\n");
-	
+
 }
- 
+

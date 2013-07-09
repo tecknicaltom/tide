@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	out_ht.cc
  *
@@ -91,7 +91,7 @@ void AnalyserHTOutput::beginLine()
 		// FIXME: buffer bla
 		work_buffer = (byte *)tag_make_sel((TAGSTRING *)work_buffer, work_buffer_end-work_buffer, temp);
 	}
-	
+
 	if (analy->explored->contains(addr)) {
 		write(" ! ");
 	} else {
@@ -129,9 +129,9 @@ void	AnalyserHTOutput::endLine()
 			char *work_buffer2 = workbuf2;
 			char *work_buffer2_end = workbuf2 + sizeof workbuf2 - 1;
 			*work_buffer2_end = 0;
-			
+
 			a += bytes_line - want_bytes_line;
-			
+
 			for (int i=0; i < want_bytes_line; i++) {
 				work_buffer2 = tag_make_edit_byte(work_buffer2, work_buffer2_end - work_buffer2, a+i);
 			}

@@ -72,10 +72,10 @@ static UiView *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 
 	ht_analy_sub *analy=new ht_analy_sub();
 	analy->init(file, v, p, low, high);
-	
+
 	delete low;
 	delete high;
-	
+
 	v->analy_sub = analy;
 	v->insertsub(analy);
 
@@ -85,7 +85,7 @@ static UiView *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 //	tmpaddr = p->createAddress32(pef_shared->pe32.header.entrypoint_address+pef_shared->pe32.header_nt.image_base);
 //	v->gotoAddress(tmpaddr, NULL);
 //	delete tmpaddr;
-	
+
 	g->insert(head);
 	g->insert(v);
 
@@ -142,7 +142,7 @@ static int pe_viewer_func_section_int(eval_scalar *result, eval_int *q)
 			return 1;
 		} else {
 //			set_eval_error("invalid file offset or no corresponding RVA for '0%xh'", rva);
-		}     
+		}
 	} else {
 		set_eval_error("no section number %qd", &q->value);
 	}

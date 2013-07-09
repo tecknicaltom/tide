@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htelf.cc
  *
@@ -43,7 +43,7 @@ static UiView *htflt_init(Bounds *b, File *file, ht_format_group *format_group)
 	file->read(&ident, sizeof ident);
 	if ((ident[0]!=FLTMAG0) || (ident[1]!=FLTMAG1) ||
 		(ident[2]!=FLTMAG2) || (ident[3]!=FLTMAG3) ) return 0;
-		
+
 	ht_flt *g=new ht_flt();
 	g->init(b, file, htflt_ifs, format_group, 0);
 	return g;
@@ -65,9 +65,9 @@ void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	String fn;
 	file->getFilename(fn);
 	LOG("%y: FLAT: found header at %08qx", &fn, header_ofs);
-	
+
 	ht_flt_shared_data *flt_shared = ht_malloc(sizeof (ht_flt_shared_data));
-	
+
 	shared_data = flt_shared;
 	flt_shared->header_ofs = header_ofs;
 

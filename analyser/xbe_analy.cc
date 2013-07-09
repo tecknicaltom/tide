@@ -93,7 +93,7 @@ void XBEAnalyser::beginAnalysis()
 
 	entry = createAddress32(xbe_shared->header.entry_point);
 	pushAddress(entry, entry);
-	
+
 	/*
 	 * give all sections a descriptive comment:
 	 */
@@ -152,7 +152,7 @@ void XBEAnalyser::beginAnalysis()
 		if (!assignSymbol(faddr, label, label_func)) {
 			// multiple import of a function (duplicate labelname)
 			// -> mangle name a bit more
-			addComment(faddr, 0, "; duplicate import");               
+			addComment(faddr, 0, "; duplicate import");
 			ht_snprintf(buffer, sizeof buffer, "%s_%x", label, f->address);
 			assignSymbol(faddr, buffer, label_func);
 		}
@@ -300,14 +300,14 @@ const char *XBEAnalyser::getSegmentNameByAddress(const Address *Addr)
 
 //	Addr-=pe_shared->pe32.header_nt.image_base;
 	if (!convertAddressToRVA(Addr, &r)) return NULL;
-	
+
 //	{ FILE *f;f=fopen("/tmp/rva","a+");if (f){fprintf(f,"rva: %08x\n",r);fclose(f);} }
-	
+
 	xbe_rva_to_section(sections, r, &i);
 //	XBE_SECTION_HEADER *s=sections->sections+i;
 	b = xbe_rva_is_valid(sections, r);
 //	{ FILE *f;f=fopen("/tmp/rva","a+");if (f){fprintf(f,"rva: %08x %u\n",r,(uint)b);fclose(f);} }
-	
+
 	if (!b) return NULL;
 
 	strcpy(sectionname, "<notyet>");

@@ -38,7 +38,7 @@ static uint32 extract_rrd(uint32 insn, bool *invalid)
 
 static uint32 extract_q(uint32 insn, bool *invalid)
 {
-	return ((insn >> 8) & 0x20) 
+	return ((insn >> 8) & 0x20)
 		| ((insn >> 7) & 0x18)
 		| (insn & 0x7);
 }
@@ -60,7 +60,7 @@ static uint32 extract_k16(uint32 insn, bool *invalid)
 
 static uint32 extract_rel22(uint32 insn, bool *invalid)
 {
-	return (((insn << 12) & 0x003e0000) 
+	return (((insn << 12) & 0x003e0000)
 		| ((insn & 1) << 16)
 		| (insn >> 16)) << 1;
 }
@@ -76,15 +76,15 @@ const struct avr_operand avr_operands[] =
 {
   /* The zero index is used to indicate the end of the list of
      operands.  */
-     
+
 //     bit, shr, add, scale, extract
-     
+
 #define UNUSED 0
   { 0, 0, 0, 0 },
 
 #define Rd UNUSED + 1
   { 5, 4, 0, 0, 0, AVR_OPERAND_GPR },
-  
+
 #define Rd16 Rd + 1
   { 4, 4, 16, 0, 0, AVR_OPERAND_GPR },
 
@@ -99,7 +99,7 @@ const struct avr_operand avr_operands[] =
 
 #define Rr RdW24 + 1
   { 5, 0, 0, 0, extract_rr, AVR_OPERAND_GPR },
-  
+
 #define Rr16 Rr + 1
   { 4, 0, 16, 0, 0, AVR_OPERAND_GPR },
 
@@ -111,7 +111,7 @@ const struct avr_operand avr_operands[] =
 
 #define Rrd RrW + 1
   { 5, 0, 0, 0, extract_rrd, AVR_OPERAND_FAKE },
-  
+
 #define K6 Rrd + 1
   { 6, 0, 0, 0, extract_k6, AVR_OPERAND_IMM },
 
@@ -132,20 +132,20 @@ const struct avr_operand avr_operands[] =
 
 #define Rel7 A6 + 1
   { 7, 3, 0, 1, 0, AVR_OPERAND_REL | AVR_OPERAND_SIGNED },
-  
+
 #define Rel12 Rel7 + 1
   { 12, 0, 0, 1, 0, AVR_OPERAND_REL | AVR_OPERAND_SIGNED },
 
 #define Rel22 Rel12 + 1
   { 22, 0, 0, 0, extract_rel22, AVR_OPERAND_ABS },
-  
+
 #define X Rel22 + 1
   { 0, 0, 0, 0, 0, AVR_OPERAND_X },
 #define XP X + 1
   { 0, 0, 0, 0, 0, AVR_OPERAND_XP },
 #define XM XP + 1
   { 0, 0, 0, 0, 0, AVR_OPERAND_XM },
-  
+
 #define Y XM + 1
   { 0, 0, 0, 0, 0, AVR_OPERAND_Y },
 #define YP Y + 1
@@ -154,7 +154,7 @@ const struct avr_operand avr_operands[] =
   { 0, 0, 0, 0, 0, AVR_OPERAND_YM },
 #define Yq YM + 1
   { 6, 0, 0, 0, extract_q, AVR_OPERAND_Yq },
-  
+
 #define Z Yq + 1
   { 0, 0, 0, 0, 0, AVR_OPERAND_Z },
 #define ZP Z + 1
@@ -163,7 +163,7 @@ const struct avr_operand avr_operands[] =
   { 0, 0, 0, 0, 0, AVR_OPERAND_ZM },
 #define Zq ZM + 1
   { 6, 0, 0, 0, extract_q, AVR_OPERAND_Zq },
-  
+
 };
 
 

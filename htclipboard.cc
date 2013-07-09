@@ -45,7 +45,7 @@ public:
 		size = aSize;
 		time = aTime;
 	}
-	
+
 	virtual ~ht_clipboard_copy_history() {
 		free(source);
 	}
@@ -96,7 +96,7 @@ uint	ht_clipboard::write(const void *buf, uint size)
 void ht_clipboard_viewer::init(Bounds *b, const char *desc, int caps, ht_clipboard *clipb, ht_format_group *format_group)
 {
 	ht_uformat_viewer::init(b, desc, caps, clipboard, format_group);
-	
+
 	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 
 	lastentrycount = 999999999;
@@ -148,7 +148,7 @@ void ht_clipboard_viewer::update_content()
 	ht_clipboard *clipboard = (ht_clipboard*)file;
 	int c = clipboard->copy_history->count();
 	char title[512];	/* secure */
-	
+
 	uint uid = 0;
 	for (int i = 0; i < c; i++) {
 		ht_clipboard_copy_history *j = (ht_clipboard_copy_history*)(*clipboard->copy_history)[i];
@@ -209,7 +209,7 @@ FileOfs clipboard_copy(const char *source_desc, void *buf, uint len)
 		clipboard->select_start = size;
 		clipboard->select_len = r;
 		clipboard_add_copy_history_entry(source_desc, size, r, time(0));
-	}		
+	}
 	return r;
 }
 

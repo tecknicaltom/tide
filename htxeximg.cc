@@ -35,7 +35,7 @@ static UiView *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
 
 	String fn;
 	LOG("%y: XEX: loading image (starting analyser)...", &file->getFilename(fn));
-	
+
 	file = xex_shared->image;
 
 	XEXAnalyser *p = new XEXAnalyser();
@@ -60,15 +60,15 @@ static UiView *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
 
 	Address *low = p->createAddress32(xex_shared->image_base);
 	Address *high = p->createAddress32(xex_shared->image_base+xex_shared->image_size-1);
-	
+
 	p->validarea->add(low, high);
-	
+
 	ht_analy_sub *analy=new ht_analy_sub();
 	analy->init(file, v, p, low, high);
-	
+
 	delete low;
 	delete high;
-	
+
 	v->analy_sub = analy;
 	v->insertsub(analy);
 
@@ -78,7 +78,7 @@ static UiView *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
 	tmpaddr = p->createAddress32(xex_shared->entrypoint);
 	v->gotoAddress(tmpaddr, NULL);
 	delete tmpaddr;
-	
+
 	g->insert(head);
 	g->insert(v);
 
@@ -135,7 +135,7 @@ static int pe_viewer_func_section_int(eval_scalar *result, eval_int *q)
 			return 1;
 		} else {
 //			set_eval_error("invalid file offset or no corresponding RVA for '0%xh'", rva);
-		}     
+		}
 	} else {
 		set_eval_error("no section number %qd", q->value);
 	}
@@ -198,7 +198,7 @@ void ht_xex_aviewer::setAnalyser(Analyser *a)
 {
 	((XEXAnalyser*)a)->xex_shared = xex_shared;
 	((XEXAnalyser*)a)->file = xex_shared->image;
-	
+
 	analy = a;
 	analy_sub->setAnalyser(a);
 }

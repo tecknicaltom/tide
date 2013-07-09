@@ -78,13 +78,13 @@ static UiView *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
 		low = p->createAddress64(l + pe_shared->pe64.header_nt.image_base);
 		high = p->createAddress64(h + pe_shared->pe64.header_nt.image_base);
 	}
-	
+
 	ht_analy_sub *analy=new ht_analy_sub();
 	analy->init(file, v, p, low, high);
-	
+
 	delete low;
 	delete high;
-	
+
 	v->analy_sub = analy;
 	v->insertsub(analy);
 
@@ -98,7 +98,7 @@ static UiView *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
 	}
 	v->gotoAddress(tmpaddr, NULL);
 	delete tmpaddr;
-	
+
 	g->insert(head);
 	g->insert(v);
 
@@ -154,7 +154,7 @@ static int pe_viewer_func_section_int(eval_scalar *result, eval_int *q)
 			return 1;
 		} else {
 //			set_eval_error("invalid file offset or no corresponding RVA for '0%xh'", rva);
-		}     
+		}
 	} else {
 		set_eval_error("no section number %qd", q->value);
 	}
@@ -213,7 +213,7 @@ bool ht_pe_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlis
 void ht_pe_aviewer::setAnalyser(Analyser *a)
 {
 	((PEAnalyser *)a)->reinit(pe_shared, file);
-	
+
 	analy = a;
 	analy_sub->setAnalyser(a);
 }

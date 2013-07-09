@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	htelfrel.cc
  *
@@ -98,10 +98,10 @@ static UiView *htelfreloctable_init(Bounds *b, File *file, ht_format_group *grou
 	if (!isValidELFSectionIdx(elf_shared, reloctab_shidx)) return NULL;
 
 	FileOfs h;
-	
+
 	/* section index of associated symbol table */
 	int si_symbol;
-	
+
 	/* section index of section to be relocated */
 	int si_dest;
 
@@ -138,13 +138,13 @@ static UiView *htelfreloctable_init(Bounds *b, File *file, ht_format_group *grou
 
 	char desc[128];
 	ht_snprintf(desc, sizeof desc, DESC_ELF_RELOCTAB, &reloctab_name, reloctab_shidx);
-	
+
 	ht_uformat_viewer *v = new ht_uformat_viewer();
 	v->init(b, desc, VC_EDIT, file, group);
-	
+
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);
-	
+
 	registerAtom(ATOM_ELF_R_386_TYPE, elf_r_386_type);
 	registerAtom(ATOM_ELF_R_X86_64_TYPE, elf_r_x86_64_type);
 
@@ -174,7 +174,7 @@ static UiView *htelfreloctable_init(Bounds *b, File *file, ht_format_group *grou
 					tt = tag_make_edit_qword(tt, tt_end, h+i*rel_size, endianness);
 				}
 				tt += ht_snprintf(tt, tt_end, " ");
-				
+
 				/* symbol (table idx) */
 				if (elf32) {
 					tt = tag_make_edit_word(tt, tt_end, h+i*rel_size+4+1, endianness);
@@ -249,7 +249,7 @@ static UiView *htelfreloctable_init(Bounds *b, File *file, ht_format_group *grou
 			break;
 		}
 	}
-	
+
 	v->insertsub(m);
 	return v;
 }

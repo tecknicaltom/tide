@@ -135,7 +135,7 @@ void ElfAnalyser::beginAnalysis()
 			addComment(secend_addr, 0, ";******************************************************************");
 
 			validarea->add(secaddr, secend_addr);
-			
+
 			Address *seciniaddr = secaddr->clone();
 			seciniaddr->add(c32 ? s32->sh_size : s64->sh_size);
 			if (validAddress(secaddr, scinitialized) && validAddress(seciniaddr, scinitialized)) {

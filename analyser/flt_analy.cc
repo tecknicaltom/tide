@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	flt_analy.cc
  *
@@ -58,7 +58,7 @@ void FLTAnalyser::beginAnalysis()
 {
 	setLocationTreeOptimizeThreshold(100);
 	setSymbolTreeOptimizeThreshold(100);
-	
+
 	/*
 	 *	give all sections a descriptive comment:
 	 */
@@ -98,7 +98,7 @@ void FLTAnalyser::beginAnalysis()
 	/*
 	 *	entrypoint
 	 */
-	 
+
 	Address *entry;
 	entry = createAddress32(flt_shared->header.entry);
 	pushAddress(entry, entry);
@@ -111,7 +111,7 @@ void FLTAnalyser::beginAnalysis()
 
 	setLocationTreeOptimizeThreshold(1000);
 	setSymbolTreeOptimizeThreshold(1000);
-	
+
 	Analyser::beginAnalysis();
 }
 

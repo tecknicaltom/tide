@@ -1,4 +1,4 @@
-/* 
+/*
  *	HT Editor
  *	out_txt.cc
  *
@@ -57,7 +57,7 @@ void	AnalyserTxtOutput::beginLine()
 		temp[s] = 0;
 	}
 	write(temp);
-	
+
 	if (analy->explored->contains(addr)) {
 		write(" ! ");
 	} else {
