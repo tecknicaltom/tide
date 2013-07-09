@@ -27,8 +27,8 @@
 #define GLOBAL_ERROR_SIZE 1024
 extern char *globalerror;
 
-extern ht_view *app;
-extern ht_view *baseview;
+extern UiView *app;
+extern UiView *baseview;
 extern SystemDisplay *screen;
 extern List *virtual_fs_list;
 extern Object *project;

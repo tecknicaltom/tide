@@ -34,13 +34,13 @@
 #include "strtools.h"
 #include "tools.h"
 
-ht_queued_msg::ht_queued_msg(ht_view *aTarget, htmsg &aMsg)
+ht_queued_msg::ht_queued_msg(UiView *aTarget, htmsg &aMsg)
 {
 	target = aTarget;
 	msg = aMsg;
 }
 
-void ht_dialog_widget::getminbounds(int *width, int *height)
+void UiDialogWidget::getminbounds(int *width, int *height)
 {
 	*width = 1;
 	*height = 1;
@@ -82,7 +82,7 @@ ht_queued_msg *ht_dialog::dequeuemsg()
 void ht_dialog::draw()
 {
 	clear(getcolor(palidx_generic_body));
-	ht_group::draw();
+	UiGroup::draw();
 }
 
 int ht_dialog::getstate(int *aReturn_val)
@@ -126,13 +126,13 @@ void do_modal_resize();
 
 int ht_dialog::run(bool modal)
 {
-	ht_view *orig_focused=app->getselected(), *orig_baseview=baseview;
+	UiView *orig_focused=app->getselected(), *orig_baseview=baseview;
 	int oldx, oldy;
-	ht_view *drawer=modal ? this : app;
+	UiView *drawer=modal ? this : app;
 	screen->getCursor(oldx, oldy);
 	setstate(ds_normal, 0);
-	((ht_group*)app)->insert(this);
-	((ht_group*)app)->focus(this);
+	((UiGroup*)app)->insert(this);
+	((UiGroup*)app)->focus(this);
 	baseview = this;
 	drawer->sendmsg(msg_draw, 0);
 	screen->show();
@@ -158,7 +158,7 @@ int ht_dialog::run(bool modal)
 	int return_val;
 	int state = getstate(&return_val);
 	screen->setCursor(oldx, oldy);
-	((ht_group*)app)->remove(this);
+	((UiGroup*)app)->remove(this);
 	app->focus(orig_focused);
 	baseview = orig_baseview;
 	if (state != ds_term_cancel) {
@@ -168,7 +168,7 @@ int ht_dialog::run(bool modal)
 	}
 }
 
-void ht_dialog::queuemsg(ht_view *target, htmsg &msg)
+void ht_dialog::queuemsg(UiView *target, htmsg &msg)
 {
 	msgqueue->enQueue(new ht_queued_msg(target, msg));
 }
@@ -180,13 +180,13 @@ void ht_dialog::setstate(int st, int retval)
 }
 
 /*
- *	CLASS ht_cluster
+ *	CLASS UiCluster
  */
 
-void ht_cluster::init(Bounds *b, ht_string_list *_strings)
+void UiCluster::init(Bounds *b, ht_string_list *_strings)
 {
-	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, 0);
-	VIEW_DEBUG_NAME("ht_cluster");
+	UiView::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, 0);
+	VIEW_DEBUG_NAME("UiCluster");
 	strings=_strings;
 	scount=strings->count();
 	if (scount>32) scount=32;			/* cant use more than 32... */
@@ -200,39 +200,39 @@ void ht_cluster::init(Bounds *b, ht_string_list *_strings)
 	}
 }
 
-void ht_cluster::done()
+void UiCluster::done()
 {
 	delete strings;
-	ht_view::done();
+	UiView::done();
 }
 
-const char *ht_cluster::defaultpalette()
+const char *UiCluster::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
 /*
- *	CLASS ht_checkboxes
+ *	CLASS UiCheckboxes
  */
 
-void ht_checkboxes::init(Bounds *b, ht_string_list *strings)
+void UiCheckboxes::init(Bounds *b, ht_string_list *strings)
 {
-	ht_cluster::init(b, strings);
-	VIEW_DEBUG_NAME("ht_checkboxes");
+	UiCluster::init(b, strings);
+	VIEW_DEBUG_NAME("UiCheckboxes");
 	state=0;
 }
 
-void ht_checkboxes::done()
+void UiCheckboxes::done()
 {
-	ht_cluster::done();
+	UiCluster::done();
 }
 
-int ht_checkboxes::datasize()
+int UiCheckboxes::datasize()
 {
 	return sizeof (ht_checkboxes_data);
 }
 
-void ht_checkboxes::draw()
+void UiCheckboxes::draw()
 {
 	clear(getcolor(focused ? palidx_generic_cluster_focused
 		: palidx_generic_cluster_unfocused));
@@ -272,12 +272,12 @@ void ht_checkboxes::draw()
 	}
 }
 
-void ht_checkboxes::getdata(ObjectStream &s)
+void UiCheckboxes::getdata(ObjectStream &s)
 {
 	PUT_INT32D(s, state);
 }
 
-void ht_checkboxes::handlemsg(htmsg *msg)
+void UiCheckboxes::handlemsg(htmsg *msg)
 {
 	if (msg->type==mt_postprocess) {
 		if (msg->msg==msg_keypressed) {
@@ -327,36 +327,36 @@ void ht_checkboxes::handlemsg(htmsg *msg)
 			}
 		}
 	}
-	ht_cluster::handlemsg(msg);
+	UiCluster::handlemsg(msg);
 }
 
-void ht_checkboxes::setdata(ObjectStream &s)
+void UiCheckboxes::setdata(ObjectStream &s)
 {
 	GET_INT32D(s, state);
 	dirtyview();
 }
 
 /*
- *	CLASS ht_radioboxes
+ *	CLASS UiRadioboxes
  */
 
-void ht_radioboxes::init(Bounds *b, ht_string_list *strings)
+void UiRadioboxes::init(Bounds *b, ht_string_list *strings)
 {
-	ht_cluster::init(b, strings);
-	VIEW_DEBUG_NAME("ht_radioboxes");
+	UiCluster::init(b, strings);
+	VIEW_DEBUG_NAME("UiRadioboxes");
 }
 
-void ht_radioboxes::done()
+void UiRadioboxes::done()
 {
-	ht_cluster::done();
+	UiCluster::done();
 }
 
-int ht_radioboxes::datasize()
+int UiRadioboxes::datasize()
 {
 	return sizeof (ht_radioboxes_data);
 }
 
-void ht_radioboxes::draw()
+void UiRadioboxes::draw()
 {
 	clear(getcolor(focused ? palidx_generic_cluster_focused
 		: palidx_generic_cluster_unfocused));
@@ -384,12 +384,12 @@ void ht_radioboxes::draw()
 	}
 }
 
-void ht_radioboxes::getdata(ObjectStream &s)
+void UiRadioboxes::getdata(ObjectStream &s)
 {
 	PUT_INT32D(s, sel);
 }
 
-void ht_radioboxes::handlemsg(htmsg *msg)
+void UiRadioboxes::handlemsg(htmsg *msg)
 {
 	if (msg->msg==msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -424,30 +424,30 @@ void ht_radioboxes::handlemsg(htmsg *msg)
 				break;*/
 		}
 	}
-	ht_cluster::handlemsg(msg);
+	UiCluster::handlemsg(msg);
 }
 
-void ht_radioboxes::setdata(ObjectStream &s)
+void UiRadioboxes::setdata(ObjectStream &s)
 {
 	GET_INT32D(s, sel);
 }
 
 
 /*
- *	CLASS ht_history_listbox
+ *	CLASS UiHistoryListbox
  */
-void ht_history_listbox::init(Bounds *b, List *hist)
+void UiHistoryListbox::init(Bounds *b, List *hist)
 {
 	history = hist;
-	ht_listbox::init(b);
+	UiListbox::init(b);
 }
 
-int  ht_history_listbox::calcCount()
+int  UiHistoryListbox::calcCount()
 {
 	return history->count();
 }
 
-void *ht_history_listbox::getFirst()
+void *UiHistoryListbox::getFirst()
 {
 	if (history->count()) {
 		return (void*)1;
@@ -456,7 +456,7 @@ void *ht_history_listbox::getFirst()
 	}
 }
 
-void *ht_history_listbox::getLast()
+void *UiHistoryListbox::getLast()
 {
 	if (history->count()) {
 		return (void*)(history->count());
@@ -465,7 +465,7 @@ void *ht_history_listbox::getLast()
 	}
 }
 
-void *ht_history_listbox::getNext(void *entry)
+void *UiHistoryListbox::getNext(void *entry)
 {
 	unsigned long e=(unsigned long)entry;
 	if (!e) return NULL;
@@ -476,7 +476,7 @@ void *ht_history_listbox::getNext(void *entry)
 	}
 }
 
-void *ht_history_listbox::getPrev(void *entry)
+void *UiHistoryListbox::getPrev(void *entry)
 {
 	unsigned long e=(unsigned long)entry;
 	if (e > 1) {
@@ -486,12 +486,12 @@ void *ht_history_listbox::getPrev(void *entry)
 	}
 }
 
-const char *ht_history_listbox::getStr(int col, void *entry)
+const char *UiHistoryListbox::getStr(int col, void *entry)
 {
 	return ((ht_history_entry*)(*history)[(long)entry-1])->desc;
 }
 
-void ht_history_listbox::handlemsg(htmsg *msg)
+void UiHistoryListbox::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_keypressed:
@@ -509,10 +509,10 @@ void ht_history_listbox::handlemsg(htmsg *msg)
 			}
 		break;
 	}
-	ht_listbox::handlemsg(msg);
+	UiListbox::handlemsg(msg);
 }
 
-void *ht_history_listbox::quickfind(const char *s)
+void *UiHistoryListbox::quickfind(const char *s)
 {
 	void *item = getFirst();
 	int slen = strlen(s);
@@ -522,7 +522,7 @@ void *ht_history_listbox::quickfind(const char *s)
 	return item;
 }
 
-char	*ht_history_listbox::quickfindCompletition(const char *s)
+char	*UiHistoryListbox::quickfindCompletition(const char *s)
 {
 	void *item = getFirst();
 	char *res = NULL;
@@ -565,8 +565,8 @@ void ht_history_popup_dialog::getdata(ObjectStream &s)
 
 void ht_history_popup_dialog::init_text_listbox(Bounds *b)
 {
-	listbox = new ht_history_listbox();
-	((ht_history_listbox *)listbox)->init(b, history);
+	listbox = new UiHistoryListbox();
+	((UiHistoryListbox *)listbox)->init(b, history);
 	insert(listbox);
 }
 
@@ -575,13 +575,13 @@ void ht_history_popup_dialog::setdata(ObjectStream &s)
 }
 
 /*
- *	CLASS ht_inputfield
+ *	CLASS UiInputfield
  */
 
-void ht_inputfield::init(Bounds *b, int Maxtextlen, List *hist)
+void UiInputfield::init(Bounds *b, int Maxtextlen, List *hist)
 {
-	ht_view::init(b, VO_SELECTABLE | VO_RESIZE, "some inputfield");
-	VIEW_DEBUG_NAME("ht_inputfield");
+	UiView::init(b, VO_SELECTABLE | VO_RESIZE, "some inputfield");
+	VIEW_DEBUG_NAME("UiInputfield");
 
 	history = hist;
 	maxtextlenv = Maxtextlen;
@@ -605,13 +605,13 @@ void ht_inputfield::init(Bounds *b, int Maxtextlen, List *hist)
 	attachedto = 0;
 }
 
-void ht_inputfield::done()
+void UiInputfield::done()
 {
 	freebuf();
-	ht_view::done();
+	UiView::done();
 }
 
-void ht_inputfield::attach(ht_inputfield *inputfield)
+void UiInputfield::attach(UiInputfield *inputfield)
 {
 	freebuf();
 	inputfield->query(&curchar, &text, &selstart, &selend, &textlen, &maxtextlen);
@@ -620,22 +620,22 @@ void ht_inputfield::attach(ht_inputfield *inputfield)
 	insert=1;
 }
 
-int ht_inputfield::datasize()
+int UiInputfield::datasize()
 {
 	return sizeof (ht_inputfield_data);
 }
 
-const char *ht_inputfield::defaultpalette()
+const char *UiInputfield::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_inputfield::freebuf()
+void UiInputfield::freebuf()
 {
 	if (!attachedto && text) free(*text);
 }
 
-void ht_inputfield::getdata(ObjectStream &s)
+void UiInputfield::getdata(ObjectStream &s)
 {
 	if (!attachedto) {
 		PUTX_INT32D(s, *textlen, NULL);
@@ -649,7 +649,7 @@ void ht_inputfield::getdata(ObjectStream &s)
 	s->recordEnd(h);*/
 }
 
-int ht_inputfield::insertbyte(byte *pos, byte b)
+int UiInputfield::insertbyte(byte *pos, byte b)
 {
 	if (*textlen<*maxtextlen) {
 		if (*selstart) {
@@ -669,12 +669,12 @@ int ht_inputfield::insertbyte(byte *pos, byte b)
 	return 0;
 }
 
-void ht_inputfield::isetcursor(uint pos)
+void UiInputfield::isetcursor(uint pos)
 {
 	if (pos < (uint)*textlen) *curchar = *text + pos;
 }
 
-void ht_inputfield::query(byte ***c, byte ***t, byte ***ss, byte ***se, int **tl, int **mtl)
+void UiInputfield::query(byte ***c, byte ***t, byte ***ss, byte ***se, int **tl, int **mtl)
 {
 	*c=curchar;
 	*t=text;
@@ -684,7 +684,7 @@ void ht_inputfield::query(byte ***c, byte ***t, byte ***ss, byte ***se, int **tl
 	*mtl=maxtextlen;
 }
 
-void ht_inputfield::select_add(byte *start, byte *end)
+void UiInputfield::select_add(byte *start, byte *end)
 {
 	if (end<start) {
 		byte *temp=start;
@@ -710,7 +710,7 @@ void ht_inputfield::select_add(byte *start, byte *end)
 	}
 }
 
-void ht_inputfield::setdata(ObjectStream &s)
+void UiInputfield::setdata(ObjectStream &s)
 {
 //	FIXPORT uint h=s->recordStart(datasize());
 	if (!attachedto) {
@@ -740,23 +740,23 @@ void ht_inputfield::setdata(ObjectStream &s)
 }
 
 /*
- *	CLASS ht_strinputfield
+ *	CLASS UiStrInputfield
  */
 
-void ht_strinputfield::init(Bounds *b, int maxstrlen, List *history)
+void UiStrInputfield::init(Bounds *b, int maxstrlen, List *history)
 {
-	ht_inputfield::init(b, maxstrlen, history);
-	VIEW_DEBUG_NAME("ht_strinputfield");
+	UiInputfield::init(b, maxstrlen, history);
+	VIEW_DEBUG_NAME("UiStrInputfield");
 	is_virgin = true;
 	selectmode = false;
 }
 
-void ht_strinputfield::done()
+void UiStrInputfield::done()
 {
-	ht_inputfield::done();
+	UiInputfield::done();
 }
 
-void ht_strinputfield::correct_viewpoint()
+void UiStrInputfield::correct_viewpoint()
 {
 	if (*curchar - *text < ofs) {
 		ofs = *curchar-*text; 
@@ -767,7 +767,7 @@ void ht_strinputfield::correct_viewpoint()
 	}
 }
 
-void ht_strinputfield::draw()
+void UiStrInputfield::draw()
 {
 	int c=focused ? getcolor(palidx_generic_input_focused) :
 		getcolor(palidx_generic_input_unfocused);
@@ -806,7 +806,7 @@ void ht_strinputfield::draw()
 	}
 }
 
-void ht_strinputfield::handlemsg(htmsg *msg)
+void UiStrInputfield::handlemsg(htmsg *msg)
 {
 	if (msg->type == mt_empty && msg->msg == msg_keypressed) {
 		int k = msg->data1.integer;
@@ -1006,10 +1006,10 @@ void ht_strinputfield::handlemsg(htmsg *msg)
 				}
 		}
 	}
-	ht_inputfield::handlemsg(msg);
+	UiInputfield::handlemsg(msg);
 }
 
-void ht_strinputfield::history_dialog()
+void UiStrInputfield::history_dialog()
 {
 	if (history && history->count()) {
 		Bounds b;
@@ -1041,13 +1041,13 @@ void ht_strinputfield::history_dialog()
 	}
 }
 
-void ht_strinputfield::receivefocus()
+void UiStrInputfield::receivefocus()
 {
 	correct_viewpoint();
-	ht_inputfield::receivefocus();
+	UiInputfield::receivefocus();
 }
 
-bool ht_strinputfield::inputbyte(byte a)
+bool UiStrInputfield::inputbyte(byte a)
 {
 	if (setbyte(a)) {
 		(*curchar)++;
@@ -1058,7 +1058,7 @@ bool ht_strinputfield::inputbyte(byte a)
 	return false;
 }
 
-bool ht_strinputfield::setbyte(byte a)
+bool UiStrInputfield::setbyte(byte a)
 {
 	if (insert || *curchar-*text >= *textlen) {
 		if (insertbyte(*curchar, a) && *curchar-*text<*textlen) return true;
@@ -1070,23 +1070,23 @@ bool ht_strinputfield::setbyte(byte a)
 }
 
 /*
- *	CLASS ht_hexinputfield
+ *	CLASS UiHexInputfield
  */
 
-void ht_hexinputfield::init(Bounds *b, int maxstrlen)
+void UiHexInputfield::init(Bounds *b, int maxstrlen)
 {
-	ht_inputfield::init(b, maxstrlen);
-	VIEW_DEBUG_NAME("ht_strinputfield");
+	UiInputfield::init(b, maxstrlen);
+	VIEW_DEBUG_NAME("UiStrInputfield");
 	nib=0;
 	insert=1;
 }
 
-void ht_hexinputfield::done()
+void UiHexInputfield::done()
 {
-	ht_inputfield::done();
+	UiInputfield::done();
 }
 
-void ht_hexinputfield::correct_viewpoint()
+void UiHexInputfield::correct_viewpoint()
 {
 	if (*curchar-*text<ofs) {
 		ofs = *curchar-*text; 
@@ -1095,7 +1095,7 @@ void ht_hexinputfield::correct_viewpoint()
 	}
 }
 
-void ht_hexinputfield::draw()
+void UiHexInputfield::draw()
 {
 	int c=focused ? getcolor(palidx_generic_input_focused) :
 		getcolor(palidx_generic_input_unfocused);
@@ -1132,7 +1132,7 @@ void ht_hexinputfield::draw()
 	}
 }
 
-void ht_hexinputfield::handlemsg(htmsg *msg)
+void UiHexInputfield::handlemsg(htmsg *msg)
 {
 	if (msg->msg==msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -1240,19 +1240,19 @@ void ht_hexinputfield::handlemsg(htmsg *msg)
 				return;
 		}
 	}
-	ht_inputfield::handlemsg(msg);
+	UiInputfield::handlemsg(msg);
 }
 
-void ht_hexinputfield::receivefocus()
+void UiHexInputfield::receivefocus()
 {
 	correct_viewpoint();
 	if (nib && *curchar-*text == *textlen) {
 		nib=0;
 	}
-	ht_inputfield::receivefocus();
+	UiInputfield::receivefocus();
 }
 
-void ht_hexinputfield::setnibble(byte a)
+void UiHexInputfield::setnibble(byte a)
 {
 	if ((insert || *curchar-*text >= *textlen) && nib == 0) {
 		if ((insertbyte(*curchar, a<<4)) && (*curchar-*text<*textlen)) nib=1;
@@ -1270,13 +1270,13 @@ void ht_hexinputfield::setnibble(byte a)
 }
 
 /*
- *	CLASS ht_button
+ *	CLASS UiButton
  */
 
-void ht_button::init(Bounds *b, const char *Text, int Value)
+void UiButton::init(Bounds *b, const char *Text, int Value)
 {
-	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, "some button");
-	VIEW_DEBUG_NAME("ht_button");
+	UiView::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_POSTPROCESS, "some button");
+	VIEW_DEBUG_NAME("UiButton");
 	value = Value;
 	text = ht_strdup(Text);
 	pressed = 0;
@@ -1292,24 +1292,24 @@ void ht_button::init(Bounds *b, const char *Text, int Value)
 	}
 }
 
-void ht_button::done()
+void UiButton::done()
 {
 	free(text);
-	ht_view::done();
+	UiView::done();
 }
 
-void ht_button::getminbounds(int *width, int *height)
+void UiButton::getminbounds(int *width, int *height)
 {
 	*width = 6;
 	*height = 2;
 }
 
-const char *ht_button::defaultpalette()
+const char *UiButton::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_button::draw()
+void UiButton::draw()
 {
 	int c=focused ? getcolor(palidx_generic_button_focused) :
 		getcolor(palidx_generic_button_unfocused);
@@ -1326,7 +1326,7 @@ void ht_button::draw()
 	buf->printChar(size.w-1, 1, getcolor(palidx_generic_button_shadow), GC_FILLED_UPPER, CP_GRAPHICAL);
 }
 
-void ht_button::handlemsg(htmsg *msg)
+void UiButton::handlemsg(htmsg *msg)
 {
 	if (msg->type == mt_postprocess) {
 		if (msg->msg == msg_keypressed) {
@@ -1350,10 +1350,10 @@ void ht_button::handlemsg(htmsg *msg)
 			}
 		}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
-void ht_button::push()
+void UiButton::push()
 {
 	/* FIXME: wont work for encapsulated buttons... */
 	/* FIXME: (thats why I hacked this now...) */
@@ -1367,7 +1367,7 @@ void ht_button::push()
  */
 void	ht_listbox_title::init(Bounds *b)
 {
-	ht_view::init(b, VO_RESIZE, "ht_listbox_title");
+	UiView::init(b, VO_RESIZE, "ht_listbox_title");
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	texts = NULL;
 	listbox = NULL;
@@ -1382,7 +1382,7 @@ void	ht_listbox_title::done()
 		}
 		free(texts);
 	}
-	ht_view::done();
+	UiView::done();
 }
 
 const char *ht_listbox_title::defaultpalette()
@@ -1453,7 +1453,7 @@ void ht_listbox_title::update()
 
 
 /*
- *	CLASS ht_listbox
+ *	CLASS UiListbox
  */
 
 class ht_listbox_vstate: public Object {
@@ -1468,9 +1468,9 @@ public:
 	}
 };
 
-void ht_listbox::init(Bounds *b, uint Listboxcaps)
+void UiListbox::init(Bounds *b, uint Listboxcaps)
 {
-	ht_view::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_RESIZE, 0);
+	UiView::init(b, VO_SELECTABLE | VO_OWNBUFFER | VO_RESIZE, 0);
 	cached_count = 0;
 
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
@@ -1496,15 +1496,15 @@ void ht_listbox::init(Bounds *b, uint Listboxcaps)
 	cols = 0;
 }
 
-void	ht_listbox::done()
+void	UiListbox::done()
 {
 	scrollbar->done();
 	delete scrollbar;
 	free(widths);
-	ht_view::done();
+	UiView::done();
 }
 
-void ht_listbox::adjustPosHack()
+void UiListbox::adjustPosHack()
 {
 	if (e_cursor != e_top) return;
 	int i=0;
@@ -1519,7 +1519,7 @@ void ht_listbox::adjustPosHack()
 	}
 }
 
-void ht_listbox::adjustScrollbar()
+void UiListbox::adjustScrollbar()
 {
 	int pstart, psize;
 	if (scrollbar_pos(pos-cursor, size.h, cached_count, &pstart, &psize)) {
@@ -1537,7 +1537,7 @@ void ht_listbox::adjustScrollbar()
 	}
 }
 
-void ht_listbox::attachTitle(ht_listbox_title *aTitle)
+void UiListbox::attachTitle(ht_listbox_title *aTitle)
 {
 	if (numColumns() > cols) rearrangeColumns();
 	title = aTitle;
@@ -1546,19 +1546,19 @@ void ht_listbox::attachTitle(ht_listbox_title *aTitle)
 	title->dirtyview();
 }
 
-void ht_listbox::clearQuickfind()
+void UiListbox::clearQuickfind()
 {
 	quickfinder[0] = 0;
 	qpos = quickfinder;
 	updateCursor();
 }
 
-int  ht_listbox::cursorAdjust()
+int  UiListbox::cursorAdjust()
 {
 	return 0;
 }
 
-int  ht_listbox::cursorUp(int n)
+int  UiListbox::cursorUp(int n)
 {
 	void *tmp;
 	int  i = 0;
@@ -1579,7 +1579,7 @@ int  ht_listbox::cursorUp(int n)
 	return i;
 }
 
-int  ht_listbox::cursorDown(int n)
+int  UiListbox::cursorDown(int n)
 {
 	void *tmp;
 	int  i = 0;
@@ -1599,17 +1599,17 @@ int  ht_listbox::cursorDown(int n)
 	return i;
 }
 
-int  ht_listbox::datasize()
+int  UiListbox::datasize()
 {
 	return sizeof (ht_listbox_data);
 }
 
-const char *ht_listbox::defaultpalette()
+const char *UiListbox::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_listbox::draw()
+void UiListbox::draw()
 {
 	int fc = focused ? getcolor(palidx_generic_list_focused_unselected) :
 		getcolor(palidx_generic_list_unfocused_unselected);
@@ -1690,7 +1690,7 @@ void ht_listbox::draw()
 	lprint(0, 2, 1, size.w, dbg);*/
 }
 
-int  ht_listbox::estimateEntryPos(void *entry)
+int  UiListbox::estimateEntryPos(void *entry)
 {
 	// this is slow!
 	void *tmp = getFirst();
@@ -1703,7 +1703,7 @@ int  ht_listbox::estimateEntryPos(void *entry)
 	return (tmp==entry) ? res : -1;
 }
 
-void ht_listbox::getdata(ObjectStream &s)
+void UiListbox::getdata(ObjectStream &s)
 {
 	ht_listbox_data_internal d;
 	d.top_ptr = e_top;
@@ -1711,7 +1711,7 @@ void ht_listbox::getdata(ObjectStream &s)
 	PUTX_BINARY(s, &d, sizeof d, NULL);
 }
 
-void ht_listbox::gotoItemByEntry(void *entry, bool clear_quickfind)
+void UiListbox::gotoItemByEntry(void *entry, bool clear_quickfind)
 {
 	if (clear_quickfind) clearQuickfind();
 	if (!entry) return;
@@ -1743,14 +1743,14 @@ void ht_listbox::gotoItemByEntry(void *entry, bool clear_quickfind)
 	stateChanged();
 }
 
-void ht_listbox::gotoItemByPosition(uint pos)
+void UiListbox::gotoItemByPosition(uint pos)
 {
 	void *entry = getFirst();
 	while (pos--) entry = getNext(entry);
 	gotoItemByEntry(entry, true);
 }
 
-void ht_listbox::handlemsg(htmsg *msg)
+void UiListbox::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_vstate_restore: {
@@ -1879,29 +1879,29 @@ void ht_listbox::handlemsg(htmsg *msg)
 		}
 		break;
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
-int	ht_listbox::numColumns()
+int	UiListbox::numColumns()
 {
 	return 1;
 }
 
-char	*ht_listbox::quickfindCompletition(const char *s)
+char	*UiListbox::quickfindCompletition(const char *s)
 {
 	return ht_strdup(s);
 }
 
-void ht_listbox::rearrangeColumns()
+void UiListbox::rearrangeColumns()
 {
 	free(widths);
 	cols = numColumns();
 	widths = (int*)calloc(cols*sizeof(int), 1);
 }
 
-void ht_listbox::redraw()
+void UiListbox::redraw()
 {
-	ht_view::redraw();
+	UiView::redraw();
 	scrollbar->relocate_to(this);
 //	fprintf(stderr, "scrollbar: x=%d, y=%d, w=%d, h=%d\n", scrollbar->vsize.x, scrollbar->vsize.y, scrollbar->vsize.w, scrollbar->vsize.h);
 	scrollbar->redraw();
@@ -1911,23 +1911,23 @@ void ht_listbox::redraw()
 	scrollbar->unrelocate_to(this);
 }
 
-void ht_listbox::resize(int rw, int rh)
+void UiListbox::resize(int rw, int rh)
 {
-	ht_view::resize(rw, rh);
+	UiView::resize(rw, rh);
 	update();
 }
 
-void ht_listbox::stateChanged()
+void UiListbox::stateChanged()
 {
 	adjustScrollbar();
 }
 
-bool ht_listbox::selectEntry(void *entry)
+bool UiListbox::selectEntry(void *entry)
 {
 	return true;
 }
 
-void ht_listbox::setdata(ObjectStream &s)
+void UiListbox::setdata(ObjectStream &s)
 {
 	ht_listbox_data_internal d;
 	GET_BINARY(s, &d, sizeof d);
@@ -1936,12 +1936,12 @@ void ht_listbox::setdata(ObjectStream &s)
 	update();
 }
 
-Object *ht_listbox::vstate_create()
+Object *UiListbox::vstate_create()
 {
 	return new ht_listbox_vstate(e_top, e_cursor);
 }
 
-void ht_listbox::vstate_save()
+void UiListbox::vstate_save()
 {
 	Object *vs = vstate_create();
 	if (vs) {
@@ -1957,7 +1957,7 @@ void ht_listbox::vstate_save()
 /*
  *	must be called if data has changed
  */
-void ht_listbox::update()
+void UiListbox::update()
 {
 	void *entry = getFirst();
 	cached_count = calcCount();
@@ -1997,7 +1997,7 @@ ok:
 	dirtyview();
 }
 
-void ht_listbox::updateCursor()
+void UiListbox::updateCursor()
 {
 	if (focused) {
 		if (*quickfinder) {
@@ -2009,27 +2009,27 @@ void ht_listbox::updateCursor()
 }
 
 /*
- *	ht_text_listbox
+ *	UiTextListbox
  */
 
-void	ht_text_listbox::init(Bounds *b, int aCols, int aKeycol, uint aListboxcaps)
+void	UiTextListbox::init(Bounds *b, int aCols, int aKeycol, uint aListboxcaps)
 {
 	first = last = NULL;
 	count = 0;
-	ht_listbox::init(b, aListboxcaps);
+	UiListbox::init(b, aListboxcaps);
 	cols = aCols;
 	keycol = aKeycol;
 	Cursor_adjust = 0;
 	rearrangeColumns();
 }
 
-void ht_text_listbox::done()
+void UiTextListbox::done()
 {
 	clearAll();
-	ht_listbox::done();
+	UiListbox::done();
 }
 
-void ht_text_listbox::clearAll()
+void UiTextListbox::clearAll()
 {
 	ht_text_listbox_item *temp = first;
 	while (temp) {
@@ -2054,36 +2054,36 @@ void ht_text_listbox::clearAll()
 	Cursor_adjust = 0;
 }
 
-int	ht_text_listbox::calcCount()
+int	UiTextListbox::calcCount()
 {
 	return count;
 }
 
-int	ht_text_listbox::compare_strn(const char *s1, const char *s2, int l)
+int	UiTextListbox::compare_strn(const char *s1, const char *s2, int l)
 {
 	return ht_strncmp(s1, s2, l);
 }
 
-int	ht_text_listbox::compare_ccomm(const char *s1, const char *s2)
+int	UiTextListbox::compare_ccomm(const char *s1, const char *s2)
 {
 	return ht_strccomm(s1, s2);
 }
 
-int  ht_text_listbox::cursorAdjust()
+int  UiTextListbox::cursorAdjust()
 {
 	return Cursor_adjust;
 }
 
-void ht_text_listbox::freeExtraData(void *extra_data)
+void UiTextListbox::freeExtraData(void *extra_data)
 {
 }
 
-void *ht_text_listbox::getFirst()
+void *UiTextListbox::getFirst()
 {
 	return first;
 }
 
-uint ht_text_listbox::getID(void *entry)
+uint UiTextListbox::getID(void *entry)
 {
 	if (entry) {
 		return ((ht_text_listbox_item *)entry)->id;
@@ -2092,7 +2092,7 @@ uint ht_text_listbox::getID(void *entry)
 	}	    
 }
 
-void *ht_text_listbox::getExtra(void *entry)
+void *UiTextListbox::getExtra(void *entry)
 {
 	if (entry) {
 		return ((ht_text_listbox_item *)entry)->extra_data;
@@ -2101,24 +2101,24 @@ void *ht_text_listbox::getExtra(void *entry)
 	}	    
 }
 
-void *ht_text_listbox::getLast()
+void *UiTextListbox::getLast()
 {
 	return last;
 }
 
-void *ht_text_listbox::getNext(void *entry)
+void *UiTextListbox::getNext(void *entry)
 {
 	if (!entry) return NULL;
 	return ((ht_text_listbox_item *)entry)->next;
 }
 
-void *ht_text_listbox::getPrev(void *entry)
+void *UiTextListbox::getPrev(void *entry)
 {
 	if (!entry) return NULL;
 	return ((ht_text_listbox_item *)entry)->prev;
 }
 
-const char *ht_text_listbox::getStr(int col, void *entry)
+const char *UiTextListbox::getStr(int col, void *entry)
 {
 	if (entry && col < cols) {
 		return ((ht_text_listbox_item *)entry)->data[col];
@@ -2127,7 +2127,7 @@ const char *ht_text_listbox::getStr(int col, void *entry)
 	}
 }
 
-void ht_text_listbox::insert_str_extra(int id, void *extra_data, const char **strs)
+void UiTextListbox::insert_str_extra(int id, void *extra_data, const char **strs)
 {
 	// FIXME: code duplication...
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
@@ -2152,7 +2152,7 @@ void ht_text_listbox::insert_str_extra(int id, void *extra_data, const char **st
 	count++;
 }
 
-void	ht_text_listbox::insert_str_extra(int id, void *extra_data, const char *str, ...)
+void	UiTextListbox::insert_str_extra(int id, void *extra_data, const char *str, ...)
 {
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
 	item->next = NULL;
@@ -2181,12 +2181,12 @@ void	ht_text_listbox::insert_str_extra(int id, void *extra_data, const char *str
 	count++;
 }
 
-void	ht_text_listbox::insert_str(int id, const char **strs)
+void	UiTextListbox::insert_str(int id, const char **strs)
 {
 	insert_str_extra(id, NULL, strs);
 }
 
-void ht_text_listbox::insert_str(int id, const char *str, ...)
+void UiTextListbox::insert_str(int id, const char *str, ...)
 {
 	// FIXME: same as insert_str(id, NULL, str, ...)
 	ht_text_listbox_item *item = ht_malloc(sizeof(ht_text_listbox_item)+sizeof(char *)*cols);
@@ -2216,12 +2216,12 @@ void ht_text_listbox::insert_str(int id, const char *str, ...)
 	count++;
 }
 
-int ht_text_listbox::numColumns()
+int UiTextListbox::numColumns()
 {
 	return cols;
 }
 
-void *ht_text_listbox::quickfind(const char *s)
+void *UiTextListbox::quickfind(const char *s)
 {
 	ht_text_listbox_item *item = first;
 	int slen = strlen(s);
@@ -2231,7 +2231,7 @@ void *ht_text_listbox::quickfind(const char *s)
 	return item;
 }
 
-char *ht_text_listbox::quickfindCompletition(const char *s)
+char *UiTextListbox::quickfindCompletition(const char *s)
 {
 	ht_text_listbox_item *item = first;
 	char *res = NULL;
@@ -2280,7 +2280,7 @@ static void ht_text_listboxqsort(int l, int r, int count, ht_text_listbox_sort_o
 	if (l < R) ht_text_listboxqsort(l, R, count, so, list);
 }
 
-void ht_text_listbox::sort(int count, ht_text_listbox_sort_order *so)
+void UiTextListbox::sort(int count, ht_text_listbox_sort_order *so)
 {
 	ht_text_listbox_item **list;
 	ht_text_listbox_item *tmp;
@@ -2324,9 +2324,9 @@ void ht_text_listbox::sort(int count, ht_text_listbox_sort_order *so)
 	stateChanged();
 }
 
-void ht_text_listbox::update()
+void UiTextListbox::update()
 {
-	ht_listbox::update();
+	UiListbox::update();
 	Cursor_adjust = 0;
 	if (widths) {
 		for (int i=0; i<keycol; i++) {
@@ -2336,26 +2336,26 @@ void ht_text_listbox::update()
 }
 
 /*
- *	CLASS ht_itext_listbox
+ *	CLASS UiITextListbox
  */
 
-void	ht_itext_listbox::init(Bounds *b, int Cols, int Keycol)
+void	UiITextListbox::init(Bounds *b, int Cols, int Keycol)
 {
-	ht_text_listbox::init(b, Cols, Keycol);
+	UiTextListbox::init(b, Cols, Keycol);
 }
 
-int	ht_itext_listbox::compare_strn(const char *s1, const char *s2, int l)
+int	UiITextListbox::compare_strn(const char *s1, const char *s2, int l)
 {
 	return ht_strnicmp(s1, s2, l);
 }
 
-int	ht_itext_listbox::compare_ccomm(const char *s1, const char *s2)
+int	UiITextListbox::compare_ccomm(const char *s1, const char *s2)
 {
 	return ht_strcicomm(s1, s2);
 }
 
 /*
- *	CLASS ht_statictext
+ *	CLASS UiStaticText
  */
 
 #define STATICTEXT_MIN_LINE_FILL 70	/* percent */
@@ -2375,10 +2375,10 @@ static void ht_statictext_align(ht_statictext_linedesc *d, statictext_align alig
 	}
 }
 
-void ht_statictext::init(Bounds *b, const char *t, statictext_align al, bool breakl, bool trans)
+void UiStaticText::init(Bounds *b, const char *t, statictext_align al, bool breakl, bool trans)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, "some statictext");
-	VIEW_DEBUG_NAME("ht_statictext");
+	UiView::init(b, VO_OWNBUFFER | VO_RESIZE, "some statictext");
+	VIEW_DEBUG_NAME("UiStaticText");
 
 	align = al;
 	breaklines = breakl;
@@ -2386,13 +2386,13 @@ void ht_statictext::init(Bounds *b, const char *t, statictext_align al, bool bre
 	text = ht_strdup(t);
 }
 
-void ht_statictext::done()
+void UiStaticText::done()
 {
 	free(text);
-	ht_view::done();
+	UiView::done();
 }
 
-const char *ht_statictext::defaultpalette()
+const char *UiStaticText::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
@@ -2411,7 +2411,7 @@ static int get_ssst(char s)
 	return ssst_word;
 }
 
-void ht_statictext::draw()
+void UiStaticText::draw()
 {
 	if (!transparent) clear(gettextcolor());
 	char text[size.w*size.h];
@@ -2494,13 +2494,13 @@ void ht_statictext::draw()
 	}
 }
 
-vcp ht_statictext::gettextcolor()
+vcp UiStaticText::gettextcolor()
 {
 	return getcolor(palidx_generic_body);
 //	return VCP(VC_RED, VC_BLACK);
 }
 
-int ht_statictext::gettext(char *aText, int maxlen)
+int UiStaticText::gettext(char *aText, int maxlen)
 {
 	if (text) {
 		return ht_strlcpy(aText, text, maxlen);
@@ -2510,7 +2510,7 @@ int ht_statictext::gettext(char *aText, int maxlen)
 	}
 }
 
-void ht_statictext::settext(const char *aText)
+void UiStaticText::settext(const char *aText)
 {
 	free(text);
 	text = ht_strdup(aText);
@@ -2548,7 +2548,7 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 	ht_listbox_data d;
 	ViewDataBuf vdb(listbox, &d, sizeof d);
 
-	PUTX_INT32D(s, ((ht_text_listbox*)listbox)->getID(d.data->cursor_ptr), NULL);
+	PUTX_INT32D(s, ((UiTextListbox*)listbox)->getID(d.data->cursor_ptr), NULL);
 
 	ht_text_listbox_item *cursor = (ht_text_listbox_item*)d.data->cursor_ptr;
 	if (cursor) {
@@ -2560,14 +2560,14 @@ void ht_listpopup_dialog::getdata(ObjectStream &s)
 
 void ht_listpopup_dialog::init_text_listbox(Bounds *b)
 {
-	listbox = new ht_text_listbox();
-	((ht_text_listbox *)listbox)->init(b);
+	listbox = new UiTextListbox();
+	((UiTextListbox *)listbox)->init(b);
 	insert(listbox);
 }
 
 void ht_listpopup_dialog::insertstring(const char *string)
 {
-	((ht_text_listbox *)listbox)->insert_str(listbox->calcCount(), string);
+	((UiTextListbox *)listbox)->insert_str(listbox->calcCount(), string);
 	listbox->update();
 }
 
@@ -2590,14 +2590,14 @@ void ht_listpopup_dialog::setdata(ObjectStream &s)
 }
 
 /*
- *	CLASS ht_listpopup
+ *	CLASS UiListPopup
  */
 
-void	ht_listpopup::init(Bounds *b)
+void	UiListPopup::init(Bounds *b)
 {
-	ht_statictext::init(b, 0, align_left, 0);
+	UiStaticText::init(b, 0, align_left, 0);
 	setoptions(options | VO_SELECTABLE);
-	VIEW_DEBUG_NAME("ht_listpopup");
+	VIEW_DEBUG_NAME("UiListPopup");
 
 	Bounds c=*b;
 	c.x=0;
@@ -2608,44 +2608,44 @@ void	ht_listpopup::init(Bounds *b)
 	listpopup->init(&c, 0);
 }
 
-void	ht_listpopup::done()
+void	UiListPopup::done()
 {
 	listpopup->done();
 	delete listpopup;
 	
-	ht_view::done();
+	UiView::done();
 }
 
-int ht_listpopup::datasize()
+int UiListPopup::datasize()
 {
 	return listpopup->datasize();
 }
 
-void ht_listpopup::draw()
+void UiListPopup::draw()
 {
-	ht_statictext::draw();
+	UiStaticText::draw();
 	buf->printChar(size.w-1, 0, gettextcolor(), GC_SMALL_ARROW_DOWN, CP_GRAPHICAL);
 }
 
-vcp ht_listpopup::gettextcolor()
+vcp UiListPopup::gettextcolor()
 {
 	return focused ? getcolor(palidx_generic_input_selected) :
 		getcolor(palidx_generic_input_focused);
 }
 
-void ht_listpopup::getdata(ObjectStream &s)
+void UiListPopup::getdata(ObjectStream &s)
 {
 	listpopup->getdata(s);
 }
 
-int ht_listpopup::gettext(char *text, int maxlen)
+int UiListPopup::gettext(char *text, int maxlen)
 {
 	ht_listpopup_dialog_data d;
 	ViewDataBuf vdb(listpopup, &d, sizeof d);
 	return ht_strlcpy(text, d.cursor_string, maxlen);
 }
 
-void ht_listpopup::handlemsg(htmsg *msg)
+void UiListPopup::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -2671,10 +2671,10 @@ void ht_listpopup::handlemsg(htmsg *msg)
 		}				
 		}
 	}
-	ht_statictext::handlemsg(msg);
+	UiStaticText::handlemsg(msg);
 }
 
-int ht_listpopup::run_listpopup()
+int UiListPopup::run_listpopup()
 {
 	int r;
 	listpopup->relocate_to(this);
@@ -2683,23 +2683,23 @@ int ht_listpopup::run_listpopup()
 	return r;
 }
 
-void ht_listpopup::insertstring(const char *string)
+void UiListPopup::insertstring(const char *string)
 {
 	listpopup->insertstring(string);
 }
 
-void ht_listpopup::setdata(ObjectStream &s)
+void UiListPopup::setdata(ObjectStream &s)
 {
 	listpopup->setdata(s);
 }
 
 /*
- *	CLASS ht_label
+ *	CLASS UiLabel
  */
 
-void ht_label::init(Bounds *b, const char *_text, ht_view *_connected)
+void UiLabel::init(Bounds *b, const char *_text, UiView *_connected)
 {
-	ht_view::init(b, VO_POSTPROCESS, 0);
+	UiView::init(b, VO_POSTPROCESS, 0);
 	text = ht_strdup(_text);
 	magicchar = strchr(text, '~');
 	if (magicchar) {
@@ -2714,18 +2714,18 @@ void ht_label::init(Bounds *b, const char *_text, ht_view *_connected)
 	}
 }
 
-void ht_label::done()
+void UiLabel::done()
 {
 	free(text);
-	ht_view::done();
+	UiView::done();
 }
 
-const char *ht_label::defaultpalette()
+const char *UiLabel::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_label::draw()
+void UiLabel::draw()
 {
 	vcp c;
 	vcp sc = getcolor(palidx_generic_text_shortcut);
@@ -2738,7 +2738,7 @@ void ht_label::draw()
 	if (magicchar) buf->printChar(magicchar-text, 0, sc, *magicchar);
 }
 
-void ht_label::handlemsg(htmsg *msg)
+void UiLabel::handlemsg(htmsg *msg)
 {
 	if (msg->type==mt_postprocess) {
 		if (msg->msg==msg_keypressed) {
@@ -2749,7 +2749,7 @@ void ht_label::handlemsg(htmsg *msg)
 				return;
 			}
 		}
-	} else ht_view::handlemsg(msg);
+	} else UiView::handlemsg(msg);
 }
 
 /*
@@ -2766,13 +2766,13 @@ void	ht_progress_indicator::init(Bounds *b, const char *hint)
 	c.y=1;
 	c.w-=c.x+2;
 	c.h-=c.y+3;
-	text=new ht_statictext();
+	text=new UiStaticText();
 	text->init(&c, NULL, align_center, true);
 	insert(text);
 
 	c.y+=2;
 	c.h=1;
-	ht_statictext *t=new ht_statictext();
+	UiStaticText *t=new UiStaticText();
 	t->init(&c, hint, align_center);
 	insert(t);
 }
@@ -2788,7 +2788,7 @@ void ht_progress_indicator::settext(const char *t)
 }
 
 /*
- *	CLASS ht_color_block
+ *	CLASS UiColorBlock
  */
 
 int vcs[16] = {
@@ -2796,10 +2796,10 @@ int vcs[16] = {
 	VC_LIGHT(VC_BLACK), VC_LIGHT(VC_BLUE), VC_LIGHT(VC_GREEN), VC_LIGHT(VC_CYAN), VC_LIGHT(VC_RED), VC_LIGHT(VC_MAGENTA), VC_LIGHT(VC_YELLOW), VC_LIGHT(VC_WHITE)
 };
 
-void ht_color_block::init(Bounds *b, int selected, int Flags)
+void UiColorBlock::init(Bounds *b, int selected, int Flags)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
-	VIEW_DEBUG_NAME("ht_color_block");
+	UiView::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
+	VIEW_DEBUG_NAME("UiColorBlock");
 	flags = Flags;
 	
 	ht_color_block_data d;
@@ -2808,17 +2808,17 @@ void ht_color_block::init(Bounds *b, int selected, int Flags)
 	if (flags & cf_light) colors = 16; else colors = 8;
 }
 
-int ht_color_block::datasize()
+int UiColorBlock::datasize()
 {
 	return sizeof (ht_color_block_data);
 }
 
-const char *ht_color_block::defaultpalette()
+const char *UiColorBlock::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_color_block::draw()
+void UiColorBlock::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	uint32 cursor = VCP(focused ? VC_LIGHT(VC_WHITE) : VC_BLACK, VC_TRANSPARENT);
@@ -2839,12 +2839,12 @@ void ht_color_block::draw()
 	}
 }
 
-void ht_color_block::getdata(ObjectStream &s)
+void UiColorBlock::getdata(ObjectStream &s)
 {
 	PUTX_INT32D(s, (color==-1) ? VC_TRANSPARENT : vcs[color], NULL);
 }
 
-void ht_color_block::handlemsg(htmsg *msg)
+void UiColorBlock::handlemsg(htmsg *msg)
 {
 	if (msg->msg==msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -2879,10 +2879,10 @@ void ht_color_block::handlemsg(htmsg *msg)
 				return;
 		}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
-void ht_color_block::setdata(ObjectStream &s)
+void UiColorBlock::setdata(ObjectStream &s)
 {
 	int c = GETX_INT32D(s, NULL);
 	if (c == VC_TRANSPARENT) {

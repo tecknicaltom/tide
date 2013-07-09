@@ -253,7 +253,7 @@ public:
 #define cmd_text_editor_protocol		HT_COMMAND(622)
 #define cmd_text_editor_delete_line		HT_COMMAND(623)
 
-class ht_text_viewer: public ht_view {
+class ht_text_viewer: public UiView {
 friend class ht_undo_data;
 friend class ht_undo_data_delete_string;
 friend class ht_undo_data_delete_string2;

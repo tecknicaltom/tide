@@ -59,7 +59,7 @@ public:
 	virtual ObjectID getObjectID() const;
 };
 
-bool insert_history_entry(List *history, const char *name, ht_view *view);
+bool insert_history_entry(List *history, const char *name, UiView *view);
 
 void store_history(ObjectStream &s);
 bool load_history(ObjectStream &s);

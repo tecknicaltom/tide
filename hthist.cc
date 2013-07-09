@@ -32,7 +32,7 @@
 
 #define MAX_HISTORY_ENTRY_COUNT			40
 
-bool insert_history_entry(List *history, const char *name, ht_view *view)
+bool insert_history_entry(List *history, const char *name, UiView *view)
 {
 	if (name && *name) {
 		ObjectStreamBin *os = NULL;

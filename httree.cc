@@ -31,7 +31,7 @@
 
 void ht_treeview::init(Bounds *b, const char *d)
 {
-	ht_view::init(b, VO_SELECTABLE | VO_BROWSABLE/* <- FIXME */ | VO_RESIZE, d);
+	UiView::init(b, VO_SELECTABLE | VO_BROWSABLE/* <- FIXME */ | VO_RESIZE, d);
 	VIEW_DEBUG_NAME("ht_treeview");
 
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
@@ -44,7 +44,7 @@ void ht_treeview::init(Bounds *b, const char *d)
 
 void ht_treeview::done()
 {
-	ht_view::done();
+	UiView::done();
 }
 
 void ht_treeview::adjust_focus(int Focus)
@@ -212,7 +212,7 @@ void *ht_treeview::get_node(int i)
 
 void	ht_treeview::handlemsg(htmsg *msg)
 {
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 	if (msg->msg==msg_keypressed) {
 		int Foc = foc;
 		switch (msg->data1.integer) {

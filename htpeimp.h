@@ -68,7 +68,7 @@ struct ht_pe_import {
  *	CLASS ht_pe_import_viewer
  */
 
-class ht_pe_import_viewer: public ht_itext_listbox {
+class ht_pe_import_viewer: public UiITextListbox {
 protected:
 	ht_format_group *format_group;
 	bool grouplib;

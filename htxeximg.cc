@@ -29,7 +29,7 @@
 
 #define DESC_XEX_IMAGE "xex/image"
 
-static ht_view *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)group->get_shared_data();
 
@@ -42,7 +42,7 @@ static ht_view *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(xex_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_XEX_IMAGE"-g");
 	AnalyInfoline *head;
 

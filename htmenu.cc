@@ -72,7 +72,7 @@ static bool execute_submenu(int x, int y, ht_context_menu *m)
 		d->databuf_set(&a, sizeof a);
 		b.x = 0;
 		b.y = 0;
-		ht_frame *frame = new ht_menu_frame();
+		UiFrame *frame = new UiMenuFrame();
 		frame->init(&b, 0, FS_MOVE/*just for fun*/);
 		d->setframe(frame);
 		d->setpalette(palkey_generic_menu_default);
@@ -234,7 +234,7 @@ ht_context_menu_entry::~ht_context_menu_entry()
 
 void ht_menu::init(Bounds *b)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_POSTPROCESS | VO_RESIZE, "menu");
+	UiView::init(b, VO_OWNBUFFER | VO_POSTPROCESS | VO_RESIZE, "menu");
 	VIEW_DEBUG_NAME("ht_menu");
 
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
@@ -251,7 +251,7 @@ void ht_menu::init(Bounds *b)
 void ht_menu::done()
 {
 	delete menu;
-	ht_view::done();
+	UiView::done();
 }
 
 const char *ht_menu::defaultpalette()
@@ -317,7 +317,7 @@ void ht_menu::execute_menu(int i)
 		d->databuf_set(&a, sizeof a);
 		b.x = 0;
 		b.y = 0;
-		ht_frame *frame = new ht_menu_frame();
+		UiFrame *frame = new UiMenuFrame();
 		frame->init(&b, 0, FS_MOVE);	// just for fun
 		d->setframe(frame);
 		d->setpalette(palkey_generic_menu_default);
@@ -403,7 +403,7 @@ void ht_menu::handlemsg(htmsg *msg)
 			}
 		}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
 bool ht_menu::handle_key_context_menu(ht_context_menu *a, int k)
@@ -498,68 +498,68 @@ bool ht_menu::set_local_menu(ht_context_menu *m)
 }
 
 /*
- *	CLASS ht_menu_frame
+ *	CLASS UiMenuFrame
  */
 
-void ht_menu_frame::init(Bounds *b, const char *desc, uint style, uint number)
+void UiMenuFrame::init(Bounds *b, const char *desc, uint style, uint number)
 {
-	ht_frame::init(b, desc, style, number);
-	VIEW_DEBUG_NAME("ht_menu_frame");
+	UiFrame::init(b, desc, style, number);
+	VIEW_DEBUG_NAME("UiMenuFrame");
 }
 
-void ht_menu_frame::done()
+void UiMenuFrame::done()
 {
-	ht_frame::done();
+	UiFrame::done();
 }
 
-const char *ht_menu_frame::defaultpalette()
+const char *UiMenuFrame::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-const char *ht_menu_frame::defaultpaletteclass()
+const char *UiMenuFrame::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
 
-int ht_menu_frame::getcurcol_normal()
+int UiMenuFrame::getcurcol_normal()
 {
-	return ht_frame::getcurcol_normal();
+	return UiFrame::getcurcol_normal();
 }
 
-int ht_menu_frame::getcurcol_killer()
+int UiMenuFrame::getcurcol_killer()
 {
 	return 0;
 }
 
 /*
- *	CLASS ht_context_menu_window_body
+ *	CLASS UiContextMenuWindowBody
  */
 
-void ht_context_menu_window_body::init(Bounds *b, ht_context_menu *Menu)
+void UiContextMenuWindowBody::init(Bounds *b, ht_context_menu *Menu)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
-	VIEW_DEBUG_NAME("ht_context_menu_window_body");
+	UiView::init(b, VO_OWNBUFFER | VO_SELECTABLE, 0);
+	VIEW_DEBUG_NAME("UiContextMenuWindowBody");
 	context_menu = Menu;
 	selected = next_selectable(-1);
 }
 
-void ht_context_menu_window_body::done()
+void UiContextMenuWindowBody::done()
 {
-	ht_view::done();
+	UiView::done();
 }
 
-const char *ht_context_menu_window_body::defaultpalette()
+const char *UiContextMenuWindowBody::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-const char *ht_context_menu_window_body::defaultpaletteclass()
+const char *UiContextMenuWindowBody::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
 
-void ht_context_menu_window_body::draw()
+void UiContextMenuWindowBody::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	int c=context_menu->count();
@@ -616,7 +616,7 @@ void ht_context_menu_window_body::draw()
 	}
 }
 
-void ht_context_menu_window_body::handlemsg(htmsg *msg)
+void UiContextMenuWindowBody::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -673,10 +673,10 @@ void ht_context_menu_window_body::handlemsg(htmsg *msg)
 			}
 //		}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
-int ht_context_menu_window_body::next_selectable(int to)
+int UiContextMenuWindowBody::next_selectable(int to)
 {
 	int s=to+1;
 	int c=context_menu->count();
@@ -690,7 +690,7 @@ int ht_context_menu_window_body::next_selectable(int to)
 	return to;
 }
 
-int ht_context_menu_window_body::prev_selectable(int to)
+int UiContextMenuWindowBody::prev_selectable(int to)
 {
 	int s = to-1;
 	int c = context_menu->count();
@@ -704,12 +704,12 @@ int ht_context_menu_window_body::prev_selectable(int to)
 	return to;
 }
 
-void ht_context_menu_window_body::getdata(ObjectStream &s)
+void UiContextMenuWindowBody::getdata(ObjectStream &s)
 {
 	PUT_INT32D(s, selected);
 }
 
-void ht_context_menu_window_body::setdata(ObjectStream &s)
+void UiContextMenuWindowBody::setdata(ObjectStream &s)
 {
 	GET_INT32D(s, selected);
 }
@@ -729,7 +729,7 @@ void ht_menu_window::init(Bounds *b, ht_context_menu *m)
 	c.w-=2;
 	c.h-=2;
 	menu = m;
-	body=new ht_menu_window_body();
+	body=new UiMenuWindowBody();
 	body->init(&c, menu);
 	insert(body);
 }
@@ -779,21 +779,21 @@ void ht_menu_window::setdata(ObjectStream &s)
 }
 
 /*
- *	CLASS ht_menu_window_body
+ *	CLASS UiMenuWindowBody
  */
 
-void ht_menu_window_body::init(Bounds *b, ht_context_menu *menu)
+void UiMenuWindowBody::init(Bounds *b, ht_context_menu *menu)
 {
-	ht_context_menu_window_body::init(b, menu);
-	VIEW_DEBUG_NAME("ht_menu_window_body");
+	UiContextMenuWindowBody::init(b, menu);
+	VIEW_DEBUG_NAME("UiMenuWindowBody");
 }
 
-void ht_menu_window_body::done()
+void UiMenuWindowBody::done()
 {
-	ht_context_menu_window_body::done();
+	UiContextMenuWindowBody::done();
 }
 
-void ht_menu_window_body::handlemsg(htmsg *msg)
+void UiMenuWindowBody::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -809,7 +809,7 @@ void ht_menu_window_body::handlemsg(htmsg *msg)
 				return;
 		}
 	}
-	ht_context_menu_window_body::handlemsg(msg);
+	UiContextMenuWindowBody::handlemsg(msg);
 }
 
 /*

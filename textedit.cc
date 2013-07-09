@@ -43,7 +43,7 @@
 #include "hthist.h"
 #include "htsearch.h"
 
-static ht_search_request* create_request_hexascii(text_search_pos *start, text_search_pos *end, ht_view *f, uint search_class)
+static ht_search_request* create_request_hexascii(text_search_pos *start, text_search_pos *end, UiView *f, uint search_class)
 {
 	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
@@ -65,7 +65,7 @@ static ht_search_request* create_request_hexascii(text_search_pos *start, text_s
 	return request;
 }
 
-typedef ht_search_request* (*create_request_func)(text_search_pos *ret_start, text_search_pos *ret_end, ht_view *form, uint search_class);
+typedef ht_search_request* (*create_request_func)(text_search_pos *ret_start, text_search_pos *ret_end, UiView *form, uint search_class);
 
 struct ht_text_search_method {
 	const char *name;
@@ -106,7 +106,7 @@ static ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint s
 	while (q->name) {
 		if (q->search_mode_mask & searchmodes) {
 			Bounds v = k;
-			ht_view *form = q->create_form(&v, q->histid);
+			UiView *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 			modes++;
 		}
@@ -121,7 +121,7 @@ static ht_search_request *text_search_dialog(ht_text_viewer *text_viewer, uint s
 //		lastsearchmodeid = modeid;
 
 		ht_text_search_method *s = &text_search_methods[modeid];
-		ht_view *form = dialog->get_search_modeform();
+		UiView *form = dialog->get_search_modeform();
 
 		text_search_pos start, end;
 
@@ -945,7 +945,7 @@ int text_viewer_pos_compare(text_viewer_pos *a, text_viewer_pos *b)
 
 void ht_text_viewer::init(Bounds *b, bool own_t, ht_textfile *t, Container *l)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_SELECTABLE | VO_RESIZE, "text viewer");
+	UiView::init(b, VO_OWNBUFFER | VO_SELECTABLE | VO_RESIZE, "text viewer");
 	VIEW_DEBUG_NAME("ht_text_viewer");
 
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
@@ -993,7 +993,7 @@ void ht_text_viewer::done()
 	free(EOL_string);
 	free(EOF_string);
 
-	ht_view::done();
+	UiView::done();
 }
 
 uint ht_text_viewer::char_vsize(char c, uint x)
@@ -1026,7 +1026,7 @@ void ht_text_viewer::config_changed()
 	tab_size = MIN(MAX(tab_size, 1), 16);
 
 	if (lexer) lexer->config_changed();
-	ht_view::config_changed();
+	UiView::config_changed();
 }
 
 bool ht_text_viewer::continue_search()
@@ -1672,7 +1672,7 @@ void ht_text_viewer::handlemsg(htmsg *msg)
 			break;
 		}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
 void ht_text_viewer::make_pos_physical(text_viewer_pos *p)
@@ -1736,7 +1736,7 @@ void ht_text_viewer::popup_change_highlight()
 	c.w = b.w-2-c.x;
 	c.h = b.h-2-c.y;
 
-	ht_itext_listbox *mode_input = new ht_itext_listbox();
+	UiITextListbox *mode_input = new UiITextListbox();
 	mode_input->init(&c);
 	
 	mode_input->insert_str(-1, "no highlighting");
@@ -1760,7 +1760,7 @@ void ht_text_viewer::popup_change_highlight()
 	c.w = 30;
 	c.h = 1;
 
-	ht_label *mode_text = new ht_label();
+	UiLabel *mode_text = new UiLabel();
 	mode_text->init(&c, "choose ~highlighting mode", mode_input);
 
 	d->insert(mode_text);
@@ -1841,7 +1841,7 @@ void ht_text_viewer::render_str_color(vcp *color, text_viewer_pos *pos)
 
 void ht_text_viewer::resize(int rw, int rh)
 {
-	ht_view::resize(rw, rh);
+	UiView::resize(rw, rh);
 	if ((int)cursorx > size.w-1) {
 		xofs += (int)cursorx-(size.w-1);
 		cursorx = size.w-1;
@@ -2526,13 +2526,13 @@ void ht_text_editor::show_protocol()
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "protocol", FS_KILLER | FS_TITLE | FS_MOVE);
 	b.assign(1, 0, b.w-4, 1);
-	ht_statictext *text;
-	NEW_OBJECT(text, ht_statictext, &b, " ", align_left);
+	UiStaticText *text;
+	NEW_OBJECT(text, UiStaticText, &b, " ", align_left);
 	dialog->insert(text);
 	b.y = 1;
 	b.h = bh-5;
-	ht_text_listbox *list;
-	NEW_OBJECT(list, ht_text_listbox, &b, 2, 1);
+	UiTextListbox *list;
+	NEW_OBJECT(list, UiTextListbox, &b, 2, 1);
 	uint cp = undo_list->get_current_position();
 	const char *od;
 	if (undo_list->is_clean(0)) {

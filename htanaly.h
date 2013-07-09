@@ -64,7 +64,7 @@ class ht_aviewer;
  *
  */
 
-class AnalyserInformation: public ht_statictext {
+class AnalyserInformation: public UiStaticText {
 	ht_aviewer	*analy;     
 	int		addrs, labels;
 	const char	*atype, *adis;
@@ -79,7 +79,7 @@ public:
 /*
  *
  */
-class SymbolBox: public ht_listbox {
+class UiSymbolListbox: public UiListbox {
 public:
 	Analyser	*analy;
 	char		*str;
@@ -141,7 +141,7 @@ private:
 #define ANALY_STATUS_ARG_FUNCTION 'f'
 #define ANALY_STATUS_ARG_OFFSET 'o'
 
-class AnalyInfoline: public ht_statictext {
+class AnalyInfoline: public UiStaticText {
 public:
 	ht_aviewer	*analy;
 	char		*s;
@@ -209,7 +209,7 @@ public:
 	virtual	int  get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	void getminbounds(int *width, int *height);
-		bool gotoAddress(Address *a, ht_view *source_object);
+		bool gotoAddress(Address *a, UiView *source_object);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	bool idle();
 	virtual	bool offset_to_pos(FileOfs ofs, viewer_pos *p);

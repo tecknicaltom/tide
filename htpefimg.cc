@@ -27,7 +27,7 @@
 #include "pefstruc.h"
 #include "snprintf.h"
 
-static ht_view *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
@@ -37,7 +37,7 @@ static ht_view *htpefimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(pef_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_PEF_IMAGE"-g");
 	AnalyInfoline *head;
 

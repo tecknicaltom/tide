@@ -50,7 +50,7 @@
  *	CLASS ht_status
  */
 
-class ht_status: public ht_view {
+class ht_status: public UiView {
 protected:
 	int		idle_count;
 	char		*format;
@@ -73,7 +73,7 @@ private:
  *	CLASS ht_keyline
  */
 
-class ht_keyline: public ht_view {
+class ht_keyline: public UiView {
 public:
 		void init(Bounds *b);
 	virtual	void done();
@@ -84,10 +84,10 @@ public:
 };
 
 /*
- *	CLASS ht_desktop
+ *	CLASS UiDesktop
  */
 
-class ht_desktop: public ht_view {
+class UiDesktop: public UiView {
 public:
 		void init(Bounds *b);
 	/* overwritten */
@@ -148,9 +148,9 @@ public:
 class ht_vstate_history_entry: public Object {
 public:
 	Object *data;
-	ht_view *view;
+	UiView *view;
 
-	ht_vstate_history_entry(Object *data, ht_view *view);
+	ht_vstate_history_entry(Object *data, UiView *view);
 	~ht_vstate_history_entry();
 };
 
@@ -217,10 +217,10 @@ public:
 };
 
 /*
- *	CLASS ht_project_listbox
+ *	CLASS UiProjectListbox
  */
 
-class ht_project_listbox: public ht_listbox {
+class UiProjectListbox: public UiListbox {
 protected:
 	ht_project *project;
 	uint colwidths[4];
@@ -252,7 +252,7 @@ public:
 class ht_project_window: public ht_window {
 protected:
 	ht_project **project;
-	ht_project_listbox *plb;
+	UiProjectListbox *plb;
 	char wtitle[128];
 public:
 
@@ -297,9 +297,9 @@ protected:
 	Container *syntax_lexers;
 
 	ht_keyline *keyline;
-	ht_desktop *desktop;
+	UiDesktop *desktop;
 
-	ht_group *battlefield;
+	UiGroup *battlefield;
 	
 	bool exit_program;
 
@@ -316,12 +316,12 @@ protected:
 			void get_stdbounds_file(Bounds *b);
 			void get_stdbounds_tool(Bounds *b);
 			
-			int popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *structure, int depth, int *currenti, ht_view *currentv);
+			int popup_view_list_dump(UiView *view, UiTextListbox *listbox, List *structure, int depth, int *currenti, UiView *currentv);
 /* overwritten */
 	virtual	const char *defaultpalette();
 	virtual	const char *defaultpaletteclass();
 public:
-	ht_view *menu;
+	UiView *menu;
 
 		ht_app() {};
 		ht_app(BuildCtorArg &a): ht_dialog(a) {};
@@ -331,7 +331,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void draw();
-	virtual	bool focus(ht_view *view);
+	virtual	bool focus(UiView *view);
 	virtual	const char *func(uint i, bool execute);
 	virtual	void handlemsg(htmsg *msg);
 	virtual	void load(ObjectStream &f);
@@ -351,7 +351,7 @@ public:
 		ht_window *get_window_by_filename(const char *filename);
 		ht_window *get_window_by_number(uint number);
 		ht_window *get_window_by_type(uint type);
-		ht_view *popup_view_list(const char *dialog_title);
+		UiView *popup_view_list(const char *dialog_title);
 		ht_window *popup_window_list(const char *dialog_title);
 		void project_opencreate(const char *filename);
 		void tile(bool vertical);

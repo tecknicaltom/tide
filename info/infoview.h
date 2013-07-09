@@ -48,9 +48,9 @@ class ht_info_lexer: public ht_syntax_lexer {
 public:
 	Container *xrefs;
 	uint cx, cy;
-	ht_view *pal_from;
+	UiView *pal_from;
 	
-		void init(ht_view *pal_from);
+		void init(UiView *pal_from);
 /* overwritten */
 	virtual	vcp getcolor_syntax(uint pal_index);
 	virtual	lexer_state getinitstate();

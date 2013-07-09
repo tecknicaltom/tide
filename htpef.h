@@ -60,7 +60,7 @@ struct ht_pef_shared_data {
 	ht_pef_import imports;
 	
 	ht_format_viewer *v_header;
-	ht_view *v_imports;
+	UiView *v_imports;
 	ht_format_viewer *v_image;
 };
 

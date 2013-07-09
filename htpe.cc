@@ -46,7 +46,7 @@ static format_viewer_if *htpe_ifs[] = {
 	0
 };
 
-static ht_view *htpe_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htpe_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte pemagic[4];
 	FileOfs h = get_newexe_header_ofs(file);

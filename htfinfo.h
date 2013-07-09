@@ -28,11 +28,13 @@
 
 extern format_viewer_if htfinfo_if;
 
+// TODO: rename finfo occurances to fileinfo
+
 /*
- *   ht_finfo_text
+ *   UiFInfoText
  */
  
-class ht_finfo_text: public ht_statictext {
+class UiFInfoText: public UiStaticText {
 protected:
 	File *file;
 	const char *olddesc;

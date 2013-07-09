@@ -29,7 +29,7 @@
 #include "machostruc.h"
 #include "macho_analy.h"
 
-static ht_view *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_macho_shared_data &macho_shared = *(ht_macho_shared_data *)group->get_shared_data();
 
@@ -40,7 +40,7 @@ static ht_view *htmachoimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(&macho_shared, file);
 
 	Bounds c = *b;
-	ht_group *g = new ht_group();
+	UiGroup *g = new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_MACHO_IMAGE"-g");
 
 	c.y += 2;

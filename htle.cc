@@ -48,7 +48,7 @@ static format_viewer_if *htle_ifs[] = {
 	0
 };
 
-static ht_view *htle_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htle_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte lemagic[2];
 	FileOfs h=get_newexe_header_ofs(file);

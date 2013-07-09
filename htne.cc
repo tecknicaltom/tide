@@ -69,7 +69,7 @@ int ne_import_rec::compareTo(const Object *obj) const
 	return module - b->module;
 }
 
-static ht_view *htne_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htne_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte nemagic[2];
 	FileOfs h = get_newexe_header_ofs(file);

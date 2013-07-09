@@ -41,7 +41,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 	c.y=0;
 	c.w=b->w-4;
 	c.h=b->h-4;
-	ht_statictext *text=new ht_statictext();
+	UiStaticText *text=new UiStaticText();
 	text->init(&c, buf, align);
 	text->growmode = MK_GM(GMH_FIT, GMV_FIT);
 
@@ -62,7 +62,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "O~K", button_ok);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -72,7 +72,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~Yes", button_yes);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -83,7 +83,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~No", button_no);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -93,7 +93,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~Skip", button_skip);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -104,7 +104,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~All", button_all);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -115,7 +115,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~None", button_none);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -126,7 +126,7 @@ static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, sta
 		c.y=b->h-4;
 		c.w=9;
 		c.h=2;
-		ht_button *button=new ht_button();
+		UiButton *button=new UiButton();
 		button->init(&c, "~Cancel", button_cancel);
 		button->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		dialog->insert(button);
@@ -197,7 +197,7 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 	ht_dialog *dialog=new ht_dialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
-	ht_strinputfield *input;
+	UiStrInputfield *input;
 
 	Bounds  b2;
 	b2.x = 3 + strlen(label);
@@ -207,7 +207,7 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 
 	List *hist = NULL;
 	if (histid) hist = (List*)getAtomValue(histid);
-	input = new ht_strinputfield();
+	input = new UiStrInputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
 	d.text = (byte *)result;
@@ -221,7 +221,7 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 		b2.w = 3 + strlen(label) - b2.x;
 		b2.h = 1;
 
-		ht_label *lab = new ht_label();
+		UiLabel *lab = new UiLabel();
 		lab->init(&b2, label, input);
 		dialog->insert(lab);
 	}
@@ -231,13 +231,13 @@ bool inputboxrect(Bounds *b, const char *title, const char *label, char *result,
 	b2.w = 10;
 	b2.h = 2;
 
-	ht_button *bok = new ht_button();
+	UiButton *bok = new UiButton();
 	bok->init(&b2, "O~k", button_ok);
 	dialog->insert(bok);
 
 	b2.x += 12;
 
-	ht_button *bcancel = new ht_button();
+	UiButton *bcancel = new UiButton();
 	bcancel->init(&b2, "~Cancel", button_cancel);
 	dialog->insert(bcancel);
 

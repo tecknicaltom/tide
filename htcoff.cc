@@ -103,7 +103,7 @@ static bool is_coff(File *file, Endianess &endian, FileOfs ofs)
 	return true;
 }
 
-static ht_view *htcoff_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htcoff_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	FileOfs h;
 	Endianess end;

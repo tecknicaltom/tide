@@ -37,7 +37,7 @@
 
 #include <stdlib.h>
 
-static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpedelayimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 	String fn;
@@ -51,12 +51,12 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 	uint dll_count=0;
 	uint function_count=0;
 
-	ht_group *g;
+	UiGroup *g;
 	Bounds c;
-	ht_statictext *head;
+	UiStaticText *head;
 
 	c=*b;
-	g=new ht_group();
+	g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_PE_DIMPORTS"-g");
 
 	c.y++;
@@ -138,7 +138,7 @@ static ht_view *htpedelayimports_init(Bounds *b, File *file, ht_format_group *gr
 
 	ht_snprintf(iline, sizeof iline, "* PE delay-import directory at offset %08x (%d delay-imports from %d libraries)", iofs, function_count, dll_count);
 
-	head=new ht_statictext();
+	head=new UiStaticText();
 	head->init(&c, iline, align_left);
 
 	g->insert(head);

@@ -37,7 +37,7 @@ static format_viewer_if *htmacho_ifs[] = {
 	0
 };
 
-static ht_view *htmacho_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htmacho_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte magic[4];
 	file->seek(0);

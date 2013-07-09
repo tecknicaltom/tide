@@ -27,7 +27,7 @@
 #include "log.h"
 #include "snprintf.h"
 
-static ht_view *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_class_shared_data *class_shared=(ht_class_shared_data *)group->get_shared_data();
 
@@ -37,7 +37,7 @@ static ht_view *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
 	a->init(class_shared, file);
 
 	Bounds c = *b;
-	ht_group *g = new ht_group();
+	UiGroup *g = new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_JAVA_IMAGE"-g");
 	AnalyInfoline *head;
 

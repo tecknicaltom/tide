@@ -102,7 +102,7 @@ public:
  *	CLASS ht_menu
  */
 
-class ht_menu: public ht_view {
+class ht_menu: public UiView {
 protected:
 	int lastmenux;
 	List *menu;
@@ -134,10 +134,10 @@ public:
 };
 
 /*
- *	CLASS ht_context_menu_window_body
+ *	CLASS UiContextMenuWindowBody
  */
 
-class ht_context_menu_window_body: public ht_view {
+class UiContextMenuWindowBody: public UiView {
 protected:
 	ht_context_menu *context_menu;
 	int selected;
@@ -162,7 +162,7 @@ public:
  *	CLASS ht_menu_window
  */
 
-class ht_menu_window_body;
+class UiMenuWindowBody;
 
 struct ht_menu_window_data {
 	int selected;
@@ -170,7 +170,7 @@ struct ht_menu_window_data {
 
 class ht_menu_window: public ht_dialog {
 protected:
-	ht_menu_window_body *body;
+	UiMenuWindowBody *body;
 	ht_context_menu *menu;
 public:
 		void init(Bounds *b, ht_context_menu *menu);
@@ -182,10 +182,10 @@ public:
 };
 
 /*
- *	CLASS ht_menu_window_body
+ *	CLASS UiMenuWindowBody
  */
 
-class ht_menu_window_body: public ht_context_menu_window_body {
+class UiMenuWindowBody: public UiContextMenuWindowBody {
 public:
 		void init(Bounds *b, ht_context_menu *menu);
 	virtual	void done();
@@ -194,10 +194,10 @@ public:
 };
 
 /*
- *	CLASS ht_menu_frame
+ *	CLASS UiMenuFrame
  */
 
-class ht_menu_frame: public ht_frame {
+class UiMenuFrame: public UiFrame {
 protected:
 /* overwritten */
 	virtual	int getcurcol_normal();

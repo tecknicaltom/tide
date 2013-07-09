@@ -31,7 +31,7 @@
 #include "htanaly.h"
 #include "ne_analy.h"
 
-static ht_view *htneimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htneimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_ne_shared_data *ne_shared=(ht_ne_shared_data *)group->get_shared_data();
 
@@ -41,7 +41,7 @@ static ht_view *htneimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(ne_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_NE_IMAGE"-g");
 	AnalyInfoline *head;
 

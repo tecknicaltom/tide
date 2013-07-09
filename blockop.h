@@ -30,10 +30,10 @@
 
 class ht_blockop_dialog: public ht_dialog {
 protected:
-	ht_strinputfield *start;
-	ht_strinputfield *end;
-	ht_listpopup *mode;
-	ht_strinputfield *action;
+	UiStrInputfield *start;
+	UiStrInputfield *end;
+	UiListPopup *mode;
+	UiStrInputfield *action;
 public:
 		void init(Bounds *b, FileOfs pstart, FileOfs pend, List *history = NULL);
 	virtual	void done();

@@ -49,8 +49,8 @@ extern "C" {
 
 #define ST_EXPR		3         // search stops when expression evals to non-zero
 
-typedef ht_view* (*create_form_func)(Bounds *b, uint histid);
-typedef void (*create_desc_func)(char *buf, int buflen, ht_view *form);
+typedef UiView* (*create_form_func)(Bounds *b, uint histid);
+typedef void (*create_desc_func)(char *buf, int buflen, UiView *form);
 
 /*
  *	CLASS ht_fxbin_search_request
@@ -114,12 +114,12 @@ struct ht_hexascii_search_form_data {
 	ht_checkboxes_data options;
 };
 
-class ht_hexascii_search_form: public ht_group {
+class ht_hexascii_search_form: public UiGroup {
 protected:
-	ht_strinputfield *str;
-	ht_strinputfield *range_start;
-	ht_strinputfield *range_end;
-	ht_checkboxes *option_boxes;
+	UiStrInputfield *str;
+	UiStrInputfield *range_start;
+	UiStrInputfield *range_end;
+	UiCheckboxes *option_boxes;
 public:
 			void init(Bounds *b, int options, List *history=0);
 };
@@ -134,12 +134,12 @@ struct ht_evalstr_search_form_data {
 	ht_checkboxes_data options;
 };
 
-class ht_evalstr_search_form: public ht_group {
+class ht_evalstr_search_form: public UiGroup {
 protected:
-	ht_strinputfield *str;
-	ht_strinputfield *range_start;
-	ht_strinputfield *range_end;
-	ht_checkboxes *option_boxes;
+	UiStrInputfield *str;
+	UiStrInputfield *range_start;
+	UiStrInputfield *range_end;
+	UiCheckboxes *option_boxes;
 public:
 			void	init(Bounds *b, int options, List *history=0);
 };
@@ -154,12 +154,12 @@ struct ht_vregex_search_form_data {
 	ht_checkboxes_data options;
 };
 
-class ht_vregex_search_form: public ht_group {
+class ht_vregex_search_form: public UiGroup {
 protected:
-	ht_strinputfield *str;
-	ht_strinputfield *range_start;
-	ht_strinputfield *range_end;
-	ht_checkboxes *option_boxes;
+	UiStrInputfield *str;
+	UiStrInputfield *range_start;
+	UiStrInputfield *range_end;
+	UiCheckboxes *option_boxes;
 public:
 			void	init(Bounds *b, int options, List *history=0);
 };
@@ -174,12 +174,12 @@ struct ht_expr_search_form_data {
 	ht_checkboxes_data options;
 };
 
-class ht_expr_search_form: public ht_group {
+class ht_expr_search_form: public UiGroup {
 protected:
-	ht_strinputfield *str;
-	ht_strinputfield *range_start;
-	ht_strinputfield *range_end;
-	ht_checkboxes *option_boxes;
+	UiStrInputfield *str;
+	UiStrInputfield *range_start;
+	UiStrInputfield *range_end;
+	UiCheckboxes *option_boxes;
 public:
 			void	init(Bounds *b, int options, List *history=0);
 };
@@ -192,9 +192,9 @@ struct ht_replace_hexascii_search_form_data {
 	ht_hexinputfield_data hex;
 };
 
-class ht_replace_hexascii_search_form: public ht_group {
+class ht_replace_hexascii_search_form: public UiGroup {
 protected:
-	ht_strinputfield *str;
+	UiStrInputfield *str;
 public:
 			void init(Bounds *b, int options, List *history=0);
 };
@@ -204,14 +204,14 @@ public:
  */
 struct ht_search_dialog_mode {
 	int id;
-	ht_view *view;
+	UiView *view;
 };
 
 #define MAX_SEARCH_DIALOG_MODES 16
 
 class ht_search_dialog: public ht_dialog {
 protected:
-	ht_listpopup *search_mode_popup;
+	UiListPopup *search_mode_popup;
 
 	int smodeidx;
 	int smodecount;
@@ -227,9 +227,9 @@ public:
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	/* new */
-			void insert_search_mode(int id, const char *desc, ht_view *v);
+			void insert_search_mode(int id, const char *desc, UiView *v);
 			void select_search_mode(int id);
-			ht_view *get_search_modeform();
+			UiView *get_search_modeform();
 			int get_search_modeid();
 };
 
@@ -240,7 +240,7 @@ public:
 
 class ht_replace_dialog: public ht_search_dialog {
 protected:
-	ht_listpopup *replace_mode_popup;
+	UiListPopup *replace_mode_popup;
 
 	int rmodeidx;
 	int rmodecount;
@@ -256,9 +256,9 @@ public:
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);
 	/* new */
-			void insert_replace_mode(int id, const char *desc, ht_view *v);
+			void insert_replace_mode(int id, const char *desc, UiView *v);
 			void select_replace_mode(int id);
-			ht_view *get_replace_modeform();
+			UiView *get_replace_modeform();
 			int get_replace_modeid();
 };
 
@@ -302,10 +302,10 @@ public:
 #define SFBIN_CASEINSENSITIVE	1
 
 Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, const byte *pat, uint patlen, uint flags, FileOfs *return_ofs, bool *return_success);
-bool search_bin_process(Object *context, ht_text *progress_indicator);
+bool search_bin_process(Object *context, UiText *progress_indicator);
 
-ht_view* create_form_hexascii(Bounds *b, uint histid);
-void create_desc_hexascii(char *buf, int buflen, ht_view *f);
+UiView* create_form_hexascii(Bounds *b, uint histid);
+void create_desc_hexascii(char *buf, int buflen, UiView *f);
 
 /*
  *
@@ -330,6 +330,6 @@ public:
 };
  
 Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, const byte *repl, FileOfs repllen, FileOfs *return_repllen);
-bool replace_bin_process(Object *context, ht_text *progress_indicator);
+bool replace_bin_process(Object *context, UiText *progress_indicator);
 
 #endif /* __HTSEARCH_H__ */

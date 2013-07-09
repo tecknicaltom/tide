@@ -46,9 +46,9 @@
 
 class ht_queued_msg: public Object {
 public:
-	ht_view *target;
+	UiView *target;
 	htmsg msg;
-		    ht_queued_msg(ht_view *target, htmsg &msg);
+		    ht_queued_msg(UiView *target, htmsg &msg);
 };
 
 class ht_dialog: public ht_window {
@@ -71,7 +71,7 @@ public:
 	virtual void draw();
 	virtual	void handlemsg(htmsg *msg);
 	/* new */
-		void queuemsg(ht_view *target, htmsg &msg);
+		void queuemsg(UiView *target, htmsg &msg);
 	virtual	int getstate(int *return_val);
 	virtual	int run(bool modal);
 	virtual	void setstate(int state, int return_val);
@@ -79,10 +79,10 @@ public:
 
 
 /*
- *	CLASS ht_cluster
+ *	CLASS UiCluster
  */
 
-class ht_cluster: public ht_dialog_widget {
+class UiCluster: public UiDialogWidget {
 protected:
 	ht_string_list *strings;
 	int sel;
@@ -96,14 +96,14 @@ public:
 };
 
 /*
- *	CLASS ht_checkboxes
+ *	CLASS UiCheckboxes
  */
 
 struct ht_checkboxes_data {
 	DDECL_UINT(state);
 };
 
-class ht_checkboxes: public ht_cluster {
+class UiCheckboxes: public UiCluster {
 protected:
 	uint32 state;
 public:
@@ -118,14 +118,14 @@ public:
 };
 
 /*
- *	CLASS ht_radioboxes
+ *	CLASS UiRadioboxes
  */
 
 struct ht_radioboxes_data {
 	DDECL_UINT(sel);
 };
 
-class ht_radioboxes: public ht_cluster {
+class UiRadioboxes: public UiCluster {
 public:
 		void	init(Bounds *b, ht_string_list *strings);
 	virtual	void	done();
@@ -138,17 +138,15 @@ public:
 };
 
 /*
- *	CLASS ht_inputfield
+ *	CLASS UiInputfield
  */
-
-class ht_inputfield;
 
 struct ht_inputfield_data {
 	DDECL_UINT(textlen);
 	DDECL_PTR(const byte, text);
 };
 
-class ht_inputfield: public ht_dialog_widget {
+class UiInputfield: public UiDialogWidget {
 protected:
 	byte **text, *textv;
 	byte **curchar, *curcharv;
@@ -158,7 +156,7 @@ protected:
 	int *maxtextlen, maxtextlenv;
 	int insert;
 	int ofs;
-	ht_inputfield *attachedto;
+	UiInputfield *attachedto;
 	List *history;
 
 		void freebuf();
@@ -174,18 +172,18 @@ public:
 	virtual	void getdata(ObjectStream &s);
 	virtual	void setdata(ObjectStream &s);
 	/* new */
-		void attach(ht_inputfield *inputfield);
+		void attach(UiInputfield *inputfield);
 		void query(byte ***curchar, byte ***text, byte ***selstart, byte ***selend, int **textlen, int **maxtextlen);
 		void isetcursor(uint pos);
 };
 
 /*
- *	CLASS ht_strinputfield
+ *	CLASS UiStrInputfield
  */
 
 #define ht_strinputfield_data ht_inputfield_data
 
-class ht_strinputfield: public ht_inputfield {
+class UiStrInputfield: public UiInputfield {
 protected:
 	bool is_virgin;		/* untouched except for cursor keys */
 	bool selectmode;
@@ -205,12 +203,12 @@ public:
 };
 
 /*
- *	CLASS ht_hexinputfield
+ *	CLASS UiHexInputfield
  */
 
 #define ht_hexinputfield_data ht_inputfield_data
 
-class ht_hexinputfield: public ht_inputfield {
+class UiHexInputfield: public UiInputfield {
 protected:
 	int nib;
 
@@ -227,10 +225,10 @@ public:
 };
 
 /*
- *	CLASS ht_button
+ *	CLASS UiButton
  */
 
-class ht_button: public ht_dialog_widget {
+class UiButton: public UiDialogWidget {
 protected:
 	int value;
 	int pressed;
@@ -257,11 +255,11 @@ public:
  *	CLASS ht_listbox_title
  */
 
-class ht_listbox;
+class UiListbox;
 
-class ht_listbox_title: public ht_dialog_widget {
+class ht_listbox_title: public UiDialogWidget {
 public:
-	ht_listbox *listbox;
+	UiListbox *listbox;
 protected:
 	char **texts;
 	int cols;
@@ -281,7 +279,7 @@ public:
 };
 
 /*
- *	CLASS ht_listbox
+ *	CLASS UiListbox
  */
 
 struct ht_listbox_data_internal {
@@ -296,7 +294,7 @@ struct ht_listbox_data {
 #define LISTBOX_NORMAL 0
 #define LISTBOX_QUICKFIND 1
 
-class ht_listbox: public ht_dialog_widget {
+class UiListbox: public UiDialogWidget {
 protected:
 public:
 	int	cursor, pos, cached_count;
@@ -355,7 +353,7 @@ protected:
 };
 
 /*
- *	CLASS ht_text_listbox
+ *	CLASS UiTextListbox
  */
 
 #define ht_text_listbox_data ht_listbox_data
@@ -372,7 +370,7 @@ struct ht_text_listbox_sort_order {
 	int		(*compare_func)(const char *key_a, const char *key_b);
 };
 
-class ht_text_listbox: public ht_listbox {
+class UiTextListbox: public UiListbox {
 protected:
 	int			cols, keycol, count;
 	ht_text_listbox_item	*first, *last;
@@ -409,7 +407,7 @@ protected:
 
 #define ht_itext_listbox_data ht_text_listbox_data
 
-class ht_itext_listbox: public ht_text_listbox {
+class UiITextListbox: public UiTextListbox {
 public:
 		void	init(Bounds *b, int Cols=1, int Keycol=0);
 	virtual	int	compare_strn(const char *s1, const char *s2, int l);
@@ -417,7 +415,7 @@ public:
 };
 
 /*
- *	CLASS ht_statictext
+ *	CLASS UiStaticText
  */
 
 enum statictext_align {
@@ -438,7 +436,7 @@ struct ht_statictext_linedesc {
 	char *text;
 };
 
-class ht_statictext: public ht_text {
+class UiStaticText: public UiText {
 protected:
 	char *text;
 	statictext_align align;
@@ -469,7 +467,7 @@ struct ht_listpopup_dialog_data {
  
 class ht_listpopup_dialog: public ht_dialog {
 protected:
-	ht_listbox *listbox;
+	UiListbox *listbox;
 	virtual	void init_text_listbox(Bounds *b);
 public:
 		void init(Bounds *b, const char *desc);
@@ -485,12 +483,12 @@ public:
 };
 
 /*
- *	CLASS ht_listpopup
+ *	CLASS UiListPopup
  */
  
 #define ht_listpopup_data ht_listpopup_dialog_data
 
-class ht_listpopup: public ht_statictext {
+class UiListPopup: public UiStaticText {
 protected:
 	ht_listpopup_dialog *listpopup;
 	/* new */	
@@ -511,10 +509,10 @@ public:
 };
 
 /*
- *	CLASS ht_history_listbox
+ *	CLASS UiHistoryListbox
  */
 
-class ht_history_listbox: public ht_listbox {
+class UiHistoryListbox: public UiListbox {
 	List	*history;
 public:
 		void init(Bounds *b, List *hist);
@@ -544,12 +542,12 @@ public:
 };
 
 /*
- *	CLASS ht_label
+ *	CLASS UiLabel
  */
 
-class ht_label: public ht_dialog_widget {
+class UiLabel: public UiDialogWidget {
 protected:
-	ht_view *connected;
+	UiView *connected;
 	char *text;
 	char *magicchar;
 	ht_key shortcut;
@@ -557,7 +555,7 @@ protected:
 	/* overwritten */
 	virtual	const char *defaultpalette();
 public:
-		void	init(Bounds *b, const char *text, ht_view *connected);
+		void	init(Bounds *b, const char *text, UiView *connected);
 	virtual	void	done();
 	/* overwritten */
 	virtual	void draw();
@@ -573,7 +571,7 @@ protected:
 	/* overwritten */
 	virtual	const char *defaultpalette();
 public:
-	ht_statictext *text;
+	UiStaticText *text;
 	
 		void init(Bounds *b, const char *hint);
 	/* new */
@@ -581,7 +579,7 @@ public:
 };
 
 /*
- *	CLASS ht_color_block
+ *	CLASS UiColorBlock
  */
 
 struct ht_color_block_data {
@@ -591,7 +589,7 @@ struct ht_color_block_data {
 #define cf_light	1
 #define cf_transparent	2
 
-class ht_color_block: public ht_dialog_widget {
+class UiColorBlock: public UiDialogWidget {
 protected:
 	int color;
 	int colors;

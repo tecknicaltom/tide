@@ -48,9 +48,9 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 
 	bool prerange = (pend > pstart);
 
-	ht_statictext *text;
+	UiStaticText *text;
 
-	ht_label *s;
+	UiLabel *s;
 	
 	List *addrhist = (List*)getAtomValue(HISTATOM_GOTO);
 	/* start */
@@ -59,7 +59,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.w = 13;
 	c.x = 7;
 	c.y = 1;
-	start = new ht_strinputfield();
+	start = new UiStrInputfield();
 	start->init(&c, 64, addrhist);
 	insert(start);
 	if (prerange) {
@@ -74,7 +74,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	/* start_desc */
 	c.x = 1;
 	c.w = 6;
-	s = new ht_label();
+	s = new UiLabel();
 	s->init(&c, "~start", start);
 	insert(s);
 	
@@ -84,7 +84,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.w = 13;
 	c.x = 27;
 	c.y = 1;
-	end=new ht_strinputfield();
+	end=new UiStrInputfield();
 	end->init(&c, 64, addrhist);
 	insert(end);
 	if (prerange) {
@@ -100,7 +100,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	/* end_desc */
 	c.x = 23;
 	c.w = 3;
-	s = new ht_label();
+	s = new UiLabel();
 	s->init(&c, "~end", end);
 	insert(s);
 
@@ -110,7 +110,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.w = 16;
 	c.x = 7;
 	c.y = 3;
-	mode = new ht_listpopup();
+	mode = new UiListPopup();
 	mode->init(&c);
 	mode->insertstring("byte (8-bit)");
 	mode->insertstring("word (16-bit)");
@@ -123,7 +123,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.x = 1;
 	c.w = 12;
 	c.y = 3;
-	s = new ht_label();
+	s = new UiLabel();
 	s->init(&c, "~mode", mode);
 	insert(s);
 
@@ -133,7 +133,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.y = 5;
 	c.w -= 3;
 	c.h = 1;
-	text = new ht_statictext();
+	text = new UiStaticText();
 	text->init(&c, "set each element to", align_left);
 	insert(text);
 	
@@ -145,7 +145,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.w = 40;
 	c.x = 7;
 	c.y = 6;
-	action = new ht_strinputfield();
+	action = new UiStrInputfield();
 	action->init(&c, 4096, ehist);
 	insert(action);
 
@@ -153,7 +153,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.x = 1;
 	c.w = 27;
 	c.y = 6;
-	s = new ht_label();
+	s = new UiLabel();
 	s->init(&c, "e~xpr", action);
 	insert(s);
 
@@ -163,14 +163,14 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 	c.y=8;
 	c.w-=c.x+2;
 	c.h-=c.y+2;
-	text=new ht_statictext();
+	text=new UiStaticText();
 	text->init(&c,
 		"special vars:          special funcs:\n"
 		"o - file offset        readbyte(ofs)\n"
 		"i - iteration index    readstring(ofs, n)", align_left);
 	insert(text);*/
 	/* functions */
-	ht_button *bhelp = new ht_button();
+	UiButton *bhelp = new UiButton();
 	c = *b;
 	c.x = 1;
 	c.y = 8;
@@ -385,7 +385,7 @@ static Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uin
 }
 
 #define BLOCKOP_STR_MAX_ITERATIONS 1024
-static bool blockop_str_process(Object *context, ht_text *progress_indicator)
+static bool blockop_str_process(Object *context, UiText *progress_indicator)
 {
 	char status[64];
 	ht_blockop_str_context *ctx = (ht_blockop_str_context*)context;
@@ -509,7 +509,7 @@ static Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uin
 }
 
 #define BLOCKOP_INT_MAX_ITERATIONS	1024
-static bool blockop_int_process(Object *context, ht_text *progress_indicator)
+static bool blockop_int_process(Object *context, UiText *progress_indicator)
 {
 	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
 	char status[64];

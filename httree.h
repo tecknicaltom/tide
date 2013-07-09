@@ -29,7 +29,7 @@ struct ht_treeview_data {
 	DDECL_PTR(void, selected);
 };
 
-class ht_treeview: public ht_view {
+class ht_treeview: public UiView {
 public:
 	int	delta_x, delta_y;
 	int	maxsize_x, maxsize_y;

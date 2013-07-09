@@ -28,7 +28,7 @@
 #include "pestruct.h"
 #include "snprintf.h"
 
-static ht_view *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -42,7 +42,7 @@ static ht_view *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(pe_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_PE_IMAGE"-g");
 	AnalyInfoline *head;
 

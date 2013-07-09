@@ -102,20 +102,20 @@ static const char *format_property[VFSV_FORMAT_PROPERTIES]={
 #define GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt) ((dfmt) & 0x80000000)
 #define GET_DISPLAY_FORMAT_IS_MIN_SIZE(dfmt) (!GET_DISPLAY_FORMAT_IS_FIXED_SIZE(dfmt))
 
-void VfsListbox::init(Bounds *b, Container *vl, ht_text *sp)
+void VfsListbox::init(Bounds *b, Container *vl, UiText *sp)
 {
 	cvfs = NULL;
 	show_pos = sp;
 	cdir[0] = 0;
 	cproto[0] = 0;
 	vfs_list = vl;
-	ht_itext_listbox::init(b);
+	UiITextListbox::init(b);
 	config_changed();
 }
 
 void VfsListbox::done()
 {
-	ht_itext_listbox::done();
+	UiITextListbox::done();
 }
 
 int VfsListbox::changeDir(const char *dir)
@@ -223,7 +223,7 @@ int VfsListbox::changeURL(const char *url)
 
 void VfsListbox::config_changed()
 {
-	ht_text_listbox::config_changed();
+	UiTextListbox::config_changed();
 	char *dfmt = get_config_string("misc/vfs display format");
 	setDisplayFormat(dfmt ? dfmt : (char*)"name");
 	free(dfmt);
@@ -270,7 +270,7 @@ void VfsListbox::handlemsg(htmsg *msg)
 		}
 		break;
 	}
-	return ht_text_listbox::handlemsg(msg);
+	return UiTextListbox::handlemsg(msg);
 }
 
 void VfsListbox::setDisplayFormat(char *fmt)
@@ -437,7 +437,7 @@ void VfsListbox::update()
 		show_pos->settext(curl);
 	}
 
-	ht_text_listbox::update();
+	UiTextListbox::update();
 }
 
 void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filename, pstat_t stat)

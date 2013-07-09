@@ -70,21 +70,21 @@ void clearmsg(htmsg *msg)
 }
 
 /*
- *	CLASS ht_text
+ *	CLASS UiText
  */
 
-void ht_text::settext(const char *text)
+void UiText::settext(const char *text)
 {
 }
 
 /*
- *	CLASS ht_view
+ *	CLASS UiView
  */
 
-void ht_view::init(Bounds *b, int o, const char *d)
+void UiView::init(Bounds *b, int o, const char *d)
 {
 	Object::init();
-	VIEW_DEBUG_NAME("ht_view");
+	VIEW_DEBUG_NAME("UiView");
 	desc = ht_strdup(d);
 	group = NULL;
 	focused = false;
@@ -120,7 +120,7 @@ void ht_view::init(Bounds *b, int o, const char *d)
 	reloadpalette();
 }
 
-void ht_view::done()
+void UiView::done()
 {
 	free(desc);
 	free(pal.data);
@@ -128,13 +128,13 @@ void ht_view::done()
 	Object::done();
 }
 
-int ht_view::aclone()
+int UiView::aclone()
 {
 	return (group && group->isaclone(this));
 }
 
 #if 0
-int ht_view::buf_lprint(int aX, int aY, int c, int l, const char *text, Codepage cp)
+int UiView::buf_lprint(int aX, int aY, int c, int l, const char *text, Codepage cp)
 {
 	if (y+aY >= vsize.y && y+aY < vsize.y+vsize.h) {
 		if (x+aX+l > vsize.x+vsize.w) l = vsize.x+vsize.w-size.x-aX;
@@ -152,7 +152,7 @@ int ht_view::buf_lprint(int aX, int aY, int c, int l, const char *text, Codepage
 	return 0;
 }
 
-int ht_view::buf_lprintw(int aX, int aY, int c, int l, const AbstractChar *text, Codepage cp)
+int UiView::buf_lprintw(int aX, int aY, int c, int l, const AbstractChar *text, Codepage cp)
 {
 	if (size.y+aY >= vsize.y && size.y+aY < vsize.y+vsize.h)) {
 		if (x+aX+l > vsize.x+vsize.w) l=vsize.x+vsize.w-x-aX;
@@ -170,7 +170,7 @@ int ht_view::buf_lprintw(int aX, int aY, int c, int l, const AbstractChar *text,
 	return 0;
 }
 
-int ht_view::buf_print(int x, int y, int c, const char *text, Codepage cp)
+int UiView::buf_print(int x, int y, int c, const char *text, Codepage cp)
 {
 	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
 		int l=vsize.x+vsize.w-x-size.x;
@@ -188,12 +188,12 @@ int ht_view::buf_print(int x, int y, int c, const char *text, Codepage cp)
 	return 0;
 }
 
-void ht_view::buf_printchar(int x, int y, int c, int ch, Codepage cp)
+void UiView::buf_printchar(int x, int y, int c, int ch, Codepage cp)
 {
 	if (pointvisible(size.x+x, size.y+y)) buf->b_printchar(size.x+x, size.y+y, c, ch, cp);
 }
 
-int ht_view::buf_printf(int x, int y, int c, CodePage cp, const char *format, ...)
+int UiView::buf_printf(int x, int y, int c, CodePage cp, const char *format, ...)
 {
 	char buf[256];	/* secure */
 	va_list arg;
@@ -203,7 +203,7 @@ int ht_view::buf_printf(int x, int y, int c, CodePage cp, const char *format, ..
 	return buf_print(x, y, c, buf, cp);
 }
 
-int ht_view::buf_printw(int x, int y, int c, const AbstractChar *text, Codepage cp)
+int UiView::buf_printw(int x, int y, int c, const AbstractChar *text, Codepage cp)
 {
 	if ((size.y+y>=vsize.y) && (size.y+y<vsize.y+vsize.h)) {
 		int l=vsize.x+vsize.w-x-size.x;
@@ -222,22 +222,22 @@ int ht_view::buf_printw(int x, int y, int c, const AbstractChar *text, Codepage 
 }
 #endif
 
-int ht_view::childcount() const
+int UiView::childcount() const
 {
 	return 1;
 }
 
-void ht_view::cleanview()
+void UiView::cleanview()
 {
 	view_is_dirty=0;
 }
 
-void ht_view::clear(int c)
+void UiView::clear(int c)
 {
 	buf->fill(0, 0, size.w, size.h, c, ' ');
 }
 
-void ht_view::clipbounds(Bounds *b)
+void UiView::clipbounds(Bounds *b)
 {
 	Bounds c;
 	getbounds(&c);
@@ -245,43 +245,43 @@ void ht_view::clipbounds(Bounds *b)
 	bounds_and(b, &vsize);
 }
 
-void ht_view::config_changed()
+void UiView::config_changed()
 {
 	reloadpalette();
 	dirtyview();
 }
 
-int ht_view::countselectables()
+int UiView::countselectables()
 {
 	return (options & VO_SELECTABLE) ? 1 : 0;
 }
 
-int ht_view::datasize()
+int UiView::datasize()
 {
 	return 0;
 }
 
-const char *ht_view::defaultpalette()
+const char *UiView::defaultpalette()
 {
 	return palkey_generic_window_default;
 }
 
-const char *ht_view::defaultpaletteclass()
+const char *UiView::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
 
-void ht_view::dirtyview()
+void UiView::dirtyview()
 {
 	view_is_dirty=1;
 }
 
-void ht_view::disable()
+void UiView::disable()
 {
 	enabled=0;
 }
 
-void ht_view::disable_buffering()
+void UiView::disable_buffering()
 {
 	if (options & VO_OWNBUFFER) {
 		delete buf;
@@ -291,16 +291,16 @@ void ht_view::disable_buffering()
 	}
 }
 
-void ht_view::draw()
+void UiView::draw()
 {
 }
 
-void ht_view::enable()
+void UiView::enable()
 {
 	enabled=1;
 }
 
-void ht_view::enable_buffering()
+void UiView::enable_buffering()
 {
 	if (!(options & VO_OWNBUFFER)) {
 		delete buf;
@@ -310,14 +310,14 @@ void ht_view::enable_buffering()
 	}
 }
 
-static bool view_line_exposed(ht_view *v, int y, int x1, int x2)
+static bool view_line_exposed(UiView *v, int y, int x1, int x2)
 {
-	ht_group *g=v->group;
+	UiGroup *g=v->group;
 	while (g) {
 		if (y >= g->size.y && y < g->size.y+g->size.h) {
 			if (x1 < g->size.x) x1 = g->size.x;
 			if (x2 > g->size.x + g->size.w) x2 = g->size.x+g->size.w;
-			ht_view *n = g->first;
+			UiView *n = g->first;
 			while (n && n!=v) n=n->next;
 			if (n) {
 				n=n->next;
@@ -351,17 +351,17 @@ static bool view_line_exposed(ht_view *v, int y, int x1, int x2)
 	return 1;
 }
 
-int ht_view::enum_start()
+int UiView::enum_start()
 {
 	return 0;
 }
 
-ht_view *ht_view::enum_next(int *handle)
+UiView *UiView::enum_next(int *handle)
 {
 	return 0;
 }
 
-bool ht_view::exposed()
+bool UiView::exposed()
 {
 #if 1
 	for (int y=0; y < size.h; y++) {
@@ -373,14 +373,14 @@ bool ht_view::exposed()
 #endif
 }
 
-void ht_view::fill(int x, int y, int w, int h, int c, char chr, Codepage cp)
+void UiView::fill(int x, int y, int w, int h, int c, char chr, Codepage cp)
 {
 	Bounds b(x+size.x, y+size.y, w, h);
 	bounds_and(&b, &vsize);
 	buf->fill(b.x-size.x, b.y-size.y, b.w, b.h, c, chr, cp);
 }
 
-bool ht_view::focus(ht_view *view)
+bool UiView::focus(UiView *view)
 {
 	if (view == this) {
 		if (!focused) receivefocus();
@@ -389,17 +389,17 @@ bool ht_view::focus(ht_view *view)
 	return false;
 }
 
-void ht_view::getbounds(Bounds *b)
+void UiView::getbounds(Bounds *b)
 {
 	*b = size;
 }
 
-vcp ht_view::getcolor(uint index)
+vcp UiView::getcolor(uint index)
 {
 	return getcolorv(&pal, index);
 }
 
-void ht_view::getminbounds(int *width, int *height)
+void UiView::getminbounds(int *width, int *height)
 {
 	*width = DEFAULT_VIEW_MIN_WIDTH;
 	*height = DEFAULT_VIEW_MIN_HEIGHT;
@@ -410,7 +410,7 @@ struct databufdup_s {
 	ObjectStreamNative *s;
 };
 
-void ht_view::databuf_free(void *handle)
+void UiView::databuf_free(void *handle)
 {
 	databufdup_s *s = (databufdup_s*)handle;	
 	delete s->s;
@@ -418,7 +418,7 @@ void ht_view::databuf_free(void *handle)
 	delete s;
 }
 
-void *ht_view::databuf_get(void *buf, int bufsize)
+void *UiView::databuf_get(void *buf, int bufsize)
 {
 	MemMapFile *f = new MemMapFile(buf, bufsize);	
 	ObjectStreamNative *s = new ObjectStreamNative(f, false, true);
@@ -431,38 +431,38 @@ void *ht_view::databuf_get(void *buf, int bufsize)
 	return q;
 }
 
-void ht_view::databuf_set(void *buf, int bufsize)
+void UiView::databuf_set(void *buf, int bufsize)
 {
 	ConstMemMapFile f(buf, bufsize);
 	ObjectStreamNative s(&f, false, true);
 	setdata(s);	
 }
 
-void ht_view::getdata(ObjectStream &s)
+void UiView::getdata(ObjectStream &s)
 {
 }
 
-ht_view *ht_view::getfirstchild()
-{
-	return 0;
-}
-
-uint ht_view::getnumber()
+UiView *UiView::getfirstchild()
 {
 	return 0;
 }
 
-const char *ht_view::getpalette()
+uint UiView::getnumber()
+{
+	return 0;
+}
+
+const char *UiView::getpalette()
 {
 	return pal_name;
 }
 
-ht_view *ht_view::getselected()
+UiView *UiView::getselected()
 {
 	return this;
 }
 
-void ht_view::handlemsg(htmsg *msg)
+void UiView::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case msg_draw:
@@ -479,23 +479,23 @@ void ht_view::handlemsg(htmsg *msg)
 	}
 }
 
-void ht_view::hidecursor()
+void UiView::hidecursor()
 {
 	buf->setCursorMode(CURSOR_OFF);
 	screen->setCursorMode(CURSOR_OFF);
 }
 
-int ht_view::isaclone(const ht_view *view)
+int UiView::isaclone(const UiView *view)
 {
 	return (view==this) && (countselectables()==1);
 }
 
-int ht_view::isviewdirty()
+int UiView::isviewdirty()
 {
 	return view_is_dirty;
 }
 
-void ht_view::load(ObjectStream &s)
+void UiView::load(ObjectStream &s)
 {
 /*     s->get_bool(enabled, NULL);
 	s->get_bool(focused, NULL);
@@ -509,7 +509,7 @@ void ht_view::load(ObjectStream &s)
 	s->get_int_dec(growmode, 4, NULL);*/
 }
 
-void ht_view::move(int rx, int ry)
+void UiView::move(int rx, int ry)
 {
 	size.x += rx;
 	size.y += ry;
@@ -519,25 +519,25 @@ void ht_view::move(int rx, int ry)
 	app->clipbounds(&vsize);
 }
 
-ObjectID ht_view::getObjectID() const
+ObjectID UiView::getObjectID() const
 {
 	return ATOM_HT_VIEW;
 }
 
-bool ht_view::pointvisible(int x, int y)
+bool UiView::pointvisible(int x, int y)
 {
 	x += size.x;
 	y += size.y;
 	return (x >= vsize.x && y >= vsize.y && x < vsize.x+vsize.w && y < vsize.y+vsize.h);
 }
 
-void ht_view::receivefocus()
+void UiView::receivefocus()
 {
 	dirtyview();
 	focused = true;
 }
 
-void ht_view::redraw()
+void UiView::redraw()
 {
 	if (exposed()) {
 		if (options & VO_OWNBUFFER) {
@@ -553,7 +553,7 @@ void ht_view::redraw()
 	}
 }
 
-void ht_view::resize(int sx, int sy)
+void UiView::resize(int sx, int sy)
 {
 	if (options & VO_RESIZE) {
 		int min_width, min_height;
@@ -569,14 +569,14 @@ void ht_view::resize(int sx, int sy)
 	app->clipbounds(&vsize);
 }
 
-void ht_view::releasefocus()
+void UiView::releasefocus()
 {
 	dirtyview();
 	hidecursor();
 	focused=0;
 }
 
-void ht_view::reloadpalette()
+void UiView::reloadpalette()
 {
 	if (pal.data) {
 		free(pal.data);
@@ -585,32 +585,32 @@ void ht_view::reloadpalette()
 	load_pal(pal_class, pal_name, &pal);
 }
 
-void ht_view::relocate_to(ht_view *view)
+void UiView::relocate_to(UiView *view)
 {
 	Bounds b;
 	view->getbounds(&b);
 	move(b.x, b.y);
 }
 
-int ht_view::select(ht_view *view)
+int UiView::select(UiView *view)
 {
 	return (view==this);
 }
 
-void ht_view::selectfirst()
+void UiView::selectfirst()
 {
 }
 
-void ht_view::selectlast()
+void UiView::selectlast()
 {
 }
 
-void ht_view::sendmsg(htmsg *msg)
+void UiView::sendmsg(htmsg *msg)
 {
 	if (enabled) handlemsg(msg);
 }
 
-void ht_view::sendmsg(int msg, void *data1, void *data2)
+void UiView::sendmsg(int msg, void *data1, void *data2)
 {
 	htmsg m;
 	m.msg=msg;
@@ -620,7 +620,7 @@ void ht_view::sendmsg(int msg, void *data1, void *data2)
 	sendmsg(&m);
 }
 
-void ht_view::sendmsg(int msg, int data1, int data2)
+void UiView::sendmsg(int msg, int data1, int data2)
 {
 	htmsg m;
 	switch (msg) {
@@ -643,20 +643,20 @@ void ht_view::sendmsg(int msg, int data1, int data2)
 	sendmsg(&m);
 }
 
-void ht_view::setbounds(Bounds *b)
+void UiView::setbounds(Bounds *b)
 {
 	size = *b;
 	setvisualbounds(b);
 }
 
-void ht_view::setvisualbounds(Bounds *b)
+void UiView::setvisualbounds(Bounds *b)
 {
 	vsize = *b;
 //	Bounds rel(0, 0, b->w, b->h);
 	buf->setBounds(*b);
 }
 
-void ht_view::setcursor(int x, int y, CursorMode c)
+void UiView::setcursor(int x, int y, CursorMode c)
 {
 	if (pointvisible(x, y)) {
 		buf->setCursor(x, y, c);
@@ -667,37 +667,37 @@ void ht_view::setcursor(int x, int y, CursorMode c)
 	}
 }
 
-void ht_view::setdata(ObjectStream &s)
+void UiView::setdata(ObjectStream &s)
 {
 }
 
-void ht_view::setgroup(ht_group *_group)
+void UiView::setgroup(UiGroup *_group)
 {
 	group=_group;
 }
 
-void ht_view::setnumber(uint number)
+void UiView::setnumber(uint number)
 {
 }
 
-void ht_view::setoptions(int Options)
+void UiView::setoptions(int Options)
 {
 	options = Options;
 }
 
-void ht_view::setpalette(const char *Pal_name)
+void UiView::setpalette(const char *Pal_name)
 {
 	pal_name = Pal_name;
 	reloadpalette();
 }
 
-void ht_view::setpalettefull(const char *_pal_name, const char *_pal_class)
+void UiView::setpalettefull(const char *_pal_name, const char *_pal_class)
 {
 	pal_class=_pal_class;
 	setpalette(pal_name);
 }
 
-void	ht_view::store(ObjectStream &s) const
+void	UiView::store(ObjectStream &s) const
 {
 /*	s->putBool(enabled, NULL);
 	s->putBool(focused, NULL);
@@ -711,7 +711,7 @@ void	ht_view::store(ObjectStream &s) const
 	s->putIntDec(growmode, 4, NULL);*/
 }
 
-void ht_view::unrelocate_to(ht_view *view)
+void UiView::unrelocate_to(UiView *view)
 {
 	Bounds b;
 	view->getbounds(&b);
@@ -721,25 +721,25 @@ void ht_view::unrelocate_to(ht_view *view)
 }
 
 /*
- *	CLASS ht_group
+ *	CLASS UiGroup
  */
 
-void ht_group::init(Bounds *b, int options, const char *desc)
+void UiGroup::init(Bounds *b, int options, const char *desc)
 {
 	first=0;
 	current=0;
 	last=0;
-	ht_view::init(b, options, desc);
-	VIEW_DEBUG_NAME("ht_group");
+	UiView::init(b, options, desc);
+	VIEW_DEBUG_NAME("UiGroup");
 	view_count=0;
 	shared_data=0;
 
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
-void ht_group::done()
+void UiGroup::done()
 {
-	ht_view *a, *b;
+	UiView *a, *b;
 	a=first;
 	while (a) {
 		b=a->next;
@@ -747,18 +747,18 @@ void ht_group::done()
 		delete a;
 		a=b;
 	}
-	ht_view::done();
+	UiView::done();
 }
 
-int ht_group::childcount() const
+int UiGroup::childcount() const
 {
 	return view_count;
 }
 
-int ht_group::countselectables()
+int UiGroup::countselectables()
 {
 	int c=0;
-	ht_view *v=first;
+	UiView *v=first;
 	while (v) {
 		c+=v->countselectables();
 		v=v->next;
@@ -766,10 +766,10 @@ int ht_group::countselectables()
 	return c;
 }
 
-int ht_group::datasize()
+int UiGroup::datasize()
 {
 	uint size=0;
-	ht_view *v=first;
+	UiView *v=first;
 	while (v) {
 		size+=v->datasize();
 		v=v->next;
@@ -777,17 +777,17 @@ int ht_group::datasize()
 	return size;
 }
 
-int ht_group::enum_start()
+int UiGroup::enum_start()
 {
 	return -1;
 }
 
-ht_view *ht_group::enum_next(int *handle)
+UiView *UiGroup::enum_next(int *handle)
 {
 	int lowest = 0x7fffffff;
-	ht_view *view = 0;
+	UiView *view = 0;
 
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		if (v->browse_idx > *handle && v->browse_idx < lowest) {
 			lowest = v->browse_idx;
@@ -799,9 +799,9 @@ ht_view *ht_group::enum_next(int *handle)
 	return view;
 }
 
-bool ht_group::focus(ht_view *view)
+bool UiGroup::focus(UiView *view)
 {
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		if (v->focus(view)) {
 			releasefocus();
@@ -812,20 +812,20 @@ bool ht_group::focus(ht_view *view)
 		}
 		v = v->next;
 	}
-	return ht_view::focus(view);
+	return UiView::focus(view);
 }
 
-bool ht_group::focusnext()
+bool UiGroup::focusnext()
 {
 	if (!current) return false;
 	int i = current->browse_idx;
 	bool r = (options & VO_SELBOUND);
-	ht_view *x = NULL;
+	UiView *x = NULL;
 	while (true) {
 		i++;
 		if (i > view_count-1) i=0;
 		if (i == current->browse_idx) break;
-		ht_view *y = get_by_browse_idx(i);
+		UiView *y = get_by_browse_idx(i);
 		if (y && (y->options & VO_SELECTABLE)) {
 			x = y;
 			break;
@@ -842,7 +842,7 @@ bool ht_group::focusnext()
 	return r;
 }
 
-bool ht_group::focusprev()
+bool UiGroup::focusprev()
 {
 	if (!current) return false;
 	int i = current->browse_idx;
@@ -854,7 +854,7 @@ bool ht_group::focusprev()
 		i--;
 		if (i<0) i=view_count-1;
 		if (i==current->browse_idx) break;
-		ht_view *v=get_by_browse_idx(i);
+		UiView *v=get_by_browse_idx(i);
 		if (v && (v->options & VO_SELECTABLE)) {
 			v->selectlast();
 			focus(v);
@@ -864,9 +864,9 @@ bool ht_group::focusprev()
 	return r;
 }
 
-ht_view *ht_group::get_by_browse_idx(int i)
+UiView *UiGroup::get_by_browse_idx(int i)
 {
-	ht_view *v=first;
+	UiView *v=first;
 	while (v) {
 		if (v->browse_idx==i) return v;
 		v=v->next;
@@ -874,29 +874,29 @@ ht_view *ht_group::get_by_browse_idx(int i)
 	return 0;
 }
 
-void ht_group::getdata(ObjectStream &s)
+void UiGroup::getdata(ObjectStream &s)
 {
-	ht_view *v;
+	UiView *v;
 	int h = enum_start();
 	while ((v = enum_next(&h))) {
 		v->getdata(s);
 	}
 }
 
-ht_view *ht_group::getselected()
+UiView *UiGroup::getselected()
 {
 	if (current) return current->getselected(); else return NULL;
 }
 
-ht_view *ht_group::getfirstchild()
+UiView *UiGroup::getfirstchild()
 {
 	return first;
 }
 
-void ht_group::getminbounds(int *width, int *height)
+void UiGroup::getminbounds(int *width, int *height)
 {
-	ht_view::getminbounds(width, height);
-	ht_view *v = first;
+	UiView::getminbounds(width, height);
+	UiView *v = first;
 	while (v) {
 		if (v->options & VO_RESIZE) {
 			int w, h;
@@ -912,19 +912,19 @@ void ht_group::getminbounds(int *width, int *height)
 	}
 }
 
-void ht_group::handlemsg(htmsg *msg)
+void UiGroup::handlemsg(htmsg *msg)
 {
 	if (!enabled) return;
 	if (msg->type == mt_broadcast) {
-		ht_view::handlemsg(msg);
-		ht_view *v=first;
+		UiView::handlemsg(msg);
+		UiView *v=first;
 		while (v) {
 			v->handlemsg(msg);
 			v = v->next;
 		}
 	} else if (msg->type == mt_empty) {
 		int msgtype = msg->type;
-		ht_view *v;
+		UiView *v;
 
 		msg->type=mt_preprocess;
 		v=first;
@@ -948,9 +948,9 @@ void ht_group::handlemsg(htmsg *msg)
 		}
 
 		msg->type=msgtype;
-		ht_view::handlemsg(msg);
+		UiView::handlemsg(msg);
 	} else if (msg->type == mt_preprocess) {
-		ht_view *v;
+		UiView *v;
 
 		v=first;
 		while (v) {
@@ -960,7 +960,7 @@ void ht_group::handlemsg(htmsg *msg)
 			v=v->next;
 		}
 	} else if (msg->type == mt_postprocess) {
-		ht_view *v;
+		UiView *v;
 
 		v=first;
 		while (v) {
@@ -995,7 +995,7 @@ void ht_group::handlemsg(htmsg *msg)
 	}
 }
 
-void ht_group::insert(ht_view *view)
+void UiGroup::insert(UiView *view)
 {
 	if (current) current->releasefocus();
 	if (view->options & VO_PREPROCESS) setoptions(options | VO_PREPROCESS);
@@ -1028,9 +1028,9 @@ void ht_group::insert(ht_view *view)
 	}
 }
 
-int ht_group::isaclone(const ht_view *view)
+int UiGroup::isaclone(const UiView *view)
 {
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		if (v != view && v->countselectables()) return 0;
 		v = v->next;
@@ -1038,9 +1038,9 @@ int ht_group::isaclone(const ht_view *view)
 	return 1;
 }
 
-int ht_group::isviewdirty()
+int UiGroup::isviewdirty()
 {
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		if (v->isviewdirty()) return 1;
 		v = v->next;
@@ -1048,26 +1048,26 @@ int ht_group::isviewdirty()
 	return 0;
 }
 
-void ht_group::load(ObjectStream &f)
+void UiGroup::load(ObjectStream &f)
 {
 }
 
-void ht_group::move(int rx, int ry)
+void UiGroup::move(int rx, int ry)
 {
-	ht_view::move(rx, ry);
-	ht_view *v = first;
+	UiView::move(rx, ry);
+	UiView *v = first;
 	while (v) {
 		v->move(rx, ry);
 		v = v->next;
 	}
 }
 
-ObjectID ht_group::getObjectID() const
+ObjectID UiGroup::getObjectID() const
 {
 	return ATOM_HT_GROUP;
 }
 
-void ht_group::putontop(ht_view *view)
+void UiGroup::putontop(UiView *view)
 {
 	if (view->next) {
 		if (view->prev) view->prev->next=view->next; else first=view->next;
@@ -1079,22 +1079,22 @@ void ht_group::putontop(ht_view *view)
 	}
 }
 
-void ht_group::receivefocus()
+void UiGroup::receivefocus()
 {
-	ht_view::receivefocus();
+	UiView::receivefocus();
 	if (current) current->receivefocus();
 }
 
-void ht_group::releasefocus()
+void UiGroup::releasefocus()
 {
-	ht_view::releasefocus();
+	UiView::releasefocus();
 	if (current)
 		current->releasefocus();
 }
 
-void ht_group::remove(ht_view *view)
+void UiGroup::remove(UiView *view)
 {
-	ht_view *n = view->next ? view->next : view->prev;
+	UiView *n = view->next ? view->next : view->prev;
 	if (n) {
 		focus(n);
 	} else {
@@ -1112,7 +1112,7 @@ void ht_group::remove(ht_view *view)
 	if (last == view) last = last->prev;
 }
 
-void ht_group::reorder_view(ht_view *v, int rx, int ry)
+void UiGroup::reorder_view(UiView *v, int rx, int ry)
 {
 	int px = 0, py = 0;
 	int sx = 0, sy = 0;
@@ -1147,25 +1147,25 @@ void ht_group::reorder_view(ht_view *v, int rx, int ry)
 	v->resize(sx, sy);
 }
 
-void ht_group::resize(int sx, int sy)
+void UiGroup::resize(int sx, int sy)
 {
 	int min_width, min_height;
 	getminbounds(&min_width, &min_height);
 	if (size.w+sx <= min_width) sx = min_width - size.w;
 	if (size.h+sy <= min_height) sy = min_height - size.h;
 
-	ht_view::resize(sx, sy);
+	UiView::resize(sx, sy);
 	
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		reorder_view(v, sx, sy);
 		v = v->next;
 	}
 }
 
-int ht_group::select(ht_view *view)
+int UiGroup::select(UiView *view)
 {
-	ht_view *v = first;
+	UiView *v = first;
 	while (v) {
 		if (v->select(view)) {
 			current = v;
@@ -1174,13 +1174,13 @@ int ht_group::select(ht_view *view)
 		}
 		v=v->next;
 	}
-	return ht_view::select(view);
+	return UiView::select(view);
 }
 
-void ht_group::selectfirst()
+void UiGroup::selectfirst()
 {
 	for (int i=0; i<view_count; i++) {
-		ht_view *v=first;
+		UiView *v=first;
 		while (v) {
 			if ((v->browse_idx==i) && (v->options & VO_SELECTABLE)) {
 				select(v);
@@ -1191,10 +1191,10 @@ void ht_group::selectfirst()
 	}
 }
 
-void ht_group::selectlast()
+void UiGroup::selectlast()
 {
 	for (int i=view_count-1; i>=0; i--) {
-		ht_view *v=first;
+		UiView *v=first;
 		while (v) {
 			if ((v->browse_idx==i) && (v->options & VO_SELECTABLE)) {
 				select(v);
@@ -1205,30 +1205,30 @@ void ht_group::selectlast()
 	}
 }
 
-void ht_group::setdata(ObjectStream &s)
+void UiGroup::setdata(ObjectStream &s)
 {
-	ht_view *v;
+	UiView *v;
 	int h=enum_start();
 	while ((v=enum_next(&h))) {
 		v->setdata(s);
 	}
 }
 
-void ht_group::setpalette(const char *pal_name)
+void UiGroup::setpalette(const char *pal_name)
 {
-	ht_view *v=first;
+	UiView *v=first;
 	while (v) {
 		if (strcmp(pal_class, v->pal_class)==0) v->setpalette(pal_name);
 		v=v->next;
 	}
-	ht_view::setpalette(pal_name);
+	UiView::setpalette(pal_name);
 }
 
-void ht_group::store(ObjectStream &s) const
+void UiGroup::store(ObjectStream &s) const
 {
-	ht_view::store(s);
+	UiView::store(s);
 	PUTX_INT32D(s, childcount(), "childcount");
-	ht_view *v=first;
+	UiView *v=first;
 	while (v) {
 		PUTX_OBJECT(s, v, "obj");
 		v=v->next;
@@ -1241,7 +1241,7 @@ void ht_group::store(ObjectStream &s) const
 
 void ht_xgroup::init(Bounds *b, int options, const char *desc)
 {
-	ht_group::init(b, options, desc);
+	UiGroup::init(b, options, desc);
 	VIEW_DEBUG_NAME("ht_xgroup");
 	first=0;
 	current=0;
@@ -1250,7 +1250,7 @@ void ht_xgroup::init(Bounds *b, int options, const char *desc)
 
 void ht_xgroup::done()
 {
-	ht_group::done();
+	UiGroup::done();
 }
 
 int ht_xgroup::countselectables()
@@ -1261,15 +1261,15 @@ int ht_xgroup::countselectables()
 void ht_xgroup::handlemsg(htmsg *msg)
 {
 	if ((msg->msg!=msg_draw) && (msg->type==mt_broadcast)) {
-		ht_group::handlemsg(msg);
+		UiGroup::handlemsg(msg);
 	} else {
 		if (msg->msg==msg_complete_init) return;
 		if (current) current->handlemsg(msg);
-		ht_view::handlemsg(msg);
+		UiView::handlemsg(msg);
 	}
 }
 
-int ht_xgroup::isaclone(const ht_view *view)
+int ht_xgroup::isaclone(const UiView *view)
 {
 	if (group) return group->isaclone(this);
 	return 0;
@@ -1277,7 +1277,7 @@ int ht_xgroup::isaclone(const ht_view *view)
 
 void ht_xgroup::load(ObjectStream &s)
 {
-	ht_group::load(s);
+	UiGroup::load(s);
 }
 
 ObjectID ht_xgroup::getObjectID() const
@@ -1287,7 +1287,7 @@ ObjectID ht_xgroup::getObjectID() const
 
 void ht_xgroup::redraw()
 {
-	ht_view::redraw();
+	UiView::redraw();
 /* no broadcasts. */
 	if (current) current->redraw();
 }
@@ -1304,7 +1304,7 @@ void ht_xgroup::selectlast()
 
 void	ht_xgroup::store(ObjectStream &s) const
 {
-	ht_group::store(s);
+	UiGroup::store(s);
 }
 
 /*
@@ -1327,7 +1327,7 @@ bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psiz
 
 void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 {
-	ht_view::init(b, VO_RESIZE, 0);
+	UiView::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_scrollbar");
 	
 	pstart = 0;
@@ -1348,20 +1348,20 @@ void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 
 void ht_scrollbar::done()
 {
-	ht_view::done();
+	UiView::done();
 }
 
 void ht_scrollbar::enable()
 {
 	enable_buffering();
-	ht_view::enable();
+	UiView::enable();
 	dirtyview();
 }
 
 void ht_scrollbar::disable()
 {
 	disable_buffering();
-	ht_view::disable();
+	UiView::disable();
 	dirtyview();
 }
 
@@ -1410,13 +1410,13 @@ void ht_scrollbar::setpos(int ps, int pz)
 }
 
 /*
- *	CLASS ht_frame
+ *	CLASS UiFrame
  */
 
-void ht_frame::init(Bounds *b, const char *desc, uint s, uint n)
+void UiFrame::init(Bounds *b, const char *desc, uint s, uint n)
 {
-	ht_view::init(b, VO_RESIZE, desc);
-	VIEW_DEBUG_NAME("ht_frame");
+	UiView::init(b, VO_RESIZE, desc);
+	VIEW_DEBUG_NAME("UiFrame");
 
 	number = n;
 	style = s;
@@ -1425,12 +1425,12 @@ void ht_frame::init(Bounds *b, const char *desc, uint s, uint n)
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
-void ht_frame::done()
+void UiFrame::done()
 {
-	ht_view::done();
+	UiView::done();
 }
 
-void ht_frame::draw()
+void UiFrame::draw()
 {
 	int cornerul, cornerur, cornerll, cornerlr;
 	int lineh, linev;
@@ -1524,7 +1524,7 @@ void ht_frame::draw()
 	}
 }
 
-vcp ht_frame::getcurcol_normal()
+vcp UiFrame::getcurcol_normal()
 {
 	switch (framestate) {
 	case FST_FOCUSED:
@@ -1538,44 +1538,44 @@ vcp ht_frame::getcurcol_normal()
 	return 0;
 }
 
-vcp ht_frame::getcurcol_killer()
+vcp UiFrame::getcurcol_killer()
 {
 	return getcolor(palidx_generic_frame_killer);
 }
 
-uint ht_frame::getnumber()
+uint UiFrame::getnumber()
 {
 	return number;
 }
 
-uint ht_frame::getstyle()
+uint UiFrame::getstyle()
 {
 	return style;
 }
 
-ObjectID ht_frame::getObjectID() const
+ObjectID UiFrame::getObjectID() const
 {
 	return ATOM_HT_FRAME;
 }
 
-void ht_frame::setframestate(uint _framestate)
+void UiFrame::setframestate(uint _framestate)
 {
 	framestate=_framestate;
 	dirtyview();
 }
 
-void ht_frame::setnumber(uint _number)
+void UiFrame::setnumber(uint _number)
 {
 	number=_number;
 	dirtyview();
 }
 
-void ht_frame::setstyle(uint s)
+void UiFrame::setstyle(uint s)
 {
 	style=s;
 }
 
-void ht_frame::settext(const char *text)
+void UiFrame::settext(const char *text)
 {
 	free(desc);
 	desc = ht_strdup(text);
@@ -1588,7 +1588,7 @@ void ht_frame::settext(const char *text)
 
 void	ht_window::init(Bounds *b, const char *desc, uint framestyle, uint num)
 {
-	ht_group::init(b, VO_SELECTABLE | VO_SELBOUND | VO_BROWSABLE, desc);
+	UiGroup::init(b, VO_SELECTABLE | VO_SELBOUND | VO_BROWSABLE, desc);
 	VIEW_DEBUG_NAME("ht_window");
 	number=num;
 	hscrollbar=NULL;
@@ -1599,7 +1599,7 @@ void	ht_window::init(Bounds *b, const char *desc, uint framestyle, uint num)
 	c.y=0;
 	frame=0;
 	action_state=WAC_NORMAL;
-	ht_frame *f=new ht_frame();
+	UiFrame *f=new UiFrame();
 	f->init(&c, desc, framestyle, number);
 	setframe(f);
 }
@@ -1609,7 +1609,7 @@ void ht_window::done()
 	pindicator=NULL;
 	hscrollbar=NULL;
 	vscrollbar=NULL;
-	ht_group::done();
+	UiGroup::done();
 }
 
 void ht_window::draw()
@@ -1634,7 +1634,7 @@ uint ht_window::getnumber()
 	return number;
 }
 
-ht_frame *ht_window::getframe()
+UiFrame *ht_window::getframe()
 {
 	return frame;
 }
@@ -1732,18 +1732,18 @@ void ht_window::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			return;
 	}
-	ht_group::handlemsg(msg);
+	UiGroup::handlemsg(msg);
 }
 
-void ht_window::insert(ht_view *view)
+void ht_window::insert(UiView *view)
 {
 	if (frame) view->move(1, 1);
-	ht_group::insert(view);
+	UiGroup::insert(view);
 }
 
 void ht_window::load(ObjectStream &s)
 {
-	ht_group::load(s);
+	UiGroup::load(s);
 }
 
 bool ht_window::next_action_state()
@@ -1798,7 +1798,7 @@ void ht_window::receivefocus()
 			delete n;
 		}
 	}
-	ht_group::receivefocus();
+	UiGroup::receivefocus();
 	if (frame) frame->setstyle(frame->getstyle() | FS_THICK);
 }
 
@@ -1855,7 +1855,7 @@ void ht_window::redraw()
 		}
 	}
 
-	ht_group::redraw();
+	UiGroup::redraw();
 }
 
 void ht_window::releasefocus()
@@ -1867,13 +1867,13 @@ void ht_window::releasefocus()
 	}
 
 	if (frame) frame->setstyle(frame->getstyle() & (~FS_THICK));
-	ht_group::releasefocus();
+	UiGroup::releasefocus();
 }
 
-void ht_window::setframe(ht_frame *newframe)
+void ht_window::setframe(UiFrame *newframe)
 {
 	if (frame) {
-		ht_group::remove(frame);
+		UiGroup::remove(frame);
 		frame->done();
 		delete frame;
 		frame = NULL;
@@ -1905,7 +1905,7 @@ void ht_window::sethscrollbar(ht_scrollbar *s)
 	putontop(hscrollbar);
 }
 
-void ht_window::setpindicator(ht_text *p)
+void ht_window::setpindicator(UiText *p)
 {
 	if (pindicator) remove(pindicator);
 	pindicator = p;
@@ -1930,7 +1930,7 @@ void ht_window::setvscrollbar(ht_scrollbar *s)
 
 void	ht_window::store(ObjectStream &s) const
 {
-	ht_group::store(s);
+	UiGroup::store(s);
 }
 
 /*
@@ -1952,11 +1952,11 @@ void ht_hbar::draw()
 }
 
 /***/
-BUILDER(ATOM_HT_VIEW, ht_view, Object);
-BUILDER(ATOM_HT_GROUP, ht_group, ht_view);
-BUILDER(ATOM_HT_XGROUP, ht_xgroup, ht_group);
-BUILDER(ATOM_HT_WINDOW, ht_window, ht_group);
-BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, ht_view);
+BUILDER(ATOM_HT_VIEW, UiView, Object);
+BUILDER(ATOM_HT_GROUP, UiGroup, UiView);
+BUILDER(ATOM_HT_XGROUP, ht_xgroup, UiGroup);
+BUILDER(ATOM_HT_WINDOW, ht_window, UiGroup);
+BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, UiView);
 
 /*
  *	INIT
@@ -1964,8 +1964,8 @@ BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, ht_view);
 
 bool init_obj()
 {
-	REGISTER(ATOM_HT_VIEW, ht_view);
-	REGISTER(ATOM_HT_GROUP, ht_group);
+	REGISTER(ATOM_HT_VIEW, UiView);
+	REGISTER(ATOM_HT_GROUP, UiGroup);
 	REGISTER(ATOM_HT_XGROUP, ht_xgroup);
 	REGISTER(ATOM_HT_WINDOW, ht_window);
 	REGISTER(ATOM_HT_SCROLLBAR, ht_scrollbar);
@@ -1978,11 +1978,11 @@ bool init_obj()
 
 void done_obj()
 {
-	UNREGISTER(ATOM_HT_VIEW, ht_view);
-	UNREGISTER(ATOM_HT_GROUP, ht_group);
+	UNREGISTER(ATOM_HT_VIEW, UiView);
+	UNREGISTER(ATOM_HT_GROUP, UiGroup);
 	UNREGISTER(ATOM_HT_XGROUP, ht_xgroup);
 	UNREGISTER(ATOM_HT_WINDOW, ht_window);
-	UNREGISTER(ATOM_HT_FRAME, ht_frame);
+	UNREGISTER(ATOM_HT_FRAME, UiFrame);
 	UNREGISTER(ATOM_HT_SCROLLBAR, ht_scrollbar);
 }
 

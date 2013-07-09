@@ -37,7 +37,7 @@ format_viewer_if *htpef_ifs[] = {
 	0
 };
 
-static ht_view *htpef_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htpef_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte id[12];
 	file->seek(0);

@@ -38,7 +38,7 @@ struct vfs_extra {
 
 #define VfsListboxData ht_itext_listbox_data
 
-class VfsListbox: public ht_itext_listbox {
+class VfsListbox: public UiITextListbox {
 protected:
 	Container *vfs_list;
 	Vfs *cvfs;
@@ -51,7 +51,7 @@ protected:
 	int dfmt_prop[VFSV_FORMAT_MAX_COLS];
 	int dfmt_quickfind;
 	/**/
-	ht_text *show_pos;
+	UiText *show_pos;
 
 	virtual	void		freeExtraData(void *extra_data);
 		void		renderEntry(char *buf, int bufsize, int dfmt, const char *filename, pstat_t stat);
@@ -60,7 +60,7 @@ protected:
 	virtual	bool 		selectEntry(void *entry);
 		char *		translateProp(char *fmt, int *type);
 public:
-		void		init(Bounds *b, Container *vfs_list, ht_text *show_pos);
+		void		init(Bounds *b, Container *vfs_list, UiText *show_pos);
 	virtual	void		done();
 	/* overwritten */
 	virtual	void		config_changed();

@@ -244,7 +244,7 @@ static void nicify(char *dest, const char *src, int d)
 
 
 
-static void do_eval(ht_strinputfield *s, ht_statictext *t, const char *b, eval_func_handler func_handler, eval_symbol_handler symbol_handler, void *context)
+static void do_eval(UiStrInputfield *s, UiStaticText *t, const char *b, eval_func_handler func_handler, eval_symbol_handler symbol_handler, void *context)
 {
 	eval_scalar r;
 	String x;
@@ -363,17 +363,17 @@ void eval_dialog(eval_func_handler func_handler, eval_symbol_handler symbol_hand
 
 	/* input line */
 	b.assign(1, 1, c.w-14, 1);
-	ht_strinputfield *s = new ht_strinputfield();
+	UiStrInputfield *s = new UiStrInputfield();
 	s->init(&b, 255, ehist);
 	d->insert(s);
 	/* help button */
-	ht_button *bhelp = new ht_button();
+	UiButton *bhelp = new UiButton();
 	b.assign(c.w-12, 1, 10, 2);
 	bhelp->init(&b, "~Functions", BUTTON_HELP);
 	d->insert(bhelp);
 	/* result text */
 	b.assign(1, 3, c.w-4, c.h-5);
-	ht_statictext *t = new ht_statictext();
+	UiStaticText *t = new UiStaticText();
 	t->init(&b, hint, align_left);
 	t->growmode = MK_GM(GMH_LEFT, GMV_FIT);
 	d->insert(t);

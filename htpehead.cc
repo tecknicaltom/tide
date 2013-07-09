@@ -161,7 +161,7 @@ static ht_mask_ptable pe32header_nt_dirs[] = {
 	{0, 0}
 };
 
-static ht_view *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -278,12 +278,12 @@ void ht_pe_header_viewer::init(Bounds *b, const char *desc, int caps, File *file
 	VIEW_DEBUG_NAME("ht_pe_header_viewer");
 }
 
-static ht_format_viewer *find_hex_viewer(ht_group *group)
+static ht_format_viewer *find_hex_viewer(UiGroup *group)
 {
 	// FIXME: God forgive us...
-	ht_group *vr_group = group;
+	UiGroup *vr_group = group;
 	while (strcmp(vr_group->desc, VIEWERGROUP_NAME)) vr_group = vr_group->group;
-	ht_view *c = vr_group->getfirstchild();
+	UiView *c = vr_group->getfirstchild();
 	while (c) {
 		if (c->desc && strcmp(c->desc, DESC_HEX) == 0) {
 			return (ht_format_viewer*)c;

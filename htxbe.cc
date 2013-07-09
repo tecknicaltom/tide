@@ -36,7 +36,7 @@ static format_viewer_if *htxbe_ifs[] = {
 	0
 };
 
-static ht_view *htxbe_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htxbe_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte xbemagic[4];
 

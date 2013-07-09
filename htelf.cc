@@ -45,7 +45,7 @@ static format_viewer_if *htelf_ifs[] = {
 	0
 };
 
-static ht_view *htelf_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htelf_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	FileOfs header_ofs = 0;
 	ELF_HEADER header;

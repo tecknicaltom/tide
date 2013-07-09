@@ -132,7 +132,7 @@ public:
 #define VC_REPLACE		0x0008
 #define VC_RESIZE		0x0010
 
-class ht_viewer: public ht_view {
+class ht_viewer: public UiView {
 protected:
 	uint caps;
 
@@ -243,7 +243,7 @@ protected:
 		void done_ifs();
 			
 		bool init_if(format_viewer_if *i);
-		bool done_if(format_viewer_if *i, ht_view *v);
+		bool done_if(format_viewer_if *i, UiView *v);
 			
 		bool edit();
 public:
@@ -251,11 +251,11 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	int childcount() const;
-	virtual	bool focus(ht_view *view);
+	virtual	bool focus(UiView *view);
 	virtual	const char *func(uint i, bool execute);
 		void getbounds(Bounds *b);
-	virtual ht_view *getfirstchild();
-	virtual	ht_view *getselected();
+	virtual UiView *getfirstchild();
+	virtual	UiView *getselected();
 	virtual	int get_pindicator_str(char *buf, int max_len);
 	virtual	bool get_hscrollbar_pos(int *pstart, int *psize);
 	virtual	bool get_vscrollbar_pos(int *pstart, int *psize);
@@ -265,12 +265,12 @@ public:
 	virtual	void redraw();
 	virtual	void releasefocus();
 	virtual	void resize(int rw, int rh);
-	virtual	void setgroup(ht_group *group);
+	virtual	void setgroup(UiGroup *group);
 	virtual	bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual	bool symbol_handler(eval_scalar *result, char *name);
 /* new */
-	virtual	void insert(ht_view *view);
-		void remove(ht_view *view);
+	virtual	void insert(UiView *view);
+		void remove(UiView *view);
 		void *get_shared_data();
 };
 

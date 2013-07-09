@@ -33,7 +33,7 @@ static format_viewer_if *htmz_ifs[] = {
 	0
 };
 
-static ht_view *htmz_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htmz_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte magic[2];
 	file->seek(0);

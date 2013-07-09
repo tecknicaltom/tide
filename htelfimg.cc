@@ -28,7 +28,7 @@
 #include "elfstruc.h"
 #include "elf_analy.h"
 
-static ht_view *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
@@ -40,7 +40,7 @@ static ht_view *htelfimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(elf_shared, file);
 
 	Bounds c = *b;
-	ht_group *g = new ht_group();
+	UiGroup *g = new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_ELF_IMAGE"-g");
 	AnalyInfoline *head;
 

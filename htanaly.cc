@@ -65,7 +65,7 @@ void	AnalyserInformation::init(Bounds *b, ht_aviewer *a)
 {
 	analy = a;
 	assert(a);
-	ht_statictext::init(b, 0, align_left);
+	UiStaticText::init(b, 0, align_left);
 	register_idle_object(this);
 	idle();
 }
@@ -73,7 +73,7 @@ void	AnalyserInformation::init(Bounds *b, ht_aviewer *a)
 void AnalyserInformation::done()
 {
 	unregister_idle_object(this);
-	ht_statictext::done();
+	UiStaticText::done();
 }
 
 int AnalyserInformation::gettext(char *buf, int maxlen)
@@ -108,64 +108,64 @@ bool AnalyserInformation::idle()
 }
 
 /*
- *   SymbolBox
+ *   UiSymbolListbox
  */
 
-void SymbolBox::init(Bounds *b, Analyser *Analy)
+void UiSymbolListbox::init(Bounds *b, Analyser *Analy)
 {
 	analy = Analy;
-	ht_listbox::init(b);
+	UiListbox::init(b);
 	str = ht_malloc(1024);
 	symbols = analy->getSymbolCount();
 	idle_count = 1;
 }
 
-void SymbolBox::done()
+void UiSymbolListbox::done()
 {
 	free(str);
-	ht_listbox::done();
+	UiListbox::done();
 }
 
-int  SymbolBox::calcCount()
+int  UiSymbolListbox::calcCount()
 {
 	return analy->getSymbolCount();
 }
 
-int  SymbolBox::cursorAdjust()
+int  UiSymbolListbox::cursorAdjust()
 {
 	Symbol *l = ((Symbol *)getFirst());
 	if (!l) return 0;
 	return l->location->addr->stringSize()+10;
 }
 
-int  SymbolBox::estimateEntryPos(void *entry)
+int  UiSymbolListbox::estimateEntryPos(void *entry)
 {
 	return 0;
 }
 
-void *SymbolBox::getFirst()
+void *UiSymbolListbox::getFirst()
 {
 	return analy->enumSymbols(NULL);
 }
 
-void *SymbolBox::getLast()
+void *UiSymbolListbox::getLast()
 {
 	return analy->enumSymbolsReverse(NULL);
 }
 
-void *SymbolBox::getNext(void *entry)
+void *UiSymbolListbox::getNext(void *entry)
 {
 	if (!entry) return NULL;
 	return analy->enumSymbols((Symbol *)entry);
 }
 
-void *SymbolBox::getPrev(void *entry)
+void *UiSymbolListbox::getPrev(void *entry)
 {
 	if (!entry) return NULL;
 	return analy->enumSymbolsReverse((Symbol *)entry);
 }
 
-const char *SymbolBox::getStr(int col, void *entry)
+const char *UiSymbolListbox::getStr(int col, void *entry)
 {
 	if (!entry) return NULL;
 	Symbol *l = ((Symbol *)entry);
@@ -184,7 +184,7 @@ const char *SymbolBox::getStr(int col, void *entry)
 	return str;
 }
 
-bool SymbolBox::idle()
+bool UiSymbolListbox::idle()
 {
 	if ((idle_count % 500)==0) {
 		update();
@@ -197,12 +197,12 @@ bool SymbolBox::idle()
 	return 0;
 }
 
-int SymbolBox::numColumns()
+int UiSymbolListbox::numColumns()
 {
 	return 3;
 }
 
-void *SymbolBox::quickfind(const char *s)
+void *UiSymbolListbox::quickfind(const char *s)
 {
 	Symbol *tmp = analy->getSymbolByName(s);
 	if (tmp) return tmp;
@@ -219,7 +219,7 @@ void *SymbolBox::quickfind(const char *s)
 }
 
 
-char *SymbolBox::quickfindCompletition(const char *s)
+char *UiSymbolListbox::quickfindCompletition(const char *s)
 {
 	if (analy->getSymbolByName(s)) {
 		return ht_strdup(s);
@@ -389,7 +389,7 @@ CallChainNode *CallChain::get_current_node()
  */
 void AnalyInfoline::init(Bounds *b, ht_aviewer *A, const char *Format)
 {
-	ht_statictext::init(b, 0, align_left);
+	UiStaticText::init(b, 0, align_left);
 	VIEW_DEBUG_NAME("AnalyInfoline");
 	analy = A;
 	displayformat = ht_strdup(Format);
@@ -401,7 +401,7 @@ void AnalyInfoline::done()
 {
 	free(displayformat);
 	delete addr;
-	ht_statictext::done();
+	UiStaticText::done();
 }
 
 int AnalyInfoline::gettext(char *buf, int maxlen)
@@ -710,7 +710,7 @@ static int ht_aviewer_symbol_to_addr(void *Aviewer, const char *s, uint64 &v)
 	return false;
 }
 
-static void setdatastr(ht_view *v, const String &str)
+static void setdatastr(UiView *v, const String &str)
 {
 	ht_inputfield_data id;
 	id.textlen = str.length();
@@ -745,12 +745,12 @@ void ht_aviewer::generateOutputDialog()
 	center_bounds(&b);
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "generate analyser output", FS_KILLER | FS_TITLE | FS_MOVE);
-	ht_view *v1, *v2;
+	UiView *v1, *v2;
 	b.assign(2, 2, 25, 1);
-	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
+	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
 	dialog->insert(v1);
 	b.assign(2, 1, 25, 1);
-	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
 	String filename, basename, basename2, suffix;
@@ -761,18 +761,18 @@ void ht_aviewer::generateOutputDialog()
 	setdatastr(v1, basename);
 
 	b.assign(29, 2, 15, 1);
-	NEW_OBJECT(v1, ht_listpopup, &b);
-	((ht_listpopup*)v1)->insertstring("HTML");
-	((ht_listpopup*)v1)->insertstring("plain text");
+	NEW_OBJECT(v1, UiListPopup, &b);
+	((UiListPopup*)v1)->insertstring("HTML");
+	((UiListPopup*)v1)->insertstring("plain text");
 	dialog->insert(v1);
 	b.assign(29, 1, 15, 1);
-	NEW_OBJECT(v2, ht_label, &b, "~output format:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "~output format:", v1);
 	dialog->insert(v2);
 	b.assign(2, 5, 35, 1);
-	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
+	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
 	dialog->insert(v1);
 	b.assign(2, 4, 35, 1);
-	NEW_OBJECT(v2, ht_label, &b, "~start address:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "~start address:", v1);
 	viewer_pos cur;
 	if (get_current_pos(&cur)) {
 		String str;
@@ -781,10 +781,10 @@ void ht_aviewer::generateOutputDialog()
 	}
 	dialog->insert(v2);
 	b.assign(2, 8, 35, 1);
-	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
+	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
 	dialog->insert(v1);
 	b.assign(2, 7, 35, 1);
-	NEW_OBJECT(v2, ht_label, &b, "~end address:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "~end address:", v1);
 	dialog->insert(v2);
 	if (get_current_pos(&cur)) {
 		String str;
@@ -793,10 +793,10 @@ void ht_aviewer::generateOutputDialog()
 		setdatastr(v1, str);
 	}
 	b.assign(13, 11, 9, 2);
-	NEW_OBJECT(v1, ht_button, &b, "O~k", button_ok);
+	NEW_OBJECT(v1, UiButton, &b, "O~k", button_ok);
 	dialog->insert(v1);
 	b.assign(27, 11, 9, 2);
-	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
+	NEW_OBJECT(v1, UiButton, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
 	while (dialog->run(false) == button_ok) {
 		char filename[260];
@@ -951,12 +951,12 @@ void ht_aviewer::exportFileDialog()
 	center_bounds(&b);
 	ht_dialog *dialog;
 	NEW_OBJECT(dialog, ht_dialog, &b, "export analyser information", FS_KILLER | FS_TITLE | FS_MOVE);
-	ht_view *v1, *v2;
+	UiView *v1, *v2;
 	b.assign(2, 2, 35, 1);
-	NEW_OBJECT(v1, ht_strinputfield, &b, 260);
+	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
 	dialog->insert(v1);
 	b.assign(2, 1, 35, 1);
-	NEW_OBJECT(v2, ht_label, &b, "output ~filename:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "output ~filename:", v1);
 	dialog->insert(v2);
 
 	String filename, basename, suffix;
@@ -966,18 +966,18 @@ void ht_aviewer::exportFileDialog()
 	setdatastr(v1, basename);
 
 	b.assign(2, 5, 25, 1);
-	NEW_OBJECT(v1, ht_listpopup, &b);
-	((ht_listpopup*)v1)->insertstring(".sym symbol file");
+	NEW_OBJECT(v1, UiListPopup, &b);
+	((UiListPopup*)v1)->insertstring(".sym symbol file");
 	dialog->insert(v1);
 	b.assign(2, 4, 25, 1);
-	NEW_OBJECT(v2, ht_label, &b, "~export format:", v1);
+	NEW_OBJECT(v2, UiLabel, &b, "~export format:", v1);
 	dialog->insert(v2);
 	
 	b.assign(13, 8, 9, 2);
-	NEW_OBJECT(v1, ht_button, &b, "O~k", button_ok);
+	NEW_OBJECT(v1, UiButton, &b, "O~k", button_ok);
 	dialog->insert(v1);
 	b.assign(27, 8, 9, 2);
-	NEW_OBJECT(v1, ht_button, &b, "~Cancel", button_cancel);
+	NEW_OBJECT(v1, UiButton, &b, "~Cancel", button_cancel);
 	dialog->insert(v1);
 	while (dialog->run(false) == button_ok) {
 		char filename[260];
@@ -1058,7 +1058,7 @@ int ht_aviewer::get_pindicator_str(char *buf, int max_len)
 	}
 }
 
-bool ht_aviewer::gotoAddress(Address *a, ht_view *source_object)
+bool ht_aviewer::gotoAddress(Address *a, UiView *source_object)
 {
 	viewer_pos p;
 	if (analy) {
@@ -1632,7 +1632,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE);
 	b.assign(1, 0, 56, 10);
-	ht_statictext *text = new ht_statictext();
+	UiStaticText *text = new UiStaticText();
 	if (a->label) {
 		ht_snprintf(str, sizeof str, "function %s %s", a->label->name, "is referenced by ..");
 	} else {
@@ -1646,11 +1646,11 @@ void ht_aviewer::showCallChain(Address *Addr)
 	cc->adjust(cc->get_root(), true);
 	dialog->insert(cc);
 	b.assign(15, 12, 9, 2);
-	ht_button *bt;
-	NEW_OBJECT(bt, ht_button, &b, "O~k", button_ok);
+	UiButton *bt;
+	NEW_OBJECT(bt, UiButton, &b, "O~k", button_ok);
 	dialog->insert(bt);
 	b.assign(35, 12, 9, 2);
-	NEW_OBJECT(bt, ht_button, &b, "~Cancel", button_cancel);
+	NEW_OBJECT(bt, UiButton, &b, "~Cancel", button_cancel);
 	dialog->insert(bt);
 	int r = dialog->run(false);
 	if (r == button_ok) {
@@ -1703,12 +1703,12 @@ void ht_aviewer::showComments(Address *Addr)
 	BOUNDS_ASSIGN(b, 56, 1, 1, 10);
 	*/
 	
-	ht_button *b1;
+	UiButton *b1;
 	b.assign(18, 12, 9, 2);
-	NEW_OBJECT(b1, ht_button, &b, "O~k", button_ok);
+	NEW_OBJECT(b1, UiButton, &b, "O~k", button_ok);
 	dialog->insert(b1);
 	b.assign(32, 12, 9, 2);
-	NEW_OBJECT(b1, ht_button, &b, "~Cancel", button_cancel);
+	NEW_OBJECT(b1, UiButton, &b, "~Cancel", button_cancel);
 	dialog->insert(b1);
 
 	if (dialog->run(false) == button_ok) {
@@ -1775,7 +1775,7 @@ void ht_aviewer::showSymbols(Address *addr)
 	dialog->init(&b, "symbols", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 	/* pull down */
 	b.assign(30, 0, 20, 1);
-/*				ht_listpopup *lp = new ht_listpopup();
+/*				UiListPopup *lp = new UiListPopup();
 				lp->init(&b);
 				lp->insertstring("show all");
 				lp->insertstring("only functions");
@@ -1790,7 +1790,7 @@ void ht_aviewer::showSymbols(Address *addr)
 	text->setText(3, "Address", "Type", "Name");
 	/* list */
 	b.assign(1, 1, 56, 12);
-	SymbolBox *sym = new SymbolBox();
+	UiSymbolListbox *sym = new UiSymbolListbox();
 	sym->init(&b, analy);
 	if (loc && loc->label) {
 		sym->gotoItemByEntry(sym->quickfind(loc->label->name));
@@ -1840,20 +1840,20 @@ void ht_aviewer::showXRefs(Address *Addr)
 		text->setText(3, "xref to", "type", "from function");
 		b.y = 1;          
 		b.h = bh-6;
-		ht_text_listbox *list;
-		NEW_OBJECT(list, ht_text_listbox, &b, 3, 2);
+		UiTextListbox *list;
+		NEW_OBJECT(list, UiTextListbox, &b, 3, 2);
 		b.assign(2, bh-4, 26, 2);
-		ht_button *search_for_xrefs;
-		NEW_OBJECT(search_for_xrefs, ht_button, &b, "~Search for more XRefs", 666);
+		UiButton *search_for_xrefs;
+		NEW_OBJECT(search_for_xrefs, UiButton, &b, "~Search for more XRefs", 666);
 		search_for_xrefs->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		b.assign(29, bh-4, 11, 2);
-		ht_button *delete_xref;
-		NEW_OBJECT(delete_xref, ht_button, &b, "~Delete", 667);
+		UiButton *delete_xref;
+		NEW_OBJECT(delete_xref, UiButton, &b, "~Delete", 667);
 		delete_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		// FIXME: disable button when possible
 		b.assign(41, bh-4, 10, 2);
-		ht_button *new_xref;
-		NEW_OBJECT(new_xref, ht_button, &b, "~Add", 668);
+		UiButton *new_xref;
+		NEW_OBJECT(new_xref, UiButton, &b, "~Add", 668);
 		new_xref->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 		char str2[1024];
 		int xcount=0;

@@ -125,10 +125,10 @@ ht_search_request::ht_search_request(uint _search_class, uint _type, uint _flags
 
 class ht_format_viewer_entry: public Object {
 public:
-	ht_view *instance;
+	UiView *instance;
 	format_viewer_if *interface;
 
-	ht_format_viewer_entry(ht_view *i, format_viewer_if *aIf):
+	ht_format_viewer_entry(UiView *i, format_viewer_if *aIf):
 		instance(i),
 		interface(aIf)
 	{
@@ -175,7 +175,7 @@ int ht_format_group::childcount() const
 	return xgroup->childcount();
 }
 
-bool ht_format_group::done_if(format_viewer_if *i, ht_view *v)
+bool ht_format_group::done_if(format_viewer_if *i, UiView *v)
 {
 	remove(v);
 	if (i->done) {
@@ -199,7 +199,7 @@ bool ht_format_group::edit()
 	return file->getAccessMode() & IOAM_WRITE;
 }
 
-bool ht_format_group::focus(ht_view *view)
+bool ht_format_group::focus(UiView *view)
 {
 	bool r = ht_format_viewer::focus(view);
 	if (!r) r = xgroup->focus(view);
@@ -221,19 +221,19 @@ void *ht_format_group::get_shared_data()
 	return shared_data;
 }
 
-ht_view *ht_format_group::getfirstchild()
+UiView *ht_format_group::getfirstchild()
 {
 	return xgroup->getfirstchild();
 }
 
-ht_view *ht_format_group::getselected()
+UiView *ht_format_group::getselected()
 {
 	return xgroup->getselected();
 }
 
 int ht_format_group::get_pindicator_str(char *buf, int max_len)
 {
-	ht_view *c = xgroup->current;
+	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
 		return ((ht_format_viewer*)c)->get_pindicator_str(buf, max_len);
 	} else {
@@ -244,7 +244,7 @@ int ht_format_group::get_pindicator_str(char *buf, int max_len)
 
 bool ht_format_group::get_hscrollbar_pos(int *pstart, int *psize)
 {
-	ht_view *c = xgroup->current;
+	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
 		return ((ht_format_viewer*)c)->get_hscrollbar_pos(pstart, psize);
 	}
@@ -253,7 +253,7 @@ bool ht_format_group::get_hscrollbar_pos(int *pstart, int *psize)
 
 bool ht_format_group::get_vscrollbar_pos(int *pstart, int *psize)
 {
-	ht_view *c = xgroup->current;
+	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
 		return ((ht_format_viewer*)c)->get_vscrollbar_pos(pstart, psize);
 	}
@@ -324,7 +324,7 @@ bool ht_format_group::init_if(format_viewer_if *i)
 	
 	if (i->init) {
 		try {
-			ht_view *v = i->init(&b, file, this);
+			UiView *v = i->init(&b, file, this);
 			if (v) {
 				v->sendmsg(msg_complete_init, 0);
 				insert(v);
@@ -352,7 +352,7 @@ void ht_format_group::init_ifs(format_viewer_if **ifs)
 	ifs = i;
 }
 
-void ht_format_group::insert(ht_view *view)
+void ht_format_group::insert(UiView *view)
 {
 	xgroup->insert(view);
 }
@@ -378,7 +378,7 @@ void ht_format_group::releasefocus()
 	xgroup->releasefocus();
 }
 
-void ht_format_group::remove(ht_view *view)
+void ht_format_group::remove(UiView *view)
 {
 	xgroup->remove(view);
 }
@@ -389,7 +389,7 @@ void ht_format_group::resize(int rw, int rh)
 	xgroup->resize(rw, rh);
 }
 
-void ht_format_group::setgroup(ht_group *_group)
+void ht_format_group::setgroup(UiGroup *_group)
 {
 	xgroup->setgroup(_group);
 }
@@ -420,7 +420,7 @@ bool ht_format_group::symbol_handler(eval_scalar *result, char *name)
 
 void ht_viewer::init(Bounds *b, const char *desc, uint c)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_BROWSABLE | VO_SELECTABLE | VO_MOVE | VO_RESIZE, desc);
+	UiView::init(b, VO_OWNBUFFER | VO_BROWSABLE | VO_SELECTABLE | VO_MOVE | VO_RESIZE, desc);
 	caps = c;
 	
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
@@ -480,7 +480,7 @@ void ht_viewer::handlemsg(htmsg *msg)
 		break;
 	}
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
 /*
@@ -1008,7 +1008,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	ht_dialog *dialog = new ht_dialog();
 	dialog->init(&b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
-	ht_strinputfield *input;
+	UiStrInputfield *input;
 	const char *label = "~Address";
 
 	Bounds  b2;
@@ -1019,7 +1019,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 
 	List *hist = NULL;
 	if (histid) hist = (List*)getAtomValue(histid);
-	input = new ht_strinputfield();
+	input = new UiStrInputfield();
 	input->init(&b2, limit, hist);
 	ht_inputfield_data d;
 	d.text = (byte*)result;
@@ -1033,7 +1033,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 		b2.w = 3 + strlen(label) - b2.x;
 		b2.h = 1;
 
-		ht_label *lab = new ht_label();
+		UiLabel *lab = new UiLabel();
 		lab->init(&b2, label, input);
 		dialog->insert(lab);
 	}
@@ -1043,20 +1043,20 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	b2.w = 10;
 	b2.h = 2;
 
-	ht_button *bok = new ht_button();
+	UiButton *bok = new UiButton();
 	bok->init(&b2, "O~k", button_ok);
 	dialog->insert(bok);
 
 	b2.x += 12;
 
-	ht_button *bcancel = new ht_button();
+	UiButton *bcancel = new UiButton();
 	bcancel->init(&b2, "~Cancel", button_cancel);
 	dialog->insert(bcancel);
 
 	b2.x += 12;
 	b2.w = 14;
 
-	ht_button *bhelp = new ht_button();
+	UiButton *bhelp = new UiButton();
 	bhelp->init(&b2, "~Functions", 100);
 	dialog->insert(bhelp);
 	
@@ -1180,7 +1180,7 @@ void ht_uformat_viewer::complete_init()
 void ht_uformat_viewer::config_changed()
 {
 	scroll_offset = get_config_dword("editor/scroll offset", 3);
-	ht_view::config_changed();
+	UiView::config_changed();
 }
 
 int ht_uformat_viewer::cursor_left()
@@ -2176,7 +2176,7 @@ const char *ht_uformat_viewer::func(uint i, bool execute)
 				if (get_current_real_offset(&o)) {
 					char title[128];
 					ht_snprintf(title, sizeof title, "view offset %08qx in...", o);
-					ht_view *v = ((ht_app*)app)->popup_view_list(title);
+					UiView *v = ((ht_app*)app)->popup_view_list(title);
 					if (v) {
 						htmsg m;
 						m.msg = msg_goto_offset;
@@ -3563,7 +3563,7 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 		b.y = 0;
 		b.w -= 2;
 		b.h -= 2;
-		ht_itext_listbox *l = new ht_itext_listbox();
+		UiITextListbox *l = new UiITextListbox();
 		l->init(&b, 2, 1);
 
 		int curpos = 0;
@@ -4320,7 +4320,7 @@ public:
 	ht_search_result **result;
 };
 
-static bool process_search_expr(Object *ctx, ht_text *progress_indicator)
+static bool process_search_expr(Object *ctx, UiText *progress_indicator)
 {
 #define PROCESS_EXPR_SEARCH_BYTES_PER_CALL	256
 	ht_expr_search_pcontext *c = (ht_expr_search_pcontext*)ctx;

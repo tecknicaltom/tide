@@ -193,7 +193,7 @@ static ht_mask_ptable xbelibraryversion[] = {
 	{0, 0}
 };
 
-static ht_view *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxbeheader_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
@@ -305,7 +305,7 @@ static ht_format_viewer *find_hex_viewer(ht_group *group)
 	// FIXME: God forgive us...
 	ht_group *vr_group=group;
 	while (strcmp(vr_group->desc, VIEWERGROUP_NAME)) vr_group=vr_group->group;
-	ht_view *c=vr_group->getfirstchild();
+	UiView *c=vr_group->getfirstchild();
 	while (c) {
 		if (c->desc && (strcmp(c->desc, DESC_HEX)==0)) {
 			return (ht_format_viewer*)c;

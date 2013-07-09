@@ -29,7 +29,7 @@
 #include "fltstruc.h"
 #include "flt_analy.h"
 
-static ht_view *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)group->get_shared_data();
 
@@ -39,7 +39,7 @@ static ht_view *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(flt_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_FLT_IMAGE"-g");
 	AnalyInfoline *head;
 

@@ -38,7 +38,7 @@ static ht_mask_ptable lepagemap[]=
 	{0, 0}
 };
 
-static ht_view *htlepagemaps_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htlepagemaps_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 

@@ -126,7 +126,7 @@ static bool file_new_dialog(uint *mode)
 	c.w=b.w-2-c.x;
 	c.h=b.h-2-c.y;
 
-	ht_text_listbox *mode_input = new ht_text_listbox();
+	UiTextListbox *mode_input = new UiTextListbox();
 	mode_input->init(&c);
 	
 	mode_input->insert_str(FOM_TEXT, "text");
@@ -142,7 +142,7 @@ static bool file_new_dialog(uint *mode)
 	c.w=12;
 	c.h=1;
 
-	ht_label *mode_text=new ht_label();
+	UiLabel *mode_text=new UiLabel();
 	mode_text->init(&c, "choose ~type", mode_input);
 
 	d->insert(mode_text);
@@ -175,7 +175,7 @@ class FileBrowserVfsListbox: public VfsListbox {
 protected:
 	FileBrowser *file_browser;
 public:
-		void init(Bounds *b, List *vfs_list, ht_text *show_pos, FileBrowser *file_browser);
+		void init(Bounds *b, List *vfs_list, UiText *show_pos, FileBrowser *file_browser);
 /* overwritten */
 	virtual	void stateChanged();
 };
@@ -191,7 +191,7 @@ struct FileBrowserData {
 
 class FileBrowser: public ht_dialog {
 protected:
-	ht_strinputfield *name_input;
+	UiStrInputfield *name_input;
 	FileBrowserVfsListbox *listbox;
 public:
 	virtual	void init(Bounds *b, Bounds *clientarea, const char *title, const char *starturl);
@@ -201,7 +201,7 @@ public:
 };
 
 /**/
-void	FileBrowserVfsListbox::init(Bounds *b, List *vfs_list, ht_text *show_pos, FileBrowser *fb)
+void	FileBrowserVfsListbox::init(Bounds *b, List *vfs_list, UiText *show_pos, FileBrowser *fb)
 {
 	file_browser = NULL;
 	VfsListbox::init(b, vfs_list, show_pos);
@@ -229,7 +229,7 @@ void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const c
 
 	List *hist = (List*)getAtomValue(HISTATOM_FILE);
 	
-	name_input = new ht_strinputfield();
+	name_input = new UiStrInputfield();
 	name_input->init(&c, 128, hist);
 
 	insert(name_input);
@@ -241,7 +241,7 @@ void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const c
 	c.w = 9;
 	c.h = 1;
 
-	ht_label *name_text = new ht_label();
+	UiLabel *name_text = new UiLabel();
 	name_text->init(&c, "~name", name_input);
 
 	insert(name_text);
@@ -261,7 +261,7 @@ void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const c
 	/* vfslistbox (text) */
 	c.assign(1, 3, 9, 1);
 
-	ht_label *name_listbox = new ht_label();
+	UiLabel *name_listbox = new UiLabel();
 	name_listbox->init(&c, "~files", listbox);
 
 	insert(name_listbox);
@@ -406,7 +406,7 @@ static bool file_open_dialog(char **name, uint *mode)
 	c.w = 12;
 	c.h = 1;
 
-	ht_listpopup *mode_input = new ht_listpopup();
+	UiListPopup *mode_input = new UiListPopup();
 	mode_input->init(&c);
 	
 	mode_input->insertstring("autodetect");
@@ -424,7 +424,7 @@ static bool file_open_dialog(char **name, uint *mode)
 	c.w = 9;
 	c.h = 1;
 
-	ht_label *mode_text = new ht_label();
+	UiLabel *mode_text = new UiLabel();
 	mode_text->init(&c, "~mode", mode_input);
 	mode_text->growmode = MK_GM(GMH_LEFT, GMV_BOTTOM);
 
@@ -722,23 +722,23 @@ void ht_project_item::store(ObjectStream &s) const
  *	CLASS ht_project_list
  */
 
-void	ht_project_listbox::init(Bounds *b, ht_project *p)
+void	UiProjectListbox::init(Bounds *b, ht_project *p)
 {
 	project = p;
-	ht_listbox::init(b);
+	UiListbox::init(b);
 	colwidths[0] = 16;
 	colwidths[1] = 16;
 }
 
-int  ht_project_listbox::calcCount()
+int  UiProjectListbox::calcCount()
 {
 	return project ? project->count() : 0;
 }
 
-void ht_project_listbox::draw()
+void UiProjectListbox::draw()
 {
 	if (project) {
-		ht_listbox::draw();
+		UiListbox::draw();
 	} else {
 	
 		vcp fc = focused ? getcolor(palidx_generic_list_focused_unselected) :
@@ -749,12 +749,12 @@ void ht_project_listbox::draw()
 	}
 }
 
-const char *ht_project_listbox::func(uint i, bool execute)
+const char *UiProjectListbox::func(uint i, bool execute)
 {
 	return NULL;
 }
 
-void *ht_project_listbox::getFirst()
+void *UiProjectListbox::getFirst()
 {
 	if (project && project->count()) {
 		return (void*)1;
@@ -763,7 +763,7 @@ void *ht_project_listbox::getFirst()
 	}
 }
 
-void *ht_project_listbox::getLast()
+void *UiProjectListbox::getLast()
 {
 	if (project && project->count()) {
 		return (void*)(project->count());
@@ -772,7 +772,7 @@ void *ht_project_listbox::getLast()
 	}
 }
 
-void *ht_project_listbox::getNext(void *entry)
+void *UiProjectListbox::getNext(void *entry)
 {
 	unsigned long e=(unsigned long)entry;
 	if (!e) return NULL;
@@ -783,7 +783,7 @@ void *ht_project_listbox::getNext(void *entry)
 	}
 }
 
-void *ht_project_listbox::getPrev(void *entry)
+void *UiProjectListbox::getPrev(void *entry)
 {
 	unsigned long e=(unsigned long)entry;
 	if (e > 1) {
@@ -793,7 +793,7 @@ void *ht_project_listbox::getPrev(void *entry)
 	}
 }
 
-const char *ht_project_listbox::getStr(int col, void *entry)
+const char *UiProjectListbox::getStr(int col, void *entry)
 {
 	static char mybuf[32];
 	if (project) switch (col) {
@@ -811,7 +811,7 @@ const char *ht_project_listbox::getStr(int col, void *entry)
 	return mybuf;
 }
 
-void ht_project_listbox::handlemsg(htmsg *msg)
+void UiProjectListbox::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case cmd_project_add_item: {
@@ -859,15 +859,15 @@ void ht_project_listbox::handlemsg(htmsg *msg)
 			break;
 		}
 	}
-	ht_listbox::handlemsg(msg);
+	UiListbox::handlemsg(msg);
 }
 
-int ht_project_listbox::numColumns()
+int UiProjectListbox::numColumns()
 {
 	return 2;
 }
 
-void *ht_project_listbox::quickfind(const char *s)
+void *UiProjectListbox::quickfind(const char *s)
 {
 	void *item = getFirst();
 	int slen = strlen(s);
@@ -877,7 +877,7 @@ void *ht_project_listbox::quickfind(const char *s)
 	return item;
 }
 
-char	*ht_project_listbox::quickfindCompletition(const char *s)
+char	*UiProjectListbox::quickfindCompletition(const char *s)
 {
 	void *item = getFirst();
 	char *res = NULL;
@@ -896,7 +896,7 @@ char	*ht_project_listbox::quickfindCompletition(const char *s)
 	return res;
 }
 
-bool ht_project_listbox::selectEntry(void *entry)
+bool UiProjectListbox::selectEntry(void *entry)
 {
 	int p = pos;
 	ht_project_item *i = (ht_project_item *)(*project)[p];
@@ -907,7 +907,7 @@ bool ht_project_listbox::selectEntry(void *entry)
 	return true;
 }
 
-void ht_project_listbox::set_project(ht_project *p)
+void UiProjectListbox::set_project(ht_project *p)
 {
 	project = p;
 	update();
@@ -927,7 +927,7 @@ void ht_project_window::init(Bounds *b, const char *desc, uint framestyle, uint 
 	c.y = 0;
 	c.w -= 2;
 	c.h -= 2;
-	plb = new ht_project_listbox();
+	plb = new UiProjectListbox();
 	plb->init(&c, *p);
 
 	insert(plb);
@@ -974,7 +974,7 @@ void ht_project_window::handlemsg(htmsg *msg)
 
 void ht_status::init(Bounds *b)
 {
-	ht_view::init(b, VO_TRANSPARENT_CHARS | VO_RESIZE, 0);
+	UiView::init(b, VO_TRANSPARENT_CHARS | VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_status");
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	idle_count = 0;
@@ -994,7 +994,7 @@ void ht_status::done()
 {
 	unregister_idle_object(this);
 	free(format);
-	ht_view::done();
+	UiView::done();
 }
 
 const char *ht_status::defaultpalette()
@@ -1018,7 +1018,7 @@ void ht_status::handlemsg(htmsg *msg)
 		format = get_config_string("misc/statusline");
 		break;
 	}
-	ht_view::handlemsg(msg);
+	UiView::handlemsg(msg);
 }
 
 void ht_status::getminbounds(int *width, int *height)
@@ -1099,14 +1099,14 @@ void ht_status::render()
 
 void ht_keyline::init(Bounds *b)
 {
-	ht_view::init(b, VO_RESIZE, 0);
+	UiView::init(b, VO_RESIZE, 0);
 	VIEW_DEBUG_NAME("ht_keyline");
 	growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
 }
 
 void ht_keyline::done()
 {
-	ht_view::done();
+	UiView::done();
 }
 
 const char *ht_keyline::defaultpalette()
@@ -1149,22 +1149,22 @@ void ht_keyline::getminbounds(int *width, int *height)
 }
 
 /*
- *	CLASS ht_desktop
+ *	CLASS UiDesktop
  */
 
-void ht_desktop::init(Bounds *b)
+void UiDesktop::init(Bounds *b)
 {
-	ht_view::init(b, VO_OWNBUFFER | VO_RESIZE, 0);
-	VIEW_DEBUG_NAME("ht_desktop");
+	UiView::init(b, VO_OWNBUFFER | VO_RESIZE, 0);
+	VIEW_DEBUG_NAME("UiDesktop");
 	growmode = MK_GM(GMV_FIT, GMH_FIT);
 }
 
-const char *ht_desktop::defaultpalette()
+const char *UiDesktop::defaultpalette()
 {
 	return palkey_generic_desktop_default;
 }
 
-void ht_desktop::draw()
+void UiDesktop::draw()
 {
 	fill(0, 0, size.w, size.h, getcolor(palidx_generic_body), GC_MEDIUM, CP_GRAPHICAL);
 }
@@ -1513,7 +1513,7 @@ void ht_app::init(Bounds *pq)
 	b.x = 0;
 	b.y = 1;
 	b.h -= 2;
-	desktop = new ht_desktop();
+	desktop = new UiDesktop();
 	desktop->init(&b);
 	insert(desktop);
 	
@@ -1532,7 +1532,7 @@ void ht_app::init(Bounds *pq)
 	b.y = 1;
 	b.h -= 2;
 
-	battlefield = new ht_group();
+	battlefield = new UiGroup();
 	battlefield->init(&b, VO_TRANSPARENT_CHARS | VO_RESIZE, "battlefield");
 	battlefield->growmode = MK_GM(GMH_FIT, GMV_FIT);
 	insert(battlefield);
@@ -1628,7 +1628,7 @@ ht_window *ht_app::create_window_clipboard()
 		k.y=k.h-2;
 		k.w-=7;
 		k.h=1;
-		ht_statictext *ind = new ht_statictext();
+		UiStaticText *ind = new UiStaticText();
 		ind->init(&k, NULL, align_left, false, true);
 		ind->disable_buffering();
 		ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
@@ -1723,7 +1723,7 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char
 	k.y=k.h-2;
 	k.w-=7;
 	k.h=1;
-	ht_statictext *ind=new ht_statictext();
+	UiStaticText *ind=new UiStaticText();
 	ind->init(&k, NULL, align_left, false, true);
 	ind->disable_buffering();
 	ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
@@ -1872,7 +1872,7 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *
 	k.w-=7;
 	k.h=1;
 	
-	ht_statictext *ind=new ht_statictext();
+	UiStaticText *ind=new UiStaticText();
 	ind->init(&k, NULL, align_left, false, true);
 	ind->disable_buffering();
 	ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
@@ -1922,7 +1922,7 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 		k.y=k.h-2;
 		k.w-=7;
 		k.h=1;
-		ht_statictext *ind=new ht_statictext();
+		UiStaticText *ind=new UiStaticText();
 		ind->init(&k, NULL, align_left, false, true);
 		ind->disable_buffering();
 		ind->growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
@@ -1982,7 +1982,7 @@ ht_window *ht_app::create_window_project()
 		b.y = 0;
 		b.w -= 2;
 		b.h -= 2;
-		ht_project_listbox *project_viewer = new ht_project_listbox();
+		UiProjectListbox *project_viewer = new UiProjectListbox();
 		project_viewer->init(&b, project);
 		project_window->insert(project_viewer);*/
 
@@ -1994,11 +1994,11 @@ ht_window *ht_app::create_window_project()
 }
 
 #if 0
-ht_view *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
+UiView *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
 {
 	Bounds b=*c;
 	b.h-=2;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&b, VO_SELECTABLE, 0);
 
 	Bounds d=b;
@@ -2124,7 +2124,7 @@ uint ht_app::find_free_window_number()
 	return e.number;
 }
 
-bool ht_app::focus(ht_view *view)
+bool ht_app::focus(UiView *view)
 {
 	return ht_dialog::focus(view);
 }
@@ -2321,7 +2321,7 @@ void ht_app::handlemsg(htmsg *msg)
 	}
 	if (msg->msg == msg_draw) {
 		if (msg->type == mt_broadcast) {
-			ht_view *v = first;
+			UiView *v = first;
 			while (v) {
 				v->handlemsg(msg);
 				v = v->next;
@@ -2332,7 +2332,7 @@ void ht_app::handlemsg(htmsg *msg)
 		draw();
 		screen->show();
 	} else {
-		ht_group::handlemsg(msg);
+		UiGroup::handlemsg(msg);
 	}
 	switch (msg->msg) {
 		case msg_keypressed: {
@@ -2606,7 +2606,7 @@ void ht_app::handlemsg(htmsg *msg)
 			return;
 		}
 		case cmd_popup_dialog_view_list: {
-			ht_view *v = popup_view_list("select mode");
+			UiView *v = popup_view_list("select mode");
 			if (v) focus(v);
 			clearmsg(msg);
 			return;
@@ -2694,7 +2694,7 @@ static int my_compare_func(const char *a, const char *b)
 	return strcmp(a, b);
 }
 
-ht_view *ht_app::popup_view_list(const char *dialog_title)
+UiView *ht_app::popup_view_list(const char *dialog_title)
 {
 	if (!battlefield->current) return NULL;
 	Bounds b, c;
@@ -2712,7 +2712,7 @@ ht_view *ht_app::popup_view_list(const char *dialog_title)
 	c.y=0;
 	c.w-=2;
 	c.h-=2;
-	ht_text_listbox *listbox=new ht_text_listbox();
+	UiTextListbox *listbox=new UiTextListbox();
 	listbox->init(&c, 1, 0, LISTBOX_NORMAL);
 
 	/* insert all browsable views */
@@ -2735,11 +2735,11 @@ ht_view *ht_app::popup_view_list(const char *dialog_title)
 	dialog->insert(listbox);
 	dialog->setpalette(palkey_generic_special);
 
-	ht_view *result = NULL;
+	UiView *result = NULL;
 	if (dialog->run(false)) {
 		ht_listbox_data data;
 		ViewDataBuf vdb(listbox, &data, sizeof data);
-		result = (ht_view*)structure[listbox->getID(data.data->cursor_ptr)];
+		result = (UiView*)structure[listbox->getID(data.data->cursor_ptr)];
 	}
 
 	dialog->done();
@@ -2747,7 +2747,7 @@ ht_view *ht_app::popup_view_list(const char *dialog_title)
 	return result;
 }
 
-int ht_app::popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *structure, int depth, int *currenti, ht_view *currentv)
+int ht_app::popup_view_list_dump(UiView *view, UiTextListbox *listbox, List *structure, int depth, int *currenti, UiView *currentv)
 {
 	if (!view) return 0;
 	char str[256];	/* secure */
@@ -2762,7 +2762,7 @@ int ht_app::popup_view_list_dump(ht_view *view, ht_text_listbox *listbox, List *
 	int c=view->childcount();
 	int count=0;
 	for (int i=0; i<c; i++) {
-		ht_view *v = view->getfirstchild();
+		UiView *v = view->getfirstchild();
 		while (v) {
 			if (v->browse_idx == i) break;
 			v = v->next;
@@ -2801,7 +2801,7 @@ ht_window *ht_app::popup_window_list(const char *dialog_title)
 	c.y=0;
 	c.w-=2;
 	c.h-=2;
-	ht_text_listbox *listbox=new ht_itext_listbox();
+	UiTextListbox *listbox=new UiITextListbox();
 	listbox->init(&c, 2, 1);
 
 	foreach(ht_app_window_entry, e, *windows, {
@@ -3030,7 +3030,7 @@ void ht_app::store(ObjectStream &f) const
  *	CLASS ht_vstate_history_entry
  */
 
-ht_vstate_history_entry::ht_vstate_history_entry(Object *Data, ht_view *View)
+ht_vstate_history_entry::ht_vstate_history_entry(Object *Data, UiView *View)
 {
 	data = Data;
 	view = View;
@@ -3091,7 +3091,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 		return;
 	case msg_vstate_save: {
 		Object *data = (Object*)msg->data1.ptr;
-		ht_view *view = (ht_view*)msg->data2.ptr;
+		UiView *view = (UiView*)msg->data2.ptr;
 		add_vstate_history(new ht_vstate_history_entry(data, view));
 		break;
 	}

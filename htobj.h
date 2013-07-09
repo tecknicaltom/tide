@@ -21,8 +21,8 @@
 #ifndef __HTOBJ_H__
 #define __HTOBJ_H__
 
-class ht_view;
-class ht_group;
+class UiView;
+class UiGroup;
 
 #include "io/types.h"
 #include "io/display.h"
@@ -59,7 +59,7 @@ struct palette {
 #define msg_postinit			HT_MESSAGE(19)
 #define msg_contextmenuquery		HT_MESSAGE(20)
 #define msg_project_changed		HT_MESSAGE(21)
-#define msg_vstate_save			HT_MESSAGE(22) // (Object *data, ht_view *)
+#define msg_vstate_save			HT_MESSAGE(22) // (Object *data, UiView *)
 #define msg_vstate_restore		HT_MESSAGE(23) // (Object *data)
 #define msg_goto_offset			HT_MESSAGE(24) // (FileOfs ofs)
 
@@ -81,7 +81,7 @@ struct gsi_scrollbar_t {
 #define mt_postprocess		3
 
 /*
- *	CLASS ht_view
+ *	CLASS UiView
  */
 
 /* options */
@@ -98,7 +98,7 @@ struct gsi_scrollbar_t {
 
 /* grow modes */
 
-#define VIEW_DEBUG_NAME(name)	ht_view::view_debug_name=name;
+#define VIEW_DEBUG_NAME(name)	UiView::view_debug_name=name;
 
 #define GMV_TOP		0
 #define GMV_BOTTOM	1
@@ -115,7 +115,7 @@ struct gsi_scrollbar_t {
 
 void clearmsg(htmsg *msg);
 
-class ht_view: public Object {
+class UiView: public Object {
 protected:
 		bool view_is_dirty;
 			
@@ -126,12 +126,12 @@ protected:
 public:
 	bool focused;
 	bool enabled;
-	ht_group *group;
+	UiGroup *group;
 	int options;
 	char *desc;
 	int browse_idx;
 	Display *buf;
-	ht_view *prev, *next;
+	UiView *prev, *next;
 
 	Bounds size;
 	Bounds vsize;	/* visual Bounds */
@@ -144,8 +144,8 @@ public:
 
 /*debug:*/const char *view_debug_name;
 
-				ht_view() {}
-				ht_view(BuildCtorArg&a): Object(a) {};
+				UiView() {}
+				UiView(BuildCtorArg&a): Object(a) {};
 
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
@@ -175,32 +175,32 @@ public:
 	virtual	void		enable();
 		void		enable_buffering();
 	virtual	int		enum_start();
-	virtual	ht_view 	*enum_next(int *handle);
+	virtual	UiView 	*enum_next(int *handle);
 		bool		exposed();
 		void		fill(int x, int y, int w, int h, int c, char chr, Codepage cp = CP_DEVICE);
-	virtual	bool		focus(ht_view *view);
+	virtual	bool		focus(UiView *view);
 		void		getbounds(Bounds *b);
 	virtual	void		getminbounds(int *width, int *height);
 		vcp		getcolor(uint index);
 	virtual	void		getdata(ObjectStream &s);
-	virtual ht_view 	*getfirstchild();
+	virtual UiView 	*getfirstchild();
 	virtual	uint		getnumber();
 		const char	*getpalette();
-	virtual	ht_view		*getselected();
+	virtual	UiView		*getselected();
 	virtual void		handlemsg(htmsg *msg);
 		void		hidecursor();
 		int		isviewdirty();
-	virtual	int		isaclone(const ht_view *view);
+	virtual	int		isaclone(const UiView *view);
 	virtual	void		load(ObjectStream &s);
 	virtual	void		move(int rx, int ry);
 	virtual	ObjectID	getObjectID() const;
 		bool		pointvisible(int x, int y);
 	virtual	void		receivefocus();
 	virtual	void		redraw();
-		void		relocate_to(ht_view *view);
+		void		relocate_to(UiView *view);
 	virtual	void		resize(int rw, int rh);
 	virtual void		releasefocus();
-	virtual	int		select(ht_view *view);
+	virtual	int		select(UiView *view);
 	virtual	void		selectfirst();
 	virtual	void		selectlast();
 		void		sendmsg(htmsg *msg);
@@ -210,13 +210,13 @@ public:
 		void		setvisualbounds(Bounds *b);
 		void		setcursor(int x, int y, CursorMode c=CURSOR_NORMAL);
 	virtual	void		setdata(ObjectStream &s);
-	virtual	void		setgroup(ht_group *group);
+	virtual	void		setgroup(UiGroup *group);
 	virtual	void		setnumber(uint number);
 		void		setoptions(int options);
 	virtual	void		setpalette(const char *pal_name);
 		void		setpalettefull(const char *pal_name, const char *pal_class);
 	virtual	void		store(ObjectStream &s) const;
-		void 		unrelocate_to(ht_view *view);
+		void 		unrelocate_to(UiView *view);
 };
 
 /*
@@ -225,9 +225,9 @@ public:
 
 class ViewDataBuf: public Object {
 	void *mBuf;
-	ht_view *mView;
+	UiView *mView;
 public:
-	ViewDataBuf(ht_view *view, void *buf, int bufsize)
+	ViewDataBuf(UiView *view, void *buf, int bufsize)
 		: mBuf(view->databuf_get(buf, bufsize)), mView(view)
 	{
 	}
@@ -238,25 +238,25 @@ public:
 	}
 };
 
-class ht_dialog_widget: public ht_view {
+class UiDialogWidget: public UiView {
 public:
 	void getminbounds(int *width, int *height);
 };
 
 /*
- *	CLASS ht_group
+ *	CLASS UiGroup
  */
 
-class ht_group: public ht_view {
+class UiGroup: public UiView {
 protected:
 	int 		view_count;
 
 public:
-	ht_view 	*first, *current, *last;
+	UiView 	*first, *current, *last;
 	void		*shared_data;
 
-		ht_group() {}
-		ht_group(BuildCtorArg&a): ht_view(a) {};
+		UiGroup() {}
+		UiGroup(BuildCtorArg&a): UiView(a) {};
 
 		void init(Bounds *b, int options, const char *desc);
 	virtual	void done();
@@ -265,52 +265,52 @@ public:
 	virtual	int countselectables();
 	virtual	int datasize();
 	virtual	int enum_start();
-	virtual	ht_view *enum_next(int *handle);
-	virtual	bool focus(ht_view *view);
+	virtual	UiView *enum_next(int *handle);
+	virtual	bool focus(UiView *view);
 	virtual	void getdata(ObjectStream &s);
-	virtual ht_view *getfirstchild();
+	virtual UiView *getfirstchild();
 	virtual	void getminbounds(int *width, int *height);
-	virtual	ht_view *getselected();
+	virtual	UiView *getselected();
 	virtual	void handlemsg(htmsg *msg);
-	virtual	int isaclone(const ht_view *view);
+	virtual	int isaclone(const UiView *view);
 		int isviewdirty();
 	virtual	void load(ObjectStream &s);
 	virtual	void move(int x, int y);
 	virtual	ObjectID getObjectID() const;
-		void putontop(ht_view *view);
+		void putontop(UiView *view);
 	virtual void receivefocus();
 	virtual	void resize(int rw, int rh);
 	virtual void releasefocus();
-	virtual	int select(ht_view *view);
+	virtual	int select(UiView *view);
 	virtual	void selectfirst();
 	virtual	void selectlast();
 	virtual	void setdata(ObjectStream &s);
 	virtual	void setpalette(const char *pal_name);
 	virtual	void store(ObjectStream &s) const;
 	/* new */
-	virtual	void reorder_view(ht_view *v, int rx, int ry);
-		void remove(ht_view *view);
-	virtual	void insert(ht_view *view);
+	virtual	void reorder_view(UiView *v, int rx, int ry);
+		void remove(UiView *view);
+	virtual	void insert(UiView *view);
 		bool focusnext();
 		bool focusprev();
-		ht_view *get_by_browse_idx(int i);
+		UiView *get_by_browse_idx(int i);
 };
 
 /*
  *	CLASS ht_xgroup
  */
 
-class ht_xgroup: public ht_group {
+class ht_xgroup: public UiGroup {
 public:
 		ht_xgroup() {}
-		ht_xgroup(BuildCtorArg&a): ht_group(a) {};
+		ht_xgroup(BuildCtorArg&a): UiGroup(a) {};
 
 		void		init(Bounds *b, int options, const char *desc);
 	virtual	void		done();
 	/* overwritten */
 	virtual	int		countselectables();
 	virtual	void		handlemsg(htmsg *msg);
-	virtual	int		isaclone(const ht_view *view);
+	virtual	int		isaclone(const UiView *view);
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void		redraw();
@@ -323,14 +323,14 @@ public:
  *	CLASS ht_scrollbar
  */
 
-class ht_scrollbar: public ht_view {
+class ht_scrollbar: public UiView {
 protected:
 	int pstart, psize;
 	palette *gpal;
 	bool isvertical;
 public:
 		ht_scrollbar() {}
-		ht_scrollbar(BuildCtorArg&a): ht_view(a) {};
+		ht_scrollbar(BuildCtorArg&a): UiView(a) {};
 
 		void init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
@@ -345,17 +345,17 @@ public:
 };
 
 /*
- *	CLASS ht_text
+ *	CLASS UiText
  */
 
-class ht_text: public ht_dialog_widget {
+class UiText: public UiDialogWidget {
 public:
 /* new */
 	virtual	void settext(const char *text);
 };
 
 /*
- *	CLASS ht_frame
+ *	CLASS UiFrame
  */
 
 #define FS_KILLER		1
@@ -370,7 +370,7 @@ public:
 #define FST_MOVE      		2
 #define FST_RESIZE      	3
 
-class ht_frame: public ht_text {
+class UiFrame: public UiText {
 protected:
 	uint number;
 	uint style;
@@ -402,12 +402,12 @@ public:
 #define WAC_MOVE	1
 #define WAC_RESIZE	2
 
-class ht_window: public ht_group {
+class ht_window: public UiGroup {
 protected:
-	ht_frame *frame;
+	UiFrame *frame;
 	ht_scrollbar *hscrollbar;
 	ht_scrollbar *vscrollbar;
-	ht_text *pindicator;
+	UiText *pindicator;
 	uint number;
 
 	int action_state;
@@ -415,7 +415,7 @@ protected:
 		bool next_action_state();
 public:
 		ht_window() {}
-		ht_window(BuildCtorArg&a): ht_group(a) {};
+		ht_window(BuildCtorArg&a): UiGroup(a) {};
 
 		void init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
@@ -423,7 +423,7 @@ public:
 	virtual	void draw();
 	virtual	uint getnumber();
 	virtual	void handlemsg(htmsg *msg);
-	virtual	void insert(ht_view *view);
+	virtual	void insert(UiView *view);
 	virtual	void load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
 	virtual	void receivefocus();
@@ -433,10 +433,10 @@ public:
 	virtual	void store(ObjectStream &s) const;
 	/* new */
 		void getclientarea(Bounds *b);
-		ht_frame *getframe();
-		void setframe(ht_frame *frame);
+		UiFrame *getframe();
+		void setframe(UiFrame *frame);
 		void sethscrollbar(ht_scrollbar *scrollbar);
-		void setpindicator(ht_text *pindicator);
+		void setpindicator(UiText *pindicator);
 		void settitle(char *title);
 		void setvscrollbar(ht_scrollbar *scrollbar);
 };
@@ -447,7 +447,7 @@ bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psiz
  *	CLASS ht_hbar
  */
 
-class ht_hbar: public ht_view {
+class ht_hbar: public UiView {
 public:
 	/* overwritten */
 	virtual	 void draw();
@@ -457,7 +457,7 @@ public:
  *	CLASS ht_vbar
  */
 
-class ht_vbar: public ht_view {
+class ht_vbar: public UiView {
 public:
 	/* overwritten */
 	virtual	 void draw();

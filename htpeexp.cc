@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -62,9 +62,9 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	String s;
 	ConstMemMapFile *efile = NULL;
 
-	ht_group *g = NULL;
+	UiGroup *g = NULL;
 	Bounds c;
-	ht_statictext *head;
+	UiStaticText *head;
 	ht_pe_export_viewer *v = NULL;
 	
 	file->getFilename(filename);
@@ -173,7 +173,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	c = *b;
 	c.x = 0;
 	c.y = 0;
-	g = new ht_group();
+	g = new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_PE_EXPORTS"-g");
 
 	c.y = 1;
@@ -184,7 +184,7 @@ static ht_view *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
 	c.y = 0;
 	c.h = 1;
 	ht_snprintf(eline, sizeof eline, "* PE export directory at offset %08qx (dllname = %s)", eofs, ename);
-	head = new ht_statictext();
+	head = new UiStaticText();
 	head->init(&c, eline, align_left);
 
 	g->insert(head);
@@ -240,7 +240,7 @@ format_viewer_if htpeexports_if = {
 
 void	ht_pe_export_viewer::init(Bounds *b, ht_format_group *fg)
 {
-	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
+	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
 	desc = strdup(DESC_PE_EXPORTS);
 	format_group = fg;
@@ -248,7 +248,7 @@ void	ht_pe_export_viewer::init(Bounds *b, ht_format_group *fg)
 
 void	ht_pe_export_viewer::done()
 {
-	ht_text_listbox::done();
+	UiTextListbox::done();
 }
 
 const char *ht_pe_export_viewer::func(uint i, bool execute)
@@ -305,7 +305,7 @@ void ht_pe_export_viewer::handlemsg(htmsg *msg)
 			break;
 		}
 	}
-	ht_text_listbox::handlemsg(msg);
+	UiTextListbox::handlemsg(msg);
 }
 
 bool ht_pe_export_viewer::select_entry(void *entry)

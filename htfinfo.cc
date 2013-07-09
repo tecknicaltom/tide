@@ -24,9 +24,9 @@
 #include <sys/stat.h>
 #include <string.h>
 
-static ht_view *htfinfo_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htfinfo_init(Bounds *b, File *file, ht_format_group *group)
 {
-	ht_finfo_text *v = new ht_finfo_text();
+	UiFInfoText *v = new UiFInfoText();
 	v->init(b, file);
 	return v;
 }
@@ -37,22 +37,22 @@ format_viewer_if htfinfo_if = {
 };
 
 /*
- *   ht_finfo_text
+ *   UiFInfoText
  */
  
-void	ht_finfo_text::init(Bounds *b, File *f)
+void	UiFInfoText::init(Bounds *b, File *f)
 {
-	ht_statictext::init(b, FINFO_DESC, align_left, 1);
+	UiStaticText::init(b, FINFO_DESC, align_left, 1);
 	options |= VO_BROWSABLE;
 //	olddesc = desc;
 //	desc =;
 	file = f;
 }
 
-void	ht_finfo_text::done()
+void	UiFInfoText::done()
 {
 //	desc = olddesc;
-	ht_statictext::done();
+	UiStaticText::done();
 }
 
 #define FINFO_IDENTIFIER_WIDTH 24
@@ -65,7 +65,7 @@ static int print_time(char *f, int max_len, const char *prefix, time_t time)
 	return ht_snprintf(f, max_len, "%-"FINFO_IDENTIFIER_WIDTH_STR"s%s", prefix, asctime(&tt));
 }
 
-int ht_finfo_text::gettext(char *text, int max_len)
+int UiFInfoText::gettext(char *text, int max_len)
 {
 	if (max_len <= 0) return 0;
 

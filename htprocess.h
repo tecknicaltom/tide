@@ -24,7 +24,7 @@
 #include "data.h"
 #include "htobj.h"
 
-typedef bool (*process_func)(Object *context, ht_text *progress_indicator);
+typedef bool (*process_func)(Object *context, UiText *progress_indicator);
 
 bool execute_process(process_func pp, Object *context);
 

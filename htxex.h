@@ -106,7 +106,7 @@ struct ht_xex_shared_data {
 	MemoryFile *image;
 
 	ht_format_viewer *v_header;
-	ht_view *v_imports;
+	UiView *v_imports;
 	ht_format_viewer *v_image;	
 };
 

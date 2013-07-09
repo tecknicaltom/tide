@@ -23,8 +23,8 @@
 static char sglobalerror[GLOBAL_ERROR_SIZE];
 char *globalerror = sglobalerror;
 
-ht_view *app;
-ht_view *baseview;
+UiView *app;
+UiView *baseview;
 SystemDisplay *screen;
 char appname[HT_NAME_MAX+1];
 List *virtual_fs_list;

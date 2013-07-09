@@ -409,17 +409,17 @@ static const char *xbox_exports[] = {
 	"HalWriteSMCScratchRegister"                     // 366  8000016E
 };
 
-static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
-	ht_group *g;
+	UiGroup *g;
 	Bounds c;
 
 	c=*b;
-	g=new ht_group();
+	g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_XBE_IMPORTS"-g");
-	ht_statictext *head;
+	UiStaticText *head;
 
 	int function_count=0;
 
@@ -456,7 +456,7 @@ static ht_view *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
 
 	char iline[256];
 	ht_snprintf(iline, sizeof iline, "* XBE kernel thunk table at offset %08x (%d functions)", xbe_shared->header.kernel_image_thunk_address, function_count);
-	head=new ht_statictext();
+	head=new UiStaticText();
 	head->init(&c, iline, align_left);
 
 	g->insert(head);
@@ -524,7 +524,7 @@ ht_xbe_import_function::~ht_xbe_import_function()
  */
 void ht_xbe_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
 {
-	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
+	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
 	desc = strdup(Desc);
 	format_group = fg;
@@ -535,7 +535,7 @@ void ht_xbe_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg
 
 void ht_xbe_import_viewer::done()
 {
-	ht_text_listbox::done();
+	UiTextListbox::done();
 }
 
 void ht_xbe_import_viewer::dosort()
@@ -610,7 +610,7 @@ void ht_xbe_import_viewer::handlemsg(htmsg *msg)
 		break;
 	}
 	}
-	ht_text_listbox::handlemsg(msg);
+	UiTextListbox::handlemsg(msg);
 }
 
 bool ht_xbe_import_viewer::select_entry(void *entry)

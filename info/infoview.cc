@@ -236,7 +236,7 @@ fallback2:
  *	CLASS ht_info_lexer
  */
 
-void ht_info_lexer::init(ht_view *pf)
+void ht_info_lexer::init(UiView *pf)
 {
 	ht_syntax_lexer::init();
 	xrefs = NULL;

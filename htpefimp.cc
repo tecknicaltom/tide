@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
@@ -52,13 +52,13 @@ static ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 			+ pef_shared->loader_info_header.importedLibraryCount
 				* sizeof(PEF_ImportedLibrary);
 
-	ht_group *g;
+	UiGroup *g;
 	Bounds c;
 
 	c=*b;
-	g=new ht_group();
+	g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_PEF_IMPORTS"-g");
-	ht_statictext *head;
+	UiStaticText *head;
 
 	int lib_count = pef_shared->loader_info_header.importedLibraryCount;
 	int function_count = pef_shared->loader_info_header.totalImportedSymbolCount;
@@ -113,7 +113,7 @@ static ht_view *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
 		pef_shared->loader_info_header_ofs + sizeof pef_shared->loader_info_header, 
 		function_count, lib_count);
 		
-	head=new ht_statictext();
+	head=new UiStaticText();
 	head->init(&c, iline, align_left);
 
 	g->insert(head);
@@ -188,7 +188,7 @@ ht_pef_import_function::~ht_pef_import_function()
 
 void ht_pef_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
 {
-	ht_text_listbox::init(b, 3, 2, LISTBOX_QUICKFIND);
+	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;
 	desc = strdup(Desc);
 	format_group = fg;
@@ -199,7 +199,7 @@ void ht_pef_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg
 
 void	ht_pef_import_viewer::done()
 {
-	ht_text_listbox::done();
+	UiTextListbox::done();
 }
 
 void ht_pef_import_viewer::dosort()
@@ -266,7 +266,7 @@ void ht_pef_import_viewer::handlemsg(htmsg *msg)
 		break;
 	}
 	}
-	ht_text_listbox::handlemsg(msg);
+	UiTextListbox::handlemsg(msg);
 }
 
 bool ht_pef_import_viewer::select_entry(void *entry)

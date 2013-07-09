@@ -37,7 +37,7 @@ extern "C" {
 #include "regex.h"
 }
 
-static ht_view *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
 {
 	int t1632;
 #if 1
@@ -106,7 +106,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
 			text->setText(2, "opcode", "disassembly");
 			dialog->insert(text);
 			b.assign(1, 1, 56, 12);
-			ht_text_listbox *list=new ht_text_listbox();
+			UiTextListbox *list=new UiTextListbox();
 			list->init(&b, 2, 0);
 			list->attachTitle(text);
 			asm_code *ac2 = ac;

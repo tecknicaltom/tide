@@ -62,7 +62,7 @@ struct ht_pef_import {
  *	CLASS ht_pef_import_viewer
  */
 
-class ht_pef_import_viewer: public ht_itext_listbox {
+class ht_pef_import_viewer: public UiITextListbox {
 protected:
 	ht_format_group *format_group;
 	bool grouplib;

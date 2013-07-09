@@ -31,7 +31,7 @@ extern format_viewer_if htpeexports_if;
  *	CLASS ht_pe_export_viewer
  */
 
-class ht_pe_export_viewer: public ht_itext_listbox {
+class ht_pe_export_viewer: public UiITextListbox {
 protected:
 	ht_format_group *format_group;
 public:

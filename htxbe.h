@@ -67,11 +67,11 @@ struct ht_xbe_shared_data {
 
 
 	ht_format_viewer *v_header;
-	ht_view *v_exports;
-	ht_view *v_imports;
-	ht_view *v_dimports;
-	ht_view *v_resources;
-	ht_view *v_il;
+	UiView *v_exports;
+	UiView *v_imports;
+	UiView *v_dimports;
+	UiView *v_resources;
+	UiView *v_il;
 	ht_format_viewer *v_image;	
 };
 

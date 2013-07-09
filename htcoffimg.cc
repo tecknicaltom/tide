@@ -30,7 +30,7 @@
 #include "htanaly.h"
 #include "coff_analy.h"
 
-static ht_view *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_coff_shared_data *coff_shared = (ht_coff_shared_data *)group->get_shared_data();
 
@@ -40,7 +40,7 @@ static ht_view *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(coff_shared, file);
 
 	Bounds c = *b;
-	ht_group *g = new ht_group();
+	UiGroup *g = new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_COFF_IMAGE"-g");
 	AnalyInfoline *head;
 

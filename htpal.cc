@@ -229,26 +229,26 @@ bool palette_entry::editdialog(const char *keyname)
 	ht_dialog *d=new ht_dialog();
 	d->init(&b, "edit palette entry", FS_TITLE | FS_KILLER);
 	
-	ht_color_block *fgc, *bgc;
-	ht_label *l1, *l2;
+	UiColorBlock *fgc, *bgc;
+	UiLabel *l1, *l2;
 	
 	b.assign(2, 1, 16, 5);
-	fgc = new ht_color_block();
+	fgc = new UiColorBlock();
 	fgc->init(&b, VCP_FOREGROUND(color), cf_transparent | cf_light);
 	d->insert(fgc);
 
 	b.assign(2, 0, 16, 1);
-	l1 = new ht_label();
+	l1 = new UiLabel();
 	l1->init(&b, "~foreground", fgc);
 	d->insert(l1);
 	
 	b.assign(20, 1, 16, 5);
-	bgc = new ht_color_block();
+	bgc = new UiColorBlock();
 	bgc->init(&b, VCP_BACKGROUND(color), cf_transparent | cf_light);
 	d->insert(bgc);
 	
 	b.assign(20, 0, 16, 1);
-	l2 = new ht_label();
+	l2 = new UiLabel();
 	l2->init(&b, "~background", bgc);
 	d->insert(l2);
 

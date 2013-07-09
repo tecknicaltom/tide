@@ -55,7 +55,7 @@ static ht_mask_ptable le_vxd_header[]=
 	{ NULL, NULL }
 };
 
-static ht_view *htlevxd_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htlevxd_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 	if (!le_shared->is_vxd) return NULL;

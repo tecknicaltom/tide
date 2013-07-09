@@ -497,7 +497,7 @@ static void mf_view(ht_group_sub *g, File *f,
 	g->insertsub(cs2);
 }
 
-static ht_view *class_view(Bounds *b, File *file, ht_format_group *group)
+static UiView *class_view(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs, *cs2;
@@ -710,7 +710,7 @@ static format_viewer_if *htcls_ifs[] = {
 	0
 };
 
-static ht_view *class_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *class_init(Bounds *b, File *file, ht_format_group *group)
 {
 	u1 magic[4];
 

@@ -149,7 +149,7 @@ static void read_resource_dir(void *node, int ofs, int level)
 	}
 }
 
-static ht_view *htperesources_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htperesources_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -243,9 +243,9 @@ void ht_pe_resource_viewer::select_node(void *node)
 	static_node *s=(static_node*)node;
 
 	if (s->data) {
-		ht_group *vr_group=group;
+		UiGroup *vr_group=group;
 		while (strcmp(vr_group->desc, VIEWERGROUP_NAME)) vr_group=vr_group->group;
-		ht_view *c=vr_group->getfirstchild();
+		UiView *c=vr_group->getfirstchild();
 		ht_format_viewer *hexv = NULL;
 		while (c) {
 			if (c->desc && (strcmp(c->desc, DESC_HEX)==0)) {

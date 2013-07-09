@@ -35,7 +35,7 @@ static format_viewer_if *htxex_ifs[] = {
 	0
 };
 
-static ht_view *htxex_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htxex_init(Bounds *b, File *file, ht_format_group *format_group)
 {
 	byte xexmagic[4];
 

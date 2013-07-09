@@ -42,9 +42,9 @@ union search_pos {
 uint lastsearchmodeid = 0;
 uint lastreplacemodeid = 0;
 
-typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, ht_view *form, ht_format_viewer *format, uint search_class);
+typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, UiView *form, ht_format_viewer *format, uint search_class);
 
-typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, FileOfs len, ht_view *form, FileOfs *return_repllen);
+typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, FileOfs len, UiView *form, FileOfs *return_repllen);
 
 struct ht_search_method {
 	const char *name;
@@ -92,14 +92,14 @@ static bool test_str_to_pos(viewer_pos *pos, const String &str, ht_format_viewer
  *	CLASS ht_fxbin_search_request
  */
 
-ht_view* create_form_hexascii(Bounds *b, uint histid)
+UiView* create_form_hexascii(Bounds *b, uint histid)
 {
 	ht_hexascii_search_form *form = new ht_hexascii_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
 {
 	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
@@ -123,7 +123,7 @@ ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, h
 	return request;
 }
 
-void create_desc_hexascii(char *buf, int buflen, ht_view *f)
+void create_desc_hexascii(char *buf, int buflen, UiView *f)
 {
 	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
@@ -156,14 +156,14 @@ void create_desc_hexascii(char *buf, int buflen, ht_view *f)
 
 /***/
 
-static ht_view* create_form_evalstr(Bounds *b, uint histid)
+static UiView* create_form_evalstr(Bounds *b, uint histid)
 {
 	ht_evalstr_search_form *form=new ht_evalstr_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
 {
 #define EVALSTR_MAXSTRLEN		256
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
@@ -203,7 +203,7 @@ static ht_search_request* create_request_evalstr(search_pos *start, search_pos *
 	return request;
 }
 
-static void create_desc_evalstr(char *buf, int buflen, ht_view *f)
+static void create_desc_evalstr(char *buf, int buflen, UiView *f)
 {
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
 	ht_evalstr_search_form_data d;
@@ -258,14 +258,14 @@ ht_fxbin_search_request *ht_fxbin_search_request::clone() const
  *	CLASS ht_regex_search_request
  */
  
-static ht_view* create_form_vregex(Bounds *b, uint histid)
+static UiView* create_form_vregex(Bounds *b, uint histid)
 {
 	ht_vregex_search_form *form=new ht_vregex_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
 {
 #define VREGEX_MAXSTRLEN		256
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
@@ -292,7 +292,7 @@ static ht_search_request* create_request_vregex(search_pos *start, search_pos *e
 	return request;
 }
 
-void create_desc_vregex(char *buf, int buflen, ht_view *f)
+void create_desc_vregex(char *buf, int buflen, UiView *f)
 {
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
@@ -364,14 +364,14 @@ String &ht_regex_search_exception::reason(String &s) const
  *	CLASS ht_expr_search_request
  */
 
-static ht_view* create_form_expr(Bounds *b, uint histid)
+static UiView* create_form_expr(Bounds *b, uint histid)
 {
 	ht_expr_search_form *form = new ht_expr_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-static ht_search_request* create_request_expr(search_pos *start, search_pos *end, ht_view *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_expr(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
 {
 #define EXPR_MAXSTRLEN		256
 	ht_expr_search_form *form=(ht_expr_search_form*)f;
@@ -397,7 +397,7 @@ static ht_search_request* create_request_expr(search_pos *start, search_pos *end
 	return request;
 }
 
-static void create_desc_expr(char *buf, int buflen, ht_view *f)
+static void create_desc_expr(char *buf, int buflen, UiView *f)
 {
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
 	ht_vregex_search_form_data d;
@@ -498,7 +498,7 @@ Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, byte *pa
 	return ctx;
 }
 
-bool search_bin_process(Object *context, ht_text *progress_indicator)
+bool search_bin_process(Object *context, UiText *progress_indicator)
 {
 	ht_search_bin_context *ctx = (ht_search_bin_context*)context;
 
@@ -539,7 +539,7 @@ bool search_bin_process(Object *context, ht_text *progress_indicator)
  */
 void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 {
-	ht_group::init(b, VO_SELECTABLE, NULL);
+	UiGroup::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_hexascii_search_form");
 
 	Bounds c;
@@ -548,14 +548,14 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	c.y=0;
 	c.w=b->w-6;
 	c.h=1;
-	str=new ht_strinputfield();
+	str=new UiStrInputfield();
 	str->init(&c, 64, history);
 	insert(str);
 	/* ascii string label */
 	c.x=0;
 	c.w=5;
 	c.h=1;
-	ht_label *strlabel=new ht_label();
+	UiLabel *strlabel=new UiLabel();
 	strlabel->init(&c, "~ascii", str);
 	insert(strlabel);
 
@@ -564,7 +564,7 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	c.y=2;
 	c.w=b->w-6;
 	c.h=1;
-	ht_hexinputfield *hex=new ht_hexinputfield();
+	UiHexInputfield *hex=new UiHexInputfield();
 	hex->init(&c, 64);
 	hex->attach(str);
 	insert(hex);
@@ -572,7 +572,7 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	c.x=0;
 	c.w=5;
 	c.h=1;
-	ht_label *hexlabel=new ht_label();
+	UiLabel *hexlabel=new UiLabel();
 	hexlabel->init(&c, "~hex", hex);
 	insert(hexlabel);
 
@@ -581,14 +581,14 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	c.y=4;
 	c.w=10;
 	c.h=1;
-	range_start=new ht_strinputfield();
+	range_start=new UiStrInputfield();
 	range_start->init(&c, 10);
 	insert(range_start);
 	/* range start label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *rslabel=new ht_label();
+	UiLabel *rslabel=new UiLabel();
 	rslabel->init(&c, "~from ofs", range_start);
 	insert(rslabel);
 
@@ -597,14 +597,14 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	c.y=6;
 	c.w=10;
 	c.h=1;
-	range_end=new ht_strinputfield();
+	range_end=new UiStrInputfield();
 	range_end->init(&c, 10);
 	insert(range_end);
 	/* range end label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *relabel=new ht_label();
+	UiLabel *relabel=new UiLabel();
 	relabel->init(&c, "~to ofs", range_end);
 	insert(relabel);
 	/* options */
@@ -614,7 +614,7 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
 	ht_string_list *opts = new ht_string_list();
 	opts->init();
 	opts->insert_string("case ~insensitive");
-	option_boxes = new ht_checkboxes();
+	option_boxes = new UiCheckboxes();
 	option_boxes->init(&c, opts);
 	ht_checkboxes_data d;
 	d.state = options;
@@ -627,7 +627,7 @@ void ht_hexascii_search_form::init(Bounds *b, int options, List *history)
  */
 void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 {
-	ht_group::init(b, VO_SELECTABLE, NULL);
+	UiGroup::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_evalstr_search_form");
 
 	Bounds c;
@@ -636,7 +636,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	c.y=1;
 	c.w=b->w;
 	c.h=1;
-	str=new ht_strinputfield();
+	str=new UiStrInputfield();
 	str->init(&c, 64, history);
 	insert(str);
 	/* string label */
@@ -644,7 +644,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	c.y=0;
 	c.w=23;
 	c.h=1;
-	ht_label *strlabel=new ht_label();
+	UiLabel *strlabel=new UiLabel();
 	strlabel->init(&c, "s~earch evaluated string", str);
 	insert(strlabel);
 	/* hint */
@@ -652,7 +652,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	c.y=2;
 	c.w=b->w-2;
 	c.h=1;
-	ht_statictext *hint=new ht_statictext();
+	UiStaticText *hint=new UiStaticText();
 	hint->init(&c, "(example: \"hello\\n\\0\\077\\xd\" 'ho',011b,66o)", 0);
 	insert(hint);*/
 
@@ -661,14 +661,14 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	c.y=4;
 	c.w=10;
 	c.h=1;
-	range_start=new ht_strinputfield();
+	range_start=new UiStrInputfield();
 	range_start->init(&c, 10);
 	insert(range_start);
 	/* range start label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *rslabel=new ht_label();
+	UiLabel *rslabel=new UiLabel();
 	rslabel->init(&c, "~from ofs", range_start);
 	insert(rslabel);
 
@@ -677,14 +677,14 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	c.y=6;
 	c.w=10;
 	c.h=1;
-	range_end=new ht_strinputfield();
+	range_end=new UiStrInputfield();
 	range_end->init(&c, 10);
 	insert(range_end);
 	/* range end label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *relabel=new ht_label();
+	UiLabel *relabel=new UiLabel();
 	relabel->init(&c, "~to ofs", range_end);
 	insert(relabel);
 	/* options */
@@ -694,7 +694,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
 	ht_string_list *opts = new ht_string_list();
 	opts->init();
 	opts->insert_string("case ~insensitive");
-	option_boxes = new ht_checkboxes();
+	option_boxes = new UiCheckboxes();
 	option_boxes->init(&c, opts);
 	ht_checkboxes_data d;
 	d.state = options;
@@ -707,7 +707,7 @@ void ht_evalstr_search_form::init(Bounds *b, int options, List *history)
  */
 void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 {
-	ht_group::init(b, VO_SELECTABLE, NULL);
+	UiGroup::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_text_search_form");
 
 	Bounds c;
@@ -716,7 +716,7 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 	c.y=1;
 	c.w=b->w;
 	c.h=1;
-	str=new ht_strinputfield();
+	str=new UiStrInputfield();
 	str->init(&c, 64, history);
 	insert(str);
 	/* string label */
@@ -724,7 +724,7 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 	c.y=0;
 	c.w=12;
 	c.h=1;
-	ht_label *strlabel=new ht_label();
+	UiLabel *strlabel=new UiLabel();
 	strlabel->init(&c, "s~earch regex", str);
 	insert(strlabel);
 
@@ -733,14 +733,14 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 	c.y=4;
 	c.w=10;
 	c.h=1;
-	range_start=new ht_strinputfield();
+	range_start=new UiStrInputfield();
 	range_start->init(&c, 10);
 	insert(range_start);
 	/* range start label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *rslabel=new ht_label();
+	UiLabel *rslabel=new UiLabel();
 	rslabel->init(&c, "~from addr", range_start);
 	insert(rslabel);
 
@@ -749,14 +749,14 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 	c.y=6;
 	c.w=10;
 	c.h=1;
-	range_end=new ht_strinputfield();
+	range_end=new UiStrInputfield();
 	range_end->init(&c, 10);
 	insert(range_end);
 	/* range end label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *relabel=new ht_label();
+	UiLabel *relabel=new UiLabel();
 	relabel->init(&c, "~to addr", range_end);
 	insert(relabel);
 	/* options */
@@ -766,7 +766,7 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
 	ht_string_list *opts = new ht_string_list();
 	opts->init();
 	opts->insert_string("case ~insensitive");
-	option_boxes = new ht_checkboxes();
+	option_boxes = new UiCheckboxes();
 	option_boxes->init(&c, opts);
 	ht_checkboxes_data d;
 	d.state = options;
@@ -779,7 +779,7 @@ void ht_vregex_search_form::init(Bounds *b, int options, List *history)
  */
 void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 {
-	ht_group::init(b, VO_SELECTABLE, NULL);
+	UiGroup::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_expr_search_form");
 
 	Bounds c;
@@ -788,7 +788,7 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.y=1;
 	c.w=b->w;
 	c.h=1;
-	str=new ht_strinputfield();
+	str=new UiStrInputfield();
 	str->init(&c, 256, history);
 	insert(str);
 	/* string label */
@@ -796,7 +796,7 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.y=0;
 	c.w=17;
 	c.h=1;
-	ht_label *strlabel=new ht_label();
+	UiLabel *strlabel=new UiLabel();
 	strlabel->init(&c, "s~earch expression", str);
 	insert(strlabel);
 	/* hint */
@@ -804,7 +804,7 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.y=2;
 	c.w=b->w-2;
 	c.h=1;
-	ht_statictext *hint=new ht_statictext();
+	UiStaticText *hint=new UiStaticText();
 	hint->init(&c, "stops if expression evaluates to non-zero", align_left);
 	insert(hint);
 
@@ -813,14 +813,14 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.y=4;
 	c.w=10;
 	c.h=1;
-	range_start=new ht_strinputfield();
+	range_start=new UiStrInputfield();
 	range_start->init(&c, 10);
 	insert(range_start);
 	/* range start label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *rslabel=new ht_label();
+	UiLabel *rslabel=new UiLabel();
 	rslabel->init(&c, "~from ofs", range_start);
 	insert(rslabel);
 
@@ -829,14 +829,14 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.y=6;
 	c.w=10;
 	c.h=1;
-	range_end=new ht_strinputfield();
+	range_end=new UiStrInputfield();
 	range_end->init(&c, 10);
 	insert(range_end);
 	/* range end label */
 	c.x=0;
 	c.w=9;
 	c.h=1;
-	ht_label *relabel=new ht_label();
+	UiLabel *relabel=new UiLabel();
 	relabel->init(&c, "~to ofs", range_end);
 	insert(relabel);
 	/* options */
@@ -845,7 +845,7 @@ void	ht_expr_search_form::init(Bounds *b, int options, List *history)
 	c.h=2;
 	ht_string_list *opts=new ht_string_list();
 	opts->init();
-	option_boxes=new ht_checkboxes();
+	option_boxes=new UiCheckboxes();
 	option_boxes->init(&c, opts);
 	ht_checkboxes_data d;
 	d.state=options;
@@ -861,14 +861,14 @@ ht_replace_bin_context::~ht_replace_bin_context()
 	free(repl);
 }
 
-static ht_view* create_form_replace_hexascii(Bounds *b, uint histid)
+static UiView* create_form_replace_hexascii(Bounds *b, uint histid)
 {
 	ht_replace_hexascii_search_form *form=new ht_replace_hexascii_search_form();
 	form->init(b, 0, (List*)getAtomValue(histid));
 	return form;
 }
 
-Object* create_replace_hexascii_context(File *file, FileOfs ofs, FileOfs len, ht_view *form, FileOfs *return_repllen)
+Object* create_replace_hexascii_context(File *file, FileOfs ofs, FileOfs len, UiView *form, FileOfs *return_repllen)
 {
 	ht_replace_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
@@ -882,7 +882,7 @@ Object* create_replace_hexascii_context(File *file, FileOfs ofs, FileOfs len, ht
 
 void ht_replace_hexascii_search_form::init(Bounds *b, int options, List *history)
 {
-	ht_group::init(b, VO_SELECTABLE, NULL);
+	UiGroup::init(b, VO_SELECTABLE, NULL);
 	VIEW_DEBUG_NAME("ht_replace_hexascii_search_form");
 
 	Bounds c;
@@ -891,14 +891,14 @@ void ht_replace_hexascii_search_form::init(Bounds *b, int options, List *history
 	c.y=0;
 	c.w=40;
 	c.h=1;
-	str=new ht_strinputfield();
+	str=new UiStrInputfield();
 	str->init(&c, 64, history);
 	insert(str);
 	/* ascii string label */
 	c.x=0;
 	c.w=5;
 	c.h=1;
-	ht_label *strlabel=new ht_label();
+	UiLabel *strlabel=new UiLabel();
 	strlabel->init(&c, "~ascii", str);
 	insert(strlabel);
 
@@ -907,7 +907,7 @@ void ht_replace_hexascii_search_form::init(Bounds *b, int options, List *history
 	c.y=2;
 	c.w=40;
 	c.h=1;
-	ht_hexinputfield *hex=new ht_hexinputfield();
+	UiHexInputfield *hex=new UiHexInputfield();
 	hex->init(&c, 64);
 	hex->attach(str);
 	insert(hex);
@@ -915,7 +915,7 @@ void ht_replace_hexascii_search_form::init(Bounds *b, int options, List *history
 	c.x=0;
 	c.w=5;
 	c.h=1;
-	ht_label *hexlabel=new ht_label();
+	UiLabel *hexlabel=new UiLabel();
 	hexlabel->init(&c, "~hex", hex);
 	insert(hexlabel);
 }
@@ -960,7 +960,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 	while (q->name) {
 		if (q->search_mode_mask & searchmodes) {
 			Bounds v = k;
-			ht_view *form = q->create_form(&v, q->histid);
+			UiView *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 			modes++;
 		}
@@ -975,7 +975,7 @@ ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, vie
 		lastsearchmodeid = modeid;
 
 		ht_search_method *s = &search_methods[modeid];
-		ht_view *form = dialog->get_search_modeform();
+		UiView *form = dialog->get_search_modeform();
 
 		search_pos sstart, send;
 
@@ -1057,7 +1057,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 		if ((q->search_mode_mask & searchmodes) &&
 		(q->search_class == SC_PHYSICAL)) {
 			Bounds v = k;
-			ht_view *form = q->create_form(&v, q->histid);
+			UiView *form = q->create_form(&v, q->histid);
 			dialog->insert_search_mode(i, q->name, form);
 		}
 		q++;
@@ -1072,7 +1072,7 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 	ht_replace_method *w = replace_methods;
 	while (w->name) {
 		Bounds v = k;
-		ht_view *form = w->create_form(&v, w->histid);
+		UiView *form = w->create_form(&v, w->histid);
 		dialog->insert_replace_mode(i, w->name, form);
 		w++;
 		i++;
@@ -1090,8 +1090,8 @@ uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
 
 		ht_search_method *s = &search_methods[smodeid];
 		ht_replace_method *r = &replace_methods[rmodeid];
-		ht_view *sform = dialog->get_search_modeform();
-		ht_view *rform = dialog->get_replace_modeform();
+		UiView *sform = dialog->get_search_modeform();
+		UiView *rform = dialog->get_replace_modeform();
 
 		search_pos start, end;
 
@@ -1202,7 +1202,7 @@ Object* create_replace_bin_context(File *file, FileOfs ofs, FileOfs len, const b
 	return ctx;
 }
 
-bool replace_bin_process(Object *context, ht_text *progress_indicator)
+bool replace_bin_process(Object *context, UiText *progress_indicator)
 {
 	progress_indicator->settext("replacing...\n");
 	
@@ -1279,7 +1279,7 @@ void ht_search_dialog::init(Bounds *b, const char *title)
 	c.w=20;
 	c.h=1;
 
-	search_mode_popup = new ht_listpopup();
+	search_mode_popup = new UiListPopup();
 	search_mode_popup->init(&c);
 	insert(search_mode_popup);
 
@@ -1287,7 +1287,7 @@ void ht_search_dialog::init(Bounds *b, const char *title)
 	c.y=0;
 	c.w=4;
 	c.h=1;
-	ht_label *mlabel=new ht_label();
+	UiLabel *mlabel=new UiLabel();
 	mlabel->init(&c, "~mode", search_mode_popup);
 	insert(mlabel);
 
@@ -1333,12 +1333,12 @@ int ht_search_dialog::get_search_modeid()
 	return smodes[smodeidx].id;
 }
 
-ht_view *ht_search_dialog::get_search_modeform()
+UiView *ht_search_dialog::get_search_modeform()
 {
 	return smodes[smodeidx].view;
 }
 
-void ht_search_dialog::insert_search_mode(int id, const char *desc, ht_view *v)
+void ht_search_dialog::insert_search_mode(int id, const char *desc, UiView *v)
 {
 	if (smodecount < MAX_SEARCH_DIALOG_MODES) {
 		search_mode_xgroup->insert(v);
@@ -1384,7 +1384,7 @@ void ht_replace_dialog::init(Bounds *b)
 	c.w=20;
 	c.h=1;
 
-	replace_mode_popup = new ht_listpopup();
+	replace_mode_popup = new UiListPopup();
 	replace_mode_popup->init(&c);
 	insert(replace_mode_popup);
 
@@ -1400,7 +1400,7 @@ void ht_replace_dialog::init(Bounds *b)
 	c.y=14;
 	c.w=4;
 	c.h=1;
-	ht_label *mlabel=new ht_label();
+	UiLabel *mlabel=new UiLabel();
 	mlabel->init(&c, "~replace mode", replace_mode_popup);
 	insert(mlabel);
 
@@ -1446,12 +1446,12 @@ int ht_replace_dialog::get_replace_modeid()
 	return rmodes[rmodeidx].id;
 }
 
-ht_view *ht_replace_dialog::get_replace_modeform()
+UiView *ht_replace_dialog::get_replace_modeform()
 {
 	return rmodes[rmodeidx].view;
 }
 
-void ht_replace_dialog::insert_replace_mode(int id, const char *desc, ht_view *v)
+void ht_replace_dialog::insert_replace_mode(int id, const char *desc, UiView *v)
 {
 	if (rmodecount < MAX_REPLACE_DIALOG_MODES) {
 		replace_mode_xgroup->insert(v);

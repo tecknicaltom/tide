@@ -27,7 +27,7 @@
 #include "xbestruct.h"
 #include "snprintf.h"
 
-static ht_view *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
@@ -37,7 +37,7 @@ static ht_view *htxbeimage_init(Bounds *b, File *file, ht_format_group *group)
 	p->init(xbe_shared, file);
 
 	Bounds c=*b;
-	ht_group *g=new ht_group();
+	UiGroup *g=new UiGroup();
 	g->init(&c, VO_RESIZE, DESC_XBE_IMAGE"-g");
 	AnalyInfoline *head;
 
