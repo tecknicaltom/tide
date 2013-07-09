@@ -46,7 +46,7 @@ static format_viewer_if *htpe_ifs[] = {
 	0
 };
 
-static UiView *htpe_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htpe_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte pemagic[4];
 	FileOfs h = get_newexe_header_ofs(file);
@@ -69,9 +69,9 @@ format_viewer_if htpe_if = {
 /*
  *	CLASS ht_pe
  */
-void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_PE, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_PE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_pe");
 
 	String fn;
@@ -149,12 +149,12 @@ void ht_pe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 
 	shared_data = pe_shared;
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_pe::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_pe_shared_data *pe_shared = (ht_pe_shared_data*)shared_data;
 

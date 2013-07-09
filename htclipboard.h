@@ -54,7 +54,7 @@ protected:
 		int get_pindicator_str(char *buf, int max_len);
 		void selection_changed();
 public:
-		void init(Bounds *b, const char *desc, int caps, ht_clipboard *clipboard, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, int caps, ht_clipboard *clipboard, UiFormatGroup *format_group);
 /* overwritten */
 	virtual	void draw();
 	virtual void handlemsg(htmsg *msg);

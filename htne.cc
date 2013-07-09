@@ -69,7 +69,7 @@ int ne_import_rec::compareTo(const Object *obj) const
 	return module - b->module;
 }
 
-static UiView *htne_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htne_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte nemagic[2];
 	FileOfs h = get_newexe_header_ofs(file);
@@ -88,9 +88,9 @@ format_viewer_if htne_if = {
 	0
 };
 
-void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
+void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs h)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_NE, f, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_NE, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_ne");
 
 	String fn;
@@ -195,12 +195,12 @@ void ht_ne::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *fo
 		}
 	}
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_ne::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
 

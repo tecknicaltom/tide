@@ -45,7 +45,7 @@ static format_viewer_if *htelf_ifs[] = {
 	0
 };
 
-static UiView *htelf_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htelf_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	FileOfs header_ofs = 0;
 	ELF_HEADER header;
@@ -112,9 +112,9 @@ bool isValidELFSectionIdx(ht_elf_shared_data *elf_shared, int idx)
 /*
  *	CLASS ht_elf
  */
-void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_ELF, f, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_ELF, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_elf");
 
 	String fn;
@@ -235,14 +235,14 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 		}
 	}
 	/* init ifs */
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 	while (init_if(&htelfsymboltable_if)) elf_shared->symtables++;
 	while (init_if(&htelfreloctable_if)) elf_shared->reloctables++;
 }
 
 void ht_elf::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
 	if (elf_shared->shnames) {
 		for (uint i=0; i < elf_shared->sheaders.count; i++)

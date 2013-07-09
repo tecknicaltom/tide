@@ -24,7 +24,7 @@
 #include <sys/stat.h>
 #include <string.h>
 
-static UiView *htfinfo_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htfinfo_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	UiFInfoText *v = new UiFInfoText();
 	v->init(b, file);

@@ -27,7 +27,7 @@
 #include "log.h"
 #include "snprintf.h"
 
-static UiView *htclassimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htclassimage_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_class_shared_data *class_shared=(ht_class_shared_data *)group->get_shared_data();
 
@@ -93,7 +93,7 @@ format_viewer_if htclassimage_if = {
 /*
  *	CLASS ht_class_aviewer
  */
-void ht_class_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_class_shared_data *Class_shared)
+void ht_class_aviewer::init(Bounds *b, const char *desc, int caps, File *File, UiFormatGroup *format_group, Analyser *Analy, ht_class_shared_data *Class_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	class_shared = Class_shared;

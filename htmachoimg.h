@@ -34,7 +34,7 @@ extern format_viewer_if htmachoimage_if;
 class ht_macho_aviewer: public ht_aviewer {
 public:
 	ht_macho_shared_data *macho_shared;
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_macho_shared_data *macho_shared);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analyser, ht_macho_shared_data *macho_shared);
 	virtual void setAnalyser(Analyser *a);
 };
 

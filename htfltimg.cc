@@ -29,7 +29,7 @@
 #include "fltstruc.h"
 #include "flt_analy.h"
 
-static UiView *htfltimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htfltimage_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)group->get_shared_data();
 
@@ -107,7 +107,7 @@ format_viewer_if htfltimage_if = {
 /*
  *	CLASS ht_flt_aviewer
  */
-void ht_flt_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_flt_shared_data *FLT_shared)
+void ht_flt_aviewer::init(Bounds *b, const char *desc, int caps, File *File, UiFormatGroup *format_group, Analyser *Analy, ht_flt_shared_data *FLT_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	flt_shared = FLT_shared;

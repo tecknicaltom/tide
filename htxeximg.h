@@ -34,7 +34,7 @@ extern format_viewer_if htxeximage_if;
 class ht_xex_aviewer: public ht_aviewer {
 public:
 	ht_xex_shared_data *xex_shared;
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_xex_shared_data *xex_shared);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analyser, ht_xex_shared_data *xex_shared);
 //	virtual bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual void setAnalyser(Analyser *a);
 };

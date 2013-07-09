@@ -36,12 +36,12 @@ struct ht_mz_shared_data {
 	IMAGE_MZ_HEADER header;
 };
 
-class ht_mz: public ht_format_group {
+class ht_mz: public UiFormatGroup {
 protected:
 	bool loc_enum;
 public:
 
-			void	init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group);
+			void	init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual   void loc_enum_start();

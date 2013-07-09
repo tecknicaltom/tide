@@ -291,7 +291,7 @@ static ht_sub *add_fileheader(File *file, const char *desc, ht_xex_shared_data &
 	return cs;
 }
 
-static UiView *htxexheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxexheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_xex_shared_data &xex_shared = *(ht_xex_shared_data *)group->get_shared_data();
 
@@ -396,13 +396,13 @@ format_viewer_if htxexheader_if = {
  *	CLASS ht_xex_header_viewer
  */
 
-void ht_xex_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group)
+void ht_xex_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_xex_header_viewer");
 }
 
-static ht_format_viewer *find_hex_viewer(UiGroup *group)
+static UiFormatViewer *find_hex_viewer(UiGroup *group)
 {
 	// FIXME: God forgive us...
 	UiGroup *vr_group=group;
@@ -410,7 +410,7 @@ static ht_format_viewer *find_hex_viewer(UiGroup *group)
 	UiView *c=vr_group->getfirstchild();
 	while (c) {
 		if (c->desc && (strcmp(c->desc, DESC_HEX)==0)) {
-			return (ht_format_viewer*)c;
+			return (UiFormatViewer*)c;
 		}
 		c=c->next;
 	}
@@ -420,7 +420,7 @@ static ht_format_viewer *find_hex_viewer(UiGroup *group)
 bool ht_xex_header_viewer::ref_sel(LINE_ID *id)
 {
 	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)format_group->get_shared_data();
-	ht_format_viewer *hexv = find_hex_viewer(group);
+	UiFormatViewer *hexv = find_hex_viewer(group);
 	if (!hexv) return false;
 	switch (id->id1) {
 	case 0: {

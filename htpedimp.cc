@@ -37,7 +37,7 @@
 
 #include <stdlib.h>
 
-static UiView *htpedelayimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpedelayimports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 	String fn;

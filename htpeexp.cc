@@ -40,7 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static UiView *htpeexports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeexports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -238,7 +238,7 @@ format_viewer_if htpeexports_if = {
  *	CLASS ht_pe_export_viewer
  */
 
-void	ht_pe_export_viewer::init(Bounds *b, ht_format_group *fg)
+void	ht_pe_export_viewer::init(Bounds *b, UiFormatGroup *fg)
 {
 	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;

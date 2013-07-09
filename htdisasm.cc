@@ -37,7 +37,7 @@ extern "C" {
 #include "regex.h"
 }
 
-static UiView *htdisasm_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htdisasm_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	int t1632;
 #if 1
@@ -76,7 +76,7 @@ static int opcode_compare(const char *a, const char *b)
 	if (al > bl) return 1; else if (al < bl) return -1; else return strcmp(a, b);
 }
 
-void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, int want_length)
+void dialog_assemble(UiFormatViewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, int want_length)
 {
 	char instr[257] = "";
 	if (default_str) strcpy(instr, default_str);
@@ -177,7 +177,7 @@ void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, As
  *	CLASS ht_disasm_viewer
  */
 
-void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t)
+void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Assembler *a, Disassembler *d, int t)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, format_group);
 	assem = a;

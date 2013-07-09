@@ -51,7 +51,7 @@ public:
 
 class ht_pe_il_viewer: public ht_uformat_viewer {
 public:
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group);
 	virtual void done();
 };
 

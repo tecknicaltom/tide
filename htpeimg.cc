@@ -28,7 +28,7 @@
 #include "pestruct.h"
 #include "snprintf.h"
 
-static UiView *htpeimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeimage_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -190,7 +190,7 @@ static int pe_viewer_func_section(eval_scalar *result, eval_scalar *q)
 /*
  *	CLASS ht_pe_aviewer
  */
-void ht_pe_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_pe_shared_data *PE_shared)
+void ht_pe_aviewer::init(Bounds *b, const char *desc, int caps, File *File, UiFormatGroup *format_group, Analyser *Analy, ht_pe_shared_data *PE_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	pe_shared = PE_shared;

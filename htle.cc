@@ -48,7 +48,7 @@ static format_viewer_if *htle_ifs[] = {
 	0
 };
 
-static UiView *htle_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htle_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte lemagic[2];
 	FileOfs h=get_newexe_header_ofs(file);
@@ -67,9 +67,9 @@ format_viewer_if htle_if = {
 	0
 };
 
-void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h)
+void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs h)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_LE, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_LE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_le");
 
 	String fn;
@@ -109,12 +109,12 @@ void ht_le::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group 
 	do_fixups();
 	check_vxd();
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_le::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_le_shared_data *le_shared=(ht_le_shared_data*)shared_data;
 

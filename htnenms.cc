@@ -39,7 +39,7 @@ static void assign_entrypoint_name(ht_ne_shared_data *ne_shared, uint i, char *n
 	} /* else trouble :-) */
 }
 
-static UiView *htnenames_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htnenames_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_ne_shared_data *ne_shared=(ht_ne_shared_data *)group->get_shared_data();
 

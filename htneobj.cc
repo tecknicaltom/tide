@@ -63,7 +63,7 @@ static ht_tag_flags_s ne_segflags[] =
 	{0, 0}
 };
 
-static UiView *htnesegments_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htnesegments_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_ne_shared_data *ne_shared=(ht_ne_shared_data *)group->get_shared_data();
 

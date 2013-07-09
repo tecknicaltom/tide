@@ -30,7 +30,7 @@
 #include "htanaly.h"
 #include "coff_analy.h"
 
-static UiView *htcoffimage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htcoffimage_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_coff_shared_data *coff_shared = (ht_coff_shared_data *)group->get_shared_data();
 
@@ -108,7 +108,7 @@ format_viewer_if htcoffimage_if = {
  *	CLASS ht_coff_aviewer
  */
 
-void ht_coff_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_coff_shared_data *Coff_shared)
+void ht_coff_aviewer::init(Bounds *b, const char *desc, int caps, File *File, UiFormatGroup *format_group, Analyser *Analy, ht_coff_shared_data *Coff_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	coff_shared = Coff_shared;

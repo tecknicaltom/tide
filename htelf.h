@@ -130,7 +130,7 @@ struct ht_elf_shared_data {
 	elf_program_headers pheaders;
 	uint symtables;
 	uint reloctables;
-	ht_format_viewer *v_image;
+	UiFormatViewer *v_image;
 	int fake_undefined_shidx;
 	uint fake_undefined_size;
 	Container *undefined2fakeaddr;
@@ -139,7 +139,7 @@ struct ht_elf_shared_data {
 /*
  *	ht_elf
  */
-class ht_elf: public ht_format_group {
+class ht_elf: public UiFormatGroup {
 protected:
 	bool loc_enum;
 	/* new */
@@ -148,7 +148,7 @@ protected:
 		uint find_reloc_section_for(uint si);
 		void relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a);
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 	/* extends ? */
 	virtual	void loc_enum_start();

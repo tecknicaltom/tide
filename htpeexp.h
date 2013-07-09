@@ -33,9 +33,9 @@ extern format_viewer_if htpeexports_if;
 
 class ht_pe_export_viewer: public UiITextListbox {
 protected:
-	ht_format_group *format_group;
+	UiFormatGroup *format_group;
 public:
-			void	init(Bounds *b, ht_format_group *fg);
+			void	init(Bounds *b, UiFormatGroup *fg);
 	virtual	void	done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);

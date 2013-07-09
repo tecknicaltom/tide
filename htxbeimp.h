@@ -58,13 +58,13 @@ struct ht_xbe_import {
  */
 class ht_xbe_import_viewer: public UiITextListbox {
 protected:
-	ht_format_group *format_group;
+	UiFormatGroup *format_group;
 	bool grouplib;
 	uint sortby;
 	/* new */
 		void dosort();
 public:
-		void init(Bounds *b, const char *desc, ht_format_group *fg);
+		void init(Bounds *b, const char *desc, UiFormatGroup *fg);
 	virtual	void done();
 	/* overwritten */
 	virtual	void handlemsg(htmsg *msg);

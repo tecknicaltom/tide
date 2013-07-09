@@ -35,7 +35,7 @@ static format_viewer_if *htxex_ifs[] = {
 	0
 };
 
-static UiView *htxex_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htxex_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte xexmagic[4];
 
@@ -57,9 +57,9 @@ format_viewer_if htxex_if = {
 /*
  *	CLASS ht_xex
  */
-void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_XEX, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_XEX, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_xex");
 
 	ht_xex_shared_data *xex_shared = ht_malloc(sizeof (ht_xex_shared_data));
@@ -287,12 +287,12 @@ void ht_xex::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 	}
 	delete[] iat;
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_xex::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_xex_shared_data *xex_shared = (ht_xex_shared_data*)shared_data;
 

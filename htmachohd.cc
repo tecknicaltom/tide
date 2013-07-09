@@ -233,7 +233,7 @@ static ht_mask_ptable macho_i386_thread_state[]=
 	{0, 0}
 };
 
-static UiView *htmachoheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htmachoheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_macho_shared_data *macho_shared=(ht_macho_shared_data *)group->get_shared_data();
 

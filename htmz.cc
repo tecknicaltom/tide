@@ -33,7 +33,7 @@ static format_viewer_if *htmz_ifs[] = {
 	0
 };
 
-static UiView *htmz_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htmz_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte magic[2];
 	file->seek(0);
@@ -51,22 +51,22 @@ format_viewer_if htmz_if = {
 	0
 };
 
-void ht_mz::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group)
+void ht_mz::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group)
 {
-	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_MZ, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_MZ, file, false, true, 0, format_group);
 	ht_mz_shared_data *mz_shared = ht_malloc(sizeof (ht_mz_shared_data));
 	shared_data = mz_shared;
 	file->seek(0);
 	file->read(&mz_shared->header, sizeof mz_shared->header);
 	createHostStruct(&mz_shared->header, MZ_HEADER_struct, little_endian);
 	shared_data = mz_shared;
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_mz::done()
 {
 	free(shared_data);
-	ht_format_group::done();
+	UiFormatGroup::done();
 }
 
 void ht_mz::loc_enum_start()

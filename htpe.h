@@ -81,24 +81,24 @@ struct ht_pe_shared_data {
 	ht_pe_export exports;
 	ht_pe_import imports;
 	ht_pe_import dimports;
-	ht_format_viewer *v_header;
+	UiFormatViewer *v_header;
 	UiView *v_exports;
 	UiView *v_imports;
 	UiView *v_dimports;
 	UiView *v_resources;
 	UiView *v_il;
-	ht_format_viewer *v_image;	
+	UiFormatViewer *v_image;	
 };
 
 /*
  *	CLASS ht_pe
  */
 
-class ht_pe: public ht_format_group {
+class ht_pe: public UiFormatGroup {
 protected:
 	bool loc_enum;
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 /* overwritten */
 	virtual   void loc_enum_start();

@@ -64,7 +64,7 @@ static ht_tag_flags_s le_objflags[] =
 	{0, 0}
 };
 
-static UiView *htleobjects_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htleobjects_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 

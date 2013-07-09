@@ -105,19 +105,19 @@ struct ht_xex_shared_data {
 
 	MemoryFile *image;
 
-	ht_format_viewer *v_header;
+	UiFormatViewer *v_header;
 	UiView *v_imports;
-	ht_format_viewer *v_image;	
+	UiFormatViewer *v_image;	
 };
 
 /*
  *	ht_xex
  */
-class ht_xex: public ht_format_group {
+class ht_xex: public UiFormatGroup {
 protected:
 	bool loc_enum;
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 };
 

@@ -39,7 +39,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static UiView *htpeimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeimports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -346,7 +346,7 @@ ht_pe_import_function::~ht_pe_import_function()
  *	CLASS ht_pe_import_viewer
  */
 
-void	ht_pe_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
+void	ht_pe_import_viewer::init(Bounds *b, const char *Desc, UiFormatGroup *fg)
 {
 	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;

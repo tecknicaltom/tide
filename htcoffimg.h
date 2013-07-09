@@ -35,7 +35,7 @@ class ht_coff_aviewer: public ht_aviewer {
 public:
 	ht_coff_shared_data *coff_shared;
 	File *file;
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *analyser, ht_coff_shared_data *coff_shared);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *analyser, ht_coff_shared_data *coff_shared);
 	virtual void setAnalyser(Analyser *a);
 };
 #endif /* !__HTCOFFIMG_H__ */

@@ -66,23 +66,23 @@ struct ht_xbe_shared_data {
 	ht_xbe_import imports;
 
 
-	ht_format_viewer *v_header;
+	UiFormatViewer *v_header;
 	UiView *v_exports;
 	UiView *v_imports;
 	UiView *v_dimports;
 	UiView *v_resources;
 	UiView *v_il;
-	ht_format_viewer *v_image;	
+	UiFormatViewer *v_image;	
 };
 
 /*
  *	ht_xbe
  */
-class ht_xbe: public ht_format_group {
+class ht_xbe: public UiFormatGroup {
 protected:
 	bool loc_enum;
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 	/* overwritten */
 	virtual   void loc_enum_start();

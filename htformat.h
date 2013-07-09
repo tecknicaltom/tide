@@ -21,7 +21,7 @@
 #ifndef __HTFORMAT_H__
 #define __HTFORMAT_H__
 
-class ht_format_group;
+class UiFormatGroup;
 
 #include "evalx.h"
 #include "data.h"
@@ -121,7 +121,7 @@ public:
 };
 
 /*
- *	CLASS ht_viewer
+ *	CLASS UiViewer
  */
 
 /* caps */
@@ -132,7 +132,7 @@ public:
 #define VC_REPLACE		0x0008
 #define VC_RESIZE		0x0010
 
-class ht_viewer: public UiView {
+class UiViewer: public UiView {
 protected:
 	uint caps;
 
@@ -145,10 +145,10 @@ public:
 };
 
 /*
- *	CLASS ht_format_viewer
+ *	CLASS UiFormatViewer
  */
 
-class ht_format_viewer: public ht_viewer {
+class UiFormatViewer: public UiViewer {
 protected:
 	File *file;
 // last search (request)
@@ -168,9 +168,9 @@ protected:
 	virtual	bool next_logical_pos(viewer_pos pos, viewer_pos *npos);
 	virtual	bool next_logical_offset(FileOfs ofs, FileOfs *nofs);
 public:
-	ht_format_group *format_group;
+	UiFormatGroup *format_group;
 
-		void init(Bounds *b, const char *desc, uint caps, File *file, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, uint caps, File *file, UiFormatGroup *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
@@ -227,10 +227,10 @@ public:
 };
 
 /*
- *	CLASS ht_format_group
+ *	CLASS UiFormatGroup
  */
 
-class ht_format_group: public ht_format_viewer {
+class UiFormatGroup: public UiFormatViewer {
 protected:
 	Container *format_views;
 	void *shared_data;
@@ -247,7 +247,7 @@ protected:
 			
 		bool edit();
 public:
-		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, ht_format_group *format_group);
+		void init(Bounds *b, int options, const char *desc, File *file, bool own_file, bool editable_file, format_viewer_if **ifs, UiFormatGroup *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	int childcount() const;
@@ -282,7 +282,7 @@ public:
 #define cursor_state_invisible	1
 #define cursor_state_disabled		2
 
-class ht_uformat_viewer: public ht_format_viewer {
+class ht_uformat_viewer: public UiFormatViewer {
 protected:
 	ht_sub *first_sub, *last_sub;
 /* top line position */
@@ -387,7 +387,7 @@ protected:
 public:
 	uint search_caps;
 	
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group);
 	virtual	void done();
 /* overwritten */
 	virtual	void config_changed();

@@ -62,19 +62,19 @@ struct ht_coff_shared_data {
 		COFF_OPTIONAL_HEADER32 coff32header;
 	};
 	coff_section_headers sections;
-	ht_viewer *v_header;
-	ht_viewer *v_image;
+	UiViewer *v_header;
+	UiViewer *v_image;
 };
 
 /*
  *	CLASS ht_coff
  */
 
-class ht_coff: public ht_format_group {
+class ht_coff: public UiFormatGroup {
 private:
 	ht_coff_shared_data *coff_shared;
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess end);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs, Endianess end);
 	virtual	void done();
 };
 

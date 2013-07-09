@@ -39,7 +39,7 @@ public:
 	virtual	void done();
 };
 
-void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend);
+void blockop_dialog(UiFormatViewer *format, FileOfs pstart, FileOfs pend);
 
 #endif /* __BLOCKOP_H__ */
 

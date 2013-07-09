@@ -42,7 +42,7 @@ union search_pos {
 uint lastsearchmodeid = 0;
 uint lastreplacemodeid = 0;
 
-typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, UiView *form, ht_format_viewer *format, uint search_class);
+typedef ht_search_request* (*create_request_func)(search_pos *ret_start, search_pos *ret_end, UiView *form, UiFormatViewer *format, uint search_class);
 
 typedef Object* (*create_replace_context_func)(File *file, FileOfs ofs, FileOfs len, UiView *form, FileOfs *return_repllen);
 
@@ -67,7 +67,7 @@ struct ht_replace_method {
 #include <stdlib.h>
 #include <string.h>
 
-static bool test_str_to_ofs(FileOfs *ofs, const String &str, ht_format_viewer *format, const char *desc)
+static bool test_str_to_ofs(FileOfs *ofs, const String &str, UiFormatViewer *format, const char *desc)
 {
 	if (str.length() > 0) {
 		if (!format->string_to_offset(str, ofs)) {
@@ -78,7 +78,7 @@ static bool test_str_to_ofs(FileOfs *ofs, const String &str, ht_format_viewer *f
 	return true;
 }
 
-static bool test_str_to_pos(viewer_pos *pos, const String &str, ht_format_viewer *format, const char *desc)
+static bool test_str_to_pos(viewer_pos *pos, const String &str, UiFormatViewer *format, const char *desc)
 {
 	if (str.length() > 0) {
 		if (!format->string_to_pos(str, pos)) {
@@ -99,7 +99,7 @@ UiView* create_form_hexascii(Bounds *b, uint histid)
 	return form;
 }
 
-ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
+ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
 	ht_hexascii_search_form_data d;
@@ -163,7 +163,7 @@ static UiView* create_form_evalstr(Bounds *b, uint histid)
 	return form;
 }
 
-static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define EVALSTR_MAXSTRLEN		256
 	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
@@ -265,7 +265,7 @@ static UiView* create_form_vregex(Bounds *b, uint histid)
 	return form;
 }
 
-static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define VREGEX_MAXSTRLEN		256
 	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
@@ -371,7 +371,7 @@ static UiView* create_form_expr(Bounds *b, uint histid)
 	return form;
 }
 
-static ht_search_request* create_request_expr(search_pos *start, search_pos *end, UiView *f, ht_format_viewer *format, uint search_class)
+static ht_search_request* create_request_expr(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define EXPR_MAXSTRLEN		256
 	ht_expr_search_form *form=(ht_expr_search_form*)f;
@@ -937,7 +937,7 @@ static ht_search_method search_methods[] =
 	{ NULL }
 };
 
-ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, viewer_pos *start, viewer_pos *end)
+ht_search_request *search_dialog(UiFormatViewer *format, uint searchmodes, viewer_pos *start, viewer_pos *end)
 {
 	ht_search_request *result = NULL;
 	Bounds b;
@@ -1032,7 +1032,7 @@ static ht_replace_method replace_methods[] =
 	{ NULL }
 };
 
-uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled)
+uint replace_dialog(UiFormatViewer *format, uint searchmodes, bool *cancelled)
 {
 	*cancelled = false;
 	Bounds b;

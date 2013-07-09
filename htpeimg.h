@@ -34,7 +34,7 @@ extern format_viewer_if htpeimage_if;
 class ht_pe_aviewer: public ht_aviewer {
 public:
 	ht_pe_shared_data *pe_shared;
-		   void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analyser, ht_pe_shared_data *pe_shared);
+		   void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analyser, ht_pe_shared_data *pe_shared);
 	virtual bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual void setAnalyser(Analyser *a);
 };

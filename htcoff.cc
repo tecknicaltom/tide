@@ -103,7 +103,7 @@ static bool is_coff(File *file, Endianess &endian, FileOfs ofs)
 	return true;
 }
 
-static UiView *htcoff_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htcoff_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	FileOfs h;
 	Endianess end;
@@ -131,9 +131,9 @@ format_viewer_if htcoff_if = {
 /*
  *	CLASS ht_coff
  */
-void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h, Endianess end)
+void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs h, Endianess end)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_COFF, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_COFF, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_coff");
 
 	String fn;
@@ -178,12 +178,12 @@ void ht_coff::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_grou
 	} /* CHECK - sufficient */
 	shared_data = coff_shared;
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_coff::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 	free(shared_data);
 }
 

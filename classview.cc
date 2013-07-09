@@ -497,7 +497,7 @@ static void mf_view(ht_group_sub *g, File *f,
 	g->insertsub(cs2);
 }
 
-static UiView *class_view(Bounds *b, File *file, ht_format_group *group)
+static UiView *class_view(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_mask_sub *s;
 	ht_collapsable_sub *cs, *cs2;
@@ -682,17 +682,17 @@ static UiView *class_view(Bounds *b, File *file, ht_format_group *group)
 }
 
 void cview::init(Bounds *b, File *f, format_viewer_if **ifs,
-		  ht_format_group *g, FileOfs header_ofs, void *shared)
+		  UiFormatGroup *g, FileOfs header_ofs, void *shared)
 {
-	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_JAVA, f, false, true, 0, g);
+	UiFormatGroup::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_JAVA, f, false, true, 0, g);
 
 	shared_data = shared;
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void cview::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 	ht_class_shared_data *clazz = (ht_class_shared_data *)shared_data;
 	if (clazz) {
 		class_unread(clazz);
@@ -710,7 +710,7 @@ static format_viewer_if *htcls_ifs[] = {
 	0
 };
 
-static UiView *class_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *class_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	u1 magic[4];
 

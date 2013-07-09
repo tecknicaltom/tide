@@ -65,11 +65,11 @@ struct ht_le_shared_data {
 	Endianess byteorder;
 	FileOfs hdr_ofs;
 	LE_HEADER hdr;
-	ht_viewer *v_header;
-	ht_viewer *v_objects;
-	ht_viewer *v_pagemaps;
-	ht_viewer *v_image;
-	ht_viewer *v_le_vxd;
+	UiViewer *v_header;
+	UiViewer *v_objects;
+	UiViewer *v_pagemaps;
+	UiViewer *v_image;
+	UiViewer *v_le_vxd;
 	ht_le_objmap objmap;
 	ht_le_pagemap pagemap;
 	bool is_vxd;
@@ -80,7 +80,7 @@ struct ht_le_shared_data {
 	LEAddress best_entrypoint;
 };
 
-class ht_le: public ht_format_group {
+class ht_le: public UiFormatGroup {
 protected:
 	bool loc_enum;
 
@@ -89,7 +89,7 @@ protected:
 			void read_pagemap();
 			void read_objects();
 public:
-			void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h);
+			void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs h);
 	virtual	void done();
 /* overwritten */
 	virtual   void loc_enum_start();

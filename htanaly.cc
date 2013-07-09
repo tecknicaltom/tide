@@ -499,7 +499,7 @@ bool AnalyInfoline::valid()
 /*
  *
  */
-void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy)
+void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analy)
 {
 	analy = Analy;
 	if (Analy) {

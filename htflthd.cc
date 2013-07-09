@@ -40,7 +40,7 @@ static ht_mask_ptable fltheader[]=
 	{0, 0}
 };
 
-static UiView *htfltheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htfltheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)group->get_shared_data();
 

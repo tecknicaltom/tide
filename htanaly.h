@@ -193,7 +193,7 @@ public:
 	ht_analy_sub *analy_sub;
 	bool one_load_hack;
 	bool pause;
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Analyser *Analy);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analy);
 	virtual	void done();
 		bool convertAddressToViewerPos(Address *a, viewer_pos *p);
 		bool convertViewerPosToAddress(const viewer_pos &p, Address **a);

@@ -58,9 +58,9 @@ struct ht_macho_shared_data {
  *	CLASS ht_macho
  */
 
-class ht_macho: public ht_format_group {
+class ht_macho: public UiFormatGroup {
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs, Endianess image_endianess, bool _64);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs, Endianess image_endianess, bool _64);
 };
 
 typedef uint64 MACHOAddress;

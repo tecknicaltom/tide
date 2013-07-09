@@ -29,7 +29,7 @@
 
 #define DESC_XEX_IMAGE "xex/image"
 
-static UiView *htxeximage_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxeximage_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_xex_shared_data *xex_shared=(ht_xex_shared_data *)group->get_shared_data();
 
@@ -172,7 +172,7 @@ static int pe_viewer_func_section(eval_scalar *result, eval_scalar *q)
 /*
  *	CLASS ht_pe_aviewer
  */
-void ht_xex_aviewer::init(Bounds *b, const char *desc, int caps, File *File, ht_format_group *format_group, Analyser *Analy, ht_xex_shared_data *XEX_shared)
+void ht_xex_aviewer::init(Bounds *b, const char *desc, int caps, File *File, UiFormatGroup *format_group, Analyser *Analy, ht_xex_shared_data *XEX_shared)
 {
 	ht_aviewer::init(b, desc, caps, File, format_group, Analy);
 	xex_shared = XEX_shared;

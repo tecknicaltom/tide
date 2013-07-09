@@ -163,9 +163,9 @@ void java_demangle(char *result, const char *classname, const char *name, const 
 void java_demangle_field(char *result, const char *name, const char *type, int flags);
 char *java_demangle_flags(char *result, int flags);
 
-class cview: public ht_format_group {
+class cview: public UiFormatGroup {
 public:
-	void init(Bounds *, File *, format_viewer_if **, ht_format_group *, FileOfs, void *shared);
+	void init(Bounds *, File *, format_viewer_if **, UiFormatGroup *, FileOfs, void *shared);
 	virtual void done();
 };
 

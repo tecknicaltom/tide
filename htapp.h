@@ -121,7 +121,7 @@ public:
 	void log(LogColor c, char *line);
 };
 
-class ht_logviewer: public ht_viewer {
+class ht_logviewer: public UiViewer {
 private:
 	ht_log *lines;
 	bool own_lines;

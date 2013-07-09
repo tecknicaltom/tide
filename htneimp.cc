@@ -28,7 +28,7 @@
 
 #include <stdlib.h>
 
-static UiView *htneimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htneimports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_ne_shared_data *ne_shared = (ht_ne_shared_data *)group->get_shared_data();
 

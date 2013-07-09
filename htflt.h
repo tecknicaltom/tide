@@ -52,9 +52,9 @@ struct ht_flt_shared_data {
  *	CLASS ht_flt
  */
 
-class ht_flt: public ht_format_group {
+class ht_flt: public UiFormatGroup {
 public:
-			void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+			void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 };
 

@@ -48,7 +48,7 @@ static int_hash elf_st_type[] =
 	{0, 0}
 };
 
-static UiView *htelfsymboltable_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htelfsymboltable_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	/* section index of associated symbol table */
 	int si_symbol;

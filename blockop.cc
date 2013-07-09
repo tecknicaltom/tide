@@ -565,7 +565,7 @@ static bool blockop_int_process(Object *context, UiText *progress_indicator)
 	return true;
 }
 
-bool format_string_to_offset_if_avail(ht_format_viewer *format, const byte *string, int stringlen, const char *string_desc, FileOfs *ofs)
+bool format_string_to_offset_if_avail(UiFormatViewer *format, const byte *string, int stringlen, const char *string_desc, FileOfs *ofs)
 {
 	if (string && *string && stringlen < 64) {
 		char str[64];
@@ -581,7 +581,7 @@ bool format_string_to_offset_if_avail(ht_format_viewer *format, const byte *stri
 }
 
 
-void blockop_dialog(ht_format_viewer *format, FileOfs pstart, FileOfs pend)
+void blockop_dialog(UiFormatViewer *format, FileOfs pstart, FileOfs pend)
 {
 	Bounds b;
 	b.w = 65;

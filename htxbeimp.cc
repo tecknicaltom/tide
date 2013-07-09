@@ -409,7 +409,7 @@ static const char *xbox_exports[] = {
 	"HalWriteSMCScratchRegister"                     // 366  8000016E
 };
 
-static UiView *htxbeimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htxbeimports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_xbe_shared_data *xbe_shared=(ht_xbe_shared_data *)group->get_shared_data();
 
@@ -522,7 +522,7 @@ ht_xbe_import_function::~ht_xbe_import_function()
 /*
  *	ht_xbe_import_viewer
  */
-void ht_xbe_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
+void ht_xbe_import_viewer::init(Bounds *b, const char *Desc, UiFormatGroup *fg)
 {
 	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;

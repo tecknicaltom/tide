@@ -36,7 +36,7 @@ static format_viewer_if *htxbe_ifs[] = {
 	0
 };
 
-static UiView *htxbe_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htxbe_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte xbemagic[4];
 
@@ -58,9 +58,9 @@ format_viewer_if htxbe_if = {
 /*
  *	CLASS ht_xbe
  */
-void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_XBE, file, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_BROWSABLE | VO_SELECTABLE | VO_RESIZE, DESC_XBE, file, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_xbe");
 
 	ht_xbe_shared_data *xbe_shared = ht_malloc(sizeof (ht_xbe_shared_data));
@@ -126,12 +126,12 @@ void ht_xbe::init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group
 
 	xbe_shared->header.tls_address -= xbe_shared->header.base_address;
 
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_xbe::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_xbe_shared_data *xbe_shared = (ht_xbe_shared_data*)shared_data;
 

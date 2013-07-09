@@ -59,21 +59,21 @@ struct ht_pef_shared_data {
 	
 	ht_pef_import imports;
 	
-	ht_format_viewer *v_header;
+	UiFormatViewer *v_header;
 	UiView *v_imports;
-	ht_format_viewer *v_image;
+	UiFormatViewer *v_image;
 };
 
 /*
  *	ht_pef
  */
 
-class ht_pef: public ht_format_group {
+class ht_pef: public UiFormatGroup {
 protected:
 	bool loc_enum;
 	/* new */
 public:
-			void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs);
+			void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs);
 	virtual	void done();
 };
 

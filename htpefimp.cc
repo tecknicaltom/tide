@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-static UiView *htpefimports_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpefimports_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)group->get_shared_data();
 
@@ -186,7 +186,7 @@ ht_pef_import_function::~ht_pef_import_function()
  *	CLASS ht_pef_import_viewer
  */
 
-void ht_pef_import_viewer::init(Bounds *b, const char *Desc, ht_format_group *fg)
+void ht_pef_import_viewer::init(Bounds *b, const char *Desc, UiFormatGroup *fg)
 {
 	UiTextListbox::init(b, 3, 2, LISTBOX_QUICKFIND);
 	options |= VO_BROWSABLE;

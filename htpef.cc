@@ -37,7 +37,7 @@ format_viewer_if *htpef_ifs[] = {
 	0
 };
 
-static UiView *htpef_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htpef_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte id[12];
 	file->seek(0);
@@ -63,9 +63,9 @@ format_viewer_if htpef_if = {
 /*
  *	CLASS ht_pef
  */
-void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_PEF, f, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_PEF, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_pef");
 
 	String fn;
@@ -121,12 +121,12 @@ void ht_pef::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	}
 
 	/* init ifs */
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_pef::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 
 	ht_pef_shared_data *pef_shared = (ht_pef_shared_data*)shared_data;
 	delete pef_shared->imports.funcs;

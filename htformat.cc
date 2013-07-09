@@ -137,13 +137,13 @@ public:
 };
 
 /*
- *	CLASS ht_format_group
+ *	CLASS UiFormatGroup
  */
 
-void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bool own_f, bool editable_f, format_viewer_if **i, ht_format_group *format_group)
+void UiFormatGroup::init(Bounds *b, int options, const char *desc, File *f, bool own_f, bool editable_f, format_viewer_if **i, UiFormatGroup *format_group)
 {
-	ht_format_viewer::init(b, desc, 0, f, format_group);
-	VIEW_DEBUG_NAME("ht_format_group");
+	UiFormatViewer::init(b, desc, 0, f, format_group);
+	VIEW_DEBUG_NAME("UiFormatGroup");
 
 	xgroup = new ht_xgroup();
 	xgroup->init(b, options, desc);
@@ -156,7 +156,7 @@ void ht_format_group::init(Bounds *b, int options, const char *desc, File *f, bo
 	if (i) init_ifs(i);
 }
 
-void ht_format_group::done()
+void UiFormatGroup::done()
 {
 	done_ifs();
 
@@ -165,17 +165,17 @@ void ht_format_group::done()
 	xgroup->done();
 	delete xgroup;
 
-	ht_format_viewer::done();
+	UiFormatViewer::done();
 
 	if (own_file) delete file;
 }
 
-int ht_format_group::childcount() const
+int UiFormatGroup::childcount() const
 {
 	return xgroup->childcount();
 }
 
-bool ht_format_group::done_if(format_viewer_if *i, UiView *v)
+bool UiFormatGroup::done_if(format_viewer_if *i, UiView *v)
 {
 	remove(v);
 	if (i->done) {
@@ -187,80 +187,80 @@ bool ht_format_group::done_if(format_viewer_if *i, UiView *v)
 	return true;
 }
 
-void ht_format_group::done_ifs()
+void UiFormatGroup::done_ifs()
 {
 	foreach(ht_format_viewer_entry, e, *format_views, {
 		done_if(e->interface, e->instance);
 	})
 }
 
-bool ht_format_group::edit()
+bool UiFormatGroup::edit()
 {
 	return file->getAccessMode() & IOAM_WRITE;
 }
 
-bool ht_format_group::focus(UiView *view)
+bool UiFormatGroup::focus(UiView *view)
 {
-	bool r = ht_format_viewer::focus(view);
+	bool r = UiFormatViewer::focus(view);
 	if (!r) r = xgroup->focus(view);
 	return r;
 }
 
-const char *ht_format_group::func(uint i, bool execute)
+const char *UiFormatGroup::func(uint i, bool execute)
 {
-	return ht_format_viewer::func(i, execute);
+	return UiFormatViewer::func(i, execute);
 }
 
-void ht_format_group::getbounds(Bounds *b)
+void UiFormatGroup::getbounds(Bounds *b)
 {
 	xgroup->getbounds(b);
 }
 
-void *ht_format_group::get_shared_data()
+void *UiFormatGroup::get_shared_data()
 {
 	return shared_data;
 }
 
-UiView *ht_format_group::getfirstchild()
+UiView *UiFormatGroup::getfirstchild()
 {
 	return xgroup->getfirstchild();
 }
 
-UiView *ht_format_group::getselected()
+UiView *UiFormatGroup::getselected()
 {
 	return xgroup->getselected();
 }
 
-int ht_format_group::get_pindicator_str(char *buf, int max_len)
+int UiFormatGroup::get_pindicator_str(char *buf, int max_len)
 {
 	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
-		return ((ht_format_viewer*)c)->get_pindicator_str(buf, max_len);
+		return ((UiFormatViewer*)c)->get_pindicator_str(buf, max_len);
 	} else {
 		if (max_len > 0) *buf = 0;
 		return 0;
 	}
 }
 
-bool ht_format_group::get_hscrollbar_pos(int *pstart, int *psize)
+bool UiFormatGroup::get_hscrollbar_pos(int *pstart, int *psize)
 {
 	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
-		return ((ht_format_viewer*)c)->get_hscrollbar_pos(pstart, psize);
+		return ((UiFormatViewer*)c)->get_hscrollbar_pos(pstart, psize);
 	}
 	return false;
 }
 
-bool ht_format_group::get_vscrollbar_pos(int *pstart, int *psize)
+bool UiFormatGroup::get_vscrollbar_pos(int *pstart, int *psize)
 {
 	UiView *c = xgroup->current;
 	if (c && (c->options & VO_FORMAT_VIEW)) {
-		return ((ht_format_viewer*)c)->get_vscrollbar_pos(pstart, psize);
+		return ((UiFormatViewer*)c)->get_vscrollbar_pos(pstart, psize);
 	}
 	return false;
 }
 
-void ht_format_group::handlemsg(htmsg *msg)
+void UiFormatGroup::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case msg_keypressed: {
@@ -295,7 +295,7 @@ void ht_format_group::handlemsg(htmsg *msg)
 		break;
 	}
 	}
-	ht_format_viewer::handlemsg(msg);
+	UiFormatViewer::handlemsg(msg);
 	xgroup->handlemsg(msg);
 	switch (msg->msg) {
 	case msg_funcexec:
@@ -315,7 +315,7 @@ void ht_format_group::handlemsg(htmsg *msg)
 	}
 }
 
-bool ht_format_group::init_if(format_viewer_if *i)
+bool UiFormatGroup::init_if(format_viewer_if *i)
 {
 	Bounds b;
 	getbounds(&b);
@@ -342,7 +342,7 @@ bool ht_format_group::init_if(format_viewer_if *i)
 	return false;
 }
 
-void ht_format_group::init_ifs(format_viewer_if **ifs)
+void UiFormatGroup::init_ifs(format_viewer_if **ifs)
 {
 	format_viewer_if **i = ifs;
 	while (*i) {
@@ -352,51 +352,51 @@ void ht_format_group::init_ifs(format_viewer_if **ifs)
 	ifs = i;
 }
 
-void ht_format_group::insert(UiView *view)
+void UiFormatGroup::insert(UiView *view)
 {
 	xgroup->insert(view);
 }
 
-void ht_format_group::move(int rx, int ry)
+void UiFormatGroup::move(int rx, int ry)
 {
-	ht_format_viewer::move(rx, ry);
+	UiFormatViewer::move(rx, ry);
 	xgroup->move(rx, ry);
 }
 
-void ht_format_group::receivefocus()
+void UiFormatGroup::receivefocus()
 {
 	xgroup->receivefocus();
 }
 
-void ht_format_group::redraw()
+void UiFormatGroup::redraw()
 {
 	xgroup->redraw();
 }
 
-void ht_format_group::releasefocus()
+void UiFormatGroup::releasefocus()
 {
 	xgroup->releasefocus();
 }
 
-void ht_format_group::remove(UiView *view)
+void UiFormatGroup::remove(UiView *view)
 {
 	xgroup->remove(view);
 }
 
-void ht_format_group::resize(int rw, int rh)
+void UiFormatGroup::resize(int rw, int rh)
 {
-	ht_format_viewer::resize(rw, rh);
+	UiFormatViewer::resize(rw, rh);
 	xgroup->resize(rw, rh);
 }
 
-void ht_format_group::setgroup(UiGroup *_group)
+void UiFormatGroup::setgroup(UiGroup *_group)
 {
 	xgroup->setgroup(_group);
 }
 
-bool ht_format_group::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool UiFormatGroup::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
-	ht_format_viewer *v = dynamic_cast<ht_format_viewer *>(xgroup->current);
+	UiFormatViewer *v = dynamic_cast<UiFormatViewer *>(xgroup->current);
 	if (v) {
 		return v->func_handler(result, name, params);
 	} else {
@@ -404,9 +404,9 @@ bool ht_format_group::func_handler(eval_scalar *result, char *name, eval_scalarl
 	}
 }
 
-bool ht_format_group::symbol_handler(eval_scalar *result, char *name)
+bool UiFormatGroup::symbol_handler(eval_scalar *result, char *name)
 {
-	ht_format_viewer *v = dynamic_cast<ht_format_viewer *>(xgroup->current);
+	UiFormatViewer *v = dynamic_cast<UiFormatViewer *>(xgroup->current);
 	if (v) {
 		return v->symbol_handler(result, name);
 	} else {
@@ -415,10 +415,10 @@ bool ht_format_group::symbol_handler(eval_scalar *result, char *name)
 }
 
 /*
- *	CLASS ht_viewer
+ *	CLASS UiViewer
  */
 
-void ht_viewer::init(Bounds *b, const char *desc, uint c)
+void UiViewer::init(Bounds *b, const char *desc, uint c)
 {
 	UiView::init(b, VO_OWNBUFFER | VO_BROWSABLE | VO_SELECTABLE | VO_MOVE | VO_RESIZE, desc);
 	caps = c;
@@ -426,12 +426,12 @@ void ht_viewer::init(Bounds *b, const char *desc, uint c)
 	growmode = MK_GM(GMH_FIT, GMV_FIT);
 }
 
-const char *ht_viewer::func(uint i, bool execute)
+const char *UiViewer::func(uint i, bool execute)
 {
 	return NULL;
 }
 
-void ht_viewer::handlemsg(htmsg *msg)
+void UiViewer::handlemsg(htmsg *msg)
 {
 	int i=0;
 	switch (msg->msg) {
@@ -484,14 +484,14 @@ void ht_viewer::handlemsg(htmsg *msg)
 }
 
 /*
- *	CLASS ht_format_viewer
+ *	CLASS UiFormatViewer
  */
 
-void ht_format_viewer::init(Bounds *b, const char *desc, uint caps, File *f, ht_format_group *fg)
+void UiFormatViewer::init(Bounds *b, const char *desc, uint caps, File *f, UiFormatGroup *fg)
 {
-	ht_viewer::init(b, desc, caps);
+	UiViewer::init(b, desc, caps);
 	options |= VO_FORMAT_VIEW;
-	VIEW_DEBUG_NAME("ht_format_viewer");
+	VIEW_DEBUG_NAME("UiFormatViewer");
 	file = f;
 	format_group = fg;
 
@@ -500,28 +500,28 @@ void ht_format_viewer::init(Bounds *b, const char *desc, uint caps, File *f, ht_
 	vs_history->init();*/
 }
 
-void ht_format_viewer::done()
+void UiFormatViewer::done()
 {
 	delete last_search_request;
 
-	ht_viewer::done();
+	UiViewer::done();
 }
 
-bool ht_format_viewer::pos_to_offset(viewer_pos pos, FileOfs *ofs)
+bool UiFormatViewer::pos_to_offset(viewer_pos pos, FileOfs *ofs)
 {
 	return false;
 }
 
-void ht_format_viewer::clear_viewer_pos(viewer_pos *p)
+void UiFormatViewer::clear_viewer_pos(viewer_pos *p)
 {
 }
 
-bool ht_format_viewer::compeq_viewer_pos(viewer_pos *a, viewer_pos *b)
+bool UiFormatViewer::compeq_viewer_pos(viewer_pos *a, viewer_pos *b)
 {
 	return false;
 }
 
-bool ht_format_viewer::continue_search()
+bool UiFormatViewer::continue_search()
 {
 	if (last_search_request) {
 		ht_search_result *r = NULL;
@@ -556,75 +556,75 @@ bool ht_format_viewer::continue_search()
 	return false;
 }
 
-bool ht_format_viewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
+bool UiFormatViewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
 	return false;
 }
 
-bool ht_format_viewer::symbol_handler(eval_scalar *result, char *name)
+bool UiFormatViewer::symbol_handler(eval_scalar *result, char *name)
 {
 	return false;
 }
 
-bool ht_format_viewer::get_current_offset(FileOfs *ofs)
+bool UiFormatViewer::get_current_offset(FileOfs *ofs)
 {
 	return false;
 }
 
-bool ht_format_viewer::get_current_pos(viewer_pos *pos)
+bool UiFormatViewer::get_current_pos(viewer_pos *pos)
 {
 	return false;
 }
 
-bool ht_format_viewer::get_current_real_offset(FileOfs *ofs)
+bool UiFormatViewer::get_current_real_offset(FileOfs *ofs)
 {
 	return get_current_offset(ofs);
 }
 
-File *ht_format_viewer::get_file()
+File *UiFormatViewer::get_file()
 {
 	return file;
 }
 
-int ht_format_viewer::get_pindicator_str(char *buf, int max_len)
+int UiFormatViewer::get_pindicator_str(char *buf, int max_len)
 {
 	if (max_len > 0) *buf = 0;
 	return 0;
 }
 
-bool ht_format_viewer::get_hscrollbar_pos(int *pstart, int *psize)
+bool UiFormatViewer::get_hscrollbar_pos(int *pstart, int *psize)
 {
 	return false;
 }
 
-bool ht_format_viewer::get_vscrollbar_pos(int *pstart, int *psize)
+bool UiFormatViewer::get_vscrollbar_pos(int *pstart, int *psize)
 {
 	return false;
 }
 
-bool ht_format_viewer::goto_offset(FileOfs ofs, bool save_vstate)
+bool UiFormatViewer::goto_offset(FileOfs ofs, bool save_vstate)
 {
 	return false;
 }
 
-bool ht_format_viewer::goto_pos(viewer_pos pos, bool save_vstate)
+bool UiFormatViewer::goto_pos(viewer_pos pos, bool save_vstate)
 {
 	return false;
 }
 
 static bool format_viewer_func_handler(eval_scalar *result, char *name, eval_scalarlist *params)
 {
-	ht_format_viewer *viewer = (ht_format_viewer*)eval_get_context();
+	UiFormatViewer *viewer = (UiFormatViewer*)eval_get_context();
 	return viewer->func_handler(result, name, params);
 }
 
 static bool format_viewer_symbol_handler(eval_scalar *result, char *name)
 {
-	ht_format_viewer *viewer = (ht_format_viewer*)eval_get_context();
+	UiFormatViewer *viewer = (UiFormatViewer*)eval_get_context();
 	return viewer->symbol_handler(result, name);
 }
 
-void ht_format_viewer::handlemsg(htmsg *msg)
+void UiFormatViewer::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case cmd_popup_dialog_eval:
@@ -699,34 +699,34 @@ void ht_format_viewer::handlemsg(htmsg *msg)
 		clearmsg(msg);
 		return;
 	}
-	ht_viewer::handlemsg(msg);
+	UiViewer::handlemsg(msg);
 }
 
-void ht_format_viewer::loc_enum_start()
+void UiFormatViewer::loc_enum_start()
 {
 }
 
-bool ht_format_viewer::loc_enum_next(ht_format_loc *loc)
-{
-	return false;
-}
-
-bool ht_format_viewer::next_logical_pos(viewer_pos pos, viewer_pos *npos)
+bool UiFormatViewer::loc_enum_next(ht_format_loc *loc)
 {
 	return false;
 }
 
-bool ht_format_viewer::next_logical_offset(FileOfs ofs, FileOfs *nofs)
+bool UiFormatViewer::next_logical_pos(viewer_pos pos, viewer_pos *npos)
 {
 	return false;
 }
 
-bool ht_format_viewer::offset_to_pos(FileOfs ofs, viewer_pos *pos)
+bool UiFormatViewer::next_logical_offset(FileOfs ofs, FileOfs *nofs)
 {
 	return false;
 }
 
-bool ht_format_viewer::vstate_save()
+bool UiFormatViewer::offset_to_pos(FileOfs ofs, viewer_pos *pos)
+{
+	return false;
+}
+
+bool UiFormatViewer::vstate_save()
 {
 	Object *vs = vstate_create();
 	if (vs) {
@@ -741,7 +741,7 @@ bool ht_format_viewer::vstate_save()
 	return false;
 }
 
-uint ht_format_viewer::pread(FileOfs ofs, void *buf, uint size)
+uint UiFormatViewer::pread(FileOfs ofs, void *buf, uint size)
 {
 	try {
 		file->seek(ofs);
@@ -751,41 +751,41 @@ uint ht_format_viewer::pread(FileOfs ofs, void *buf, uint size)
 	}
 }
 
-ht_search_result *ht_format_viewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *UiFormatViewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
 {
 	return 0;
 }
 
-void ht_format_viewer::pselect_add(FileOfs start, FileOfs end)
+void UiFormatViewer::pselect_add(FileOfs start, FileOfs end)
 {
 }
 
-void ht_format_viewer::pselect_get(FileOfs *start, FileOfs *end)
+void UiFormatViewer::pselect_get(FileOfs *start, FileOfs *end)
 {
 }
 
-void ht_format_viewer::pselect_set(FileOfs start, FileOfs end)
+void UiFormatViewer::pselect_set(FileOfs start, FileOfs end)
 {
 }
 
-uint ht_format_viewer::pwrite(FileOfs ofs, void *buf, uint size)
+uint UiFormatViewer::pwrite(FileOfs ofs, void *buf, uint size)
 {
 	sendmsg(msg_file_changed);
 	file->seek(ofs);
 	return file->write(buf, size);
 }
 
-bool ht_format_viewer::qword_to_offset(uint64 q, FileOfs *ofs)
+bool UiFormatViewer::qword_to_offset(uint64 q, FileOfs *ofs)
 {
 	return false;
 }
 
-bool ht_format_viewer::qword_to_pos(uint64 q, viewer_pos *pos)
+bool UiFormatViewer::qword_to_pos(uint64 q, viewer_pos *pos)
 {
 	return false;
 }
 
-bool ht_format_viewer::show_search_result(ht_search_result *r)
+bool UiFormatViewer::show_search_result(ht_search_result *r)
 {
 	switch (r->search_class) {
 	case SC_PHYSICAL: {
@@ -802,7 +802,7 @@ bool ht_format_viewer::show_search_result(ht_search_result *r)
 	return false;
 }
 
-bool ht_format_viewer::string_to_qword(const String &string, uint64 *q)
+bool UiFormatViewer::string_to_qword(const String &string, uint64 *q)
 {
 	eval_scalar r;
 	if (string.containsChar(0)) {
@@ -824,30 +824,30 @@ bool ht_format_viewer::string_to_qword(const String &string, uint64 *q)
 	return false;
 }
 
-bool ht_format_viewer::string_to_pos(const String &string, viewer_pos *pos)
+bool UiFormatViewer::string_to_pos(const String &string, viewer_pos *pos)
 {
 	uint64 q;
 	if (!string_to_qword(string, &q)) return false;
 	return qword_to_pos(q, pos);
 }
 
-bool ht_format_viewer::string_to_offset(const String &string, FileOfs *ofs)
+bool UiFormatViewer::string_to_offset(const String &string, FileOfs *ofs)
 {
 	uint64 q;
 	if (!string_to_qword(string, &q)) return false;
 	return qword_to_offset(q, ofs);
 }
 
-Object *ht_format_viewer::vstate_create()
+Object *UiFormatViewer::vstate_create()
 {
 	return NULL;
 }
 
-void ht_format_viewer::vstate_restore(Object *view_state)
+void UiFormatViewer::vstate_restore(Object *view_state)
 {
 }
 
-uint ht_format_viewer::vread(viewer_pos pos, void *buf, uint size)
+uint UiFormatViewer::vread(viewer_pos pos, void *buf, uint size)
 {
 	FileOfs o;
 	if (pos_to_offset(pos, &o)) {
@@ -856,12 +856,12 @@ uint ht_format_viewer::vread(viewer_pos pos, void *buf, uint size)
 	return 0;
 }
 
-ht_search_result *ht_format_viewer::vsearch(ht_search_request *search, viewer_pos start, viewer_pos end)
+ht_search_result *UiFormatViewer::vsearch(ht_search_request *search, viewer_pos start, viewer_pos end)
 {
 	return NULL;
 }
 
-void ht_format_viewer::vselect_add(viewer_pos start, viewer_pos end)
+void UiFormatViewer::vselect_add(viewer_pos start, viewer_pos end)
 {
 	FileOfs so, eo;
 	if (pos_to_offset(start, &so) && pos_to_offset(end, &eo)) {
@@ -869,12 +869,12 @@ void ht_format_viewer::vselect_add(viewer_pos start, viewer_pos end)
 	}
 }
 
-void ht_format_viewer::vselect_get(viewer_pos *start, viewer_pos *end)
+void UiFormatViewer::vselect_get(viewer_pos *start, viewer_pos *end)
 {
 	HT_ERROR("NYI!");
 }
 
-void ht_format_viewer::vselect_set(viewer_pos start, viewer_pos end)
+void UiFormatViewer::vselect_set(viewer_pos start, viewer_pos end)
 {
 	FileOfs so, eo;
 	if (pos_to_offset(start, &so) && pos_to_offset(end, &eo)) {
@@ -882,7 +882,7 @@ void ht_format_viewer::vselect_set(viewer_pos start, viewer_pos end)
 	}
 }
 
-uint ht_format_viewer::vwrite(viewer_pos pos, void *buf, uint size)
+uint UiFormatViewer::vwrite(viewer_pos pos, void *buf, uint size)
 {
 	FileOfs o;
 	if (pos_to_offset(pos, &o)) {
@@ -961,11 +961,11 @@ public:
 	}
 };
 
-void ht_uformat_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group)
+void ht_uformat_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group)
 {
 	tagpal.data = NULL;
 	tagpal.size = 0;
-	ht_format_viewer::init(b, desc, caps, file, format_group);
+	UiFormatViewer::init(b, desc, caps, file, format_group);
 	VIEW_DEBUG_NAME("ht_uformat_view");
 	first_sub = NULL;
 	last_sub = NULL;
@@ -993,7 +993,7 @@ void ht_uformat_viewer::done()
 	edit_end();
 	clear_subs();
 	free(tagpal.data);
-	ht_format_viewer::done();
+	UiFormatViewer::done();
 }
 
 int ht_uformat_viewer::address_input(const char *title, char *result, int limit, uint32 histid)
@@ -2195,7 +2195,7 @@ const char *ht_uformat_viewer::func(uint i, bool execute)
 			return "viewin...";
 		}
 	}
-	return ht_format_viewer::func(i, execute);
+	return UiFormatViewer::func(i, execute);
 }
 
 vcp ht_uformat_viewer::getcolor_tag(uint pal_index)
@@ -2898,7 +2898,7 @@ void ht_uformat_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 	}
-	ht_format_viewer::handlemsg(msg);
+	UiFormatViewer::handlemsg(msg);
 }
 
 void ht_uformat_viewer::insertsub(ht_sub *sub)
@@ -3081,7 +3081,7 @@ void ht_uformat_viewer::render_tagstring_desc(const char **string, int *length, 
 
 void ht_uformat_viewer::reloadpalette()
 {
-	ht_format_viewer::reloadpalette();
+	UiFormatViewer::reloadpalette();
 	free(tagpal.data);
 	tagpal.data = NULL;
 	load_pal(palclasskey_tags, palkey_tags_default, &tagpal);
@@ -3508,7 +3508,7 @@ void ht_uformat_viewer::select_mode_post(bool lastpos)
 uint ht_uformat_viewer::pwrite(FileOfs ofs, void *buf, uint size)
 {
 	cursorline_dirty();
-	return ht_format_viewer::pwrite(ofs, buf, size);
+	return UiFormatViewer::pwrite(ofs, buf, size);
 }
 
 bool ht_uformat_viewer::ref()
@@ -4220,10 +4220,10 @@ static int ht_linear_func_readbyte(eval_scalar *result, eval_int *offset)
 {
 	struct context_t {
 		ht_linear_sub *sub;
-		ht_format_viewer *fv;
+		UiFormatViewer *fv;
 		int i, o;
 	};
-	ht_format_viewer *f=((context_t*)eval_get_context())->fv;
+	UiFormatViewer *f=((context_t*)eval_get_context())->fv;
 	byte b;
 	if (f->pread(offset->value, &b, 1) != 1) {
 		set_eval_error("i/o error (requested %d, read %d from ofs 0x%08qx)", 1, 0, offset->value);
@@ -4237,10 +4237,10 @@ static int ht_linear_func_readstring(eval_scalar *result, eval_int *offset, eval
 {
 	struct context_t {
 		ht_linear_sub *sub;
-		ht_format_viewer *fv;
+		UiFormatViewer *fv;
 		int i, o;
 	};
-	ht_format_viewer *f = ((context_t*)eval_get_context())->fv;
+	UiFormatViewer *f = ((context_t*)eval_get_context())->fv;
 
 	uint l = len->value;
 	void *buf = malloc(l);	/* FIXME: may be too slow... */
@@ -4277,7 +4277,7 @@ static int ht_linear_func_entropy2(eval_scalar *result, eval_str *buf)
 
 struct search_expr_eval_context_t {
 	ht_sub *sub;
-	ht_format_viewer *fv;
+	UiFormatViewer *fv;
 	FileOfs i, o;
 };
 
@@ -4311,7 +4311,7 @@ public:
 	/* in */
 	ht_search_request *request;
 	ht_sub *sub;
-	ht_format_viewer *fv;
+	UiFormatViewer *fv;
 	FileOfs start;
 	FileOfs end;
 	int i;

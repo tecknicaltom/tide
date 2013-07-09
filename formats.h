@@ -27,7 +27,7 @@ struct format_viewer_if;
 #include "htformat.h"
 
 struct format_viewer_if {
-	UiView *(*init)(Bounds *b, File *file, ht_format_group *group);
+	UiView *(*init)(Bounds *b, File *file, UiFormatGroup *group);
 	void (*done)(UiView *view);
 };
 

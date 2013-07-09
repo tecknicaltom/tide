@@ -29,7 +29,7 @@
 
 extern format_viewer_if htdisasm_if;
 
-void dialog_assemble(ht_format_viewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, int want_length);
+void dialog_assemble(UiFormatViewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Assembler *a, Disassembler *disasm, const char *default_str, int want_length);
 
 /*
  *	CLASS ht_disasm_viewer
@@ -46,7 +46,7 @@ protected:
 /* new */
 	virtual	ht_disasm_sub *get_disasm_sub();
 public:
-		void init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *format_group, Assembler *a, Disassembler *d, int t);
+		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Assembler *a, Disassembler *d, int t);
 	virtual void done();
 /* overwritten */
 	virtual	const char *func(uint i, bool execute);

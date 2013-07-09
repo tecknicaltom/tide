@@ -65,7 +65,7 @@ static int_hash elf_r_x86_64_type[] =
 	{0, 0}
 };
 
-static UiView *htelfreloctable_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htelfreloctable_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 

@@ -80,7 +80,7 @@ struct ht_ne_shared_data {
 	ht_aviewer *v_image;
 };
 
-class ht_ne: public ht_format_group {
+class ht_ne: public UiFormatGroup {
 protected:
 	bool loc_enum;
 
@@ -88,7 +88,7 @@ protected:
 		bool relocate(ht_reloc_file *rf);
 		bool relocate_single(ht_reloc_file *rf, uint seg, FileOfs ofs, uint type, uint flags, uint16 value_seg, uint16 value_ofs);
 public:
-		void init(Bounds *b, File *file, format_viewer_if **ifs, ht_format_group *format_group, FileOfs h);
+		void init(Bounds *b, File *file, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs h);
 	virtual	void done();
 /* overwritten */
 	virtual void loc_enum_start();

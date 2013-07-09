@@ -36,7 +36,7 @@ static format_viewer_if *htflt_ifs[] = {
 	0
 };
 
-static UiView *htflt_init(Bounds *b, File *file, ht_format_group *format_group)
+static UiView *htflt_init(Bounds *b, File *file, UiFormatGroup *format_group)
 {
 	byte ident[4];
 	file->seek(0);
@@ -57,9 +57,9 @@ format_viewer_if htflt_if = {
 /*
  *	CLASS ht_flt
  */
-void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *format_group, FileOfs header_ofs)
+void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *format_group, FileOfs header_ofs)
 {
-	ht_format_group::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_FLT, f, false, true, 0, format_group);
+	UiFormatGroup::init(b, VO_SELECTABLE | VO_BROWSABLE | VO_RESIZE, DESC_FLT, f, false, true, 0, format_group);
 	VIEW_DEBUG_NAME("ht_flt");
 
 	String fn;
@@ -83,12 +83,12 @@ void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, ht_format_group *f
 	flt_shared->bss_start = flt_shared->header.data_end;
 	flt_shared->bss_end = flt_shared->header.bss_end;
 	/* init ifs */
-	ht_format_group::init_ifs(ifs);
+	UiFormatGroup::init_ifs(ifs);
 }
 
 void ht_flt::done()
 {
-	ht_format_group::done();
+	UiFormatGroup::done();
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)shared_data;
 	free(flt_shared);
 }

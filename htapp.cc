@@ -1223,7 +1223,7 @@ void ht_log::log(LogColor c, char *line)
 
 void ht_logviewer::init(Bounds *b, ht_window *w, ht_log *l, bool ol)
 {
-	ht_viewer::init(b, "log", 0);
+	UiViewer::init(b, "log", 0);
 	VIEW_DEBUG_NAME("ht_logviewer");
 	ofs = 0;
 	xofs = 0;
@@ -1238,7 +1238,7 @@ void ht_logviewer::done()
 	if (own_lines) {
 		delete lines;
 	}
-	ht_viewer::done();
+	UiViewer::done();
 }
 
 int ht_logviewer::cursor_up(int n)
@@ -1345,7 +1345,7 @@ void ht_logviewer::handlemsg(htmsg *msg)
 			}
 			break;
 	}
-	ht_viewer::handlemsg(msg);
+	UiViewer::handlemsg(msg);
 }
 
 void ht_logviewer::update()
@@ -1735,7 +1735,7 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char
 	k.y=0;
 	k.w-=2;
 	k.h-=2;
-	ht_format_group *format_group=new ht_format_group();
+	UiFormatGroup *format_group=new UiFormatGroup();
 	format_group->init(&k, VO_SELECTABLE | VO_RESIZE, VIEWERGROUP_NAME, file, true, true, format_viewer_ifs, NULL);
 
 	window->insert(format_group);

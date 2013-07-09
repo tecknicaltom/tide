@@ -161,7 +161,7 @@ static ht_mask_ptable pe32header_nt_dirs[] = {
 	{0, 0}
 };
 
-static UiView *htpeheader_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *htpeheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)group->get_shared_data();
 
@@ -272,13 +272,13 @@ format_viewer_if htpeheader_if = {
  *	CLASS ht_pe_header_viewer
  */
 
-void ht_pe_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, ht_format_group *group)
+void ht_pe_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group)
 {
 	ht_uformat_viewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_pe_header_viewer");
 }
 
-static ht_format_viewer *find_hex_viewer(UiGroup *group)
+static UiFormatViewer *find_hex_viewer(UiGroup *group)
 {
 	// FIXME: God forgive us...
 	UiGroup *vr_group = group;
@@ -286,7 +286,7 @@ static ht_format_viewer *find_hex_viewer(UiGroup *group)
 	UiView *c = vr_group->getfirstchild();
 	while (c) {
 		if (c->desc && strcmp(c->desc, DESC_HEX) == 0) {
-			return (ht_format_viewer*)c;
+			return (UiFormatViewer*)c;
 		}
 		c = c->next;
 	}
@@ -298,7 +298,7 @@ bool ht_pe_header_viewer::ref_sel(LINE_ID *id)
 	ht_pe_shared_data *pe_shared = (ht_pe_shared_data *)format_group->get_shared_data();
 	switch (id->id1) {
 		case 0: {
-			ht_format_viewer *hexv = find_hex_viewer(group);
+			UiFormatViewer *hexv = find_hex_viewer(group);
 			if (hexv) {
 				uint rva;
 				uint size;
@@ -338,7 +338,7 @@ bool ht_pe_header_viewer::ref_sel(LINE_ID *id)
 			}
 			break;
 		case 4: {
-			ht_format_viewer *hexv = find_hex_viewer(group);
+			UiFormatViewer *hexv = find_hex_viewer(group);
 			if (hexv) {
 				uint ofs;
 				uint size;

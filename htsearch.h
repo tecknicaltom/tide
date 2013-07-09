@@ -271,8 +271,8 @@ public:
 #define SEARCHMODE_VREGEX	4
 #define SEARCHMODE_EXPR		8
 
-ht_search_request *search_dialog(ht_format_viewer *format, uint searchmodes, viewer_pos *start, viewer_pos *end);
-uint replace_dialog(ht_format_viewer *format, uint searchmodes, bool *cancelled);
+ht_search_request *search_dialog(UiFormatViewer *format, uint searchmodes, viewer_pos *start, viewer_pos *end);
+uint replace_dialog(UiFormatViewer *format, uint searchmodes, bool *cancelled);
 
 class ht_search_bin_context: public Object {
 public:

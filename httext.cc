@@ -24,7 +24,7 @@
 
 #include <string.h>
 
-static UiView *httext_init(Bounds *b, File *file, ht_format_group *group)
+static UiView *httext_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	/* no httext for file > 5 MiB */
 	if (file->getSize() > 5*1024*1024) {
