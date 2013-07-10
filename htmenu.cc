@@ -65,7 +65,7 @@ static bool execute_submenu(int x, int y, ht_context_menu *m)
 				b.y = 0;
 			}
 		}
-		ht_menu_window *d = new ht_menu_window();
+		UiMenuWindow *d = new UiMenuWindow();
 		d->init(&b, m);
 		ht_menu_window_data a;
 		a.selected = curentry;
@@ -229,13 +229,13 @@ ht_context_menu_entry::~ht_context_menu_entry()
 }
 
 /*
- *	CLASS ht_menu
+ *	CLASS UiMenu
  */
 
-void ht_menu::init(Bounds *b)
+void UiMenu::init(Bounds *b)
 {
 	UiView::init(b, VO_OWNBUFFER | VO_POSTPROCESS | VO_RESIZE, "menu");
-	VIEW_DEBUG_NAME("ht_menu");
+	VIEW_DEBUG_NAME("UiMenu");
 
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
 
@@ -248,36 +248,36 @@ void ht_menu::init(Bounds *b)
 	context_menu_hack2 = false;
 }
 
-void ht_menu::done()
+void UiMenu::done()
 {
 	delete menu;
 	UiView::done();
 }
 
-const char *ht_menu::defaultpalette()
+const char *UiMenu::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-const char *ht_menu::defaultpaletteclass()
+const char *UiMenu::defaultpaletteclass()
 {
 	return palclasskey_generic;
 }
 
-ht_context_menu *ht_menu::get_context_menu(int i)
+ht_context_menu *UiMenu::get_context_menu(int i)
 {
 	ht_context_menu *q = (ht_context_menu*)(*menu)[i];
 	if (context_menu_hack && (i == localmenu) && !q) return context_menu_hack;
 	return q;
 }
 
-void ht_menu::getminbounds(int *width, int *height)
+void UiMenu::getminbounds(int *width, int *height)
 {
 	*width = 1;
 	*height = 1;
 }
 
-void ht_menu::draw()
+void UiMenu::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	int c = count();
@@ -297,7 +297,7 @@ void ht_menu::draw()
 	}
 }
 
-void ht_menu::execute_menu(int i)
+void UiMenu::execute_menu(int i)
 {
 	curmenu = i;
 	int curentry = 0;
@@ -310,7 +310,7 @@ void ht_menu::execute_menu(int i)
 		b.y = 1;
 		b.w = m->width + 4;
 		b.h = m->count() + 2;
-		ht_menu_window *d = new ht_menu_window();
+		UiMenuWindow *d = new UiMenuWindow();
 		d->init(&b, m);
 		ht_menu_window_data a;
 		a.selected = curentry;
@@ -348,7 +348,7 @@ void ht_menu::execute_menu(int i)
 	dirtyview();
 }
 
-void ht_menu::handlemsg(htmsg *msg)
+void UiMenu::handlemsg(htmsg *msg)
 {
 	if (msg->type == mt_postprocess) {
 		if (msg->msg == msg_keypressed) {
@@ -406,7 +406,7 @@ void ht_menu::handlemsg(htmsg *msg)
 	UiView::handlemsg(msg);
 }
 
-bool ht_menu::handle_key_context_menu(ht_context_menu *a, int k)
+bool UiMenu::handle_key_context_menu(ht_context_menu *a, int k)
 {
 	ht_context_menu_entry *e = a->enum_entry_first();
 	while (e) {
@@ -424,14 +424,14 @@ bool ht_menu::handle_key_context_menu(ht_context_menu *a, int k)
 	return false;
 }
 
-int ht_menu::count()
+int UiMenu::count()
 {
 	ht_context_menu *q = (ht_context_menu*)(*menu)[localmenu];
 	if (context_menu_hack) return menu->count() + !!(localmenu != -1 && !q);
 	return menu->count();
 }
 
-void ht_menu::delete_local_menu()
+void UiMenu::delete_local_menu()
 {
 	if (localmenu != -1) {
 /*		if (last_context_menu_hack) {
@@ -455,12 +455,12 @@ void ht_menu::delete_local_menu()
 	}
 }
 
-void ht_menu::insert_local_menu()
+void UiMenu::insert_local_menu()
 {
 	localmenu = menu->count();
 }
 
-void ht_menu::insert_menu(ht_context_menu *m)
+void UiMenu::insert_menu(ht_context_menu *m)
 {
 	int namelen = strlen(m->get_name());
 
@@ -470,7 +470,7 @@ void ht_menu::insert_menu(ht_context_menu *m)
 	lastmenux += namelen+1;
 }
 
-bool ht_menu::set_local_menu(ht_context_menu *m)
+bool UiMenu::set_local_menu(ht_context_menu *m)
 {
 	if (localmenu == -1) return false;
 	if (context_menu_hack2) {
@@ -663,7 +663,7 @@ void UiContextMenuWindowBody::handlemsg(htmsg *msg)
 					if (s >= 'A' && s <= 'Z') s += 'a'-'A';
 					if (s==k) {
 						selected=i;
-						((ht_dialog*)group->group)->sendmsg(msg_button_pressed, button_ok);
+						((UiDialog*)group->group)->sendmsg(msg_button_pressed, button_ok);
 						dirtyview();
 						clearmsg(msg);
 						return;
@@ -715,13 +715,13 @@ void UiContextMenuWindowBody::setdata(ObjectStream &s)
 }
 
 /*
- *	CLASS ht_menu_window
+ *	CLASS UiMenuWindow
  */
 
-void ht_menu_window::init(Bounds *b, ht_context_menu *m)
+void UiMenuWindow::init(Bounds *b, ht_context_menu *m)
 {
-	ht_dialog::init(b, 0, 0);
-	VIEW_DEBUG_NAME("ht_menu_window");
+	UiDialog::init(b, 0, 0);
+	VIEW_DEBUG_NAME("UiMenuWindow");
 
 	Bounds c=*b;
 	c.x=0;
@@ -734,17 +734,17 @@ void ht_menu_window::init(Bounds *b, ht_context_menu *m)
 	insert(body);
 }
 
-void ht_menu_window::done()
+void UiMenuWindow::done()
 {
-	ht_dialog::done();
+	UiDialog::done();
 }
 
-void ht_menu_window::getdata(ObjectStream &s)
+void UiMenuWindow::getdata(ObjectStream &s)
 {
 	body->getdata(s);
 }
 
-void ht_menu_window::handlemsg(htmsg *msg)
+void UiMenuWindow::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_button_pressed) {
 		switch (msg->data1.integer) {
@@ -770,10 +770,10 @@ void ht_menu_window::handlemsg(htmsg *msg)
 			}
 		}
 	}
-	ht_dialog::handlemsg(msg);
+	UiDialog::handlemsg(msg);
 }
 
-void ht_menu_window::setdata(ObjectStream &s)
+void UiMenuWindow::setdata(ObjectStream &s)
 {
 	body->setdata(s);
 }
@@ -798,12 +798,12 @@ void UiMenuWindowBody::handlemsg(htmsg *msg)
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 			case K_Left:
-				((ht_dialog*)baseview)->setstate(ds_term_ok, button_left);
+				((UiDialog*)baseview)->setstate(ds_term_ok, button_left);
 				dirtyview();
 				clearmsg(msg);
 				return;
 			case K_Right:
-				((ht_dialog*)baseview)->setstate(ds_term_ok, button_right);
+				((UiDialog*)baseview)->setstate(ds_term_ok, button_right);
 				dirtyview();
 				clearmsg(msg);
 				return;

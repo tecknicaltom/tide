@@ -1005,7 +1005,7 @@ int ht_uformat_viewer::address_input(const char *title, char *result, int limit,
 	b.w = 60;
 	b.h = 8;
 
-	ht_dialog *dialog = new ht_dialog();
+	UiDialog *dialog = new UiDialog();
 	dialog->init(&b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	UiStrInputfield *input;
@@ -3556,7 +3556,7 @@ bool ht_uformat_viewer::ref_desc(ID id, FileOfs offset, uint size, bool bigendia
 		b.h = 14;
 		b.x = (screen->w - b.w)/2;
 		b.y = (screen->h - b.h)/2;
-		ht_dialog *g=new ht_dialog();
+		UiDialog *g=new UiDialog();
 		g->init(&b, "desc", FS_KILLER | FS_MOVE);
 
 		b.x = 0;
@@ -3649,7 +3649,7 @@ bool ht_uformat_viewer::ref_flags(ID id, FileOfs offset)
 		b.h = 14;
 		b.x = (screen->w-b.w)/2;
 		b.y = (screen->h-b.h)/2;
-		ht_dialog *d = new ht_dialog();
+		UiDialog *d = new UiDialog();
 		d->init(&b, (flags->bitidx==-1) ? flags->desc : 0, FS_KILLER | FS_TITLE | FS_MOVE);
 
 		b.x = 0;
@@ -3753,7 +3753,7 @@ ht_search_result *ht_uformat_viewer::vsearch(ht_search_request *request, viewer_
 		/* build progress indicator */
 		Bounds b;
 		get_std_progress_indicator_metrics(&b);
-		ht_progress_indicator *progress_indicator=new ht_progress_indicator();
+		UiProgressIndicator *progress_indicator=new UiProgressIndicator();
 		progress_indicator->init(&b, "ESC to cancel");
 		uint lines=0;
 

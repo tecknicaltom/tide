@@ -29,7 +29,7 @@ struct ht_treeview_data {
 	DDECL_PTR(void, selected);
 };
 
-class ht_treeview: public UiView {
+class UiTreeview: public UiView {
 public:
 	int	delta_x, delta_y;
 	int	maxsize_x, maxsize_y;
@@ -76,7 +76,7 @@ struct static_node {
 	Object		*data;
 };
 
-class ht_static_treeview: public ht_treeview {
+class UiStaticTreeview: public UiTreeview {
 public:
 	static_node	*root;
 		void	init(Bounds *b, const char *desc);

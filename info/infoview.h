@@ -81,10 +81,10 @@ public:
 };
 
 /*
- *	CLASS ht_info_viewer
+ *	CLASS UiInfoViewer
  */
 
-class ht_info_viewer: public ht_text_viewer {
+class UiInfoViewer: public UiTextViewer {
 protected:
 	char *cwd;
 	char *file;

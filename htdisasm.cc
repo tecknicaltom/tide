@@ -98,10 +98,10 @@ void dialog_assemble(UiFormatViewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Asse
 			b.w = 60;
 			b.h = 15;
 			center_bounds(&b);
-			ht_dialog *dialog = new ht_dialog();
+			UiDialog *dialog = new UiDialog();
 			dialog->init(&b, "choose opcode", FS_KILLER | FS_TITLE | FS_MOVE);
 			b.assign(1, 0, 56, 1);
-			ht_listbox_title *text = new ht_listbox_title();
+			UiListboxTitle *text = new UiListboxTitle();
 			text->init(&b);
 			text->setText(2, "opcode", "disassembly");
 			dialog->insert(text);

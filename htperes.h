@@ -27,7 +27,7 @@
  *	CLASS ht_pe_resource_viewer
  */
 
-class ht_pe_resource_viewer: public ht_static_treeview {
+class ht_pe_resource_viewer: public UiStaticTreeview {
 private:
 /* new */
 	virtual	Object *vstate_create();

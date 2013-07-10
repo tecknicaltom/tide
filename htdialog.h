@@ -29,7 +29,7 @@
 #include "io/keyb.h"
 
 /*
- *	CLASS ht_dialog
+ *	CLASS UiDialog
  */
 
 #define ds_normal			0
@@ -51,7 +51,7 @@ public:
 		    ht_queued_msg(UiView *target, htmsg &msg);
 };
 
-class ht_dialog: public ht_window {
+class UiDialog: public UiWindow {
 protected:
 	int state;
 	int return_val;
@@ -62,8 +62,8 @@ protected:
 	virtual	const char *defaultpalette();
 			ht_queued_msg *dequeuemsg();
 public:
-			ht_dialog() {};
-			ht_dialog(BuildCtorArg&a): ht_window(a) {};
+			UiDialog() {};
+			UiDialog(BuildCtorArg&a): UiWindow(a) {};
 		void	init(Bounds *b, const char *desc, uint framestyle);
 	virtual	void	done();
 	/* overwritten */
@@ -252,12 +252,12 @@ public:
 
 
 /*
- *	CLASS ht_listbox_title
+ *	CLASS UiListboxTitle
  */
 
 class UiListbox;
 
-class ht_listbox_title: public UiDialogWidget {
+class UiListboxTitle: public UiDialogWidget {
 public:
 	UiListbox *listbox;
 protected:
@@ -308,14 +308,14 @@ public:
 	int	cols;
 	int	*widths;
 
-	ht_scrollbar *scrollbar;
+	UiScrollbar *scrollbar;
 	bool	mScrollbarEnabled;
-	ht_listbox_title *title;
+	UiListboxTitle *title;
 
 public:
 		void		init(Bounds *b, uint Listboxcaps=LISTBOX_QUICKFIND);
 	virtual	void		done();
-		void		attachTitle(ht_listbox_title *title);
+		void		attachTitle(UiListboxTitle *title);
 		void		adjustPosHack();
 		void		adjustScrollbar();
 	virtual	int		calcCount() = 0;
@@ -465,7 +465,7 @@ struct ht_listpopup_dialog_data {
 	DDECL_PTR(char, cursor_string);
 };
 
-class ht_listpopup_dialog: public ht_dialog {
+class ht_listpopup_dialog: public UiDialog {
 protected:
 	UiListbox *listbox;
 	virtual	void init_text_listbox(Bounds *b);
@@ -563,10 +563,10 @@ public:
 };
 
 /*
- *	CLASS ht_progress_indicator
+ *	CLASS UiProgressIndicator
  */
 
-class ht_progress_indicator: public ht_window {
+class UiProgressIndicator: public UiWindow {
 protected:
 	/* overwritten */
 	virtual	const char *defaultpalette();

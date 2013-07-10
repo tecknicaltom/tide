@@ -1308,7 +1308,7 @@ void	ht_xgroup::store(ObjectStream &s) const
 }
 
 /*
- *	CLASS ht_scrollbar
+ *	CLASS UiScrollbar
  */
 
 bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psize)
@@ -1325,10 +1325,10 @@ bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psiz
 	return true;
 }
 
-void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
+void UiScrollbar::init(Bounds *b, palette *p, bool isv)
 {
 	UiView::init(b, VO_RESIZE, 0);
-	VIEW_DEBUG_NAME("ht_scrollbar");
+	VIEW_DEBUG_NAME("UiScrollbar");
 
 	pstart = 0;
 	psize = 0;
@@ -1346,26 +1346,26 @@ void ht_scrollbar::init(Bounds *b, palette *p, bool isv)
 	enable();	// enabled by default
 }
 
-void ht_scrollbar::done()
+void UiScrollbar::done()
 {
 	UiView::done();
 }
 
-void ht_scrollbar::enable()
+void UiScrollbar::enable()
 {
 	enable_buffering();
 	UiView::enable();
 	dirtyview();
 }
 
-void ht_scrollbar::disable()
+void UiScrollbar::disable()
 {
 	disable_buffering();
 	UiView::disable();
 	dirtyview();
 }
 
-void ht_scrollbar::draw()
+void UiScrollbar::draw()
 {
 	if (enabled) {
 		vcp color = getcolorv(gpal, palidx_generic_scrollbar);
@@ -1391,18 +1391,18 @@ void ht_scrollbar::draw()
 	}
 }
 
-void ht_scrollbar::getminbounds(int *width, int *height)
+void UiScrollbar::getminbounds(int *width, int *height)
 {
 	*width = 1;
 	*height = 1;
 }
 
-ObjectID ht_scrollbar::getObjectID() const
+ObjectID UiScrollbar::getObjectID() const
 {
 	return ATOM_HT_SCROLLBAR;
 }
 
-void ht_scrollbar::setpos(int ps, int pz)
+void UiScrollbar::setpos(int ps, int pz)
 {
 	pstart = ps;
 	psize = pz;
@@ -1434,7 +1434,7 @@ void UiFrame::draw()
 {
 	int cornerul, cornerur, cornerll, cornerlr;
 	int lineh, linev;
-	ht_window *w = (ht_window*)group;
+	UiWindow *w = (UiWindow*)group;
 	if (framestate != FST_MOVE && framestate != FST_RESIZE) {
 		setframestate(w->focused ? FST_FOCUSED : FST_UNFOCUSED);
 	}
@@ -1583,13 +1583,13 @@ void UiFrame::settext(const char *text)
 }
 
 /*
- *	CLASS ht_window
+ *	CLASS UiWindow
  */
 
-void	ht_window::init(Bounds *b, const char *desc, uint framestyle, uint num)
+void	UiWindow::init(Bounds *b, const char *desc, uint framestyle, uint num)
 {
 	UiGroup::init(b, VO_SELECTABLE | VO_SELBOUND | VO_BROWSABLE, desc);
-	VIEW_DEBUG_NAME("ht_window");
+	VIEW_DEBUG_NAME("UiWindow");
 	number=num;
 	hscrollbar=NULL;
 	vscrollbar=NULL;
@@ -1604,7 +1604,7 @@ void	ht_window::init(Bounds *b, const char *desc, uint framestyle, uint num)
 	setframe(f);
 }
 
-void ht_window::done()
+void UiWindow::done()
 {
 	pindicator=NULL;
 	hscrollbar=NULL;
@@ -1612,13 +1612,13 @@ void ht_window::done()
 	UiGroup::done();
 }
 
-void ht_window::draw()
+void UiWindow::draw()
 {
 	vcp c=getcolor(palidx_generic_body);
 	clear(c);
 }
 
-void ht_window::getclientarea(Bounds *b)
+void UiWindow::getclientarea(Bounds *b)
 {
 	getbounds(b);
 	if (frame) {
@@ -1629,17 +1629,17 @@ void ht_window::getclientarea(Bounds *b)
 	}
 }
 
-uint ht_window::getnumber()
+uint UiWindow::getnumber()
 {
 	return number;
 }
 
-UiFrame *ht_window::getframe()
+UiFrame *UiWindow::getframe()
 {
 	return frame;
 }
 
-void ht_window::handlemsg(htmsg *msg)
+void UiWindow::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_keypressed:
@@ -1735,18 +1735,18 @@ void ht_window::handlemsg(htmsg *msg)
 	UiGroup::handlemsg(msg);
 }
 
-void ht_window::insert(UiView *view)
+void UiWindow::insert(UiView *view)
 {
 	if (frame) view->move(1, 1);
 	UiGroup::insert(view);
 }
 
-void ht_window::load(ObjectStream &s)
+void UiWindow::load(ObjectStream &s)
 {
 	UiGroup::load(s);
 }
 
-bool ht_window::next_action_state()
+bool UiWindow::next_action_state()
 {
 #define wstate_count 3
 	int ass[wstate_count] = { WAC_NORMAL, WAC_MOVE, WAC_RESIZE };
@@ -1773,19 +1773,19 @@ bool ht_window::next_action_state()
 	return false;
 }
 
-ObjectID ht_window::getObjectID() const
+ObjectID UiWindow::getObjectID() const
 {
 	return ATOM_HT_WINDOW;
 }
 
-void ht_window::receivefocus()
+void UiWindow::receivefocus()
 {
 	htmsg m;
 	m.msg = msg_contextmenuquery;
 	m.type = mt_empty;
 	sendmsg(&m);
 	if (m.msg == msg_retval) {
-		ht_menu *q = (ht_menu*)((ht_app*)app)->menu;
+		UiMenu *q = (UiMenu*)((ht_app*)app)->menu;
 		ht_context_menu *n = (ht_context_menu*)m.data1.ptr;
 		if (q) {
 			if (!q->set_local_menu(n)) {
@@ -1802,7 +1802,7 @@ void ht_window::receivefocus()
 	if (frame) frame->setstyle(frame->getstyle() | FS_THICK);
 }
 
-void ht_window::redraw()
+void UiWindow::redraw()
 {
 	htmsg m;
 
@@ -1858,9 +1858,9 @@ void ht_window::redraw()
 	UiGroup::redraw();
 }
 
-void ht_window::releasefocus()
+void UiWindow::releasefocus()
 {
-	ht_menu *q = (ht_menu*)((ht_app*)app)->menu;
+	UiMenu *q = (UiMenu*)((ht_app*)app)->menu;
 	if (q) {
 		q->delete_local_menu();
 		q->sendmsg(msg_dirtyview);
@@ -1870,7 +1870,7 @@ void ht_window::releasefocus()
 	UiGroup::releasefocus();
 }
 
-void ht_window::setframe(UiFrame *newframe)
+void UiWindow::setframe(UiFrame *newframe)
 {
 	if (frame) {
 		UiGroup::remove(frame);
@@ -1890,14 +1890,14 @@ void ht_window::setframe(UiFrame *newframe)
 	frame = newframe;
 }
 
-void ht_window::setnumber(uint aNumber)
+void UiWindow::setnumber(uint aNumber)
 {
 	if (frame) frame->setnumber(aNumber);
 	number = aNumber;
 	dirtyview();
 }
 
-void ht_window::sethscrollbar(ht_scrollbar *s)
+void UiWindow::sethscrollbar(UiScrollbar *s)
 {
 	if (hscrollbar) remove(hscrollbar);
 	hscrollbar = s;
@@ -1905,7 +1905,7 @@ void ht_window::sethscrollbar(ht_scrollbar *s)
 	putontop(hscrollbar);
 }
 
-void ht_window::setpindicator(UiText *p)
+void UiWindow::setpindicator(UiText *p)
 {
 	if (pindicator) remove(pindicator);
 	pindicator = p;
@@ -1913,14 +1913,14 @@ void ht_window::setpindicator(UiText *p)
 	putontop(pindicator);
 }
 
-void ht_window::settitle(char *title)
+void UiWindow::settitle(char *title)
 {
 	free(desc);
 	desc = ht_strdup(title);
 	if (frame) frame->settext(title);
 }
 
-void ht_window::setvscrollbar(ht_scrollbar *s)
+void UiWindow::setvscrollbar(UiScrollbar *s)
 {
 	if (vscrollbar) remove(vscrollbar);
 	vscrollbar = s;
@@ -1928,25 +1928,25 @@ void ht_window::setvscrollbar(ht_scrollbar *s)
 	putontop(vscrollbar);
 }
 
-void	ht_window::store(ObjectStream &s) const
+void	UiWindow::store(ObjectStream &s) const
 {
 	UiGroup::store(s);
 }
 
 /*
- *	CLASS ht_vbar
+ *	CLASS UiVBar
  */
 
-void ht_vbar::draw()
+void UiVBar::draw()
 {
 	fill(0, 0, 1, size.h, getcolor(palidx_generic_body), GC_1VLINE, CP_GRAPHICAL);
 }
 
 /*
- *	CLASS ht_hbar
+ *	CLASS UiHBar
  */
 
-void ht_hbar::draw()
+void UiHBar::draw()
 {
 	fill(0, 0, size.w, 1, getcolor(palidx_generic_body), GC_1HLINE, CP_GRAPHICAL);
 }
@@ -1955,8 +1955,8 @@ void ht_hbar::draw()
 BUILDER(ATOM_HT_VIEW, UiView, Object);
 BUILDER(ATOM_HT_GROUP, UiGroup, UiView);
 BUILDER(ATOM_HT_XGROUP, ht_xgroup, UiGroup);
-BUILDER(ATOM_HT_WINDOW, ht_window, UiGroup);
-BUILDER(ATOM_HT_SCROLLBAR, ht_scrollbar, UiView);
+BUILDER(ATOM_HT_WINDOW, UiWindow, UiGroup);
+BUILDER(ATOM_HT_SCROLLBAR, UiScrollbar, UiView);
 
 /*
  *	INIT
@@ -1967,8 +1967,8 @@ bool init_obj()
 	REGISTER(ATOM_HT_VIEW, UiView);
 	REGISTER(ATOM_HT_GROUP, UiGroup);
 	REGISTER(ATOM_HT_XGROUP, ht_xgroup);
-	REGISTER(ATOM_HT_WINDOW, ht_window);
-	REGISTER(ATOM_HT_SCROLLBAR, ht_scrollbar);
+	REGISTER(ATOM_HT_WINDOW, UiWindow);
+	REGISTER(ATOM_HT_SCROLLBAR, UiScrollbar);
 	return true;
 }
 
@@ -1981,8 +1981,8 @@ void done_obj()
 	UNREGISTER(ATOM_HT_VIEW, UiView);
 	UNREGISTER(ATOM_HT_GROUP, UiGroup);
 	UNREGISTER(ATOM_HT_XGROUP, ht_xgroup);
-	UNREGISTER(ATOM_HT_WINDOW, ht_window);
+	UNREGISTER(ATOM_HT_WINDOW, UiWindow);
 	UNREGISTER(ATOM_HT_FRAME, UiFrame);
-	UNREGISTER(ATOM_HT_SCROLLBAR, ht_scrollbar);
+	UNREGISTER(ATOM_HT_SCROLLBAR, UiScrollbar);
 }
 

@@ -28,7 +28,7 @@
  *	CLASS ht_blockop_dialog
  */
 
-class ht_blockop_dialog: public ht_dialog {
+class ht_blockop_dialog: public UiDialog {
 protected:
 	UiStrInputfield *start;
 	UiStrInputfield *end;

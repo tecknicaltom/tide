@@ -78,7 +78,7 @@ public:
 
 static File *peresource_file;
 static FileOfs peresource_dir_ofs;
-static ht_static_treeview *peresource_tree;
+static UiStaticTreeview *peresource_tree;
 static char peresource_string[128];
 static pe_section_headers *peresource_section_headers;
 
@@ -218,13 +218,13 @@ format_viewer_if htperesources_if = {
 
 void ht_pe_resource_viewer::init(Bounds *b, const char *desc)
 {
-	ht_static_treeview::init(b, desc);
+	UiStaticTreeview::init(b, desc);
 	VIEW_DEBUG_NAME("ht_pe_resource_viewer");
 }
 
 void ht_pe_resource_viewer::done()
 {
-	ht_static_treeview::done();
+	UiStaticTreeview::done();
 }
 
 void ht_pe_resource_viewer::handlemsg(htmsg *msg)
@@ -235,7 +235,7 @@ void ht_pe_resource_viewer::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			return;
 	}
-	ht_static_treeview::handlemsg(msg);
+	UiStaticTreeview::handlemsg(msg);
 }
 
 void ht_pe_resource_viewer::select_node(void *node)

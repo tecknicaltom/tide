@@ -209,7 +209,7 @@ struct ht_search_dialog_mode {
 
 #define MAX_SEARCH_DIALOG_MODES 16
 
-class ht_search_dialog: public ht_dialog {
+class ht_search_dialog: public UiDialog {
 protected:
 	UiListPopup *search_mode_popup;
 

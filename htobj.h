@@ -320,17 +320,17 @@ public:
 };
 
 /*
- *	CLASS ht_scrollbar
+ *	CLASS UiScrollbar
  */
 
-class ht_scrollbar: public UiView {
+class UiScrollbar: public UiView {
 protected:
 	int pstart, psize;
 	palette *gpal;
 	bool isvertical;
 public:
-		ht_scrollbar() {}
-		ht_scrollbar(BuildCtorArg&a): UiView(a) {};
+		UiScrollbar() {}
+		UiScrollbar(BuildCtorArg&a): UiView(a) {};
 
 		void init(Bounds *b, palette *gpal, bool isvertical);
 	virtual	void done();
@@ -395,18 +395,18 @@ public:
 };
 
 /*
- *	CLASS ht_window
+ *	CLASS UiWindow
  */
 
 #define WAC_NORMAL	0
 #define WAC_MOVE	1
 #define WAC_RESIZE	2
 
-class ht_window: public UiGroup {
+class UiWindow: public UiGroup {
 protected:
 	UiFrame *frame;
-	ht_scrollbar *hscrollbar;
-	ht_scrollbar *vscrollbar;
+	UiScrollbar *hscrollbar;
+	UiScrollbar *vscrollbar;
 	UiText *pindicator;
 	uint number;
 
@@ -414,8 +414,8 @@ protected:
 
 		bool next_action_state();
 public:
-		ht_window() {}
-		ht_window(BuildCtorArg&a): UiGroup(a) {};
+		UiWindow() {}
+		UiWindow(BuildCtorArg&a): UiGroup(a) {};
 
 		void init(Bounds *b, const char *desc, uint framestyle, uint number=0);
 	virtual	void done();
@@ -435,29 +435,29 @@ public:
 		void getclientarea(Bounds *b);
 		UiFrame *getframe();
 		void setframe(UiFrame *frame);
-		void sethscrollbar(ht_scrollbar *scrollbar);
+		void sethscrollbar(UiScrollbar *scrollbar);
 		void setpindicator(UiText *pindicator);
 		void settitle(char *title);
-		void setvscrollbar(ht_scrollbar *scrollbar);
+		void setvscrollbar(UiScrollbar *scrollbar);
 };
 
 bool scrollbar_pos(sint64 start, sint64 size, sint64 all, int *pstart, int *psize);
 
 /*
- *	CLASS ht_hbar
+ *	CLASS UiHBar
  */
 
-class ht_hbar: public UiView {
+class UiHBar: public UiView {
 public:
 	/* overwritten */
 	virtual	 void draw();
 };
 
 /*
- *	CLASS ht_vbar
+ *	CLASS UiVBar
  */
 
-class ht_vbar: public UiView {
+class UiVBar: public UiView {
 public:
 	/* overwritten */
 	virtual	 void draw();

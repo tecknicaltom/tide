@@ -32,7 +32,7 @@
 
 static int imsgbox(Bounds *b, int buttonmask, const char *title, bool modal, statictext_align align, char *buf)
 {
-	ht_dialog *dialog=new ht_dialog();
+	UiDialog *dialog=new UiDialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | (modal ? 0 : FS_MOVE | FS_RESIZE));
 
 	Bounds c;
@@ -194,7 +194,7 @@ bool inputbox(const char *title, const char *label, char *result, int limit, uin
 
 bool inputboxrect(Bounds *b, const char *title, const char *label, char *result, int limit, uint32 histid)
 {
-	ht_dialog *dialog=new ht_dialog();
+	UiDialog *dialog=new UiDialog();
 	dialog->init(b, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	UiStrInputfield *input;

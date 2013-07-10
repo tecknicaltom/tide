@@ -173,7 +173,7 @@ bool RegistryDataRaw::editdialog(const char *keyname)
 	b.x = (screen->w-b.w)/2;
 	b.y = (screen->h-b.h)/2;
 
-	ht_dialog *d = new ht_dialog();
+	UiDialog *d = new UiDialog();
 	d->init(&b, "edit data_raw", FS_TITLE | FS_KILLER);
 
 	if (d->run(false)) {

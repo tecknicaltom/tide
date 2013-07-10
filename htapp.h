@@ -35,7 +35,7 @@
 #define VIEWERGROUP_NAME			"viewergroup"
 
 /*
- *	CLASS ht_status
+ *	CLASS UiStatus
  */
 
 #define STATUS_DEFAULT_FORMAT "%a %L %t %d"
@@ -47,10 +47,10 @@
 #define STATUS_WORKBUFLEN 80
 
 /*
- *	CLASS ht_status
+ *	CLASS UiStatus
  */
 
-class ht_status: public UiView {
+class UiStatus: public UiView {
 protected:
 	int		idle_count;
 	char		*format;
@@ -70,10 +70,10 @@ private:
 };
 
 /*
- *	CLASS ht_keyline
+ *	CLASS UiKeyline
  */
 
-class ht_keyline: public UiView {
+class UiKeyline: public UiView {
 public:
 		void init(Bounds *b);
 	virtual	void done();
@@ -126,7 +126,7 @@ private:
 	ht_log *lines;
 	bool own_lines;
 	int ofs, xofs;
-	ht_window *window;
+	UiWindow *window;
 
 	/* new */
 	int cursor_up(int n);
@@ -134,7 +134,7 @@ private:
 	bool get_vscrollbar_pos(int *pstart, int *psize);
 	void update();
 public:
-		void init(Bounds *b, ht_window *window, ht_log *log, bool own_log);
+		void init(Bounds *b, UiWindow *window, ht_log *log, bool own_log);
 	virtual	void done();
 	/* overwritten */
 	virtual	void draw();
@@ -155,10 +155,10 @@ public:
 };
 
 /*
- *	CLASS ht_file_window
+ *	CLASS UiFileWindow
  */
 
-class ht_file_window: public ht_window {
+class UiFileWindow: public UiWindow {
 protected:
 	Array vstate_history;
 	int vstate_history_pos;
@@ -167,7 +167,7 @@ protected:
 public:
 	File	*file;
 
-		ht_file_window();
+		UiFileWindow();
 
 		void init(Bounds *b, const char *desc, uint framestyle, uint number, File *file);
 	virtual	void done();
@@ -246,10 +246,10 @@ public:
 };
 
 /*
- *	CLASS ht_project_window
+ *	CLASS UiProjectWindow
  */
 
-class ht_project_window: public ht_window {
+class UiProjectWindow: public UiWindow {
 protected:
 	ht_project **project;
 	UiProjectListbox *plb;
@@ -276,13 +276,13 @@ public:
 class ht_app_window_entry: public Object {
 public:
 	uint type;
-	ht_window *window;
+	UiWindow *window;
 	bool minimized;
 	uint number;
 	bool isfile;
 	FileLayer *layer;
 
-	ht_app_window_entry(ht_window *window, uint number, uint type, bool minimized, bool isfile, FileLayer *layer);
+	ht_app_window_entry(UiWindow *window, uint number, uint type, bool minimized, bool isfile, FileLayer *layer);
 	virtual int compareTo(const Object *) const;
 };
 
@@ -290,13 +290,13 @@ public:
  *	CLASS ht_app
  */
 
-class ht_app: public ht_dialog {
+class ht_app: public UiDialog {
 protected:
 	Container *windows;
 
 	Container *syntax_lexers;
 
-	ht_keyline *keyline;
+	UiKeyline *keyline;
 	UiDesktop *desktop;
 
 	UiGroup *battlefield;
@@ -304,14 +304,14 @@ protected:
 	bool exit_program;
 
 /* new */
-			ht_window *create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile);
-			ht_window *create_window_file_text(Bounds *b, FileLayer *file, const char *title, bool isfile);
+			UiWindow *create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile);
+			UiWindow *create_window_file_text(Bounds *b, FileLayer *file, const char *title, bool isfile);
 
 			bool accept_close_all_windows();
 			uint find_free_window_number();
 
-			uint get_window_number(ht_window *window);
-			ObjHandle get_window_listindex(ht_window *window);
+			uint get_window_number(UiWindow *window);
+			ObjHandle get_window_listindex(UiWindow *window);
 
 			void get_stdbounds_file(Bounds *b);
 			void get_stdbounds_tool(Bounds *b);
@@ -324,8 +324,8 @@ public:
 	UiView *menu;
 
 		ht_app() {};
-		ht_app(BuildCtorArg &a): ht_dialog(a) {};
-		void insert_window(ht_window *window, uint type, bool minimized, bool isfile, FileLayer *layer);
+		ht_app(BuildCtorArg &a): UiDialog(a) {};
+		void insert_window(UiWindow *window, uint type, bool minimized, bool isfile, FileLayer *layer);
 
 		void init(Bounds *b);
 	virtual	void done();
@@ -339,20 +339,20 @@ public:
 	virtual	int run(bool modal);
 	virtual	void store(ObjectStream &f) const;
 /* new */
-		ht_window *create_window_clipboard();
-		ht_window *create_window_file(const char *filename, uint mode, bool allow_duplicates);
-		ht_window *create_window_file_bin(const char *filename, bool allow_duplicates);
-		ht_window *create_window_file_text(const char *filename, bool allow_duplicates);
-		ht_window *create_window_help(const char *file, const char *node);
-		ht_window *create_window_log();
-		ht_window *create_window_ofm(const char *url1, const char *url2);
-		ht_window *create_window_project();
-		void delete_window(ht_window *window);
-		ht_window *get_window_by_filename(const char *filename);
-		ht_window *get_window_by_number(uint number);
-		ht_window *get_window_by_type(uint type);
+		UiWindow *create_window_clipboard();
+		UiWindow *create_window_file(const char *filename, uint mode, bool allow_duplicates);
+		UiWindow *create_window_file_bin(const char *filename, bool allow_duplicates);
+		UiWindow *create_window_file_text(const char *filename, bool allow_duplicates);
+		UiWindow *create_window_help(const char *file, const char *node);
+		UiWindow *create_window_log();
+		UiWindow *create_window_ofm(const char *url1, const char *url2);
+		UiWindow *create_window_project();
+		void delete_window(UiWindow *window);
+		UiWindow *get_window_by_filename(const char *filename);
+		UiWindow *get_window_by_number(uint number);
+		UiWindow *get_window_by_type(uint type);
 		UiView *popup_view_list(const char *dialog_title);
-		ht_window *popup_window_list(const char *dialog_title);
+		UiWindow *popup_window_list(const char *dialog_title);
 		void project_opencreate(const char *filename);
 		void tile(bool vertical);
 		void modal_resize();

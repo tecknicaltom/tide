@@ -137,7 +137,7 @@ static void dialog_fhelp(File *f)
 	b.y = (c.h - b.h) / 2;
 	c = b;
 
-	ht_dialog dialog;
+	UiDialog dialog;
 	dialog.init(&b, "eval() - functions", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	b.x = 0;
@@ -145,7 +145,7 @@ static void dialog_fhelp(File *f)
 	b.w -= 2;
 	b.h -= 2;
 
-	ht_text_viewer *v = new ht_text_viewer();
+	UiTextViewer *v = new UiTextViewer();
 	v->init(&b, true, t, NULL);
 
 	v->set_lexer(l, true);
@@ -157,7 +157,7 @@ static void dialog_fhelp(File *f)
 	b.y = 0;
 	b.w = 1;
 	b.h-=2;
-	ht_scrollbar *hs=new ht_scrollbar();
+	UiScrollbar *hs=new UiScrollbar();
 	hs->init(&b, &dialog.pal, true);
 
 	dialog.setvscrollbar(hs);
@@ -353,7 +353,7 @@ void eval_dialog(eval_func_handler func_handler, eval_symbol_handler symbol_hand
 	b.h=17;
 	b.x=(c.w-b.w)/2;
 	b.y=(c.h-b.h)/2;
-	ht_dialog *d=new ht_dialog();
+	UiDialog *d=new UiDialog();
 	c=b;
 	const char *hint="type integer, float or string expression to evaluate";
 

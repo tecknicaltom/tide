@@ -380,16 +380,16 @@ void ht_info_textfile::set_node(uint ofs, uint len)
 }
 
 /*
- *	CLASS ht_info_viewer
+ *	CLASS UiInfoViewer
  */
 
-void ht_info_viewer::init(Bounds *b)
+void UiInfoViewer::init(Bounds *b)
 {
 	MemoryFile *f = new MemoryFile();
 
 	ht_info_textfile *s = new ht_info_textfile(f, true, NULL);
 
-	ht_text_viewer::init(b, true, s, NULL);
+	UiTextViewer::init(b, true, s, NULL);
 	cwd = NULL;
 	file = NULL;
 	node = NULL;
@@ -397,28 +397,28 @@ void ht_info_viewer::init(Bounds *b)
 	history = new Array(true);
 }
 
-void ht_info_viewer::done()
+void UiInfoViewer::done()
 {
 	delete history;
 	delete xrefs;
 	free(cwd);
 	free(node);
 	free(file);
-	ht_text_viewer::done();
+	UiTextViewer::done();
 }
 
-const char *ht_info_viewer::defaultpalette()
+const char *UiInfoViewer::defaultpalette()
 {
 	return palkey_generic_help_default;
 }
 
-void ht_info_viewer::draw()
+void UiInfoViewer::draw()
 {
 	((ht_info_lexer*)lexer)->set_cursor(physical_cursorx(), cursory+top_line);
-	ht_text_viewer::draw();
+	UiTextViewer::draw();
 }
 
-int ht_info_viewer::find_node(const char *infotext, const char *node)
+int UiInfoViewer::find_node(const char *infotext, const char *node)
 {
 	const char *tags[] = {"File", "Node", "Prev", "Next", "Up"};
 #define NUM_NODE_TAGS (sizeof (tags) / sizeof (tags[0]))
@@ -458,12 +458,12 @@ int ht_info_viewer::find_node(const char *infotext, const char *node)
 	return -1;
 }
 
-bool ht_info_viewer::gotonode(const char *f, const char *n)
+bool UiInfoViewer::gotonode(const char *f, const char *n)
 {
 	return igotonode(f, n, true);
 }
 
-uint ht_info_viewer::readfile(char *fn, char **text)
+uint UiInfoViewer::readfile(char *fn, char **text)
 {
 	FILE *f = fopen(fn, "r");
 	if (!f) return 0;
@@ -482,7 +482,7 @@ uint ht_info_viewer::readfile(char *fn, char **text)
 	return len;
 }
 
-bool ht_info_viewer::igotonode(const char *f, const char *n, bool add2hist)
+bool UiInfoViewer::igotonode(const char *f, const char *n, bool add2hist)
 {
 	char *infotext = NULL;
 	char nfile[HT_NAME_MAX];
@@ -567,12 +567,12 @@ bool ht_info_viewer::igotonode(const char *f, const char *n, bool add2hist)
 	return false;
 }
 
-int ht_info_viewer::get_pindicator_str(char *buf, int max_len)
+int UiInfoViewer::get_pindicator_str(char *buf, int max_len)
 {
 	return ht_snprintf(buf, max_len, " %d:%d (%s) %s ", top_line+cursory+1, xofs+cursorx+1, file, node);
 }
 
-void ht_info_viewer::handlemsg(htmsg *msg)
+void UiInfoViewer::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
@@ -667,5 +667,5 @@ void ht_info_viewer::handlemsg(htmsg *msg)
 		}
 		}
 	}
-	ht_text_viewer::handlemsg(msg);
+	UiTextViewer::handlemsg(msg);
 }

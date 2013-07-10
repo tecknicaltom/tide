@@ -40,7 +40,7 @@ union text_search_pos {
 	FileOfs offset;
 };
 
-class ht_text_editor;
+class UiTextEditor;
 
 #define ATOM_HT_UNDO_DATA_INSERT	MAGIC32("UND\x01")
 #define ATOM_HT_UNDO_DATA_OVERWRITE	MAGIC32("UND\x02")
@@ -59,8 +59,8 @@ public:
 	virtual bool combine(ht_undo_data *ud);
 	virtual uint getsize() = 0;
 	virtual void gettext(char *text, uint maxlen) = 0;
-	virtual void apply(ht_text_editor *te) = 0;
-	virtual void unapply(ht_text_editor *te, bool *goto_only) = 0;
+	virtual void apply(UiTextEditor *te) = 0;
+	virtual void unapply(UiTextEditor *te, bool *goto_only) = 0;
 };
 
 /*
@@ -78,8 +78,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -97,8 +97,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -117,8 +117,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -139,8 +139,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 
@@ -156,8 +156,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -172,8 +172,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -194,8 +194,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -216,8 +216,8 @@ public:
 	virtual uint getsize();
 	virtual void gettext(char *text, uint maxlen);
 	virtual ObjectID getObjectID() const;
-	virtual void apply(ht_text_editor *te);
-	virtual void unapply(ht_text_editor *te, bool *goto_only);
+	virtual void apply(UiTextEditor *te);
+	virtual void unapply(UiTextEditor *te, bool *goto_only);
 };
 
 /*
@@ -232,17 +232,17 @@ public:
 	bool goto_state;
 public:
 	ht_text_editor_undo(uint max_undo_size);
-	void insert_undo(ht_text_editor *te, ht_undo_data *undo);
+	void insert_undo(UiTextEditor *te, ht_undo_data *undo);
 	bool is_clean();
 	bool is_clean(int i);
 	int get_current_position();
 	void mark_clean();
-	void undo(ht_text_editor *te, bool place_cursor_first);
-	void redo(ht_text_editor *te);
+	void undo(UiTextEditor *te, bool place_cursor_first);
+	void redo(UiTextEditor *te);
 };
 
 /*
- *	CLASS ht_text_viewer
+ *	CLASS UiTextViewer
  */
 
 #define cmd_text_viewer_goto				HT_COMMAND(601)
@@ -253,7 +253,7 @@ public:
 #define cmd_text_editor_protocol		HT_COMMAND(622)
 #define cmd_text_editor_delete_line		HT_COMMAND(623)
 
-class ht_text_viewer: public UiView {
+class UiTextViewer: public UiView {
 friend class ht_undo_data;
 friend class ht_undo_data_delete_string;
 friend class ht_undo_data_delete_string2;
@@ -360,10 +360,10 @@ public:
 };
 
 /*
- *	CLASS ht_text_editor
+ *	CLASS UiTextEditor
  */
 
-class ht_text_editor: public ht_text_viewer {
+class UiTextEditor: public UiTextViewer {
 protected:
 	uint edit_options;
 	ht_text_editor_undo *undo_list;

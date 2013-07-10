@@ -43,7 +43,7 @@
 
 void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *history)
 {
-	ht_dialog::init(b, "operate on block", FS_TITLE | FS_KILLER | FS_MOVE);
+	UiDialog::init(b, "operate on block", FS_TITLE | FS_KILLER | FS_MOVE);
 	Bounds c;
 
 	bool prerange = (pend > pstart);
@@ -182,7 +182,7 @@ void ht_blockop_dialog::init(Bounds *b, FileOfs pstart, FileOfs pend, List *hist
 
 void ht_blockop_dialog::done()
 {
-	ht_dialog::done();
+	UiDialog::done();
 }
 
 struct ht_blockop_dialog_data {

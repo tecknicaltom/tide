@@ -76,18 +76,18 @@ extern "C" {
 ht_log *loglines;
 
 /*
- *	CLASS ht_help_window
+ *	CLASS UiHelpWindow
  */
 
-class ht_help_window : public ht_window {
+class UiHelpWindow : public UiWindow {
 public:
 /* overwritten */
 	virtual void handlemsg(htmsg *msg);
 };
 
-void ht_help_window::handlemsg(htmsg *msg)
+void UiHelpWindow::handlemsg(htmsg *msg)
 {
-	ht_window::handlemsg(msg);
+	UiWindow::handlemsg(msg);
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 		case K_Escape: {
@@ -113,7 +113,7 @@ static bool file_new_dialog(uint *mode)
 	b.w = 40;
 	b.h = 8;
 
-	ht_dialog *d=new ht_dialog();
+	UiDialog *d=new UiDialog();
 	d->init(&b, "create new file", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 
 	b.x=0;
@@ -189,7 +189,7 @@ struct FileBrowserData {
 	ht_listbox_data listbox;
 };
 
-class FileBrowser: public ht_dialog {
+class FileBrowser: public UiDialog {
 protected:
 	UiStrInputfield *name_input;
 	FileBrowserVfsListbox *listbox;
@@ -217,7 +217,7 @@ void FileBrowserVfsListbox::stateChanged()
 /**/
 void FileBrowser::init(Bounds *n, Bounds *clientarea, const char *title, const char *starturl)
 {
-	ht_dialog::init(n, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
+	UiDialog::init(n, title, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 	Bounds b = *clientarea, c;
 
 	/* name (input) */
@@ -313,7 +313,7 @@ void FileBrowser::setstate(int state, int return_val)
 			return;
 		}
 	}
-	ht_dialog::setstate(state, return_val);
+	UiDialog::setstate(state, return_val);
 }
 
 /**/
@@ -498,7 +498,7 @@ static uint autodetect_file_open_mode(const char *filename)
 
 static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 {
-	ht_file_window *w = (ht_file_window*)context;
+	UiFileWindow *w = (UiFileWindow*)context;
 
 	pstat_t p;
 
@@ -538,7 +538,7 @@ static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 
 static void file_window_store_fcfg_func(ObjectStream &f, void *context)
 {
-	ht_file_window *w = (ht_file_window*)context;
+	UiFileWindow *w = (UiFileWindow*)context;
 	htmsg m;
 	m.msg = msg_get_analyser;
 	m.type = mt_broadcast;
@@ -914,12 +914,12 @@ void UiProjectListbox::set_project(ht_project *p)
 }
 
 /*
- *	CLASS ht_project_window
+ *	CLASS UiProjectWindow
  */
 
-void ht_project_window::init(Bounds *b, const char *desc, uint framestyle, uint number, ht_project **p)
+void UiProjectWindow::init(Bounds *b, const char *desc, uint framestyle, uint number, ht_project **p)
 {
-	ht_window::init(b, desc, framestyle, number);
+	UiWindow::init(b, desc, framestyle, number);
 	project = p;
 
 	Bounds c = *b;
@@ -934,12 +934,12 @@ void ht_project_window::init(Bounds *b, const char *desc, uint framestyle, uint 
 	sendmsg(msg_project_changed);
 }
 
-void ht_project_window::done()
+void UiProjectWindow::done()
 {
-	ht_window::done();
+	UiWindow::done();
 }
 
-void ht_project_window::handlemsg(htmsg *msg)
+void UiProjectWindow::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 		case msg_project_changed: {
@@ -965,17 +965,17 @@ void ht_project_window::handlemsg(htmsg *msg)
 			return;
 		}
 	}
-	ht_window::handlemsg(msg);
+	UiWindow::handlemsg(msg);
 }
 
 /*
- *	CLASS ht_status
+ *	CLASS UiStatus
  */
 
-void ht_status::init(Bounds *b)
+void UiStatus::init(Bounds *b)
 {
 	UiView::init(b, VO_TRANSPARENT_CHARS | VO_RESIZE, 0);
-	VIEW_DEBUG_NAME("ht_status");
+	VIEW_DEBUG_NAME("UiStatus");
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	idle_count = 0;
 	analy_ani = 0;
@@ -990,19 +990,19 @@ void ht_status::init(Bounds *b)
 	register_idle_object(this);
 }
 
-void ht_status::done()
+void UiStatus::done()
 {
 	unregister_idle_object(this);
 	free(format);
 	UiView::done();
 }
 
-const char *ht_status::defaultpalette()
+const char *UiStatus::defaultpalette()
 {
 	return palkey_generic_menu_default;
 }
 
-void ht_status::draw()
+void UiStatus::draw()
 {
 	fill(size.w-clear_len, 0, clear_len, 1, getcolor(palidx_generic_text_focused), ' ');
 	int len = strlen(workbuf);
@@ -1010,7 +1010,7 @@ void ht_status::draw()
 	buf->print(size.w-len, 0, getcolor(palidx_generic_text_focused), workbuf);
 }
 
-void ht_status::handlemsg(htmsg *msg)
+void UiStatus::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case msg_config_changed:
@@ -1021,13 +1021,13 @@ void ht_status::handlemsg(htmsg *msg)
 	UiView::handlemsg(msg);
 }
 
-void ht_status::getminbounds(int *width, int *height)
+void UiStatus::getminbounds(int *width, int *height)
 {
 	*width = 1;
 	*height = 1;
 }
 
-bool ht_status::idle()
+bool UiStatus::idle()
 {
 	if (idle_count % 100 == 0) {
 		char *oldstatus = ht_strdup(workbuf);
@@ -1046,7 +1046,7 @@ bool ht_status::idle()
 	return false;
 }
 
-void ht_status::render()
+void UiStatus::render()
 {
 	char *f = format;
 	char *buf = workbuf;
@@ -1094,27 +1094,27 @@ void ht_status::render()
 
 
 /*
- *	CLASS ht_keyline
+ *	CLASS UiKeyline
  */
 
-void ht_keyline::init(Bounds *b)
+void UiKeyline::init(Bounds *b)
 {
 	UiView::init(b, VO_RESIZE, 0);
-	VIEW_DEBUG_NAME("ht_keyline");
+	VIEW_DEBUG_NAME("UiKeyline");
 	growmode = MK_GM(GMH_FIT, GMV_BOTTOM);
 }
 
-void ht_keyline::done()
+void UiKeyline::done()
 {
 	UiView::done();
 }
 
-const char *ht_keyline::defaultpalette()
+const char *UiKeyline::defaultpalette()
 {
 	return palkey_generic_keys_default;
 }
 
-void ht_keyline::draw()
+void UiKeyline::draw()
 {
 	clear(getcolor(palidx_generic_text_disabled));
 	int x = 0;
@@ -1142,7 +1142,7 @@ void ht_keyline::draw()
 	}
 }
 
-void ht_keyline::getminbounds(int *width, int *height)
+void UiKeyline::getminbounds(int *width, int *height)
 {
 	*width = 1;
 	*height = 1;
@@ -1221,7 +1221,7 @@ void ht_log::log(LogColor c, char *line)
  *	CLASS ht_logviewer
  */
 
-void ht_logviewer::init(Bounds *b, ht_window *w, ht_log *l, bool ol)
+void ht_logviewer::init(Bounds *b, UiWindow *w, ht_log *l, bool ol)
 {
 	UiViewer::init(b, "log", 0);
 	VIEW_DEBUG_NAME("ht_logviewer");
@@ -1357,7 +1357,7 @@ void ht_logviewer::update()
  *	CLASS ht_app_window_entry
  */
 
-ht_app_window_entry::ht_app_window_entry(ht_window *w, uint n, uint t, bool m, bool isf, FileLayer *l)
+ht_app_window_entry::ht_app_window_entry(UiWindow *w, uint n, uint t, bool m, bool isf, FileLayer *l)
 {
 	window = w;
 	number = n;
@@ -1404,7 +1404,7 @@ static bool doFileChecks(File *file)
 
 void ht_app::init(Bounds *pq)
 {
-	ht_dialog::init(pq, 0, 0);
+	UiDialog::init(pq, 0, 0);
 	menu = NULL;
 	setframe(NULL);
 	options |= VO_RESIZE;
@@ -1432,7 +1432,7 @@ void ht_app::init(Bounds *pq)
 	b.x=0;
 	b.y=0;
 	b.h=1;
-	ht_menu *m=new ht_menu();
+	UiMenu *m=new UiMenu();
 	m->init(&b);
 
 	ht_static_context_menu *file=new ht_static_context_menu();
@@ -1503,7 +1503,7 @@ void ht_app::init(Bounds *pq)
 
 	/* create status */
 	/* the status should have the same Bounds as the menu */
-	ht_status *status = new ht_status();
+	UiStatus *status = new UiStatus();
 	status->init(&b);
 	status->setpalette(menu->getpalette());
 	insert(status);
@@ -1522,7 +1522,7 @@ void ht_app::init(Bounds *pq)
 	b.x = 0;
 	b.y = b.h-1;
 	b.h = 1;
-	keyline = new ht_keyline();
+	keyline = new UiKeyline();
 	keyline->init(&b);
 	insert(keyline);
 
@@ -1545,7 +1545,7 @@ void ht_app::done()
 	delete syntax_lexers;
 	delete windows;
 
-	ht_dialog::done();
+	UiDialog::done();
 }
 
 bool ht_app::accept_close_all_windows()
@@ -1560,9 +1560,9 @@ bool ht_app::accept_close_all_windows()
 	return true;
 }
 
-ht_window *ht_app::create_window_log()
+UiWindow *ht_app::create_window_log()
 {
-	ht_window *w = get_window_by_type(AWT_LOG);
+	UiWindow *w = get_window_by_type(AWT_LOG);
 	if (w) {
 		focus(w);
 	} else {
@@ -1572,7 +1572,7 @@ ht_window *ht_app::create_window_log()
 		b.y = 0;*/
 		get_stdbounds_file(&b);
 
-		ht_window *logwindow=new ht_window();
+		UiWindow *logwindow=new UiWindow();
 		logwindow->init(&b, "log window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 
 		Bounds k=b;
@@ -1580,7 +1580,7 @@ ht_window *ht_app::create_window_log()
 		k.y=0;
 		k.w=1;
 		k.h-=2;
-		ht_scrollbar *hs=new ht_scrollbar();
+		UiScrollbar *hs=new UiScrollbar();
 		hs->init(&k, &logwindow->pal, true);
 
 		logwindow->setvscrollbar(hs);
@@ -1598,18 +1598,18 @@ ht_window *ht_app::create_window_log()
 	return w;
 }
 
-ht_window *ht_app::create_window_clipboard()
+UiWindow *ht_app::create_window_clipboard()
 {
-	ht_window *w = get_window_by_type(AWT_CLIPBOARD);
+	UiWindow *w = get_window_by_type(AWT_CLIPBOARD);
 	if (w) {
 		focus(w);
 		return w;
 	} else {
 		Bounds b;
 		get_stdbounds_file(&b);
-/*		ht_file_window *window=new ht_file_window();
+/*		UiFileWindow *window=new UiFileWindow();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, clipboard);*/
-		ht_window *window = new ht_window();
+		UiWindow *window = new UiWindow();
 		window->init(&b, "clipboard", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 
 /*		Bounds k=b;
@@ -1617,7 +1617,7 @@ ht_window *ht_app::create_window_clipboard()
 		k.y=0;
 		k.w=1;
 		k.h-=2;
-		ht_scrollbar *hs=new ht_scrollbar();
+		UiScrollbar *hs=new UiScrollbar();
 		hs->init(&k, &window->pal, true);
 
 		window->setvscrollbar(hs);*/
@@ -1650,7 +1650,7 @@ ht_window *ht_app::create_window_clipboard()
 	return NULL;
 }
 
-ht_window *ht_app::create_window_file(const char *filename, uint mode, bool allow_duplicates)
+UiWindow *ht_app::create_window_file(const char *filename, uint mode, bool allow_duplicates)
 {
 	if (mode == FOM_AUTO) mode = autodetect_file_open_mode(filename);
 	switch (mode) {
@@ -1660,7 +1660,7 @@ ht_window *ht_app::create_window_file(const char *filename, uint mode, bool allo
 	return NULL;
 }
 
-ht_window *ht_app::create_window_file_bin(const char *filename, bool allow_duplicates)
+UiWindow *ht_app::create_window_file_bin(const char *filename, bool allow_duplicates)
 {
 	Bounds b;
 	get_stdbounds_file(&b);
@@ -1673,7 +1673,7 @@ ht_window *ht_app::create_window_file_bin(const char *filename, bool allow_dupli
 	String f(fullfilename);
 	free(fullfilename);
 
-	ht_window *w;
+	UiWindow *w;
 	if (!allow_duplicates && ((w = get_window_by_filename(f.contentChar())))) {
 		focus(w);
 		return w;
@@ -1703,9 +1703,9 @@ ht_window *ht_app::create_window_file_bin(const char *filename, bool allow_dupli
 	return create_window_file_bin(&b, file, f.contentChar(), true);
 }
 
-ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile)
+UiWindow *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char *title, bool isfile)
 {
-	ht_file_window *window = new ht_file_window();
+	UiFileWindow *window = new UiFileWindow();
 	window->init(b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
 	Bounds k=*b;
@@ -1713,7 +1713,7 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char
 	k.y=0;
 	k.w=1;
 	k.h-=2;
-	ht_scrollbar *hs=new ht_scrollbar();
+	UiScrollbar *hs=new UiScrollbar();
 	hs->init(&k, &window->pal, true);
 
 	window->setvscrollbar(hs);
@@ -1780,7 +1780,7 @@ ht_window *ht_app::create_window_file_bin(Bounds *b, FileLayer *file, const char
 	return window;
 }
 
-ht_window *ht_app::create_window_file_text(const char *filename, bool allow_duplicates)
+UiWindow *ht_app::create_window_file_text(const char *filename, bool allow_duplicates)
 {
 	Bounds b, c;
 	get_stdbounds_file(&c);
@@ -1794,7 +1794,7 @@ ht_window *ht_app::create_window_file_text(const char *filename, bool allow_dupl
 	String f(fullfilename);
 	free(fullfilename);
 
-	ht_window *w;
+	UiWindow *w;
 	if (!allow_duplicates && ((w = get_window_by_filename(f.contentChar())))) {
 		focus(w);
 		return w;
@@ -1825,20 +1825,20 @@ ht_window *ht_app::create_window_file_text(const char *filename, bool allow_dupl
 	return create_window_file_text(&b, file, f.contentChar(), true);
 }
 
-ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *title, bool isfile)
+UiWindow *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *title, bool isfile)
 {
 	Bounds b=*c;
 
 	ht_layer_textfile *file = (ht_layer_textfile *)f;
 
-	ht_file_window *window = new ht_file_window();
+	UiFileWindow *window = new UiFileWindow();
 	window->init(&b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);
 
 	b.x=0;
 	b.y=0;
 	b.w-=2;
 	b.h-=2;
-	ht_text_editor *text_editor=new ht_text_editor();
+	UiTextEditor *text_editor=new UiTextEditor();
 	text_editor->init(&b, true, file, syntax_lexers, TEXTEDITOPT_INPUTTABS|TEXTEDITOPT_UNDO);
 
 	IString fn, base, fn_suf;
@@ -1861,7 +1861,7 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *
 	k.y=0;
 	k.w=1;
 	k.h-=2;
-	ht_scrollbar *hs=new ht_scrollbar();
+	UiScrollbar *hs=new UiScrollbar();
 	hs->init(&k, &window->pal, true);
 
 	window->setvscrollbar(hs);
@@ -1886,9 +1886,9 @@ ht_window *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *
 	return window;
 }
 
-ht_window *ht_app::create_window_help(const char *file, const char *node)
+UiWindow *ht_app::create_window_help(const char *file, const char *node)
 {
-	ht_window *w = get_window_by_type(AWT_HELP);
+	UiWindow *w = get_window_by_type(AWT_HELP);
 	if (w) {
 		focus(w);
 		return w;
@@ -1901,7 +1901,7 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 		b.y=(c.h-b.h)/2;
 		Bounds k = b;
 
-		ht_help_window *window=new ht_help_window();
+		UiHelpWindow *window=new UiHelpWindow();
 		window->init(&b, "help", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 
 		b.x=0;
@@ -1913,7 +1913,7 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 		b=c;
 		b.x+=b.w;
 		b.w=1;
-		ht_scrollbar *scrollbar=new ht_scrollbar();
+		UiScrollbar *scrollbar=new UiScrollbar();
 		scrollbar->init(&b, &window->pal, true);
 		scrollbar->enable();
 		window->setvscrollbar(scrollbar);
@@ -1930,7 +1930,7 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 		window->setpindicator(ind);
 
 		b=c;
-		ht_info_viewer *infoviewer=new ht_info_viewer();
+		UiInfoViewer *infoviewer=new UiInfoViewer();
 		infoviewer->init(&b);
 		window->insert(infoviewer);
 
@@ -1955,9 +1955,9 @@ ht_window *ht_app::create_window_help(const char *file, const char *node)
 	return NULL;
 }
 
-ht_window *ht_app::create_window_project()
+UiWindow *ht_app::create_window_project()
 {
-	ht_window *w = get_window_by_type(AWT_PROJECT);
+	UiWindow *w = get_window_by_type(AWT_PROJECT);
 	if (w) {
 		focus(w);
 		return w;
@@ -1965,7 +1965,7 @@ ht_window *ht_app::create_window_project()
 		Bounds b;
 		get_stdbounds_tool(&b);
 
-		ht_project_window *project_window=new ht_project_window();
+		UiProjectWindow *project_window=new UiProjectWindow();
 		project_window->init(&b, "project window", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, (ht_project**)&project);
 
 		Bounds k = b;
@@ -1973,7 +1973,7 @@ ht_window *ht_app::create_window_project()
 		k.y = 0;
 		k.w = 1;
 		k.h -= 2;
-		ht_scrollbar *hs = new ht_scrollbar();
+		UiScrollbar *hs = new UiScrollbar();
 		hs->init(&k, &project_window->pal, true);
 
 		project_window->sethscrollbar(hs);
@@ -2031,12 +2031,12 @@ UiView *create_ofm_single(Bounds *c, char *url, ht_vfs_viewer **x)
 }
 #endif
 
-ht_window *ht_app::create_window_ofm(const char *url1, const char *url2)
+UiWindow *ht_app::create_window_ofm(const char *url1, const char *url2)
 {
 	Bounds b;
 	get_stdbounds_file(&b);
 
-	ht_window *window=new ht_window();
+	UiWindow *window=new UiWindow();
 	window->init(&b, "file manager", FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0);
 #if 1
 	b.w-=2;
@@ -2101,7 +2101,7 @@ void ht_app::draw()
 {
 }
 
-void ht_app::delete_window(ht_window *window)
+void ht_app::delete_window(UiWindow *window)
 {
 	ObjHandle oh = get_window_listindex(window);
 	if (oh != invObjHandle) {
@@ -2126,7 +2126,7 @@ uint ht_app::find_free_window_number()
 
 bool ht_app::focus(UiView *view)
 {
-	return ht_dialog::focus(view);
+	return UiDialog::focus(view);
 }
 
 const char *ht_app::func(uint i, bool execute)
@@ -2173,7 +2173,7 @@ void ht_app::get_stdbounds_tool(Bounds *b)
 	b->h = h;
 }
 
-ht_window *ht_app::get_window_by_filename(const char *filename)
+UiWindow *ht_app::get_window_by_filename(const char *filename)
 {
 	foreach(ht_app_window_entry, e, *windows, {
 		// FIXME: filename_compare (taking into account slash/backslash, and case)
@@ -2182,28 +2182,28 @@ ht_window *ht_app::get_window_by_filename(const char *filename)
 	return NULL;
 }
 
-ht_window *ht_app::get_window_by_number(uint number)
+UiWindow *ht_app::get_window_by_number(uint number)
 {
 	ht_app_window_entry *e;
 	firstThat(ht_app_window_entry, e, *windows, e->number==number);
 	return e ? e->window : NULL;
 }
 
-ht_window *ht_app::get_window_by_type(uint type)
+UiWindow *ht_app::get_window_by_type(uint type)
 {
 	ht_app_window_entry *e;
 	firstThat(ht_app_window_entry, e, *windows, e->type==type);
 	return e ? e->window : NULL;
 }
 
-uint ht_app::get_window_number(ht_window *window)
+uint ht_app::get_window_number(UiWindow *window)
 {
 	ht_app_window_entry *e;
 	firstThat(ht_app_window_entry, e, *windows, e->window==window);
 	return e ? e->number : 0;
 }
 
-ObjHandle ht_app::get_window_listindex(ht_window *window)
+ObjHandle ht_app::get_window_listindex(UiWindow *window)
 {
 	ObjHandle oh;
 	for (oh = windows->findFirst(); oh != invObjHandle; ) {
@@ -2242,12 +2242,12 @@ void ht_app::handlemsg(htmsg *msg)
 			break;
 		}
 		case cmd_file_save: {
-			ObjHandle oh = get_window_listindex((ht_window*)battlefield->current);
+			ObjHandle oh = get_window_listindex((UiWindow*)battlefield->current);
 			ht_app_window_entry *e = (ht_app_window_entry*)windows->get(oh);
 			if (e && e->layer && e->isfile) break;
 		}
 		case cmd_file_saveas: {
-			ObjHandle oh = get_window_listindex((ht_window*)battlefield->current);
+			ObjHandle oh = get_window_listindex((UiWindow*)battlefield->current);
 			ht_app_window_entry *e = (ht_app_window_entry*)windows->get(oh);
 			if (e && e->layer) {
 				char fn[HT_NAME_MAX];
@@ -2308,7 +2308,7 @@ void ht_app::handlemsg(htmsg *msg)
 		}
 		case msg_kill: {
 			htmsg m;
-			ht_window *w = (ht_window*)msg->data1.ptr;
+			UiWindow *w = (UiWindow*)msg->data1.ptr;
 			m.msg = msg_accept_close;
 			m.type = mt_broadcast;
 			m.data1.ptr = NULL;
@@ -2494,7 +2494,7 @@ void ht_app::handlemsg(htmsg *msg)
 					FileModificator *modfile = new FileModificator(mfile, true);
 					FileLayer *file = new FileLayer(modfile, true);
 
-					ht_window *w = create_window_file_bin(&b, file, "Untitled", false);
+					UiWindow *w = create_window_file_bin(&b, file, "Untitled", false);
 					htmsg m;
 					m.msg = cmd_file_resize;
 					m.type = mt_empty;
@@ -2612,7 +2612,7 @@ void ht_app::handlemsg(htmsg *msg)
 			return;
 		}
 		case cmd_popup_dialog_window_list: {
-			ht_window *w = popup_window_list("select window");
+			UiWindow *w = popup_window_list("select window");
 			if (w) focus(w);
 			clearmsg(msg);
 			return;
@@ -2648,7 +2648,7 @@ void ht_app::handlemsg(htmsg *msg)
 			clearmsg(msg);
 			return;
 		case msg_project_changed: {
-			ht_window *w = ((ht_app*)app)->get_window_by_type(AWT_PROJECT);
+			UiWindow *w = ((ht_app*)app)->get_window_by_type(AWT_PROJECT);
 			if (w) w->sendmsg(msg_dirtyview);
 			app->sendmsg(msg_draw);
 			return;
@@ -2656,7 +2656,7 @@ void ht_app::handlemsg(htmsg *msg)
 	}
 }
 
-void	ht_app::insert_window(ht_window *window, uint type, bool minimized, bool isfile, FileLayer *layer)
+void	ht_app::insert_window(UiWindow *window, uint type, bool minimized, bool isfile, FileLayer *layer)
 {
 	uint n=find_free_window_number();
 	ht_app_window_entry *e=new ht_app_window_entry(window, n, type, minimized, isfile, layer);
@@ -2703,7 +2703,7 @@ UiView *ht_app::popup_view_list(const char *dialog_title)
 	b.y=b.h/4;
 	b.w/=2;
 	b.h/=2;
-	ht_dialog *dialog=new ht_dialog();
+	UiDialog *dialog=new UiDialog();
 	dialog->init(&b, dialog_title, FS_KILLER | FS_TITLE | FS_MOVE);
 
 	/* create listbox */
@@ -2783,7 +2783,7 @@ int ht_app::popup_view_list_dump(UiView *view, UiTextListbox *listbox, List *str
 	return count;
 }
 
-ht_window *ht_app::popup_window_list(const char *dialog_title)
+UiWindow *ht_app::popup_window_list(const char *dialog_title)
 {
 	Bounds b, c;
 	getbounds(&b);
@@ -2792,7 +2792,7 @@ ht_window *ht_app::popup_window_list(const char *dialog_title)
 	b.h=b.h*2/3;
 	b.x=(c.w-b.w)/2;
 	b.y=(c.h-b.h)/2;
-	ht_dialog *dialog=new ht_dialog();
+	UiDialog *dialog=new UiDialog();
 	dialog->init(&b, dialog_title, FS_KILLER | FS_TITLE | FS_MOVE);
 
 	/* create listbox */
@@ -2815,7 +2815,7 @@ ht_window *ht_app::popup_window_list(const char *dialog_title)
 	dialog->insert(listbox);
 	dialog->setpalette(palkey_generic_special);
 
-	ht_window *result = NULL;
+	UiWindow *result = NULL;
 	if (dialog->run(false)) {
 		ht_listbox_data data;
 		ViewDataBuf vdb(listbox, &data, sizeof data);
@@ -3043,26 +3043,26 @@ ht_vstate_history_entry::~ht_vstate_history_entry()
 }
 
 /*
- *	CLASS ht_file_window
+ *	CLASS UiFileWindow
  */
-ht_file_window::ht_file_window()
+UiFileWindow::UiFileWindow()
 	: vstate_history(true)
 {
 }
 
-void ht_file_window::init(Bounds *b, const char *desc, uint framestyle, uint number, File *f)
+void UiFileWindow::init(Bounds *b, const char *desc, uint framestyle, uint number, File *f)
 {
-	ht_window::init(b, desc, framestyle, number);
+	UiWindow::init(b, desc, framestyle, number);
 	file = f;
 	vstate_history_pos = 0;
 }
 
-void ht_file_window::done()
+void UiFileWindow::done()
 {
-	ht_window::done();
+	UiWindow::done();
 }
 
-void ht_file_window::add_vstate_history(ht_vstate_history_entry *e)
+void UiFileWindow::add_vstate_history(ht_vstate_history_entry *e)
 {
 	int c = vstate_history.count();
 	if (c > vstate_history_pos) {
@@ -3072,7 +3072,7 @@ void ht_file_window::add_vstate_history(ht_vstate_history_entry *e)
 	vstate_history_pos++;
 }
 
-void ht_file_window::handlemsg(htmsg *msg)
+void UiFileWindow::handlemsg(htmsg *msg)
 {
 	switch (msg->msg) {
 	case cmd_vstate_restore:
@@ -3164,7 +3164,7 @@ void ht_file_window::handlemsg(htmsg *msg)
 		break;
 	}
 	}
-	ht_window::handlemsg(msg);
+	UiWindow::handlemsg(msg);
 	switch (msg->msg) {
 	case msg_keypressed:
 		switch (msg->data1.integer) {
@@ -3213,7 +3213,7 @@ static List *build_vfs_list()
 	return vfslist;
 }
 
-BUILDER(ATOM_HT_APP, ht_app, ht_dialog);
+BUILDER(ATOM_HT_APP, ht_app, UiDialog);
 BUILDER(ATOM_HT_PROJECT, ht_project, AVLTree);
 BUILDER(ATOM_HT_PROJECT_ITEM, ht_project_item, Object);
 

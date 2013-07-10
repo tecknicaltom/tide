@@ -1267,7 +1267,7 @@ bool replace_bin_process(Object *context, UiText *progress_indicator)
  */
 void ht_search_dialog::init(Bounds *b, const char *title)
 {
-	ht_dialog::init(b, title, FS_KILLER | FS_TITLE | FS_MOVE);
+	UiDialog::init(b, title, FS_KILLER | FS_TITLE | FS_MOVE);
 	VIEW_DEBUG_NAME("ht_search_dialog");
 
 	smodecount = 0;
@@ -1302,7 +1302,7 @@ void ht_search_dialog::init(Bounds *b, const char *title)
 
 void ht_search_dialog::done()
 {
-	ht_dialog::done();
+	UiDialog::done();
 }
 
 int ht_search_dialog::find_search_mode(int id)
@@ -1318,14 +1318,14 @@ int ht_search_dialog::find_search_mode(int id)
 void ht_search_dialog::handlemsg(htmsg *msg)
 {
 	if (msg->msg==msg_keypressed) {
-		ht_dialog::handlemsg(msg);
+		UiDialog::handlemsg(msg);
 		ht_listpopup_data data;
 		ViewDataBuf vdb(search_mode_popup, &data, sizeof data);
 		if ((int)data.cursor_pos != smodeidx) {
 			smodeidx = data.cursor_pos;
 			select_search_mode_bymodeidx();
 		}
-	} else ht_dialog::handlemsg(msg);
+	} else UiDialog::handlemsg(msg);
 }
 
 int ht_search_dialog::get_search_modeid()
@@ -1392,7 +1392,7 @@ void ht_replace_dialog::init(Bounds *b)
 	c.y=13;
 	c.w=size.w-2;
 	c.h=1;
-	ht_hbar *hbar=new ht_hbar();
+	UiHBar *hbar=new UiHBar();
 	hbar->init(&c, 0, NULL);
 	insert(hbar);
 
@@ -1415,7 +1415,7 @@ void ht_replace_dialog::init(Bounds *b)
 
 void ht_replace_dialog::done()
 {
-	ht_dialog::done();
+	UiDialog::done();
 }
 
 int ht_replace_dialog::find_replace_mode(int id)

@@ -111,7 +111,7 @@ struct CallChainNode {
 	bool expanded;
 };
 
-class CallChain: public ht_treeview {
+class CallChain: public UiTreeview {
 		Analyser		*analy;
 		CallChainNode *root;
 public:

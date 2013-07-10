@@ -47,51 +47,51 @@ void UiDialogWidget::getminbounds(int *width, int *height)
 }
 
 /*
- *	CLASS ht_dialog
+ *	CLASS UiDialog
  */
 
-void ht_dialog::init(Bounds *b, const char *desc, uint framestyle)
+void UiDialog::init(Bounds *b, const char *desc, uint framestyle)
 {
-	ht_window::init(b, desc, framestyle);
-	VIEW_DEBUG_NAME("ht_dialog");
+	UiWindow::init(b, desc, framestyle);
+	VIEW_DEBUG_NAME("UiDialog");
 	options &= ~VO_SELBOUND;
 	msgqueue = new Queue(true);
 }
 
-void ht_dialog::done()
+void UiDialog::done()
 {
 	delete msgqueue;
-	ht_window::done();
+	UiWindow::done();
 }
 
-int ht_dialog::aclone()
+int UiDialog::aclone()
 {
 	return 1;
 }
 
-const char *ht_dialog::defaultpalette()
+const char *UiDialog::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-ht_queued_msg *ht_dialog::dequeuemsg()
+ht_queued_msg *UiDialog::dequeuemsg()
 {
 	return (ht_queued_msg*)msgqueue->deQueue();
 }
 
-void ht_dialog::draw()
+void UiDialog::draw()
 {
 	clear(getcolor(palidx_generic_body));
 	UiGroup::draw();
 }
 
-int ht_dialog::getstate(int *aReturn_val)
+int UiDialog::getstate(int *aReturn_val)
 {
 	if (aReturn_val) *aReturn_val = return_val;
 	return state;
 }
 
-void ht_dialog::handlemsg(htmsg *msg)
+void UiDialog::handlemsg(htmsg *msg)
 {
 	if (msg->msg == msg_button_pressed) {
 		switch (msg->data1.integer) {
@@ -105,7 +105,7 @@ void ht_dialog::handlemsg(htmsg *msg)
 			return;
 		}
 	}
-	ht_window::handlemsg(msg);
+	UiWindow::handlemsg(msg);
 	if (msg->msg == msg_keypressed) {
 		switch (msg->data1.integer) {
 		case K_Escape:
@@ -124,7 +124,7 @@ void ht_dialog::handlemsg(htmsg *msg)
 
 void do_modal_resize();
 
-int ht_dialog::run(bool modal)
+int UiDialog::run(bool modal)
 {
 	UiView *orig_focused=app->getselected(), *orig_baseview=baseview;
 	int oldx, oldy;
@@ -168,12 +168,12 @@ int ht_dialog::run(bool modal)
 	}
 }
 
-void ht_dialog::queuemsg(UiView *target, htmsg &msg)
+void UiDialog::queuemsg(UiView *target, htmsg &msg)
 {
 	msgqueue->enQueue(new ht_queued_msg(target, msg));
 }
 
-void ht_dialog::setstate(int st, int retval)
+void UiDialog::setstate(int st, int retval)
 {
 	state = st;
 	return_val = retval;
@@ -1363,18 +1363,18 @@ void UiButton::push()
 }
 
 /*
- *	CLASS ht_listbox_title
+ *	CLASS UiListboxTitle
  */
-void	ht_listbox_title::init(Bounds *b)
+void	UiListboxTitle::init(Bounds *b)
 {
-	UiView::init(b, VO_RESIZE, "ht_listbox_title");
+	UiView::init(b, VO_RESIZE, "UiListboxTitle");
 	growmode = MK_GM(GMH_FIT, GMV_TOP);
 	texts = NULL;
 	listbox = NULL;
 	cols = 0;
 }
 
-void	ht_listbox_title::done()
+void	UiListboxTitle::done()
 {
 	if (texts) {
 		for (int i=0; i < cols; i++) {
@@ -1385,12 +1385,12 @@ void	ht_listbox_title::done()
 	UiView::done();
 }
 
-const char *ht_listbox_title::defaultpalette()
+const char *UiListboxTitle::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_listbox_title::draw()
+void UiListboxTitle::draw()
 {
 	vcp color = getTextColor();
 	clear(color);
@@ -1410,12 +1410,12 @@ void ht_listbox_title::draw()
 	}
 }
 
-vcp ht_listbox_title::getTextColor()
+vcp UiListboxTitle::getTextColor()
 {
 	return getcolor(palidx_generic_body);
 }
 
-void ht_listbox_title::setText(int cols, ...)
+void UiListboxTitle::setText(int cols, ...)
 {
 	va_list vargs;
 	va_start(vargs, cols);
@@ -1423,7 +1423,7 @@ void ht_listbox_title::setText(int cols, ...)
 	va_end(vargs);
 }
 
-void ht_listbox_title::setTextv(int c, va_list vargs)
+void UiListboxTitle::setTextv(int c, va_list vargs)
 {
 	if (texts) {
 		for (int i=0; i<cols; i++) {
@@ -1441,7 +1441,7 @@ void ht_listbox_title::setTextv(int c, va_list vargs)
 	update();
 }
 
-void ht_listbox_title::update()
+void UiListboxTitle::update()
 {
 	if (texts && listbox && listbox->widths) {
 		for (int i=0; i<cols; i++) {
@@ -1479,7 +1479,7 @@ void UiListbox::init(Bounds *b, uint Listboxcaps)
 	c.x = c.w-1;
 	c.y = 0;
 	c.w = 1;
-	scrollbar = new ht_scrollbar();
+	scrollbar = new UiScrollbar();
 	scrollbar->init(&c, &pal, true);
 
 	pos = 0;
@@ -1537,7 +1537,7 @@ void UiListbox::adjustScrollbar()
 	}
 }
 
-void UiListbox::attachTitle(ht_listbox_title *aTitle)
+void UiListbox::attachTitle(UiListboxTitle *aTitle)
 {
 	if (numColumns() > cols) rearrangeColumns();
 	title = aTitle;
@@ -2523,7 +2523,7 @@ void UiStaticText::settext(const char *aText)
 
 void ht_listpopup_dialog::init(Bounds *b, const char *desc)
 {
-	ht_dialog::init(b, desc, FS_TITLE | FS_MOVE);
+	UiDialog::init(b, desc, FS_TITLE | FS_MOVE);
 	VIEW_DEBUG_NAME("ht_listpopup_dialog");
 
 	Bounds c;
@@ -2753,12 +2753,12 @@ void UiLabel::handlemsg(htmsg *msg)
 }
 
 /*
- *	CLASS ht_progress_indicator
+ *	CLASS UiProgressIndicator
  */
 
-void	ht_progress_indicator::init(Bounds *b, const char *hint)
+void	UiProgressIndicator::init(Bounds *b, const char *hint)
 {
-	ht_window::init(b, NULL, 0);
+	UiWindow::init(b, NULL, 0);
 
 	Bounds c=*b;
 
@@ -2777,12 +2777,12 @@ void	ht_progress_indicator::init(Bounds *b, const char *hint)
 	insert(t);
 }
 
-const char *ht_progress_indicator::defaultpalette()
+const char *UiProgressIndicator::defaultpalette()
 {
 	return palkey_generic_dialog_default;
 }
 
-void ht_progress_indicator::settext(const char *t)
+void UiProgressIndicator::settext(const char *t)
 {
 	text->settext(t);
 }

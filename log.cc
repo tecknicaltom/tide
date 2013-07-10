@@ -31,7 +31,7 @@ void ht_logf(int color, const char *format, ...)
 	va_end(arg);
 	loglines->log(color, buf);
 
-	ht_window *w = ((ht_app*)app)->get_window_by_type(AWT_LOG);
+	UiWindow *w = ((ht_app*)app)->get_window_by_type(AWT_LOG);
 	if (w) w->sendmsg(msg_log_changed);
 	app->sendmsg(msg_draw);
 }

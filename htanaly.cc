@@ -253,7 +253,7 @@ char *UiSymbolListbox::quickfindCompletition(const char *s)
  */
 void	CallChain::init(Bounds *b, Analyser *Analy, Address *a, char *desc)
 {
-	ht_treeview::init(b, desc);
+	UiTreeview::init(b, desc);
 	VIEW_DEBUG_NAME("CallChain");
 	analy = Analy;
 	root = createNode(a);
@@ -272,7 +272,7 @@ static void CallChain_done(CallChainNode *n)
 void	CallChain::done()
 {
 	CallChain_done(root);
-	ht_treeview::done();
+	UiTreeview::done();
 }
 
 void	CallChain::adjust(void *node, bool expand)
@@ -743,8 +743,8 @@ void ht_aviewer::generateOutputDialog()
 	b.w=50;
 	b.h=15;
 	center_bounds(&b);
-	ht_dialog *dialog;
-	NEW_OBJECT(dialog, ht_dialog, &b, "generate analyser output", FS_KILLER | FS_TITLE | FS_MOVE);
+	UiDialog *dialog;
+	NEW_OBJECT(dialog, UiDialog, &b, "generate analyser output", FS_KILLER | FS_TITLE | FS_MOVE);
 	UiView *v1, *v2;
 	b.assign(2, 2, 25, 1);
 	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
@@ -899,8 +899,8 @@ void ht_aviewer::dataStringDialog()
 	b.w=50;
 	b.h=15;
 	center_bounds(&b);
-	ht_dialog *dialog;
-	NEW_OBJECT(dialog, ht_dialog, &b, "interprete data as string", FS_KILLER | FS_TITLE | FS_MOVE);
+	UiDialog *dialog;
+	NEW_OBJECT(dialog, UiDialog, &b, "interprete data as string", FS_KILLER | FS_TITLE | FS_MOVE);
 
 	while (dialog->run(false)==button_ok) {
 	}
@@ -949,8 +949,8 @@ void ht_aviewer::exportFileDialog()
 	b.w=50;
 	b.h=12;
 	center_bounds(&b);
-	ht_dialog *dialog;
-	NEW_OBJECT(dialog, ht_dialog, &b, "export analyser information", FS_KILLER | FS_TITLE | FS_MOVE);
+	UiDialog *dialog;
+	NEW_OBJECT(dialog, UiDialog, &b, "export analyser information", FS_KILLER | FS_TITLE | FS_MOVE);
 	UiView *v1, *v2;
 	b.assign(2, 2, 35, 1);
 	NEW_OBJECT(v1, UiStrInputfield, &b, 260);
@@ -1629,7 +1629,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 	char str[256];
 	global_analyser_address_string_format = ADDRESS_STRING_FORMAT_LEADING_ZEROS;
 	ht_snprintf(str, sizeof str, "call chain of address %y", Addr);
-	ht_dialog *dialog = new ht_dialog();
+	UiDialog *dialog = new UiDialog();
 	dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE);
 	b.assign(1, 0, 56, 10);
 	UiStaticText *text = new UiStaticText();
@@ -1691,11 +1691,11 @@ void ht_aviewer::showComments(Address *Addr)
 	b.w = 60;
 	b.h = 16;
 	center_bounds(&b);
-	ht_dialog *dialog = new ht_dialog();
+	UiDialog *dialog = new UiDialog();
 	dialog->init(&b, "edit comments", FS_KILLER | FS_TITLE | FS_MOVE);
 
 	b.assign(1, 1, 55, 10);
-	ht_text_editor *text_editor = new ht_text_editor();
+	UiTextEditor *text_editor = new UiTextEditor();
 	text_editor->init(&b, false, &text_file, NULL, TEXTEDITOPT_UNDO);
 	dialog->insert(text_editor);
 
@@ -1748,7 +1748,7 @@ void ht_aviewer::showInfo(Address *Addr)
 	center_bounds(&b);
 	char str[100];
 	strcpy(str, "Analyser information");
-	ht_dialog *dialog = new ht_dialog();
+	UiDialog *dialog = new UiDialog();
 	dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE);
 	b.assign(1, 0, b.w-4, 10);
 	AnalyserInformation *text = new AnalyserInformation();
@@ -1771,7 +1771,7 @@ void ht_aviewer::showSymbols(Address *addr)
 	b.w = 60;
 	b.h = 15;
 	center_bounds(&b);
-	ht_dialog *dialog = new ht_dialog();
+	UiDialog *dialog = new UiDialog();
 	dialog->init(&b, "symbols", FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 	/* pull down */
 	b.assign(30, 0, 20, 1);
@@ -1785,7 +1785,7 @@ void ht_aviewer::showSymbols(Address *addr)
 				dialog->insert(lp);*/
 	/* text */
 	b.assign(1, 0, 56, 1);
-	ht_listbox_title *text = new ht_listbox_title();
+	UiListboxTitle *text = new UiListboxTitle();
 	text->init(&b);
 	text->setText(3, "Address", "Type", "Name");
 	/* list */
@@ -1832,10 +1832,10 @@ void ht_aviewer::showXRefs(Address *Addr)
 		char str[256];
 		global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT | ADDRESS_STRING_FORMAT_ADD_0X;
 		ht_snprintf(str, sizeof str, "xrefs of address %y", Addr);
-		ht_dialog *dialog = new ht_dialog();
+		UiDialog *dialog = new UiDialog();
 		dialog->init(&b, str, FS_KILLER | FS_TITLE | FS_MOVE | FS_RESIZE);
 		b.assign(1, 0, bw-4, 1);
-		ht_listbox_title *text = new ht_listbox_title();
+		UiListboxTitle *text = new UiListboxTitle();
 		text->init(&b);
 		text->setText(3, "xref to", "type", "from function");
 		b.y = 1;

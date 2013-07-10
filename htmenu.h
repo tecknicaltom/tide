@@ -99,10 +99,10 @@ public:
 };
 
 /*
- *	CLASS ht_menu
+ *	CLASS UiMenu
  */
 
-class ht_menu: public UiView {
+class UiMenu: public UiView {
 protected:
 	int lastmenux;
 	List *menu;
@@ -159,7 +159,7 @@ public:
 };
 
 /*
- *	CLASS ht_menu_window
+ *	CLASS UiMenuWindow
  */
 
 class UiMenuWindowBody;
@@ -168,7 +168,7 @@ struct ht_menu_window_data {
 	int selected;
 };
 
-class ht_menu_window: public ht_dialog {
+class UiMenuWindow: public UiDialog {
 protected:
 	UiMenuWindowBody *body;
 	ht_context_menu *menu;
