@@ -95,7 +95,7 @@ uint	ht_clipboard::write(const void *buf, uint size)
 
 void ht_clipboard_viewer::init(Bounds *b, const char *desc, int caps, ht_clipboard *clipb, UiFormatGroup *format_group)
 {
-	ht_uformat_viewer::init(b, desc, caps, clipboard, format_group);
+	UiUFormatViewer::init(b, desc, caps, clipboard, format_group);
 
 	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 
@@ -106,7 +106,7 @@ void ht_clipboard_viewer::init(Bounds *b, const char *desc, int caps, ht_clipboa
 void ht_clipboard_viewer::draw()
 {
 	update_content();
-	ht_uformat_viewer::draw();
+	UiUFormatViewer::draw();
 }
 
 void ht_clipboard_viewer::handlemsg(htmsg *msg)
@@ -118,18 +118,18 @@ void ht_clipboard_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 	}
-	ht_uformat_viewer::handlemsg(msg);
+	UiUFormatViewer::handlemsg(msg);
 }
 
 void ht_clipboard_viewer::pselect_add(FileOfs start, FileOfs end)
 {
-	ht_uformat_viewer::pselect_add(start, end);
+	UiUFormatViewer::pselect_add(start, end);
 	selection_changed();
 }
 
 void ht_clipboard_viewer::pselect_set(FileOfs start, FileOfs end)
 {
-	ht_uformat_viewer::pselect_set(start, end);
+	UiUFormatViewer::pselect_set(start, end);
 	selection_changed();
 }
 

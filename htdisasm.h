@@ -37,7 +37,7 @@ void dialog_assemble(UiFormatViewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Asse
 
 class ht_disasm_sub;
 
-class ht_disasm_viewer: public ht_uformat_viewer {
+class ht_disasm_viewer: public UiUFormatViewer {
 protected:
 	Assembler *assem;
 	Disassembler *disasm;

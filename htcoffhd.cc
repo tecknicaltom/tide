@@ -205,7 +205,7 @@ static UiView *htcoffheader_init(Bounds *b, File *file, UiFormatGroup *group)
 	bool coff_bigendian = coff_shared->endian == big_endian;
 
 	uint32 h = coff_shared->hdr_ofs;
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, DESC_COFF_HEADER, VC_EDIT, file, group);
 
 	ht_mask_sub *m = new ht_mask_sub();

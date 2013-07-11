@@ -46,7 +46,7 @@ public:
  *	CLASS ht_clipboard_viewer
  */
 
-class ht_clipboard_viewer: public ht_uformat_viewer {
+class ht_clipboard_viewer: public UiUFormatViewer {
 protected:
 	uint lastwritecount;
 	uint lastentrycount;

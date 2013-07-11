@@ -95,7 +95,7 @@ void ht_text_viewer2::handlemsg(htmsg *msg)
 		}
 		break;
 	}
-	return ht_uformat_viewer::handlemsg(msg);
+	return UiUFormatViewer::handlemsg(msg);
 }
 
 /*

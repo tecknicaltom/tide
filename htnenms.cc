@@ -44,7 +44,7 @@ static UiView *htnenames_init(Bounds *b, File *file, UiFormatGroup *group)
 	ht_ne_shared_data *ne_shared=(ht_ne_shared_data *)group->get_shared_data();
 
 	uint32 h=ne_shared->hdr_ofs;
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	UiUFormatViewer *v=new UiUFormatViewer();
 	v->init(b, DESC_NE_NAMES, VC_EDIT | VC_SEARCH, file, group);
 	ht_mask_sub *m=new ht_mask_sub();
 	m->init(file, 0);

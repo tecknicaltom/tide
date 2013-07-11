@@ -104,7 +104,7 @@ static UiView *htelfsymboltable_init(Bounds *b, File *file, UiFormatGroup *group
 	char desc[128];
 	ht_snprintf(desc, sizeof desc, DESC_ELF_SYMTAB, &symtab_name, symtab_shidx);
 
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	UiUFormatViewer *v=new UiUFormatViewer();
 	v->init(b, desc, VC_EDIT | VC_SEARCH, file, group);
 
 	ht_mask_sub *m = new ht_mask_sub();

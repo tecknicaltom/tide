@@ -139,7 +139,7 @@ static UiView *htelfreloctable_init(Bounds *b, File *file, UiFormatGroup *group)
 	char desc[128];
 	ht_snprintf(desc, sizeof desc, DESC_ELF_RELOCTAB, &reloctab_name, reloctab_shidx);
 
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, desc, VC_EDIT, file, group);
 
 	ht_mask_sub *m = new ht_mask_sub();

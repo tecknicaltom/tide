@@ -140,7 +140,7 @@ static UiView *htleheader_init(Bounds *b, File *file, UiFormatGroup *group)
 	bool le_bigendian = false;
 
 	FileOfs h = le_shared->hdr_ofs;
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, DESC_LE_HEADER, VC_EDIT | VC_SEARCH, file, group);
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);

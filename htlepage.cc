@@ -43,7 +43,7 @@ static UiView *htlepagemaps_init(Bounds *b, File *file, UiFormatGroup *group)
 	ht_le_shared_data *le_shared=(ht_le_shared_data *)group->get_shared_data();
 
 	FileOfs h = le_shared->hdr_ofs;
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	UiUFormatViewer *v=new UiUFormatViewer();
 	v->init(b, DESC_LE_PAGEMAP, VC_EDIT | VC_SEARCH, file, group);
 
 	ht_mask_sub *m = new ht_mask_sub();

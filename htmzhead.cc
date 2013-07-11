@@ -50,7 +50,7 @@ static ht_mask_ptable mzheader[]=
 
 static UiView *htmzheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, DESC_MZ_HEADER, VC_EDIT | VC_SEARCH, file, group);
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);

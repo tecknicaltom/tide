@@ -99,10 +99,10 @@ static UiView *htelfsectionheaders_init(Bounds *b, File *file, UiFormatGroup *gr
 		return NULL;
 	}
 
-	ht_uformat_viewer *v = NULL;
+	UiUFormatViewer *v = NULL;
 	bool elf_bigendian = elf_shared->ident.e_ident[ELF_EI_DATA]==ELFDATA2MSB;
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS] == ELFCLASS32) {
-		v = new ht_uformat_viewer();
+		v = new UiUFormatViewer();
 		v->init(b, DESC_ELF_SECTION_HEADERS, VC_EDIT, file, group);
 
 		registerAtom(ATOM_ELF_SH_TYPE, elf_sh_type);
@@ -155,7 +155,7 @@ static UiView *htelfsectionheaders_init(Bounds *b, File *file, UiFormatGroup *gr
 			v->insertsub(cn);
 		}
 	} else if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS64) {
-		v = new ht_uformat_viewer();
+		v = new UiUFormatViewer();
 		v->init(b, DESC_ELF_SECTION_HEADERS, VC_EDIT, file, group);
 
 		registerAtom(ATOM_ELF_SH_TYPE, elf_sh_type);

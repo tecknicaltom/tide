@@ -184,7 +184,7 @@ public:
  *	CLASS ht_aviewer
  */
 
-class ht_aviewer: public ht_uformat_viewer {
+class ht_aviewer: public UiUFormatViewer {
 public:
 	int idle_count;
 	Analyser *analy;

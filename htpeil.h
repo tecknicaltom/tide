@@ -49,7 +49,7 @@ public:
  *	CLASS ht_pe_header_viewer
  */
 
-class ht_pe_il_viewer: public ht_uformat_viewer {
+class ht_pe_il_viewer: public UiUFormatViewer {
 public:
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group);
 	virtual void done();

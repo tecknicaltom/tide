@@ -508,7 +508,7 @@ static UiView *class_view(Bounds *b, File *file, UiFormatGroup *group)
 
 	clazz = ((ht_class_shared_data *)group->get_shared_data())->file;
 	if (clazz) {
-		ht_uformat_viewer *v = new ht_uformat_viewer();
+		UiUFormatViewer *v = new UiUFormatViewer();
 		v->init(b, DESC_JAVA_HEADERS, VC_EDIT, file, group);
 		registerAtom(ATOM_CLS_ACCESS, access_flags);
 		registerAtom(ATOM_CLS_CPOOL,  cpool_tags);

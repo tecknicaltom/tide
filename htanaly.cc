@@ -509,7 +509,7 @@ void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, UiForma
 			ANALY_EDIT_BYTES);
 	}
 	analy_sub = NULL;
-	ht_uformat_viewer::init(b, desc, caps, file, format_group);
+	UiUFormatViewer::init(b, desc, caps, file, format_group);
 	search_caps |= SEARCHMODE_BIN | SEARCHMODE_EVALSTR | SEARCHMODE_EXPR;
 	infoline = NULL;
 	idle_count = 0;
@@ -522,7 +522,7 @@ void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, UiForma
 void ht_aviewer::done()
 {
 	unregister_idle_object(this);
-	ht_uformat_viewer::done();
+	UiUFormatViewer::done();
 	if (analy) {
 		analy->done(); // FIXME: this musnt be here
 		delete analy;
@@ -603,7 +603,7 @@ const char *ht_aviewer::func(uint i, bool execute)
 		}
 		return "symbols";
 	default:
-		return ht_uformat_viewer::func(i, execute);
+		return UiUFormatViewer::func(i, execute);
 	}
 	return NULL;
 }
@@ -1012,7 +1012,7 @@ bool ht_aviewer::getCurrentAddress(Address **a)
 
 bool ht_aviewer::get_current_offset(FileOfs *ofs)
 {
-	if (ht_uformat_viewer::get_current_offset(ofs)) {
+	if (UiUFormatViewer::get_current_offset(ofs)) {
 		return true;
 	} else {
 		Address *a;
@@ -1503,7 +1503,7 @@ void ht_aviewer::handlemsg(htmsg *msg)
 		return;
 	}
 
-	ht_uformat_viewer::handlemsg(msg);
+	UiUFormatViewer::handlemsg(msg);
 
 	switch (msg->msg) {
 	case msg_draw:
@@ -1584,7 +1584,7 @@ bool ht_aviewer::ref_sel(LINE_ID *id)
 
 void ht_aviewer::reloadpalette()
 {
-	ht_uformat_viewer::reloadpalette();
+	UiUFormatViewer::reloadpalette();
 	if (analy_sub) analy_sub->output->changeConfig();
 }
 
@@ -1987,7 +1987,7 @@ bool ht_aviewer::symbol_handler(eval_scalar *result, char *name)
 			return true;
 		}
 	}
-	return ht_uformat_viewer::symbol_handler(result, name);
+	return UiUFormatViewer::symbol_handler(result, name);
 }
 
 bool ht_aviewer::qword_to_pos(uint64 q, viewer_pos *pos)

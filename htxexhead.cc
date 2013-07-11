@@ -398,7 +398,7 @@ format_viewer_if htxexheader_if = {
 
 void ht_xex_header_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group)
 {
-	ht_uformat_viewer::init(b, desc, caps, file, group);
+	UiUFormatViewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_xex_header_viewer");
 }
 

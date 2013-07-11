@@ -44,7 +44,7 @@ static UiView *htfltheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)group->get_shared_data();
 
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	UiUFormatViewer *v=new UiUFormatViewer();
 	v->init(b, DESC_FLT_HEADER, VC_EDIT, file, group);
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);

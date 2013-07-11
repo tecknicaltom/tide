@@ -201,7 +201,7 @@ static UiView *htelfheader_init(Bounds *b, File *file, UiFormatGroup *group)
 {
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, DESC_ELF_HEADER, VC_EDIT, file, group);
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(file, 0);

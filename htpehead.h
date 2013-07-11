@@ -29,7 +29,7 @@ extern format_viewer_if htpeheader_if;
  *	CLASS ht_pe_header_viewer
  */
 
-class ht_pe_header_viewer: public ht_uformat_viewer {
+class ht_pe_header_viewer: public UiUFormatViewer {
 public:
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group);
 /* overwritten */

@@ -35,7 +35,7 @@ static int htmzrel_detect(File *file)
 
 static UiView *htmzrel_init(Bounds *b, File *file, UiFormatGroup *group)
 {
-	ht_uformat_viewer *v=new ht_uformat_viewer();
+	UiUFormatViewer *v=new UiUFormatViewer();
 	v->init(b, DESC_MZ_REL, VC_EDIT | VC_SEARCH, file, group);
 	uint32 r = 0;
 	uint32 rc = 0;

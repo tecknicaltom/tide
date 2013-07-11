@@ -32,7 +32,7 @@ extern format_viewer_if httext_if;
  *	CLASS ht_text_viewer
  */
 
-class ht_text_viewer2: public ht_uformat_viewer {
+class ht_text_viewer2: public UiUFormatViewer {
 public:
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);

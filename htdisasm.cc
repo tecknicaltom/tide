@@ -179,7 +179,7 @@ void dialog_assemble(UiFormatViewer *f, viewer_pos vaddr, CPU_ADDR cpuaddr, Asse
 
 void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Assembler *a, Disassembler *d, int t)
 {
-	ht_uformat_viewer::init(b, desc, caps, file, format_group);
+	UiUFormatViewer::init(b, desc, caps, file, format_group);
 	assem = a;
 	disasm = d;
 	op1632 = t;
@@ -187,7 +187,7 @@ void ht_disasm_viewer::init(Bounds *b, const char *desc, int caps, File *file, U
 
 void ht_disasm_viewer::done()
 {
-	ht_uformat_viewer::done();
+	UiUFormatViewer::done();
 	delete assem;
 	delete disasm;
 }
@@ -302,7 +302,7 @@ void ht_disasm_viewer::handlemsg(htmsg *msg)
 			return;
 		}
 	}
-	ht_uformat_viewer::handlemsg(msg);
+	UiUFormatViewer::handlemsg(msg);
 }
 
 ht_disasm_sub *ht_disasm_viewer::get_disasm_sub()
@@ -348,7 +348,7 @@ bool ht_disasm_viewer::symbol_handler(eval_scalar *result, char *name)
 		scalar_create_int_q(result, ofs);
 		return true;
 	}
-	return ht_uformat_viewer::symbol_handler(result, name);
+	return UiUFormatViewer::symbol_handler(result, name);
 }
 
 const char *ht_disasm_viewer::func(uint i, bool execute)
@@ -359,7 +359,7 @@ const char *ht_disasm_viewer::func(uint i, bool execute)
 			if (execute) sendmsg(cmd_disasm_toggle1632);
 			return op1632 ? (char*)"use32" : (char*)"use16";
 	}
-	return ht_uformat_viewer::func(i, execute);
+	return UiUFormatViewer::func(i, execute);
 }
 
 /*

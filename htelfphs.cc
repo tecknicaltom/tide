@@ -85,9 +85,9 @@ static UiView *htelfprogramheaders_init(Bounds *b, File *file, UiFormatGroup *gr
 	if (!elf_shared->pheaders.count) return NULL;
 
 	bool elf_bigendian = (elf_shared->ident.e_ident[ELF_EI_DATA] == ELFDATA2MSB);
-	ht_uformat_viewer *v = NULL;
+	UiUFormatViewer *v = NULL;
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS32) {
-		v = new ht_uformat_viewer();
+		v = new UiUFormatViewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
 
 		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);
@@ -122,7 +122,7 @@ static UiView *htelfprogramheaders_init(Bounds *b, File *file, UiFormatGroup *gr
 			v->insertsub(cn);
 		}
 	} else if (elf_shared->ident.e_ident[ELF_EI_CLASS]==ELFCLASS64) {
-		v = new ht_uformat_viewer();
+		v = new UiUFormatViewer();
 		v->init(b, DESC_ELF_PROGRAM_HEADERS, VC_EDIT, file, group);
 
 		registerAtom(ATOM_ELF_PH_TYPE, elf_ph_type);

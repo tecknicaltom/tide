@@ -175,7 +175,7 @@ void ht_hex_viewer::handlemsg(htmsg *msg)
 		return;
 	}
 	}
-	ht_uformat_viewer::handlemsg(msg);
+	UiUFormatViewer::handlemsg(msg);
 }
 
 bool ht_hex_viewer::pos_to_offset(viewer_pos p, FileOfs *ofs)
@@ -273,7 +273,7 @@ bool ht_hex_viewer::symbol_handler(eval_scalar *result, char *name)
 	if (strcmp(name, "u64be") == 0) return reada(result, this, 8, big_endian, false);
 	if (strcmp(name, "s16be") == 0) return reada(result, this, 2, big_endian, true);
 	if (strcmp(name, "s32be") == 0) return reada(result, this, 4, big_endian, true);
-	return ht_uformat_viewer::symbol_handler(result, name);
+	return UiUFormatViewer::symbol_handler(result, name);
 }
 
 static int func_readint(eval_scalar *result, eval_int *offset, int size, Endianess e)

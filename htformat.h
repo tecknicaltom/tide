@@ -275,14 +275,14 @@ public:
 };
 
 /*
- *	CLASS ht_uformat_viewer
+ *	CLASS UiUFormatViewer
  */
 
 #define cursor_state_visible		0
 #define cursor_state_invisible	1
 #define cursor_state_disabled		2
 
-class ht_uformat_viewer: public UiFormatViewer {
+class UiUFormatViewer: public UiFormatViewer {
 protected:
 	ht_sub *first_sub, *last_sub;
 /* top line position */
@@ -428,7 +428,7 @@ class ht_sub: public Object {
 protected:
 	File *file;
 public:
-	ht_uformat_viewer *uformat_viewer;
+	UiUFormatViewer *uformat_viewer;
 	ht_sub *prev, *next;
 
 		void init(File *file);
@@ -592,7 +592,7 @@ public:
 		void insertsub(ht_sub *sub);
 };
 
-ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, ht_uformat_viewer *ufv, FileOfs fofs, FileOfs fsize);
+ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, UiUFormatViewer *ufv, FileOfs fofs, FileOfs fsize);
 ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize);
 
 void clear_line_id(LINE_ID *l);

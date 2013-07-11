@@ -28,7 +28,7 @@ extern format_viewer_if htxexheader_if;
 /*
  *	ht_xex_header_viewer
  */
-class ht_xex_header_viewer: public ht_uformat_viewer {
+class ht_xex_header_viewer: public UiUFormatViewer {
 public:
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group);
 	/* overwritten */

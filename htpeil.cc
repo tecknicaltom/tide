@@ -197,7 +197,7 @@ format_viewer_if htpeil_if = {
 
 void ht_pe_il_viewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *group)
 {
-	ht_uformat_viewer::init(b, desc, caps, file, group);
+	UiUFormatViewer::init(b, desc, caps, file, group);
 	VIEW_DEBUG_NAME("ht_pe_il_viewer");
 }
 
@@ -209,7 +209,7 @@ void ht_pe_il_viewer::done()
 		delete pe_shared->il->entries;
 		delete pe_shared->il;
 	}
-	ht_uformat_viewer::done();
+	UiUFormatViewer::done();
 }
 
 ht_il_metadata_entry::ht_il_metadata_entry(const char *n, uint32 o, uint32 s)

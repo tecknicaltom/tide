@@ -32,7 +32,7 @@ extern format_viewer_if hthex_if;
  */
 
 class ht_hex_file_sub;
-class ht_hex_viewer: public ht_uformat_viewer {
+class ht_hex_viewer: public UiUFormatViewer {
 public:
 	ht_hex_file_sub *h;
 protected:

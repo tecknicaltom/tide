@@ -64,7 +64,7 @@ static UiView *htlevxd_init(Bounds *b, File *file, UiFormatGroup *group)
 	/* FIXME: */
 	bool le_bigendian = false;
 
-	ht_uformat_viewer *v = new ht_uformat_viewer();
+	UiUFormatViewer *v = new UiUFormatViewer();
 	v->init(b, DESC_LE_VXD, VC_EDIT | VC_SEARCH, myfile, group);
 	ht_mask_sub *m = new ht_mask_sub();
 	m->init(myfile, 0);
