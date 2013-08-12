@@ -62,7 +62,6 @@ linux*)
 cygwin*)
 	IO_DIR=win32
 	echo "*** CYGWIN, building native Win32 version (no cygwin.dll)" 1>&2
-	FLAGS_ALL="$FLAGS_ALL -mno-cygwin"
 	NEED_CURSES=0
 	HAVE_PIPE=1
 ;;
