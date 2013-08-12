@@ -24,3 +24,10 @@ README
 *.o
 tags
 .glimpse
+eval/evalparse.c
+eval/evalparse.h
+eval/lex.c
+doc/ht.html
+doc/ht.info
+doc/hthelp.info
+ylwrap
