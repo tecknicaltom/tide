@@ -183,9 +183,9 @@ public:
 		void			init(Analyser *A);
 
 	virtual	Address *		branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine) = 0;
-	virtual	void			examineOpcode(OPCODE *opcode) = 0;
+	virtual	void			examineOpcode(const OPCODE *opcode) = 0;
 	virtual	void			initDisasm();
-	virtual	branch_enum_t		isBranch(OPCODE *opcode) = 0;
+	virtual	branch_enum_t		isBranch(const OPCODE *opcode) = 0;
 };
 
 /***************************************************************************/

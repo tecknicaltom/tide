@@ -59,16 +59,16 @@ Address *AnalyAVRDisassembler::createAddress(uint64 offset)
 /*
  *
  */
-void AnalyAVRDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyAVRDisassembler::examineOpcode(const OPCODE *opcode)
 {
 }
 
 /*
  *
  */
-branch_enum_t AnalyAVRDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyAVRDisassembler::isBranch(const OPCODE *opcode)
 {
-	avrdis_insn *avr_insn = (avrdis_insn *) opcode;
+	const avrdis_insn *avr_insn = static_cast<const avrdis_insn *>(opcode);
 	const char *name = avr_insn->name;
 	if (strcmp(name, "call") == 0
 	 || strcmp(name, "rcall") == 0) {

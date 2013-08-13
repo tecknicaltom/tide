@@ -89,8 +89,8 @@ protected:
 	bool fixdisp;
 
 	/* new */
-	virtual		void	checkInfo(x86opc_insn *xinsn);
-			void	decode_insn(x86opc_insn *insn);
+	virtual		void	checkInfo(const x86opc_insn *xinsn);
+			void	decode_insn(const x86opc_insn *insn);
 			void	decode_vex_insn(x86opc_vex_insn *xinsn);
 	virtual		void	decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm, bool ymm);
 			void	decode_op(x86_insn_op *op, x86opc_insn_op *xop);
@@ -111,7 +111,7 @@ protected:
 			bool	isaddr(char c);
 	virtual		void	prefixes();
 			void	str_format(char **str, const char **format, char *p, char *n, char *op[5], int oplen[5], char stopchar, int print);
-	virtual		void	str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
+	virtual		void	str_op(char *opstr, int *opstrlen, const x86dis_insn *insn, const x86_insn_op *op, bool explicit_params);
 			uint	mkmod(uint modrm);
 			uint	mkreg(uint modrm);
 			uint	mkindex(uint modrm);
@@ -141,7 +141,7 @@ class x86_64dis: public x86dis {
 public:
 				x86_64dis();
 				x86_64dis(BuildCtorArg&a): x86dis(a) {};
-	virtual	void		checkInfo(x86opc_insn *xinsn);
+	virtual	void		checkInfo(const x86opc_insn *xinsn);
 	virtual	void		decode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow_mem, bool mmx, bool xmm, bool ymm);
 	virtual	void		prefixes();
 	virtual	uint64		getoffset();
@@ -154,7 +154,7 @@ public:
 
 class x86dis_vxd: public x86dis {
 protected:
-	virtual void str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params);
+	virtual void str_op(char *opstr, int *opstrlen, const x86dis_insn *insn, const x86_insn_op *op, bool explicit_params);
 public:
 				x86dis_vxd(BuildCtorArg&a): x86dis(a) {};
 				x86dis_vxd(X86OpSize opsize, X86AddrSize addrsize);

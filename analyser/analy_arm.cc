@@ -21,9 +21,9 @@ Address *AnalyArmDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchty
     return new InvalidAddress();
 }
 
-void AnalyArmDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyArmDisassembler::examineOpcode(const OPCODE *opcode)
 {
-    ArmDisInsn *insn = static_cast<ArmDisInsn *>(opcode);
+    const ArmDisInsn *insn = static_cast<const ArmDisInsn *>(opcode);
     if (insn->offset == ~0u)
         return;
 
@@ -38,9 +38,9 @@ void AnalyArmDisassembler::examineOpcode(OPCODE *opcode)
     analy->addXRef(&addr, analy->addr, xrefread);
 }
 
-branch_enum_t AnalyArmDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyArmDisassembler::isBranch(const OPCODE *opcode)
 {
-    ArmDisInsn *dis_insn = static_cast<ArmDisInsn *>(opcode);
+    const ArmDisInsn *dis_insn = static_cast<const ArmDisInsn *>(opcode);
     if (dis_insn->opstr[0] != 'b')
     {
         if (strstr(dis_insn->opstr, "pc, lr") != NULL)

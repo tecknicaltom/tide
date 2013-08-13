@@ -61,7 +61,7 @@ Address *AnalyIA64Disassembler::createAddress(uint32 offset)
 /*
  *
  */
-void AnalyIA64Disassembler::examineOpcode(OPCODE *opcode)
+void AnalyIA64Disassembler::examineOpcode(const OPCODE *opcode)
 {
 /*     IA64DisInsn *dis_insn = (IA64DisInsn*)opcode;
 	IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
@@ -83,10 +83,10 @@ void AnalyIA64Disassembler::examineOpcode(OPCODE *opcode)
 /*
  *
  */
-branch_enum_t AnalyIA64Disassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyIA64Disassembler::isBranch(const OPCODE *opcode)
 {
-	IA64DisInsn *dis_insn = (IA64DisInsn *) opcode;
-	IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
+	const IA64DisInsn *dis_insn = static_cast<const IA64DisInsn *>(opcode);
+	const IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
 	if (ht_strncmp(slot->opcode->name, "br.", 3)==0) {
 		if (ht_strncmp(slot->opcode->name+3, "call", 4)==0) {
 			return br_call;

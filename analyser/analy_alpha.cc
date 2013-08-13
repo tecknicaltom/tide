@@ -81,17 +81,17 @@ Address *AnalyAlphaDisassembler::createAddress(uint32 offset)
 /*
  *
  */
-void AnalyAlphaDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyAlphaDisassembler::examineOpcode(const OPCODE *opcode)
 {
 }
 
 /*
  *
  */
-branch_enum_t AnalyAlphaDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyAlphaDisassembler::isBranch(const OPCODE *opcode)
 {
 	// FIXME: needs work!!
-	alphadis_insn *alpha_insn = (alphadis_insn *) opcode;
+	const alphadis_insn *alpha_insn = static_cast<const alphadis_insn *>(opcode);
 	if (alpha_insn->valid) {
 		switch ((alpha_insn->table+alpha_insn->code)->type) {
 			case ALPHA_GROUP_BRA:

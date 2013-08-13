@@ -574,11 +574,11 @@ Address *AnalyX86Disassembler::branchAddr(OPCODE *opcode, branch_enum_t branchty
 /*
  *
  */
-void	AnalyX86Disassembler::examineOpcode(OPCODE *opcode)
+void	AnalyX86Disassembler::examineOpcode(const OPCODE *opcode)
 {
-	x86dis_insn *o = (x86dis_insn*)opcode;
+	const x86dis_insn *o = static_cast<const x86dis_insn*>(opcode);
 	for (int i = 0; i < 5; i++) {
-		x86_insn_op *op = &o->op[i];
+		const x86_insn_op *op = &o->op[i];
 		Address *addr = NULL;
 		taccess access;
 		xref_enum_t xref = xrefoffset;
@@ -623,9 +623,9 @@ void	AnalyX86Disassembler::examineOpcode(OPCODE *opcode)
 /*
  *
  */
-branch_enum_t AnalyX86Disassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyX86Disassembler::isBranch(const OPCODE *opcode)
 {
-	x86dis_insn *o = (x86dis_insn*)opcode;
+	const x86dis_insn *o = static_cast<const x86dis_insn*>(opcode);
 	const char *opcode_str = o->name;
 	if (opcode_str[0] == '~') {
 		opcode_str++;

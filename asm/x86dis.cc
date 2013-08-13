@@ -70,7 +70,7 @@ x86dis::x86dis(X86OpSize aOpsize, X86AddrSize aAddrsize)
 	x86_insns = &x86_32_insns;
 }
 
-void x86dis::checkInfo(x86opc_insn *xinsn)
+void x86dis::checkInfo(const x86opc_insn *xinsn)
 {
 }
 
@@ -334,7 +334,7 @@ void x86dis::decode_vex_insn(x86opc_vex_insn *xinsn)
 	invalidate();
 }
 
-void x86dis::decode_insn(x86opc_insn *xinsn)
+void x86dis::decode_insn(const x86opc_insn *xinsn)
 {
 	if (!xinsn->name) {
 		byte specialtype = xinsn->op[0];
@@ -1161,7 +1161,7 @@ void x86dis::prefixes()
 	}
 }
 
-static const char *regs(x86dis_insn *insn, int mode, int nr)
+static const char *regs(const x86dis_insn *insn, int mode, int nr)
 {
 	if (insn->rexprefix) {
 		return x86_64regs[mode][nr];
@@ -1170,7 +1170,7 @@ static const char *regs(x86dis_insn *insn, int mode, int nr)
 	}
 }
 
-void x86dis::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params)
+void x86dis::str_op(char *opstr, int *opstrlen, const x86dis_insn *insn, const x86_insn_op *op, bool explicit_params)
 {
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
@@ -1793,7 +1793,7 @@ void x86_64dis::prefixes()
 }
 
 
-void x86_64dis::checkInfo(x86opc_insn *xinsn)
+void x86_64dis::checkInfo(const x86opc_insn *xinsn)
 {
 	if (insn.opsizeprefix != X86_PREFIX_OPSIZE
 	&& (x86_op_type[xinsn->op[0]].info & INFO_DEFAULT_64)) {
@@ -1877,7 +1877,7 @@ ObjectID x86dis_vxd::getObjectID() const
 	return ATOM_DISASM_X86_VXD;
 }
 
-void x86dis_vxd::str_op(char *opstr, int *opstrlen, x86dis_insn *insn, x86_insn_op *op, bool explicit_params)
+void x86dis_vxd::str_op(char *opstr, int *opstrlen, const x86dis_insn *insn, const x86_insn_op *op, bool explicit_params)
 {
 	if (op->type == X86_OPTYPE_USER) {
 		*opstrlen = 0;

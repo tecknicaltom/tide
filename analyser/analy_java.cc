@@ -62,9 +62,9 @@ static uint32 read4(Analyser *a, Address &addr, byte *b)
 	return (b[0]<<24) | (b[1]<<16) | (b[2]<<8) | b[3];
 }
 
-void AnalyJavaDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyJavaDisassembler::examineOpcode(const OPCODE *opcode)
 {
-	javadis_insn *o = (javadis_insn*)opcode;
+	const javadis_insn *o = static_cast<const javadis_insn*>(opcode);
 	const char *opcode_str = o->name;
 	if (strcmp("lookupswitch", opcode_str) == 0) {
 		uint32 ofs = o->addr;
@@ -162,9 +162,9 @@ void AnalyJavaDisassembler::examineOpcode(OPCODE *opcode)
 /*
  *
  */
-branch_enum_t AnalyJavaDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyJavaDisassembler::isBranch(const OPCODE *opcode)
 {
-	javadis_insn *o = (javadis_insn*)opcode;
+	const javadis_insn *o = static_cast<const javadis_insn*>(opcode);
 	const char *opcode_str = o->name;
 	if ((opcode_str[0]=='i') && (opcode_str[1]=='f')) {
 		return br_jXX;

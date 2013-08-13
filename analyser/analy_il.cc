@@ -53,14 +53,14 @@ Address *AnalyILDisassembler::createAddress(uint32 offset)
 /*
  *
  */
-void AnalyILDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyILDisassembler::examineOpcode(const OPCODE *opcode)
 {
 }
 
 /*
  *
  */
-branch_enum_t AnalyILDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyILDisassembler::isBranch(const OPCODE *opcode)
 {
 	return br_nobranch;
 }

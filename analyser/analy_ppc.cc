@@ -78,17 +78,17 @@ Address *AnalyPPCDisassembler::createAddress(uint64 offset)
 /*
  *
  */
-void AnalyPPCDisassembler::examineOpcode(OPCODE *opcode)
+void AnalyPPCDisassembler::examineOpcode(const OPCODE *opcode)
 {
 }
 
 /*
  *
  */
-branch_enum_t AnalyPPCDisassembler::isBranch(OPCODE *opcode)
+branch_enum_t AnalyPPCDisassembler::isBranch(const OPCODE *opcode)
 {
 	// FIXME: needs work!!
-	ppcdis_insn *ppc_insn = (ppcdis_insn *) opcode;
+	const ppcdis_insn *ppc_insn = static_cast<const ppcdis_insn *>(opcode);
 	if (ppc_insn->name[0]=='b') {
 		if (ppc_insn->name[1]=='l') {
 			if (ppc_insn->name[2]==0) {

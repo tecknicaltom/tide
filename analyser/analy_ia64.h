@@ -33,8 +33,8 @@ public:
 
 	virtual	Address			*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
 		Address			*createAddress(uint32 offset);
-	virtual	void			examineOpcode(OPCODE *opcode);
-	virtual	branch_enum_t 		isBranch(OPCODE *opcode);
+	virtual	void			examineOpcode(const OPCODE *opcode);
+	virtual	branch_enum_t 		isBranch(const OPCODE *opcode);
 };
 
 #endif
