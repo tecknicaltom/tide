@@ -77,7 +77,7 @@ asm_code *Assembler::encode(const asm_insn *asm_insn, int _options, CPU_ADDR cur
 	free_asm_codes();
 	error = 0;
 	options = _options;
-	return 0;
+	return NULL;
 }
 
 void Assembler::clearcode()

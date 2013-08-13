@@ -191,10 +191,10 @@ bool UiSymbolListbox::idle()
 		redraw();
 		symbols = analy->getSymbolCount();
 		idle_count = 1;
-		return 1;
+		return true;
 	}
 	idle_count++;
-	return 0;
+	return false;
 }
 
 int UiSymbolListbox::numColumns()
@@ -1558,7 +1558,7 @@ bool ht_aviewer::offset_to_pos(FileOfs ofs, viewer_pos *p)
 
 bool ht_aviewer::ref_sel(LINE_ID *id)
 {
-	if (!id->id1 && !id->id2 && !id->id3 && !id->id4) return 0;
+	if (!id->id1 && !id->id2 && !id->id3 && !id->id4) return false;
 	switch (id->id4) {
 	case 0:
 		if (analy) {

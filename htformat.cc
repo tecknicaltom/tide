@@ -753,7 +753,7 @@ uint UiFormatViewer::pread(FileOfs ofs, void *buf, uint size)
 
 ht_search_result *UiFormatViewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
 {
-	return 0;
+	return NULL;
 }
 
 void UiFormatViewer::pselect_add(FileOfs start, FileOfs end)
@@ -3748,7 +3748,7 @@ ht_search_result *UiUFormatViewer::vsearch(ht_search_request *request, viewer_po
 	last_search_end_pos = end;
 
 	if (request->search_class == SC_VISUAL && request->type == ST_REGEX) {
-		if (!cursor.sub) return 0;
+		if (!cursor.sub) return NULL;
 		ht_regex_search_request *s=(ht_regex_search_request*)request;
 		/* build progress indicator */
 		Bounds b;

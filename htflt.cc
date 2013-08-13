@@ -42,7 +42,7 @@ static UiView *htflt_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	file->seek(0);
 	file->read(&ident, sizeof ident);
 	if ((ident[0]!=FLTMAG0) || (ident[1]!=FLTMAG1) ||
-		(ident[2]!=FLTMAG2) || (ident[3]!=FLTMAG3) ) return 0;
+		(ident[2]!=FLTMAG2) || (ident[3]!=FLTMAG3) ) return NULL;
 
 	ht_flt *g=new ht_flt();
 	g->init(b, file, htflt_ifs, format_group, 0);

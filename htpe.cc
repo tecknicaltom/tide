@@ -54,7 +54,7 @@ static UiView *htpe_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	;
 	if (file->read(pemagic, 4) != 4
 	 || pemagic[0] != PE_MAGIC0 || pemagic[1] != PE_MAGIC1
-	 || pemagic[2] != PE_MAGIC2 || pemagic[3] != PE_MAGIC3) return 0;
+	 || pemagic[2] != PE_MAGIC2 || pemagic[3] != PE_MAGIC3) return NULL;
 
 	ht_pe *g = new ht_pe();
 	g->init(b, file, htpe_ifs, format_group, h);

@@ -56,7 +56,7 @@ static UiView *htelfsymboltable_init(Bounds *b, File *file, UiFormatGroup *group
 	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)group->get_shared_data();
 
 	if (elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS32 &&
-		elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS64) return 0;
+		elf_shared->ident.e_ident[ELF_EI_CLASS]!=ELFCLASS64) return NULL;
 
 	bool elf32 = elf_shared->ident.e_ident[ELF_EI_CLASS] == ELFCLASS32;
 	uint skip = elf_shared->symtables;

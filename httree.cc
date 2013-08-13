@@ -205,7 +205,7 @@ void *UiTreeview::get_node_r(void *node, int *i)
  */
 void *UiTreeview::get_node(int i)
 {
-	if (i <= 0) return 0;
+	if (i <= 0) return NULL;
 	void *Node = get_root();
 	return get_node_r(Node, &i);
 }

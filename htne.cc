@@ -76,7 +76,7 @@ static UiView *htne_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	file->seek(h);
 	file->read(nemagic, 2);
 	if ((nemagic[0]!=NE_MAGIC0) || (nemagic[1]!=NE_MAGIC1))
-		return 0;
+		return NULL;
 
 	ht_ne *g=new ht_ne();
 	g->init(b, file, htne_ifs, format_group, h);

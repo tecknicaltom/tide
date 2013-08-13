@@ -21,13 +21,15 @@
 #include "vxd.h"
 #include "vxdserv.h"
 
+#include <cstdlib>
+
 vxd_t *find_vxd(vxd_desc *table, int key)
 {
 	while (table->key!=-1) {
 		if (table->key==key) return &table->vxd;
 		table++;
 	}
-	return 0;
+	return NULL;
 }
 
 const char *find_vxd_service(vxd_service_desc *table, int key)
@@ -36,7 +38,7 @@ const char *find_vxd_service(vxd_service_desc *table, int key)
 		if (table->key==key) return table->name;
 		table++;
 	}
-	return 0;
+	return NULL;
 }
 
 vxd_desc vxds[] = {

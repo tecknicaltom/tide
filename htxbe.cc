@@ -43,7 +43,7 @@ static UiView *htxbe_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	file->seek(0);
 	file->read(xbemagic, 4);
 	if ((xbemagic[0]!=XBE_MAGIC0) || (xbemagic[1]!=XBE_MAGIC1) ||
-	   (xbemagic[2]!=XBE_MAGIC2) || (xbemagic[3]!=XBE_MAGIC3)) return 0;
+	   (xbemagic[2]!=XBE_MAGIC2) || (xbemagic[3]!=XBE_MAGIC3)) return NULL;
 
 	ht_xbe *g=new ht_xbe();
 	g->init(b, file, htxbe_ifs, format_group, 0);

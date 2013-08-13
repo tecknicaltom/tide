@@ -55,7 +55,7 @@ static UiView *htle_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	file->seek(h);
 
 	if (file->read(lemagic, 2) != 2
-	 || lemagic[0] != LE_MAGIC0 || lemagic[1] != LE_MAGIC1) return 0;
+	 || lemagic[0] != LE_MAGIC0 || lemagic[1] != LE_MAGIC1) return NULL;
 
 	ht_le *g=new ht_le();
 	g->init(b, file, htle_ifs, format_group, h);

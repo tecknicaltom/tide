@@ -185,7 +185,7 @@ bool ht_ltextfile::convert_line2ofs(uint line, uint pofs, FileOfs *o) const
 bool ht_ltextfile::convert_ofs2line(FileOfs o, uint *line, uint *pofs) const
 {
 	uint l=0, r=linecount();
-	if (!r) return 0; else r--;
+	if (!r) return false; else r--;
 	uint m=0;
 	ht_ltextfile_line *x, *y;
 	while (l<=r) {

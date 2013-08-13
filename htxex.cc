@@ -42,7 +42,7 @@ static UiView *htxex_init(Bounds *b, File *file, UiFormatGroup *format_group)
 	file->seek(0);
 	file->read(xexmagic, 4);
 	if (xexmagic[0]!=XEX_MAGIC0 || xexmagic[1]!=XEX_MAGIC1 ||
-	    xexmagic[2]!=XEX_MAGIC2 || xexmagic[3]!=XEX_MAGIC3) return 0;
+	    xexmagic[2]!=XEX_MAGIC2 || xexmagic[3]!=XEX_MAGIC3) return NULL;
 
 	ht_xex *g=new ht_xex();
 	g->init(b, file, htxex_ifs, format_group, 0);

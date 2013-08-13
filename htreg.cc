@@ -821,11 +821,11 @@ RegistryNode *Registry::find_entry_get_subdir(Container *dir, const char *nodena
 {
 	RegistryNode *n=find_entry_get_node(dir, nodename);
 start:
-	if (!n) return 0;
+	if (!n) return NULL;
 	switch (n->type) {
 		case RNT_SYMLINK: {
 			rec_depth++;
-			if (rec_depth > MAX_SYMLINK_REC_DEPTH) return 0;
+			if (rec_depth > MAX_SYMLINK_REC_DEPTH) return NULL;
 			char *sl=((RegistryDataString*)n->data)->value;
 			if (sl[0] == '/') {
 				n = find_entry_i(NULL, sl, true);
@@ -837,7 +837,7 @@ start:
 		case RNT_SUBDIR:
 			return n;
 	}
-	return 0;
+	return NULL;
 }
 
 RegistryNode *Registry::find_entry_get_data(Container *dir, const char *nodename, bool follow_symlinks)
@@ -963,11 +963,11 @@ bool Registry::splitfind(const char *key, const char **name, RegistryNode **node
 	}
 
 	RegistryNode *m = find_entry_i(NULL, dir, true);
-	if (!m) return 0;
-	if (m->type != RNT_SUBDIR) return 0;
+	if (!m) return false;
+	if (m->type != RNT_SUBDIR) return false;
 	*node = m;
 	*name = n;
-	return 1;
+	return true;
 }
 
 void Registry::store(ObjectStream &f) const

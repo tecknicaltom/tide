@@ -327,13 +327,13 @@ static bool view_line_exposed(UiView *v, int y, int x1, int x2)
 						if ((y>=n->size.y) && (y<n->size.y+n->size.h)) {
 							if (n->size.x<=x1) {
 								if (n->size.x+n->size.w>=x2) {
-									return 0;
+									return false;
 								} else if (n->size.x+n->size.w>x1) {
 									x1=n->size.x+n->size.w;
 								}
 							} else if (n->size.x<=x2) {
 								if (n->size.x+n->size.w<x2) {
-									if (!view_line_exposed(n, y, x1, n->size.x)) return 0;
+									if (!view_line_exposed(n, y, x1, n->size.x)) return false;
 									x1=n->size.x+n->size.w;
 								} else {
 									x2=n->size.x;
@@ -348,7 +348,7 @@ static bool view_line_exposed(UiView *v, int y, int x1, int x2)
 		v=g;
 		g=g->group;
 	}
-	return 1;
+	return true;
 }
 
 int UiView::enum_start()
@@ -365,9 +365,9 @@ bool UiView::exposed()
 {
 #if 1
 	for (int y=0; y < size.h; y++) {
-		if (view_line_exposed(this, size.y+y, size.x, size.x+size.w)) return 1;
+		if (view_line_exposed(this, size.y+y, size.x, size.x+size.w)) return true;
 	}
-	return 0;
+	return false;
 #else
 	return 1;
 #endif
@@ -444,7 +444,7 @@ void UiView::getdata(ObjectStream &s)
 
 UiView *UiView::getfirstchild()
 {
-	return 0;
+	return NULL;
 }
 
 uint UiView::getnumber()
@@ -871,7 +871,7 @@ UiView *UiGroup::get_by_browse_idx(int i)
 		if (v->browse_idx==i) return v;
 		v=v->next;
 	}
-	return 0;
+	return NULL;
 }
 
 void UiGroup::getdata(ObjectStream &s)

@@ -343,7 +343,7 @@ char *VfsListbox::translateProp(char *fmt, int *type)
 			return fmt+l;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 void VfsListbox::reread()

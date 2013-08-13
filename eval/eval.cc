@@ -1457,7 +1457,7 @@ static const char *type2str(eval_scalartype t)
 		return "...";
 		break;
 	default:
-		return 0;
+		return NULL;
 		break;
 	}
 }

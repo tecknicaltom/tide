@@ -2145,7 +2145,7 @@ const char *ht_app::func(uint i, bool execute)
 			if (execute) sendmsg(cmd_quit);
 			return "quit";
 	}
-	return 0;
+	return NULL;
 }
 
 void ht_app::get_stdbounds_file(Bounds *b)

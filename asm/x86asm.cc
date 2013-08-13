@@ -801,7 +801,7 @@ bool x86asm::encode_modrm(x86_insn_op *op, char size, bool allow_reg, bool allow
 		}
 		if (addrsize == X86_ADDRSIZE16) {
 			int mod, rm, dispsize;
-			if (!encode_modrm_v(&modrm16, op, mindispsize, &mod, &rm, &dispsize)) return 0;
+			if (!encode_modrm_v(&modrm16, op, mindispsize, &mod, &rm, &dispsize)) return false;
 			emitmodrm_mod(mod);
 			emitmodrm_rm(rm);
 			emitdisp(op->mem.disp, dispsize);
@@ -1149,7 +1149,7 @@ bool x86asm::encode_sib_v(x86_insn_op *op, int mindispsize, int *_ss, int *_inde
 		case 2: ss = 1; break;
 		case 4: ss = 2; break;
 		case 8: ss = 3; break;
-		default: return 0;
+		default: return false;
 		}
 	} else {
 		ss = 0;
@@ -1303,7 +1303,7 @@ const char *x86asm::immlsz2hsz(int size, int opsize)
 			return immhsz64_64;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 const char *x86asm::lsz2hsz(int size, int opsize)
@@ -1360,7 +1360,7 @@ const char *x86asm::lsz2hsz(int size, int opsize)
 			return hsz256_64;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 #define MATCHTYPE_NOMATCH	0
@@ -2053,10 +2053,10 @@ bool x86asm::opspecialregs(x86_insn_op *op, const char *xop)
 	 * strtol sets e to next untranslatable char,
 	 * this case is caught below...
 	 */
-	if (strlen(xop) != 3) return 0;
+	if (strlen(xop) != 3) return false;
 
 	int w = strtol(xop+2, &e, 10);
-	if (*e || w > 7) return 0;
+	if (*e || w > 7) return false;;
 	if (ht_strncmp(xop, "cr", 2) == 0) {
 		op->type = X86_OPTYPE_CRX;
 		op->size = 4;

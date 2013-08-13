@@ -75,7 +75,7 @@ static bool is_coff(File *file, Endianess &endian, FileOfs ofs)
 	// BIG-ENDIAN machines
 	if (!machine_found) {
 		file->seek(ofs);
-		if (file->read(&h, sizeof h)!=sizeof h) return 0;
+		if (file->read(&h, sizeof h)!=sizeof h) return false;
 		createHostStruct(&h, COFF_HEADER_struct, big_endian);
 		switch (h.machine) {
 			case COFF_MACHINE_R3000BE:
@@ -112,10 +112,10 @@ static UiView *htcoff_init(Bounds *b, File *file, UiFormatGroup *format_group)
 		/* look for dj-coff */
 		byte mz[2];
 		file->seek(0);
-		if (file->read(mz, 2) != 2) return 0;
+		if (file->read(mz, 2) != 2) return NULL;
 		if ((mz[0] != IMAGE_MZ_MAGIC0) || (mz[1] != IMAGE_MZ_MAGIC1) ||
 				(!is_coff(file, end, h = 0x800)))
-				return 0;
+				return NULL;
 	}
 
 	ht_coff *g = new ht_coff();
