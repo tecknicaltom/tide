@@ -13,9 +13,9 @@ ObjectID AnalyArmDisassembler::getObjectID() const
     return ATOM_ANALY_ARM;
 }
 
-Address *AnalyArmDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyArmDisassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
-    ArmDisInsn *insn = static_cast<ArmDisInsn *>(opcode);
+    const ArmDisInsn *insn = static_cast<const ArmDisInsn *>(opcode);
     if (insn->offset != ~0u)
         return new AddressFlat32(insn->offset);
     return new InvalidAddress();

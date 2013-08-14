@@ -40,7 +40,7 @@ ObjectID AnalyAVRDisassembler::getObjectID() const
 /*
  *
  */
-Address *AnalyAVRDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyAVRDisassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
 	Address *a;
 	a = createAddress(((avrdis_insn *)opcode)->op[0].imm);

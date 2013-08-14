@@ -32,7 +32,7 @@ public:
 		void		init(Analyser *A);
 	virtual	ObjectID	getObjectID() const;
 
-	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+	virtual	Address		*branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine);
 		Address		*createAddress(uint64 offset);
 	virtual	void		examineOpcode(const OPCODE *opcode);
 	virtual	branch_enum_t 	isBranch(const OPCODE *opcode);

@@ -45,9 +45,9 @@ ObjectID AnalyJavaDisassembler::getObjectID() const
  *
  */
 
-Address *AnalyJavaDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyJavaDisassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
-	javadis_insn *o = (javadis_insn*)opcode;
+	const javadis_insn *o = static_cast<const javadis_insn*>(opcode);
 	switch (o->op[0].type) {
 	case JAVA_OPTYPE_LABEL:
 		return new AddressFlat32(o->op[0].label);

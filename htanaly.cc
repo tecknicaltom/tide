@@ -251,7 +251,7 @@ char *UiSymbolListbox::quickfindCompletition(const char *s)
 /*
  *	CLASS CallChain
  */
-void	CallChain::init(Bounds *b, Analyser *Analy, Address *a, char *desc)
+void	CallChain::init(Bounds *b, Analyser *Analy, const Address *a, char *desc)
 {
 	UiTreeview::init(b, desc);
 	VIEW_DEBUG_NAME("CallChain");
@@ -280,7 +280,7 @@ void	CallChain::adjust(void *node, bool expand)
 	((CallChainNode*)node)->expanded = expand;
 }
 
-CallChainNode *CallChain::createNode(Address *a)
+CallChainNode *CallChain::createNode(const Address *a)
 {
 	CallChainNode *n = ht_malloc(sizeof(CallChainNode));
 	n->next = NULL;
@@ -856,7 +856,7 @@ void ht_aviewer::generateOutputDialog()
 	delete dialog;
 }
 
-bool ht_aviewer::canCreateAddress(Address *addr, bool error_msg)
+bool ht_aviewer::canCreateAddress(const Address *addr, bool error_msg)
 {
 	Location *ctx = analy->getLocationContextByAddress(addr);
 	if (ctx && ctx->addr->compareTo(addr) != 0) {
@@ -1588,7 +1588,7 @@ void ht_aviewer::reloadpalette()
 	if (analy_sub) analy_sub->output->changeConfig();
 }
 
-void ht_aviewer::searchForXRefs(Address *Addr)
+void ht_aviewer::searchForXRefs(const Address *Addr)
 {
 	// FIXME: viewer_pos && FIXNEW
 	char str[100];
@@ -1618,7 +1618,7 @@ void ht_aviewer::searchForXRefs(Address *Addr)
 	delete q;
 }
 
-void ht_aviewer::showCallChain(Address *Addr)
+void ht_aviewer::showCallChain(const Address *Addr)
 {
 	Location *a = analy->getFunctionByAddress(Addr);
 	if (!a) return;
@@ -1660,7 +1660,7 @@ void ht_aviewer::showCallChain(Address *Addr)
 	delete dialog;
 }
 
-void ht_aviewer::showComments(Address *Addr)
+void ht_aviewer::showComments(const Address *Addr)
 {
 	if (!analy) return;
 	if (!canCreateAddress(Addr, true)) {
@@ -1739,7 +1739,7 @@ void ht_aviewer::showComments(Address *Addr)
 	delete dialog;
 }
 
-void ht_aviewer::showInfo(Address *Addr)
+void ht_aviewer::showInfo(const Address *Addr)
 {
 	Bounds c, b;
 	app->getbounds(&c);
@@ -1761,7 +1761,7 @@ void ht_aviewer::showInfo(Address *Addr)
 	delete dialog;
 }
 
-void ht_aviewer::showSymbols(Address *addr)
+void ht_aviewer::showSymbols(const Address *addr)
 {
 	if (!analy) return;
 
@@ -1811,7 +1811,7 @@ void ht_aviewer::showSymbols(Address *addr)
 	delete dialog;
 }
 
-void ht_aviewer::showXRefs(Address *Addr)
+void ht_aviewer::showXRefs(const Address *Addr)
 {
 	if (!analy->getXRefs(Addr)) {
 		if (confirmbox("No xrefs for address %y!\nSearch for xrefs?", Addr) == button_yes) {

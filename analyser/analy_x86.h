@@ -120,7 +120,7 @@ public:
 		void 		load(ObjectStream &f);
 	virtual	ObjectID	getObjectID() const;
 
-	virtual	Address		*branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine);
+	virtual	Address		*branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine);
 		Address		*createAddress(uint16 segment, uint64 offset);
 		uint16		getSegment(Address *addr);
 	virtual	void		examineOpcode(const OPCODE *opcode);

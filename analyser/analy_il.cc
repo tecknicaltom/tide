@@ -40,7 +40,7 @@ ObjectID AnalyILDisassembler::getObjectID() const
 /*
  *
  */
-Address *AnalyILDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyILDisassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
 	return new InvalidAddress();
 }

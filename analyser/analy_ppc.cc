@@ -55,10 +55,11 @@ ObjectID AnalyPPCDisassembler::getObjectID() const
 /*
  *
  */
-Address *AnalyPPCDisassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyPPCDisassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
 	Address *a;
-	a = createAddress(((ppcdis_insn *)opcode)->op[((ppcdis_insn *)opcode)->ops-1].rel.mem);
+	const ppcdis_insn *o = static_cast<const ppcdis_insn*>(opcode);
+	a = createAddress(o->op[o->ops-1].rel.mem);
 	if (/*examine &&*/ analy->validAddress(a, scvalid)) {
 		return a;
 	}

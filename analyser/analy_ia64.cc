@@ -40,10 +40,10 @@ ObjectID AnalyIA64Disassembler::getObjectID() const
 /*
  *
  */
-Address *AnalyIA64Disassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyIA64Disassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
-	IA64DisInsn *dis_insn = (IA64DisInsn*)opcode;
-	IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
+	const IA64DisInsn *dis_insn = static_cast<const IA64DisInsn*>(opcode);
+	const IA64SlotDisInsn *slot = &dis_insn->slot[dis_insn->selected];
 	for (int j=0; j<7; j++) {
 		if (slot->op[j].type == IA64_OPERAND_ADDRESS) {
 			Address *addr = new AddressFlat64(slot->op[j].imm);

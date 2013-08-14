@@ -115,7 +115,7 @@ class CallChain: public UiTreeview {
 		Analyser		*analy;
 		CallChainNode *root;
 public:
-			void	init(Bounds *b, Analyser *analy, Address *a, char *desc);
+			void	init(Bounds *b, Analyser *analy, const Address *a, char *desc);
 		virtual void	done();
 		virtual void	adjust(void *node, bool expand);
 		virtual void   *get_child(void *node, int i);
@@ -128,7 +128,7 @@ public:
 		virtual void	select_node(void *node);
 		CallChainNode   *get_current_node();
 private:
-	CallChainNode		*createNode(Address *a);
+	CallChainNode		*createNode(const Address *a);
 		void		examineNode(CallChainNode *n);
 };
 /*
@@ -198,7 +198,7 @@ public:
 		bool convertAddressToViewerPos(Address *a, viewer_pos *p);
 		bool convertViewerPosToAddress(const viewer_pos &p, Address **a);
 		void attachInfoline(AnalyInfoline *V);
-		bool canCreateAddress(Address *addr, bool error_msg);
+		bool canCreateAddress(const Address *addr, bool error_msg);
 		void dataStringDialog();
 		void dataIntDialog(taddr_int_subtype subtype, int length);
 		void exportFileDialog();
@@ -218,12 +218,12 @@ public:
 	virtual	bool ref_sel(LINE_ID *id);
 	virtual	void reloadpalette();
 	virtual	void setAnalyser(Analyser *a) = 0;
-		void showCallChain(Address *addr);
-		void showComments(Address *addr);
-		void showInfo(Address *addr);
-		void showSymbols(Address *addr);
-		void showXRefs(Address *addr);
-		void searchForXRefs(Address *addr);
+		void showCallChain(const Address *addr);
+		void showComments(const Address *addr);
+		void showInfo(const Address *addr);
+		void showSymbols(const Address *addr);
+		void showXRefs(const Address *addr);
+		void searchForXRefs(const Address *addr);
 	virtual	bool qword_to_pos(uint64 q, viewer_pos *p);
 	virtual	bool func_handler(eval_scalar *result, char *name, eval_scalarlist *params);
 	virtual	bool symbol_handler(eval_scalar *result, char *name);

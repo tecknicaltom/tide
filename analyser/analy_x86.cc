@@ -512,10 +512,10 @@ uint16 AnalyX86Disassembler::getSegment(Address *addr)
 /*
  *
  */
-Address *AnalyX86Disassembler::branchAddr(OPCODE *opcode, branch_enum_t branchtype, bool examine)
+Address *AnalyX86Disassembler::branchAddr(const OPCODE *opcode, branch_enum_t branchtype, bool examine)
 {
 	Address *addr;
-	x86dis_insn *o = (x86dis_insn*)opcode;
+	const x86dis_insn *o = static_cast<const x86dis_insn*>(opcode);
 	assert(o->op[1].type == X86_OPTYPE_EMPTY);
 	switch (o->op[0].type) {
 		case X86_OPTYPE_IMM: {
