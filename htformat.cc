@@ -751,7 +751,7 @@ uint UiFormatViewer::pread(FileOfs ofs, void *buf, uint size)
 	}
 }
 
-ht_search_result *UiFormatViewer::psearch(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *UiFormatViewer::psearch(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	return NULL;
 }
@@ -856,7 +856,7 @@ uint UiFormatViewer::vread(viewer_pos pos, void *buf, uint size)
 	return 0;
 }
 
-ht_search_result *UiFormatViewer::vsearch(ht_search_request *search, viewer_pos start, viewer_pos end)
+ht_search_result *UiFormatViewer::vsearch(const ht_search_request *search, viewer_pos start, viewer_pos end)
 {
 	return NULL;
 }
@@ -3720,7 +3720,7 @@ bool UiUFormatViewer::ref_sel(LINE_ID *id)
 	return false;
 }
 
-ht_search_result *UiUFormatViewer::psearch(ht_search_request *request, FileOfs start, FileOfs end)
+ht_search_result *UiUFormatViewer::psearch(const ht_search_request *request, FileOfs start, FileOfs end)
 {
 	if (request != last_search_request) {
 		delete last_search_request;
@@ -3738,7 +3738,7 @@ ht_search_result *UiUFormatViewer::psearch(ht_search_request *request, FileOfs s
 	return NULL;
 }
 
-ht_search_result *UiUFormatViewer::vsearch(ht_search_request *request, viewer_pos start, viewer_pos end)
+ht_search_result *UiUFormatViewer::vsearch(const ht_search_request *request, viewer_pos start, viewer_pos end)
 {
 	if (request != last_search_request) {
 		delete last_search_request;
@@ -4187,7 +4187,7 @@ bool ht_sub::ref(LINE_ID *id)
 	return false;
 }
 
-ht_search_result *ht_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	return NULL;
 }
@@ -4309,7 +4309,7 @@ static bool ht_linear_sub_symbol_handler(eval_scalar *result, char *name)
 class ht_expr_search_pcontext: public Object {
 public:
 	/* in */
-	ht_search_request *request;
+	const ht_search_request *request;
 	ht_sub *sub;
 	UiFormatViewer *fv;
 	FileOfs start;
@@ -4368,7 +4368,7 @@ static bool process_search_expr(Object *ctx, UiText *progress_indicator)
 	return false;
 }
 
-ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, UiUFormatViewer *ufv, FileOfs fofs, FileOfs fsize)
+ht_search_result *linear_expr_search(const ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, UiUFormatViewer *ufv, FileOfs fofs, FileOfs fsize)
 {
 	if (start < fofs) start = fofs;
 	if (end > fofs + fsize) end = fofs+fsize;
@@ -4388,7 +4388,7 @@ ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, F
 	return NULL;
 }
 
-ht_search_result *ht_linear_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_linear_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	ht_search_result *r = NULL;
 	if (search->search_class == SC_PHYSICAL && search->type == ST_EXPR) {
@@ -4774,7 +4774,7 @@ bool ht_layer_sub::ref(LINE_ID *id)
 	return sub->ref(id);
 }
 
-ht_search_result *ht_layer_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_layer_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	return sub->search(search, start, end);
 }
@@ -4898,7 +4898,7 @@ bool ht_collapsable_sub::ref(LINE_ID *id)
 	return false;
 }
 
-ht_search_result *ht_collapsable_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_collapsable_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	if (collapsed) return NULL;
 	return ht_layer_sub::search(search, start, end);
@@ -5012,7 +5012,7 @@ bool ht_group_sub::ref(LINE_ID *id)
 	return false;
 }
 
-ht_search_result *ht_group_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_group_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	return NULL;
 }

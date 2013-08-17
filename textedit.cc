@@ -1893,7 +1893,7 @@ uint UiTextViewer::scroll_right(uint n)
 	return n;
 }
 
-ht_search_result *UiTextViewer::search(ht_search_request *request, text_search_pos *s, text_search_pos *e)
+ht_search_result *UiTextViewer::search(const ht_search_request *request, text_search_pos *s, text_search_pos *e)
 {
 	if (request != last_search_request) {
 		delete last_search_request;

@@ -1486,7 +1486,7 @@ void ht_replace_dialog::select_replace_mode_bymodeidx()
  *
  */
 
-ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize)
+ht_search_result *linear_bin_search(const ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize)
 {
 	ht_fxbin_search_request *s = (ht_fxbin_search_request*)search;
 

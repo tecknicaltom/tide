@@ -190,7 +190,7 @@ public:
 	virtual	bool get_current_offset(FileOfs *ofs);
 	virtual	bool goto_offset(FileOfs ofs, bool save_vstate);
 	virtual	uint pread(FileOfs ofs, void *buf, uint size);
-	virtual	ht_search_result *psearch(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *psearch(const ht_search_request *search, FileOfs start, FileOfs end);
 	virtual	void pselect_add(FileOfs start, FileOfs end);
 	virtual	void pselect_get(FileOfs *start, FileOfs *end);
 	virtual	void pselect_set(FileOfs start, FileOfs end);
@@ -204,7 +204,7 @@ public:
 	virtual	bool get_current_pos(viewer_pos *pos);
 	virtual	bool goto_pos(viewer_pos pos, bool save_vstate);
 	virtual	uint vread(viewer_pos pos, void *buf, uint size);
-	virtual	ht_search_result *vsearch(ht_search_request *search, viewer_pos start, viewer_pos end);
+	virtual	ht_search_result *vsearch(const ht_search_request *search, viewer_pos start, viewer_pos end);
 	virtual	void vselect_add(viewer_pos start, viewer_pos end);
 	virtual	void vselect_get(viewer_pos *start, viewer_pos *end);
 	virtual	void vselect_set(viewer_pos start, viewer_pos end);
@@ -398,13 +398,13 @@ public:
 	virtual	bool goto_offset(FileOfs offset, bool save_vstate);
 	virtual	bool goto_pos(viewer_pos pos, bool save_vstate);
 	virtual	void handlemsg(htmsg *msg);
-	virtual	ht_search_result *psearch(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *psearch(const ht_search_request *search, FileOfs start, FileOfs end);
 	virtual	void pselect_add(FileOfs start, FileOfs end);
 	virtual	void pselect_get(FileOfs *start, FileOfs *end);
 	virtual	void pselect_set(FileOfs start, FileOfs end);
 	virtual	uint pwrite(FileOfs ofs, void *buf, uint size);
 	virtual	bool qword_to_offset(uint64 q, FileOfs *ofs);
-	virtual	ht_search_result *vsearch(ht_search_request *search, viewer_pos start, viewer_pos end);
+	virtual	ht_search_result *vsearch(const ht_search_request *search, viewer_pos start, viewer_pos end);
 /* new */
 	virtual	bool compeq_viewer_pos(viewer_pos *a, viewer_pos *b);
 		void complete_init();
@@ -443,7 +443,7 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 	virtual	bool ref(LINE_ID *id);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 };
 
 /*
@@ -458,7 +458,7 @@ public:
 		void init(File *file, FileOfs offset, FileOfs size);
 /* overwritten */
 	virtual	void handlemsg(htmsg *msg);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 };
 
 /*
@@ -539,7 +539,7 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 	virtual	bool ref(LINE_ID *id);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 };
 
 /*
@@ -564,7 +564,7 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 	virtual	bool ref(LINE_ID *id);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 };
 
 /*
@@ -587,13 +587,13 @@ public:
 	virtual	int next_line_id(LINE_ID *line_id, int n);
 	virtual	int prev_line_id(LINE_ID *line_id, int n);
 	virtual	bool ref(LINE_ID *id);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 /* new */
 		void insertsub(ht_sub *sub);
 };
 
-ht_search_result *linear_expr_search(ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, UiUFormatViewer *ufv, FileOfs fofs, FileOfs fsize);
-ht_search_result *linear_bin_search(ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize);
+ht_search_result *linear_expr_search(const ht_search_request *search, FileOfs start, FileOfs end, ht_sub *sub, UiUFormatViewer *ufv, FileOfs fofs, FileOfs fsize);
+ht_search_result *linear_bin_search(const ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize);
 
 void clear_line_id(LINE_ID *l);
 bool compeq_line_id(const LINE_ID &a, const LINE_ID &b);

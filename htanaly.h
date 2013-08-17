@@ -177,7 +177,7 @@ public:
 	virtual	int	next_line_id(LINE_ID *line_id, int n);
 	virtual	int	prev_line_id(LINE_ID *line_id, int n);
 			void	setAnalyser(Analyser *Analy);
-	virtual	ht_search_result *search(ht_search_request *search, FileOfs start, FileOfs end);
+	virtual	ht_search_result *search(const ht_search_request *search, FileOfs start, FileOfs end);
 };
 
 /*
@@ -195,7 +195,7 @@ public:
 	bool pause;
 		void init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analy);
 	virtual	void done();
-		bool convertAddressToViewerPos(Address *a, viewer_pos *p);
+		bool convertAddressToViewerPos(const Address *a, viewer_pos *p);
 		bool convertViewerPosToAddress(const viewer_pos &p, Address **a);
 		void attachInfoline(AnalyInfoline *V);
 		bool canCreateAddress(const Address *addr, bool error_msg);

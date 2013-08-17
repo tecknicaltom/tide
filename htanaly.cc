@@ -578,7 +578,7 @@ bool ht_aviewer::convertViewerPosToAddress(const viewer_pos &p, Address **a)
 	return true;
 }
 
-bool ht_aviewer::convertAddressToViewerPos(Address *a, viewer_pos *p)
+bool ht_aviewer::convertAddressToViewerPos(const Address *a, viewer_pos *p)
 {
 	if (a && a->isValid()) {
 		clear_viewer_pos(p);
@@ -2113,7 +2113,7 @@ int ht_analy_sub::prev_line_id(LINE_ID *line_id, int n)
 	return res;
 }
 
-ht_search_result *ht_analy_sub::search(ht_search_request *search, FileOfs start, FileOfs end)
+ht_search_result *ht_analy_sub::search(const ht_search_request *search, FileOfs start, FileOfs end)
 {
 	// FIXME: viewer pos
 	Address *st = NULL;
