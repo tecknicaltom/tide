@@ -1650,14 +1650,22 @@ UiWindow *ht_app::create_window_clipboard()
 	return NULL;
 }
 
+bool auto_exit;
 UiWindow *ht_app::create_window_file(const char *filename, uint mode, bool allow_duplicates)
 {
+	auto_exit = true;
+	UiWindow* ret = NULL;
 	if (mode == FOM_AUTO) mode = autodetect_file_open_mode(filename);
 	switch (mode) {
-		case FOM_BIN: return create_window_file_bin(filename, allow_duplicates);
-		case FOM_TEXT: return create_window_file_text(filename, allow_duplicates);
+		case FOM_BIN: ret = create_window_file_bin(filename, allow_duplicates);
+					  break;
+		case FOM_TEXT: ret = create_window_file_text(filename, allow_duplicates);
 	}
-	return NULL;
+	if (auto_exit)
+	{
+		exit(0);
+	}
+	return ret;
 }
 
 UiWindow *ht_app::create_window_file_bin(const char *filename, bool allow_duplicates)

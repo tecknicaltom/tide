@@ -496,11 +496,13 @@ bool AnalyInfoline::valid()
 	return analy && analy->analy;
 }
 
+extern bool auto_exit;
 /*
  *
  */
 void ht_aviewer::init(Bounds *b, const char *desc, int caps, File *file, UiFormatGroup *format_group, Analyser *Analy)
 {
+	auto_exit = false;
 	analy = Analy;
 	if (Analy) {
 		analy->setDisplayMode(ANALY_SHOW_ADDRESS | ANALY_SHOW_COMMENTS
@@ -1530,6 +1532,7 @@ bool ht_aviewer::idle()
 		LOG("%y: analyser finished after %d ops.", &analy->getName(name), analy->ops_parsed);
 		dirtyview();
 		app->sendmsg(msg_draw, 0);
+		exit(0);
 	}
 	idle_count++;
 /*	if (idle_count % 565 == 0) {
