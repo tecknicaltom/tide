@@ -134,9 +134,6 @@ extern const int powerpc_num_opcodes;
 /* Opcode is supported by machine check APU.  */
 #define PPC_OPCODE_RFMCI    (020000000)
 
-/* A macro to extract the major opcode from an instruction.  */
-#define PPC_OP(i) (((i) >> 26) & 0x3f)
-
 /* The operands table is an array of struct powerpc_operand.  */
 
 struct powerpc_operand

@@ -41,7 +41,6 @@ dis_insn *PPCDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 {
 	const struct powerpc_opcode *opcode;
 	const struct powerpc_opcode *opcode_end;
-	uint32 op;
 	int dialect = -1;
 
 	insn.data = createHostInt(code, 4, big_endian);
@@ -54,20 +53,14 @@ dis_insn *PPCDisassembler::decode(const byte *code, int maxlen, CPU_ADDR addr)
 
 	insn.size = 4;
 
-	/* Get the major opcode of the instruction.  */
-	op = PPC_OP(insn.data);
-
 	/* Find the first match in the opcode table.  We could speed this up
 	   a bit by doing a binary search on the major opcode.  */
 	opcode_end = powerpc_opcodes + powerpc_num_opcodes;
 
 	for (opcode = powerpc_opcodes; opcode < opcode_end; opcode++) {
-		uint32 table_op;
 		const byte *opindex;
 		const struct powerpc_operand *operand;
 		bool invalid;
-
-		table_op = PPC_OP (opcode->opcode);
 
 		if ((insn.data & opcode->mask) != opcode->opcode/* || (opcode->flags & dialect) == 0*/) {
 			continue;
@@ -165,7 +158,11 @@ dis_insn *PPCDisassembler::duplicateInsn(const dis_insn *disasm_insn)
 
 void PPCDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align)
 {
-	min_length = max_length = min_look_ahead = avg_look_ahead = addr_align = 4;
+	min_length = 4;
+	max_length = 4;
+	min_look_ahead = 4;
+	avg_look_ahead = 4;
+	addr_align = 4;
 }
 
 byte PPCDisassembler::getSize(const dis_insn *disasm_insn)

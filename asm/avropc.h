@@ -47,9 +47,6 @@ extern const int avr_num_opcodes;
 /* Values defined for the flags field of a struct powerpc_opcode.  */
 
 
-/* A macro to extract the major opcode from an instruction.  */
-//#define PPC_OP(i) (((i) >> 26) & 0x3f)
-
 /* The operands table is an array of struct powerpc_operand.  */
 
 struct avr_operand
