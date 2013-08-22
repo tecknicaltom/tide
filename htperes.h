@@ -38,7 +38,7 @@ public:
 	virtual	void done();
 /* overwritten */
 	virtual	void	handlemsg(htmsg *msg);
-	virtual	void	select_node(void *node);
+	virtual	void	select_node(const void *node);
 };
 
 extern format_viewer_if htperesources_if;

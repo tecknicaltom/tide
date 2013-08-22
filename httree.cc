@@ -85,7 +85,7 @@ int  UiTreeview::create_graph(AbstractChar *s, void *node, int level, int lines,
 	return p;
 }
 
-int	UiTreeview::count_children(void *node)
+int	UiTreeview::count_children(const void *node)
 {
 	int i = 0;
 	if (!is_expanded(node)) return 0;
@@ -319,7 +319,7 @@ void UiTreeview::setdata(ObjectStream &s)
  *	called whenever a node is being selected
  *	can be overwritten
  */
-void	UiTreeview::select_node(void *node)
+void	UiTreeview::select_node(const void *node)
 {
 }
 
@@ -430,7 +430,7 @@ static_node *UiStaticTreeview::create_node(const char *text, static_node *prev, 
 	return node;
 }
 
-void *UiStaticTreeview::get_child(void *node, int i)
+void *UiStaticTreeview::get_child(const void *node, int i)
 {
 	static_node *p;
 	if (node) {
@@ -442,7 +442,7 @@ void *UiStaticTreeview::get_child(void *node, int i)
 	return p;
 }
 
-void	*UiStaticTreeview::get_next_node(void *node)
+void	*UiStaticTreeview::get_next_node(const void *node)
 {
 	return ((static_node *)node)->next;
 }
@@ -457,7 +457,7 @@ void	*UiStaticTreeview::get_root()
 	return root;
 }
 
-char	*UiStaticTreeview::get_text(void *node)
+char	*UiStaticTreeview::get_text(const void *node)
 {
 	return ((static_node *)node)->text;
 }
@@ -472,17 +472,17 @@ void	UiStaticTreeview::goto_node(void *node)
 {
 }
 
-bool	UiStaticTreeview::has_children(void *node)
+bool	UiStaticTreeview::has_children(const void *node)
 {
 	return (((static_node *)node)->child);
 }
 
-bool	UiStaticTreeview::is_expanded(void *node)
+bool	UiStaticTreeview::is_expanded(const void *node)
 {
 	return (((static_node *)node)->expanded);
 }
 
-void	UiStaticTreeview::select_node(void *node)
+void	UiStaticTreeview::select_node(const void *node)
 {
 }
 

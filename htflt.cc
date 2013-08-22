@@ -89,6 +89,6 @@ void ht_flt::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *for
 void ht_flt::done()
 {
 	UiFormatGroup::done();
-	ht_flt_shared_data *flt_shared=(ht_flt_shared_data *)shared_data;
+	ht_flt_shared_data *flt_shared=static_cast<ht_flt_shared_data *>(shared_data);
 	free(flt_shared);
 }

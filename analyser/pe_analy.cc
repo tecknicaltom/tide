@@ -447,7 +447,7 @@ static char *string_func(uint32 ofs, void *context)
 {
 	char str[1024];
 	static char str2[1024];
-	ht_pe_shared_data *pe = (ht_pe_shared_data*)context;
+	ht_pe_shared_data *pe = static_cast<ht_pe_shared_data*>(context);
 	if (ofs < pe->il->string_pool_size) {
 		uint32 length;
 		uint32 o = ILunpackDword(length, (byte*)&pe->il->string_pool[ofs], 10);
@@ -462,7 +462,7 @@ static char *string_func(uint32 ofs, void *context)
 static char *token_func(uint32 token, void *context)
 {
 	static char tokenstr[1024];
-//	ht_pe_shared_data *pe = (ht_pe_shared_data*)context;
+//	ht_pe_shared_data *pe = static_cast<ht_pe_shared_data*>(context);
 	switch (token & IL_META_TOKEN_MASK) {
 	case IL_META_TOKEN_TYPE_REF:
 	case IL_META_TOKEN_TYPE_DEF: {

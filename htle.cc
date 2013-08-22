@@ -116,7 +116,7 @@ void ht_le::done()
 {
 	UiFormatGroup::done();
 
-	ht_le_shared_data *le_shared=(ht_le_shared_data*)shared_data;
+	ht_le_shared_data *le_shared=static_cast<ht_le_shared_data*>(shared_data);
 
 	free(le_shared->objmap.header);
 	free(le_shared->objmap.vsize);
@@ -134,7 +134,7 @@ void ht_le::done()
 
 void ht_le::do_fixups()
 {
-	ht_le_shared_data *le_shared = (ht_le_shared_data*)shared_data;
+	ht_le_shared_data *le_shared = static_cast<ht_le_shared_data*>(shared_data);
 	FileOfs h = le_shared->hdr_ofs;
 
 	uint32 *page_fixup_ofs = ht_malloc(sizeof (uint32) * (le_shared->hdr.pagecnt+1));
@@ -281,7 +281,7 @@ void ht_le::do_fixups()
 
 void ht_le::check_vxd()
 {
-	ht_le_shared_data *le_shared = (ht_le_shared_data*)shared_data;
+	ht_le_shared_data *le_shared = static_cast<ht_le_shared_data*>(shared_data);
 	FileOfs h = le_shared->hdr_ofs;
 
 	/* VxD */
@@ -314,7 +314,7 @@ void ht_le::check_vxd()
 
 void ht_le::read_pagemap()
 {
-	ht_le_shared_data *le_shared = (ht_le_shared_data*)shared_data;
+	ht_le_shared_data *le_shared = static_cast<ht_le_shared_data*>(shared_data);
 	FileOfs h = le_shared->hdr_ofs;
 
 	le_shared->pagemap.count=le_shared->hdr.pagecnt;
@@ -350,7 +350,7 @@ void ht_le::read_pagemap()
 
 void ht_le::read_objects()
 {
-	ht_le_shared_data *le_shared = (ht_le_shared_data*)shared_data;
+	ht_le_shared_data *le_shared = static_cast<ht_le_shared_data*>(shared_data);
 	FileOfs h = le_shared->hdr_ofs;
 
 	le_shared->objmap.count = le_shared->hdr.objcnt;
@@ -400,7 +400,7 @@ void ht_le::loc_enum_start()
 bool ht_le::loc_enum_next(ht_format_loc *loc)
 {
 #if 0
-	ht_le_shared_data *sh=(ht_le_shared_data*)shared_data;
+	ht_le_shared_data *sh=static_cast<ht_le_shared_data*>(shared_data);
 	if (loc_enum) {
 		loc->name="le";
 		loc->start=sh->hdr_ofs;
@@ -476,7 +476,7 @@ uint ht_le_page_file::read(void *aBuf, uint size)
 	FileOfs mofs;
 	FileOfs msize;
 	int c = 0;
-	byte *buf = (byte *)aBuf;
+	byte *buf = static_cast<byte *>(aBuf);
 	while (size) {
 		uint s = size;
 		if (!map_ofs(ofs, &mofs, &msize)) break;
@@ -547,7 +547,7 @@ uint ht_le_page_file::write(const void *aBuf, uint size)
 	FileOfs mofs;
 	FileOfs msize;
 	int c = 0;
-	const byte *buf = (const byte *)aBuf;
+	const byte *buf = static_cast<const byte *>(aBuf);
 	while (size) {
 		uint s = size;
 		if (!map_ofs(ofs, &mofs, &msize)) break;
@@ -586,7 +586,7 @@ ht_le_reloc_file::ht_le_reloc_file(File *s, bool os, ht_le_shared_data *d)
 
 void ht_le_reloc_file::reloc_apply(Object *reloc, byte *data)
 {
-	ht_le_reloc_entry *e = (ht_le_reloc_entry*)reloc;
+	ht_le_reloc_entry *e = static_cast<ht_le_reloc_entry*>(reloc);
 
 	switch (e->address_type & LE_FIXUP_ADDR_TYPE_MASK) {
 		case LE_FIXUP_ADDR_TYPE_0_8:

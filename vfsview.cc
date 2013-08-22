@@ -318,7 +318,7 @@ void VfsListbox::setDisplayFormat(char *fmt)
 
 bool VfsListbox::selectEntry(void *entry)
 {
-	ht_text_listbox_item *i = (ht_text_listbox_item*)entry;
+	ht_text_listbox_item *i = static_cast<ht_text_listbox_item*>(entry);
 	if (i->extra_data) {
 		vfs_extra *e = (vfs_extra*)i->extra_data;
 		if (e->stat.caps & pstat_mode_type) {
@@ -380,7 +380,7 @@ void VfsListbox::reread()
 
 void *VfsListbox::quickfind(const char *s)
 {
-	ht_text_listbox_item *item = (ht_text_listbox_item *)e_cursor;
+	ht_text_listbox_item *item = static_cast<ht_text_listbox_item *>(e_cursor);
 	for (int j=0; j<2; j++) {
 		int slen = strlen(s);
 		char *i = NULL;
@@ -648,7 +648,7 @@ void VfsListbox::renderEntry(char *buf, int bufsize, int dfmt, const char *filen
 bool VfsListbox2::selectEntry(void *entry)
 {
 	if (VfsListbox::selectEntry(entry)) return true;
-	ht_text_listbox_item *i = (ht_text_listbox_item*)entry;
+	ht_text_listbox_item *i = static_cast<ht_text_listbox_item*>(entry);
 	if (i->extra_data) {
 		vfs_extra *e = (vfs_extra*)i->extra_data;
 		char path[VFS_URL_MAX];

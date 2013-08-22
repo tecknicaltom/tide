@@ -294,7 +294,7 @@ void ht_xex::done()
 {
 	UiFormatGroup::done();
 
-	ht_xex_shared_data *xex_shared = (ht_xex_shared_data*)shared_data;
+	ht_xex_shared_data *xex_shared = static_cast<ht_xex_shared_data*>(shared_data);
 
 	delete[] xex_shared->pages.page;
 	for (int i=0; i < xex_shared->imports.lib_count; i++) {

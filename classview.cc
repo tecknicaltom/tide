@@ -693,7 +693,7 @@ void cview::init(Bounds *b, File *f, format_viewer_if **ifs,
 void cview::done()
 {
 	UiFormatGroup::done();
-	ht_class_shared_data *clazz = (ht_class_shared_data *)shared_data;
+	ht_class_shared_data *clazz = static_cast<ht_class_shared_data *>(shared_data);
 	if (clazz) {
 		class_unread(clazz);
 	}

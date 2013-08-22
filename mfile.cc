@@ -52,7 +52,7 @@ int FileArea::compareTo(const Object *obj) const
 {
 	const FileArea *l, *r;
 	int sign = 1;
-	l = (FileArea*)obj;
+	l = static_cast<const FileArea*>(obj);
 	r = this;
 	if (r->start < l->start) {
 		const FileArea *t = l;
@@ -163,7 +163,7 @@ void FileModificator::debug()
 	fprintf(f, "<areas>\n");
 	foreach(FileArea, x, mods,
 		if (dynamic_cast<ModifiedFileArea*>(x)) {
-			ModifiedFileArea *m = (ModifiedFileArea *)x;
+			ModifiedFileArea *m = static_cast<ModifiedFileArea *>(x);
 			ht_fprintf(f, "\tmodify %08qx, %qd bytes", &x->start, &x->size);
 			for (uint i=0; i < x->size; i++) {
 				ht_fprintf(f, " %02x", m->buf[i]);
@@ -176,7 +176,7 @@ void FileModificator::debug()
 			}
 			ht_fprintf(f, "'\n");
 		} else {
-			CopiedFileArea *c = (CopiedFileArea *)x;
+			CopiedFileArea *c = static_cast<CopiedFileArea *>(x);
 			ht_fprintf(f, "\tcopy   %08qx, %qd bytes, orig start %08qx\n", &x->start, &x->size, &c->src_start);
 		}
 	);
@@ -195,7 +195,7 @@ bool FileModificator::cut1(ObjHandle h, FileOfs rstart, FileOfs size)
 		return true;
 	}
 	if (a->getObjectID() == OBJID_CFA) {
-		CopiedFileArea *c = (CopiedFileArea*)a;
+		CopiedFileArea *c = static_cast<CopiedFileArea*>(a);
 		if (have_head_gap) {
 			FileOfs csize = c->size;
 			c->size = rstart;
@@ -208,7 +208,7 @@ bool FileModificator::cut1(ObjHandle h, FileOfs rstart, FileOfs size)
 		}
 	} else {
 		assert(a->getObjectID() == OBJID_MFA);
-		ModifiedFileArea *m = (ModifiedFileArea*)a;
+		ModifiedFileArea *m = static_cast<ModifiedFileArea*>(a);
 		memmove(m->buf + rstart, m->buf + rstart+size, m->size-rstart-size);
 		m->size -= size;
 		m->buf = (byte*)realloc(m->buf, m->size);
@@ -411,7 +411,7 @@ void FileModificator::insert(const void *buf, FileOfs size)
 			}
 		} else if (a->getObjectID() == OBJID_CFA) {
 			// split CFA at offset t, and relocate high (offset) part
-			CopiedFileArea *c = (CopiedFileArea*)a;
+			CopiedFileArea *c = static_cast<CopiedFileArea*>(a);
 			FileOfs d = t - a->start;
 			// b becomes 'high' (offset) a
 			FileArea *b = new CopiedFileArea(c->start + d + ssize, c->size -d, c->src_start+d);
@@ -429,7 +429,7 @@ void FileModificator::insert(const void *buf, FileOfs size)
 				start += k;
 			}
 		} else {
-			ModifiedFileArea *m = (ModifiedFileArea*)a;
+			ModifiedFileArea *m = static_cast<ModifiedFileArea*>(a);
 			// FIXME: should merge existing MFA with new one(s)
 
 			// split MFA at offset t and relocate high (offset) part
@@ -464,7 +464,7 @@ void FileModificator::insert(const void *buf, FileOfs size)
 	}
 
 	// (2) write data
-	const byte *b = (const byte*)buf;
+	const byte *b = static_cast<const byte*>(buf);
 	FileOfs o = t;
 	h = findArea(o);
 	while (size && (h != invObjHandle)) {
@@ -490,7 +490,7 @@ void FileModificator::makeAreaModified(ObjHandle h, FileOfs rstart, FileOfs size
 	FileArea *a = (FileArea*)mods.get(h);
 	if (a->getObjectID() == OBJID_CFA) {
 		// not marked modified, do something
-		CopiedFileArea *c = (CopiedFileArea*)a;
+		CopiedFileArea *c = static_cast<CopiedFileArea*>(a);
 		FileOfs csrc_start = c->src_start;
 		FileOfs cstart = c->start;
 		FileOfs csize = c->size;
@@ -623,7 +623,7 @@ uint FileModificator::read(void *buf, uint size)
 	}
 	FileOfs o = t;
 	ObjHandle h = findArea(o);
-	byte *b = (byte*)buf;
+	byte *b = static_cast<byte*>(buf);
 
 	while (size && h != invObjHandle) {
 		FileArea *a = (FileArea*)mods.get(h);
@@ -661,10 +661,10 @@ void FileModificator::truncate(FileOfs Newsize)
 	FileArea *a = (FileArea*)mods.get(h);
 	if (a->start < Newsize) {
 		if (a->getObjectID() == OBJID_CFA) {
-			CopiedFileArea *c = (CopiedFileArea*)a;
+			CopiedFileArea *c = static_cast<CopiedFileArea*>(a);
 			c->size = Newsize - a->start;
 		} else {
-			ModifiedFileArea *m = (ModifiedFileArea*)a;
+			ModifiedFileArea *m = static_cast<ModifiedFileArea*>(a);
 			m->size = Newsize - a->start;
 			m->buf = (byte*)realloc(m->buf, m->size);
 		}
@@ -693,7 +693,7 @@ void FileModificator::flushMods()
 	// store CFAs with start > src_start in descending order
 	foreachbwd(FileArea, fa, mods,
 		if (fa->getObjectID() == OBJID_CFA) {
-			CopiedFileArea *cfa = (CopiedFileArea*)fa;
+			CopiedFileArea *cfa = static_cast<CopiedFileArea*>(fa);
 			if (cfa->start > cfa->src_start) {
 				mFile->move(cfa->src_start, cfa->start, cfa->size);
 			}
@@ -702,7 +702,7 @@ void FileModificator::flushMods()
 	// store CFAs with start < src_start in ascending order
 	foreach(FileArea, fa, mods,
 		if (fa->getObjectID() == OBJID_CFA) {
-			CopiedFileArea *cfa = (CopiedFileArea*)fa;
+			CopiedFileArea *cfa = static_cast<CopiedFileArea*>(fa);
 			if (cfa->start < cfa->src_start) {
 				mFile->move(cfa->src_start, cfa->start, cfa->size);
 			}
@@ -711,7 +711,7 @@ void FileModificator::flushMods()
 	// store MFAs
 	foreach(FileArea, fa, mods,
 		if (fa->getObjectID() == OBJID_MFA) {
-			ModifiedFileArea *mfa = (ModifiedFileArea*)fa;
+			ModifiedFileArea *mfa = static_cast<ModifiedFileArea*>(fa);
 			mFile->seek(mfa->start);
 			mFile->writex(mfa->buf, mfa->size);
 		}
@@ -751,14 +751,14 @@ bool FileModificator::isModifiedByte(FileOfs o)
 	FileArea *fa = (FileArea*)mods.get(h);
 	if (!fa) return true;
 	if (fa->getObjectID() == OBJID_MFA) {
-		ModifiedFileArea *mfa = (ModifiedFileArea*)fa;
+		ModifiedFileArea *mfa = static_cast<ModifiedFileArea*>(fa);
 		int pg_ofs = o - fa->start;
 		byte b;
 		mFile->seek(o);
 		mFile->readx(&b, 1);
 		return mfa->buf[pg_ofs] != b;
 	} else if (fa->getObjectID() == OBJID_CFA) {
-		CopiedFileArea *cfa = (CopiedFileArea*)fa;
+		CopiedFileArea *cfa = static_cast<CopiedFileArea*>(fa);
 		if (cfa->src_start == cfa->start) return false;
 		int pg_ofs = o - fa->start;
 		byte b1, b2;
@@ -826,7 +826,7 @@ void FileModificator::write1(FileArea *a, FileOfs rstart, const byte *buf, uint 
 {
 	assert(a->getObjectID() == OBJID_MFA);
 //	ObjectID id = a->getObjectID();
-	ModifiedFileArea *m = (ModifiedFileArea*)a;
+	ModifiedFileArea *m = static_cast<ModifiedFileArea*>(a);
 	memcpy(m->buf+rstart, buf, count);
 }
 
@@ -849,7 +849,7 @@ uint FileModificator::write(const void *buf, uint size)
 		size -= z;
 	}
 	// (2) write data
-	const byte *b = (const byte*)buf;
+	const byte *b = static_cast<const byte*>(buf);
 	o = t;
 	size = osize;
 	ObjHandle h = findArea(o);

@@ -238,9 +238,9 @@ void ht_pe_resource_viewer::handlemsg(htmsg *msg)
 	UiStaticTreeview::handlemsg(msg);
 }
 
-void ht_pe_resource_viewer::select_node(void *node)
+void ht_pe_resource_viewer::select_node(const void *node)
 {
-	static_node *s=(static_node*)node;
+	const static_node *s=static_cast<const static_node*>(node);
 
 	if (s->data) {
 		UiGroup *vr_group=group;
@@ -249,7 +249,7 @@ void ht_pe_resource_viewer::select_node(void *node)
 		UiFormatViewer *hexv = NULL;
 		while (c) {
 			if (c->desc && (strcmp(c->desc, DESC_HEX)==0)) {
-				hexv=(UiFormatViewer*)c;
+				hexv=static_cast<UiFormatViewer*>(c);
 				break;
 			}
 			c=c->next;

@@ -99,7 +99,7 @@ format_viewer_if htelf_if = {
 /**/
 int FakeAddr::compareTo(const Object *keyb) const
 {
-	FakeAddr *b = (FakeAddr*)keyb;
+	const FakeAddr *b = static_cast<const FakeAddr*>(keyb);
 	if (secidx == b->secidx) return symidx - b->symidx;
 	return secidx - b->secidx;
 }
@@ -243,7 +243,7 @@ void ht_elf::init(Bounds *b, File *f, format_viewer_if **ifs, UiFormatGroup *for
 void ht_elf::done()
 {
 	UiFormatGroup::done();
-	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
+	ht_elf_shared_data *elf_shared=static_cast<ht_elf_shared_data *>(shared_data);
 	if (elf_shared->shnames) {
 		for (uint i=0; i < elf_shared->sheaders.count; i++)
 			free(elf_shared->shnames[i]);
@@ -266,7 +266,7 @@ void ht_elf::done()
 
 uint ht_elf::find_reloc_section_for(uint si)
 {
-	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
+	ht_elf_shared_data *elf_shared=static_cast<ht_elf_shared_data *>(shared_data);
 
 	ELF_SECTION_HEADER32 *s=elf_shared->sheaders.sheaders32;
 	for (uint i=0; i < elf_shared->sheaders.count; i++) {
@@ -305,7 +305,7 @@ static elf32_addr elf32_invent_address(uint si, ELF_SECTION_HEADER32 *s, uint sc
 void ht_elf::relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a)
 {
 	// relocate section si (using section rsi) to address a
-	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
+	ht_elf_shared_data *elf_shared=static_cast<ht_elf_shared_data *>(shared_data);
 	ELF_SECTION_HEADER32 *s=elf_shared->sheaders.sheaders32;
 
 	FileOfs relh = s[rsi].sh_offset;
@@ -361,7 +361,7 @@ void ht_elf::relocate_section(ht_reloc_file *f, uint si, uint rsi, elf32_addr a)
 /* "resolve" undefined references by creating fake section and fake addresses */
 void ht_elf::fake_undefined_symbols32()
 {
-	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
+	ht_elf_shared_data *elf_shared=static_cast<ht_elf_shared_data *>(shared_data);
 	// create a fake section
 	elf_shared->fake_undefined_shidx = elf_shared->sheaders.count;
 	elf_shared->sheaders.count++;
@@ -415,7 +415,7 @@ void ht_elf::auto_relocate32()
 
 	bool reloc_needed = false;
 
-	ht_elf_shared_data *elf_shared=(ht_elf_shared_data *)shared_data;
+	ht_elf_shared_data *elf_shared=static_cast<ht_elf_shared_data *>(shared_data);
 
 	ELF_SECTION_HEADER32 *s=elf_shared->sheaders.sheaders32;
 	if (!elf_shared->sheaders.count) {
@@ -470,7 +470,7 @@ void ht_elf::auto_relocate32()
 
 bool ht_elf::loc_enum_next(ht_format_loc *loc)
 {
-	ht_elf_shared_data *sh = (ht_elf_shared_data*)shared_data;
+	ht_elf_shared_data *sh = static_cast<ht_elf_shared_data*>(shared_data);
 	if (loc_enum) {
 		loc->name = "elf";
 		loc->start = sh->header_ofs;

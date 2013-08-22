@@ -62,7 +62,7 @@ ClassMethod::ClassMethod(char *n, char *d, ClassAddress s, uint l, int f,
 
 int ClassMethod::compareTo(const Object *obj) const
 {
-	ClassMethod *cm = (ClassMethod*)obj;
+	const ClassMethod *cm = static_cast<const ClassMethod*>(obj);
 	if ((start + length - 1) < cm->start) return -1;
 	if (start > (cm->start + cm->length - 1)) return 1;
 	return 0;

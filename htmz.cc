@@ -76,7 +76,7 @@ void ht_mz::loc_enum_start()
 
 bool ht_mz::loc_enum_next(ht_format_loc *loc)
 {
-	ht_mz_shared_data *sh=(ht_mz_shared_data*)shared_data;
+	ht_mz_shared_data *sh=static_cast<ht_mz_shared_data*>(shared_data);
 	if (loc_enum) {
 		loc->name = "mz";
 		loc->start = 0;

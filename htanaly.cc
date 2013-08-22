@@ -138,7 +138,7 @@ int  UiSymbolListbox::cursorAdjust()
 	return l->location->addr->stringSize()+10;
 }
 
-int  UiSymbolListbox::estimateEntryPos(void *entry)
+int  UiSymbolListbox::estimateEntryPos(const void *entry)
 {
 	return 0;
 }
@@ -313,7 +313,7 @@ void CallChain::examineNode(CallChainNode *n)
 	}
 }
 
-void	*CallChain::get_child(void *node, int i)
+void	*CallChain::get_child(const void *node, int i)
 {
 	CallChainNode *p;
 	if (node) {
@@ -326,7 +326,7 @@ void	*CallChain::get_child(void *node, int i)
 	return p;
 }
 
-void	*CallChain::get_next_node(void *node)
+void	*CallChain::get_next_node(const void *node)
 {
 	return ((CallChainNode*)node)->next;
 }
@@ -341,10 +341,10 @@ void	*CallChain::get_root()
 	return root;
 }
 
-char *CallChain::get_text(void *node)
+char *CallChain::get_text(const void *node)
 {
 	static char stupid[1024]; // FIXME: static var
-	CallChainNode *n = (CallChainNode*)node;
+	const CallChainNode *n = static_cast<const CallChainNode*>(node);
 	int d = 0;
 	n->xa->difference(d, n->faddr->addr);
 	char sign = '+';
@@ -362,17 +362,17 @@ char *CallChain::get_text(void *node)
 	return stupid;
 }
 
-bool	CallChain::has_children(void *node)
+bool	CallChain::has_children(const void *node)
 {
 	return ((CallChainNode*)node)->faddr->xrefs != NULL;
 }
 
-bool	CallChain::is_expanded(void *node)
+bool	CallChain::is_expanded(const void *node)
 {
 	return ((CallChainNode*)node)->expanded;
 }
 
-void	CallChain::select_node(void *node)
+void	CallChain::select_node(const void *node)
 {
 }
 
@@ -651,7 +651,7 @@ static int aviewer_func_fileofs(eval_scalar *result, eval_int *i)
 static int ht_aviewer_symbol_to_addr(void *Aviewer, const char *s, uint64 &v)
 {
 	// FIXNEW
-	ht_aviewer *aviewer = (ht_aviewer*)Aviewer;
+	ht_aviewer *aviewer = static_cast<ht_aviewer*>(Aviewer);
 	Address *a;
 	if (*s == '@') {
 		s++;

@@ -90,7 +90,7 @@ public:
 	virtual void	done();
 	virtual int	calcCount();
 	virtual int	cursorAdjust();
-	virtual	int	estimateEntryPos(void *entry);
+	virtual	int	estimateEntryPos(const void *entry);
 	virtual void *	getFirst();
 	virtual void *	getLast();
 	virtual void *	getNext(void *entry);
@@ -118,14 +118,14 @@ public:
 			void	init(Bounds *b, Analyser *analy, const Address *a, char *desc);
 		virtual void	done();
 		virtual void	adjust(void *node, bool expand);
-		virtual void   *get_child(void *node, int i);
-		virtual void	*get_next_node(void *node);
+		virtual void   *get_child(const void *node, int i);
+		virtual void	*get_next_node(const void *node);
 		virtual void	*get_prev_node(void *node);
 		virtual void	*get_root();
-		virtual char	*get_text(void *node);
-		virtual bool	has_children(void *node);
-		virtual bool	is_expanded(void *node);
-		virtual void	select_node(void *node);
+		virtual char	*get_text(const void *node);
+		virtual bool	has_children(const void *node);
+		virtual bool	is_expanded(const void *node);
+		virtual void	select_node(const void *node);
 		CallChainNode   *get_current_node();
 private:
 	CallChainNode		*createNode(const Address *a);

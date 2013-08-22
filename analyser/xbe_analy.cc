@@ -342,7 +342,7 @@ static char *string_func(uint32 ofs, void *context)
 {
 	char str[1024];
 	static char str2[1024];
-	ht_pe_shared_data *pe = (ht_pe_shared_data*)context;
+	ht_pe_shared_data *pe = static_cast<ht_pe_shared_data*>(context);
 	if (ofs < pe->il->string_pool_size) {
 		uint32 length;
 		uint32 o = ILunpackDword(length, (byte*)&pe->il->string_pool[ofs], 10);

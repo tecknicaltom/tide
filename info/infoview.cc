@@ -41,7 +41,7 @@ public:
 
 	virtual int compareTo(const Object *data_b) const
 	{
-		info_pos *b = (info_pos*)data_b;
+		const info_pos *b = static_cast<const info_pos*>(data_b);
 		uint da = line;
 		uint db = b->line;
 		if (da == db) {

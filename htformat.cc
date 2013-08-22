@@ -789,13 +789,13 @@ bool UiFormatViewer::show_search_result(ht_search_result *r)
 {
 	switch (r->search_class) {
 	case SC_PHYSICAL: {
-		ht_physical_search_result *s = (ht_physical_search_result*)r;
+		ht_physical_search_result *s = static_cast<ht_physical_search_result*>(r);
 		if (!goto_offset(s->offset, this)) return false;
 		pselect_set(s->offset, s->offset + s->size);
 		return true;
 	}
 	case SC_VISUAL: {
-		ht_visual_search_result *s = (ht_visual_search_result*)r;
+		ht_visual_search_result *s = static_cast<ht_visual_search_result*>(r);
 		return goto_pos(s->pos, this);
 	}
 	}
@@ -3749,7 +3749,7 @@ ht_search_result *UiUFormatViewer::vsearch(const ht_search_request *request, vie
 
 	if (request->search_class == SC_VISUAL && request->type == ST_REGEX) {
 		if (!cursor.sub) return NULL;
-		ht_regex_search_request *s=(ht_regex_search_request*)request;
+		const ht_regex_search_request *s=static_cast<const ht_regex_search_request*>(request);
 		/* build progress indicator */
 		Bounds b;
 		get_std_progress_indicator_metrics(&b);
@@ -4097,7 +4097,7 @@ void UiUFormatViewer::update_ypos()
 
 void UiUFormatViewer::vstate_restore(Object *data)
 {
-	ht_uformat_viewer_vstate *vs = (ht_uformat_viewer_vstate*)data;
+	ht_uformat_viewer_vstate *vs = static_cast<ht_uformat_viewer_vstate*>(data);
 	if (vs->resolve) {
 		vs->top.sub = idx_to_sub(intptr_t(vs->top.sub));
 		vs->cursor.sub = idx_to_sub(intptr_t(vs->cursor.sub));
@@ -4323,7 +4323,7 @@ public:
 static bool process_search_expr(Object *ctx, UiText *progress_indicator)
 {
 #define PROCESS_EXPR_SEARCH_BYTES_PER_CALL	256
-	ht_expr_search_pcontext *c = (ht_expr_search_pcontext*)ctx;
+	ht_expr_search_pcontext *c = static_cast<ht_expr_search_pcontext*>(ctx);
 	ht_expr_search_request *s = (ht_expr_search_request*)c->request;
 
 	search_expr_eval_context_t context;

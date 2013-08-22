@@ -326,7 +326,7 @@ public:
 	virtual	int		datasize();
 	virtual	const char *	defaultpalette();
 	virtual	void		draw();
-	virtual	int		estimateEntryPos(void *entry);
+	virtual	int		estimateEntryPos(const void *entry);
 	virtual	void		getdata(ObjectStream &s);
 	virtual	void *		getFirst() = 0;
 	virtual	void *		getLast() = 0;

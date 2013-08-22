@@ -271,7 +271,7 @@ void ht_pef_import_viewer::handlemsg(htmsg *msg)
 
 bool ht_pef_import_viewer::select_entry(void *entry)
 {
-/*	ht_text_listbox_item *i = (ht_text_listbox_item *)entry;
+/*	ht_text_listbox_item *i = static_cast<ht_text_listbox_item *>(entry);
 
 	ht_pef_shared_data *pef_shared=(ht_pef_shared_data *)format_group->get_shared_data();
 

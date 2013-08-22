@@ -388,7 +388,7 @@ static Object *create_blockop_str_context(File *file, FileOfs ofs, uint len, uin
 static bool blockop_str_process(Object *context, UiText *progress_indicator)
 {
 	char status[64];
-	ht_blockop_str_context *ctx = (ht_blockop_str_context*)context;
+	ht_blockop_str_context *ctx = static_cast<ht_blockop_str_context*>(context);
 	if (ctx->expr_const) {
 		ht_snprintf(status, sizeof status, "operating (constant string)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));
 		progress_indicator->settext(status);
@@ -511,7 +511,7 @@ static Object *create_blockop_int_context(File *file, FileOfs ofs, uint len, uin
 #define BLOCKOP_INT_MAX_ITERATIONS	1024
 static bool blockop_int_process(Object *context, UiText *progress_indicator)
 {
-	ht_blockop_int_context *ctx = (ht_blockop_int_context*)context;
+	ht_blockop_int_context *ctx = static_cast<ht_blockop_int_context*>(context);
 	char status[64];
 	if (ctx->expr_const) {
 		ht_snprintf(status, sizeof status, "operating (constant integer)... %d%% complete", (int)(((double)(ctx->o-ctx->ofs)) * 100 / ctx->len));

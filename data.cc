@@ -2091,8 +2091,8 @@ Object *MRUCache::remove(ObjHandle h)
 
 void MRUCache::setNodeIdentity(BinTreeNode *node, BinTreeNode *newident)
 {
-	MRUCacheNode *_node = (MRUCacheNode *)node;
-	MRUCacheNode *_newident = (MRUCacheNode *)newident;
+	MRUCacheNode *_node = static_cast<MRUCacheNode *>(node);
+	MRUCacheNode *_newident = static_cast<MRUCacheNode *>(newident);
 	_node->key = _newident->key;
 	_node->moreRU = _newident->moreRU;
 	_node->lessRU = _newident->lessRU;
@@ -2293,7 +2293,7 @@ SInt *SInt::clone() const
 
 int SInt::compareTo(const Object *obj) const
 {
-	SInt *s = (SInt*)obj;
+	const SInt *s = static_cast<const SInt*>(obj);
 	return value - s->value;
 }
 
@@ -2368,7 +2368,7 @@ UInt *UInt::clone() const
 
 int UInt::compareTo(const Object *obj) const
 {
-	UInt *u = (UInt*)obj;
+	const UInt *u = static_cast<const UInt*>(obj);
 
 	if (value < u->value) {
 		return -1;
@@ -2451,7 +2451,7 @@ Float *Float::clone() const
 int Float::compareTo(const Object *obj) const
 {
 // FIXME: do we want to compare for equality using some error term epsilon ?
-	Float *f = (Float*)obj;
+	const Float *f = static_cast<const Float*>(obj);
 
 	if (value < f->value) {
 		return -1;
@@ -2503,7 +2503,7 @@ MemArea *MemArea::clone() const
 int MemArea::compareTo(const Object *obj) const
 {
 	const MemArea *a = this;
-	const MemArea *b = (const MemArea*)obj;
+	const MemArea *b = static_cast<const MemArea*>(obj);
 	if (a->size != b->size) return a->size - b->size;
 	return memcmp(a->ptr, b->ptr, a->size);
 }
@@ -2565,8 +2565,8 @@ IntSet *IntSet::clone() const
 
 int IntSet::compareTo(const Object *obj) const
 {
-	const IntSet *a = (const IntSet*)this;
-	const IntSet *b = (const IntSet*)obj;
+	const IntSet *a = static_cast<const IntSet*>(this);
+	const IntSet *b = static_cast<const IntSet*>(obj);
 	if (a->mSetSize == b->mSetSize) {
 		uint s = a->mSetSize ? idx2ByteOfs(a->mSetSize-1)+1 : 0;
 		return memcmp(a->mSet, b->mSet, s);

@@ -45,7 +45,7 @@
 
 static ht_search_request* create_request_hexascii(text_search_pos *start, text_search_pos *end, UiView *f, uint search_class)
 {
-	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
+	ht_hexascii_search_form *form=static_cast<ht_hexascii_search_form*>(f);
 	ht_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -186,7 +186,7 @@ ht_undo_data_delete_string::~ht_undo_data_delete_string()
 bool ht_undo_data_delete_string::combine(ht_undo_data *ud)
 {
 	if (ud->getObjectID() == getObjectID()) {
-		ht_undo_data_delete_string *ud2 = (ht_undo_data_delete_string *)ud;
+		ht_undo_data_delete_string *ud2 = static_cast<ht_undo_data_delete_string *>(ud);
 		if (ud2->apos.line == apos.line) {
 			if (ud2->bpos.pofs + ud2->len == bpos.pofs) {
 				string = realloc(string, len+ud2->len);
@@ -352,7 +352,7 @@ ht_undo_data_insert_string::~ht_undo_data_insert_string()
 bool ht_undo_data_insert_string::combine(ht_undo_data *ud)
 {
 	if (ud->getObjectID() == getObjectID()) {
-		ht_undo_data_insert_string *ud2 = (ht_undo_data_insert_string *)ud;
+		ht_undo_data_insert_string *ud2 = static_cast<ht_undo_data_insert_string *>(ud);
 		if (ud2->cpos.line == cpos.line) {
 			if (ud2->apos.pofs == apos.pofs + len) {
 				string = realloc(string, len + ud2->len);
@@ -451,7 +451,7 @@ ht_undo_data_overwrite_string::~ht_undo_data_overwrite_string()
 bool ht_undo_data_overwrite_string::combine(ht_undo_data *ud)
 {
 	if (ud->getObjectID()==getObjectID()) {
-		ht_undo_data_overwrite_string *ud2 = (ht_undo_data_overwrite_string *)ud;
+		ht_undo_data_overwrite_string *ud2 = static_cast<ht_undo_data_overwrite_string *>(ud);
 		if (ud2->cpos.line == cpos.line) {
 			if (ud2->apos.pofs == apos.pofs + len) {
 				string = realloc(string, len + ud2->len);
@@ -1998,7 +1998,7 @@ bool UiTextViewer::show_search_result(ht_search_result *result)
 {
 	switch (result->search_class) {
 	case SC_PHYSICAL: {
-		ht_physical_search_result *r = (ht_physical_search_result*)result;
+		ht_physical_search_result *r = static_cast<ht_physical_search_result*>(result);
 		text_viewer_pos start, end;
 		textfile->convert_ofs2line(r->offset, &start.line, &start.pofs);
 		textfile->convert_ofs2line(r->offset+r->size, &end.line, &end.pofs);

@@ -498,7 +498,7 @@ static uint autodetect_file_open_mode(const char *filename)
 
 static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 {
-	UiFileWindow *w = (UiFileWindow*)context;
+	UiFileWindow *w = static_cast<UiFileWindow*>(context);
 
 	pstat_t p;
 
@@ -538,7 +538,7 @@ static void file_window_load_fcfg_func(ObjectStream &f, void *context)
 
 static void file_window_store_fcfg_func(ObjectStream &f, void *context)
 {
-	UiFileWindow *w = (UiFileWindow*)context;
+	UiFileWindow *w = static_cast<UiFileWindow*>(context);
 	htmsg m;
 	m.msg = msg_get_analyser;
 	m.type = mt_broadcast;
@@ -696,7 +696,7 @@ const char *ht_project_item::get_path() const
 
 int ht_project_item::compareTo(const Object *obj) const
 {
-	ht_project_item *b = (ht_project_item *)obj;
+	const ht_project_item *b = static_cast<const ht_project_item *>(obj);
 	int c = sys_filename_cmp(get_path(), b->get_path());
 	return (c == 0) ? sys_filename_cmp(get_filename(), b->get_filename()) : c;
 }
@@ -1829,7 +1829,7 @@ UiWindow *ht_app::create_window_file_text(Bounds *c, FileLayer *f, const char *t
 {
 	Bounds b=*c;
 
-	ht_layer_textfile *file = (ht_layer_textfile *)f;
+	ht_layer_textfile *file = static_cast<ht_layer_textfile *>(f);
 
 	UiFileWindow *window = new UiFileWindow();
 	window->init(&b, title, FS_KILLER | FS_TITLE | FS_NUMBER | FS_MOVE | FS_RESIZE, 0, file);

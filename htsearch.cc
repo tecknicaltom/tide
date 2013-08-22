@@ -101,7 +101,7 @@ UiView* create_form_hexascii(Bounds *b, uint histid)
 
 ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
-	ht_hexascii_search_form *form = (ht_hexascii_search_form*)f;
+	ht_hexascii_search_form *form = static_cast<ht_hexascii_search_form*>(f);
 	ht_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -125,7 +125,7 @@ ht_search_request* create_request_hexascii(search_pos *start, search_pos *end, U
 
 void create_desc_hexascii(char *buf, int buflen, UiView *f)
 {
-	ht_hexascii_search_form *form=(ht_hexascii_search_form*)f;
+	ht_hexascii_search_form *form=static_cast<ht_hexascii_search_form*>(f);
 	ht_hexascii_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -166,7 +166,7 @@ static UiView* create_form_evalstr(Bounds *b, uint histid)
 static ht_search_request* create_request_evalstr(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define EVALSTR_MAXSTRLEN		256
-	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
+	ht_evalstr_search_form *form=static_cast<ht_evalstr_search_form*>(f);
 	ht_evalstr_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -205,7 +205,7 @@ static ht_search_request* create_request_evalstr(search_pos *start, search_pos *
 
 static void create_desc_evalstr(char *buf, int buflen, UiView *f)
 {
-	ht_evalstr_search_form *form=(ht_evalstr_search_form*)f;
+	ht_evalstr_search_form *form=static_cast<ht_evalstr_search_form*>(f);
 	ht_evalstr_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -268,7 +268,7 @@ static UiView* create_form_vregex(Bounds *b, uint histid)
 static ht_search_request* create_request_vregex(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define VREGEX_MAXSTRLEN		256
-	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
+	ht_vregex_search_form *form=static_cast<ht_vregex_search_form*>(f);
 	ht_vregex_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -294,7 +294,7 @@ static ht_search_request* create_request_vregex(search_pos *start, search_pos *e
 
 void create_desc_vregex(char *buf, int buflen, UiView *f)
 {
-	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
+	ht_vregex_search_form *form=static_cast<ht_vregex_search_form*>(f);
 	ht_vregex_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -374,7 +374,7 @@ static UiView* create_form_expr(Bounds *b, uint histid)
 static ht_search_request* create_request_expr(search_pos *start, search_pos *end, UiView *f, UiFormatViewer *format, uint search_class)
 {
 #define EXPR_MAXSTRLEN		256
-	ht_expr_search_form *form=(ht_expr_search_form*)f;
+	ht_expr_search_form *form=static_cast<ht_expr_search_form*>(f);
 	ht_expr_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -399,7 +399,7 @@ static ht_search_request* create_request_expr(search_pos *start, search_pos *end
 
 static void create_desc_expr(char *buf, int buflen, UiView *f)
 {
-	ht_vregex_search_form *form=(ht_vregex_search_form*)f;
+	ht_vregex_search_form *form=static_cast<ht_vregex_search_form*>(f);
 	ht_vregex_search_form_data d;
 	ViewDataBuf vdb(form, &d, sizeof d);
 
@@ -500,7 +500,7 @@ Object* create_search_bin_context(File *file, FileOfs ofs, FileOfs len, byte *pa
 
 bool search_bin_process(Object *context, UiText *progress_indicator)
 {
-	ht_search_bin_context *ctx = (ht_search_bin_context*)context;
+	ht_search_bin_context *ctx = static_cast<ht_search_bin_context*>(context);
 
 	if (ctx->bufptr - ctx->buf + ctx->patlen > ctx->c) {
 		if (ctx->file_end) {
@@ -1206,7 +1206,7 @@ bool replace_bin_process(Object *context, UiText *progress_indicator)
 {
 	progress_indicator->settext("replacing...\n");
 
-	ht_replace_bin_context *c = (ht_replace_bin_context*)context;
+	ht_replace_bin_context *c = static_cast<ht_replace_bin_context*>(context);
 	if (c->repllen > c->len) {
 		/* grow */
 		uint size = c->file->getSize();
@@ -1488,7 +1488,7 @@ void ht_replace_dialog::select_replace_mode_bymodeidx()
 
 ht_search_result *linear_bin_search(const ht_search_request *search, FileOfs start, FileOfs end, File *file, FileOfs fofs, FileOfs fsize)
 {
-	ht_fxbin_search_request *s = (ht_fxbin_search_request*)search;
+	const ht_fxbin_search_request *s = static_cast<const ht_fxbin_search_request*>(search);
 
 	int fl = (search->flags & SFBIN_CASEINSENSITIVE) ? SFBIN_CASEINSENSITIVE : 0;
 	if (start < fofs) start = fofs;

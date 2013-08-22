@@ -133,7 +133,7 @@ void ht_xbe::done()
 {
 	UiFormatGroup::done();
 
-	ht_xbe_shared_data *xbe_shared = (ht_xbe_shared_data*)shared_data;
+	ht_xbe_shared_data *xbe_shared = static_cast<ht_xbe_shared_data*>(shared_data);
 
 /*
 	if (pe_shared->exports.funcs) {
@@ -165,7 +165,7 @@ void ht_xbe::done()
 void ht_xbe::loc_enum_start()
 {
 /*
-	ht_pe_shared_data *sh=(ht_pe_shared_data*)shared_data;
+	ht_pe_shared_data *sh=static_cast<ht_pe_shared_data*>(shared_data);
 	if (sh->opt_magic==COFF_OPTMAGIC_PE32) {
 		loc_enum=1;
 	} else {

@@ -145,7 +145,7 @@ void ht_clipboard_viewer::update_content()
 {
 	if (clipboard->copy_history->count() == lastentrycount) return;
 	clear_subs();
-	ht_clipboard *clipboard = (ht_clipboard*)file;
+	ht_clipboard *clipboard = static_cast<ht_clipboard*>(file);
 	int c = clipboard->copy_history->count();
 	char title[512];	/* secure */
 

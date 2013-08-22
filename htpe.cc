@@ -156,7 +156,7 @@ void ht_pe::done()
 {
 	UiFormatGroup::done();
 
-	ht_pe_shared_data *pe_shared = (ht_pe_shared_data*)shared_data;
+	ht_pe_shared_data *pe_shared = static_cast<ht_pe_shared_data*>(shared_data);
 
 	delete pe_shared->exports.funcs;
 	delete pe_shared->dimports.funcs;
@@ -171,7 +171,7 @@ void ht_pe::done()
 void ht_pe::loc_enum_start()
 {
 /*
-	ht_pe_shared_data *sh=(ht_pe_shared_data*)shared_data;
+	ht_pe_shared_data *sh=static_cast<ht_pe_shared_data*>(shared_data);
 	if (sh->opt_magic==COFF_OPTMAGIC_PE32) {
 		loc_enum=1;
 	} else {
@@ -183,7 +183,7 @@ void ht_pe::loc_enum_start()
 bool ht_pe::loc_enum_next(ht_format_loc *loc)
 {
 #if 0
-	ht_pe_shared_data *sh=(ht_pe_shared_data*)shared_data;
+	ht_pe_shared_data *sh=static_cast<ht_pe_shared_data*>(shared_data);
 	if (loc_enum) {
 		loc->name="pe";
 		loc->start=sh->header_ofs;

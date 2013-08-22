@@ -55,7 +55,7 @@ ne_import_rec::ne_import_rec(uint a, uint mod, bool b, uint i)
 
 int ne_import_rec::compareTo(const Object *obj) const
 {
-	ne_import_rec *b=(ne_import_rec*)obj;
+	const ne_import_rec *b=static_cast<const ne_import_rec*>(obj);
 	if (module == b->module) {
 		if (byname == b->byname) {
 			if (byname) {
@@ -202,7 +202,7 @@ void ht_ne::done()
 {
 	UiFormatGroup::done();
 
-	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
+	ht_ne_shared_data *ne_shared = static_cast<ht_ne_shared_data*>(shared_data);
 
 	if (ne_shared->segments.segments) {
 		free(ne_shared->segments.segments);
@@ -229,7 +229,7 @@ void ht_ne::loc_enum_start()
 bool ht_ne::loc_enum_next(ht_format_loc *loc)
 {
 #if 0
-	ht_ne_shared_data *sh=(ht_ne_shared_data*)shared_data;
+	ht_ne_shared_data *sh=static_cast<ht_ne_shared_data*>(shared_data);
 	if (loc_enum) {
 		loc->name="ne";
 		loc->start=sh->hdr_ofs;
@@ -244,7 +244,7 @@ bool ht_ne::loc_enum_next(ht_format_loc *loc)
 
 bool ht_ne::create_fake_segment()
 {
-	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
+	ht_ne_shared_data *ne_shared = static_cast<ht_ne_shared_data*>(shared_data);
 	uint i = ne_shared->hdr.cseg;
 	NE_SEGMENT *newsegs = ht_malloc(sizeof *newsegs * (ne_shared->segments.segment_count+1));
 	memcpy(newsegs, ne_shared->segments.segments, sizeof *newsegs * ne_shared->segments.segment_count);
@@ -261,7 +261,7 @@ bool ht_ne::create_fake_segment()
 
 bool ht_ne::relocate(ht_reloc_file *rf)
 {
-	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
+	ht_ne_shared_data *ne_shared = static_cast<ht_ne_shared_data*>(shared_data);
 	if (!create_fake_segment()) return false;
 
 	AVLTree *imports = new AVLTree(true);
@@ -341,7 +341,7 @@ bool ht_ne::relocate(ht_reloc_file *rf)
 
 bool ht_ne::relocate_single(ht_reloc_file *rf, uint seg, FileOfs ofs, uint type, uint flags, uint16 value_seg, uint16 value_ofs)
 {
-	ht_ne_shared_data *ne_shared = (ht_ne_shared_data*)shared_data;
+	ht_ne_shared_data *ne_shared = static_cast<ht_ne_shared_data*>(shared_data);
 	while (1) {
 		if (flags & NE_RF_ADD) break;
 
@@ -417,7 +417,7 @@ ht_ne_reloc_file::ht_ne_reloc_file(File *s, bool os, ht_ne_shared_data *d)
 
 void ht_ne_reloc_file::reloc_apply(Object *reloc, byte *data)
 {
-	ht_ne_reloc_entry *e = (ht_ne_reloc_entry*)reloc;
+	ht_ne_reloc_entry *e = static_cast<ht_ne_reloc_entry*>(reloc);
 
 	switch (e->mode & NE_RT_MASK) {
 		case NE_RT_OFS8:
@@ -446,7 +446,7 @@ void ht_ne_reloc_file::reloc_apply(Object *reloc, byte *data)
 bool ht_ne_reloc_file::reloc_unapply(Object *reloc, byte *data)
 {
 	return false;
-//	ht_ne_reloc_entry *e = (ht_ne_reloc_entry*)reloc;
+//	ht_ne_reloc_entry *e = static_cast<ht_ne_reloc_entry*>(reloc);
 }
 
 /*

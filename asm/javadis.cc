@@ -231,7 +231,7 @@ ObjectID javadis::getObjectID() const
 	return ATOM_DISASM_JAVA;
 }
 
-void javadis::str_op(char *opstr, int *opstrlen, javadis_insn *insn, java_insn_op *op)
+void javadis::str_op(char *opstr, int *opstrlen, const javadis_insn *insn, const java_insn_op *op)
 {
 	const char *cs_default = get_cs(e_cs_default);
 	const char *cs_number = get_cs(e_cs_number);
@@ -415,7 +415,7 @@ const char *javadis::str(const dis_insn *disasm_insn, int options)
 
 const char *javadis::strf(const dis_insn *disasm_insn, int opt, const char *format)
 {
-	javadis_insn *insn = (javadis_insn*)disasm_insn;
+	const javadis_insn *insn = static_cast<const javadis_insn*>(disasm_insn);
 	char prefix[64];
 	char *p = prefix;
 	options = opt;

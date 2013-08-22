@@ -537,7 +537,7 @@ static void loadlocations(ObjectStream &st, Location *&loc, int l, int r)
 
 	// must be resolved later (thisfunc is of type Location not Address)
 	Address *a = GETX_OBJECT(st, "func");
-	loc->thisfunc = (Location *)a;
+	loc->thisfunc = (Location *)a; // TODO: this cast is fishy TJS
 	loc->flags = GETX_INT(st, 1, "flags");
 	loc->label = NULL;
 

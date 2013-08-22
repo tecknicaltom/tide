@@ -412,7 +412,7 @@ struct databufdup_s {
 
 void UiView::databuf_free(void *handle)
 {
-	databufdup_s *s = (databufdup_s*)handle;
+	databufdup_s *s = static_cast<databufdup_s*>(handle);
 	delete s->s;
 	delete s->f;
 	delete s;
@@ -1434,7 +1434,7 @@ void UiFrame::draw()
 {
 	int cornerul, cornerur, cornerll, cornerlr;
 	int lineh, linev;
-	UiWindow *w = (UiWindow*)group;
+	UiWindow *w = static_cast<UiWindow*>(group);
 	if (framestate != FST_MOVE && framestate != FST_RESIZE) {
 		setframestate(w->focused ? FST_FOCUSED : FST_UNFOCUSED);
 	}

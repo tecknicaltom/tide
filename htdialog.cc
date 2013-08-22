@@ -1690,7 +1690,7 @@ void UiListbox::draw()
 	lprint(0, 2, 1, size.w, dbg);*/
 }
 
-int  UiListbox::estimateEntryPos(void *entry)
+int  UiListbox::estimateEntryPos(const void *entry)
 {
 	// this is slow!
 	void *tmp = getFirst();

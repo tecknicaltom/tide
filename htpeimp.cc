@@ -439,7 +439,7 @@ void ht_pe_import_viewer::handlemsg(htmsg *msg)
 
 bool ht_pe_import_viewer::select_entry(void *entry)
 {
-	ht_text_listbox_item *i = (ht_text_listbox_item *)entry;
+	ht_text_listbox_item *i = static_cast<ht_text_listbox_item *>(entry);
 
 	ht_pe_shared_data *pe_shared=(ht_pe_shared_data *)format_group->get_shared_data();
 

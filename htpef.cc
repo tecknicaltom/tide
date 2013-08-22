@@ -128,7 +128,7 @@ void ht_pef::done()
 {
 	UiFormatGroup::done();
 
-	ht_pef_shared_data *pef_shared = (ht_pef_shared_data*)shared_data;
+	ht_pef_shared_data *pef_shared = static_cast<ht_pef_shared_data*>(shared_data);
 	delete pef_shared->imports.funcs;
 	delete pef_shared->imports.libs;
 	free(shared_data);
