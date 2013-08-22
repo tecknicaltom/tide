@@ -105,11 +105,6 @@ bool InvalidAddress::isValid() const
 	return false;
 }
 
-int InvalidAddress::parseString(const char *s, int length, Analyser *a)
-{
-	return 0;
-}
-
 ObjectID InvalidAddress::getObjectID() const
 {
 	return ATOM_ADDRESS_INVALID;
@@ -215,11 +210,6 @@ void AddressFlat32::load(ObjectStream &st)
 ObjectID AddressFlat32::getObjectID() const
 {
 	return ATOM_ADDRESS_FLAT_32;
-}
-
-int AddressFlat32::parseString(const char *s, int length, Analyser *a)
-{
-	return false;
 }
 
 void AddressFlat32::putIntoArray(byte *array) const
@@ -340,11 +330,6 @@ void AddressFlat64::load(ObjectStream &st)
 ObjectID AddressFlat64::getObjectID() const
 {
 	return ATOM_ADDRESS_FLAT_64;
-}
-
-int AddressFlat64::parseString(const char *s, int length, Analyser *a)
-{
-	return false;
 }
 
 void AddressFlat64::putIntoArray(byte *array) const

@@ -106,11 +106,6 @@ ObjectID AddressX86Flat32::getObjectID() const
 	return ATOM_ADDRESS_X86_FLAT_32;
 }
 
-int AddressX86Flat32::parseString(const char *s, int length, Analyser *a)
-{
-	return 0;
-}
-
 void AddressX86Flat32::putIntoArray(byte *array) const
 {
 	UNALIGNED_MOVE(*(uint32*)array, addr);
@@ -241,11 +236,6 @@ void AddressX86_1632::load(ObjectStream &s)
 ObjectID AddressX86_1632::getObjectID() const
 {
 	return ATOM_ADDRESS_X86_1632;
-}
-
-int AddressX86_1632::parseString(const char *s, int length, Analyser *a)
-{
-	return 0;
 }
 
 void AddressX86_1632::putIntoArray(byte *array) const
@@ -384,11 +374,6 @@ void AddressX86_1616::load(ObjectStream &s)
 ObjectID AddressX86_1616::getObjectID() const
 {
 	return ATOM_ADDRESS_X86_1616;
-}
-
-int AddressX86_1616::parseString(const char *s, int length, Analyser *a)
-{
-	return 0;
 }
 
 void AddressX86_1616::putIntoArray(byte *array) const

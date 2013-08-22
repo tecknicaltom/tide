@@ -39,7 +39,6 @@ public:
 	virtual	bool getFromUInt64(uint64 u);
 	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
-	virtual int parseString(const char *s, int length, Analyser *a);
 	virtual void putIntoArray(byte *array) const;
 	virtual void putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool putIntoUInt64(uint64 &u) const;
@@ -66,7 +65,6 @@ public:
 	virtual	bool getFromUInt64(uint64 u);
 	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
-	virtual int parseString(const char *s, int length, Analyser *a);
 	virtual void putIntoArray(byte *array) const;
 	virtual void putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool putIntoUInt64(uint64 &u) const;
@@ -93,7 +91,6 @@ public:
 	virtual	bool getFromUInt64(uint64 u);
 	virtual void load(ObjectStream &s);
 	virtual ObjectID getObjectID() const;
-	virtual int parseString(const char *s, int length, Analyser *a);
 	virtual void putIntoArray(byte *array) const;
 	virtual void putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool putIntoUInt64(uint64 &u) const;

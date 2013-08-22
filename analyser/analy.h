@@ -53,7 +53,6 @@ public:
 	virtual	void 		getFromCPUAddress(const CPU_ADDR *ca) = 0;
 	virtual	bool		getFromUInt64(uint64 u) = 0;
 	virtual	bool 		isValid() const;
-	virtual	int		parseString(const char *s, int length, Analyser *a) = 0;
 	virtual	void		putIntoArray(byte *array) const = 0;
 	virtual	void		putIntoCPUAddress(CPU_ADDR *ca) const = 0;
 	virtual	bool		putIntoUInt64(uint64 &u) const = 0;
@@ -76,7 +75,6 @@ public:
 	virtual	bool		getFromUInt64(uint64 u);
 	virtual	bool		isValid() const;
 	virtual	ObjectID	getObjectID() const;
-	virtual	int		parseString(const char *s, int length, Analyser *a);
 	virtual	void 		putIntoArray(byte *array) const;
 	virtual	void 		putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool		putIntoUInt64(uint64 &u) const;
@@ -103,7 +101,6 @@ public:
 	virtual	bool		difference(int &result, const Address *to);
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
-	virtual	int		parseString(const char *s, int length, Analyser *a);
 	virtual	void		putIntoArray(byte *array) const;
 	virtual	void		putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool		putIntoUInt64(uint64 &u) const;
@@ -128,7 +125,6 @@ public:
 	virtual	AddressFlat64 *	clone() const;
 	virtual	void		load(ObjectStream &s);
 	virtual	ObjectID	getObjectID() const;
-	virtual	int		parseString(const char *s, int length, Analyser *a);
 	virtual	void		putIntoArray(byte *array) const;
 	virtual	void		putIntoCPUAddress(CPU_ADDR *ca) const;
 	virtual	bool		putIntoUInt64(uint64 &u) const;

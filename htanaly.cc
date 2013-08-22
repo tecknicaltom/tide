@@ -608,26 +608,6 @@ const char *ht_aviewer::func(uint i, bool execute)
 	return NULL;
 }
 
-static int aviewer_func_addr(eval_scalar *result, eval_str *str)
-{
-	ht_aviewer *aviewer = (ht_aviewer*)eval_get_context();
-
-	Address *addr = aviewer->analy->createAddress();
-	int l = addr->parseString(str->value, str->len, aviewer->analy);
-	if (l) {
-		uint64 q;
-		if (addr->putIntoUInt64(q)) {
-			scalar_create_int_q(result, q);
-			return 1;
-		}
-	} else {
-		char buffer[1024];
-		bin2str(buffer, str->value, MIN((uint)str->len, sizeof buffer));
-		set_eval_error("invalid address '%s'", buffer);
-	}
-	return 0;
-}
-
 static int aviewer_func_address_of(eval_scalar *result, eval_str *str)
 {
 	ht_aviewer *aviewer = (ht_aviewer*)eval_get_context();
@@ -1939,7 +1919,6 @@ bool ht_aviewer::func_handler(eval_scalar *result, char *name, eval_scalarlist *
 	eval_func myfuncs[] = {
 		{"addressOf", (void*)&aviewer_func_address_of, {SCALAR_STR}, "return address of symbol"},
 		{"fileofs", (void*)&aviewer_func_fileofs, {SCALAR_INT}, "convert file offset to address"},
-//		{"addr", (void*)&aviewer_func_addr, {SCALAR_STR}}, "",
 		{NULL}
 	};
 	return std_eval_func_handler(result, name, params, myfuncs);
