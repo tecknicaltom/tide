@@ -43,7 +43,7 @@
 
 int global_analyser_address_string_format = ADDRESS_STRING_FORMAT_COMPACT;
 
-int Address::compareDelinear(const Address *obj)
+int Address::compareDelinear(const Address *obj) const
 {
 	return compareTo(obj);
 }
@@ -63,7 +63,7 @@ bool InvalidAddress::add(int UNUSED(offset))
 	return false;
 }
 
-int InvalidAddress::byteSize()
+int InvalidAddress::byteSize() const
 {
 	return 0;
 }
@@ -77,7 +77,7 @@ void InvalidAddress::putIntoCPUAddress(CPU_ADDR UNUSED(*ca)) const
 {
 }
 
-bool InvalidAddress::difference(int UNUSED(&result), const Address UNUSED(*to))
+bool InvalidAddress::difference(int UNUSED(&result), const Address UNUSED(*to)) const
 {
 	return false;
 }
@@ -144,7 +144,7 @@ bool AddressFlat32::add(int offset)
 	return true;
 }
 
-int AddressFlat32::byteSize()
+int AddressFlat32::byteSize() const
 {
 	return 4;
 }
@@ -157,7 +157,7 @@ int AddressFlat32::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressFlat32::compareDelinear(const Address *to)
+int AddressFlat32::compareDelinear(const Address *to) const
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 da = delinearize(addr);
@@ -167,7 +167,7 @@ int AddressFlat32::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressFlat32::difference(int &result, const Address *to)
+bool AddressFlat32::difference(int &result, const Address *to) const
 {
 	if (getObjectID() == to->getObjectID()) {
 		result = addr - ((AddressFlat32 *)to)->addr;
@@ -264,7 +264,7 @@ bool AddressFlat64::add(int offset)
 	return true;
 }
 
-int AddressFlat64::byteSize()
+int AddressFlat64::byteSize() const
 {
 	return 8;
 }
@@ -277,7 +277,7 @@ int AddressFlat64::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressFlat64::compareDelinear(const Address *to)
+int AddressFlat64::compareDelinear(const Address *to) const
 {
 	assert(getObjectID() == to->getObjectID());
 	uint64 da1, da2;
@@ -288,7 +288,7 @@ int AddressFlat64::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressFlat64::difference(int &result, const Address *to)
+bool AddressFlat64::difference(int &result, const Address *to) const
 {
 	if (getObjectID() == to->getObjectID()) {
 		uint64 res = addr - ((AddressFlat64 *)to)->addr;

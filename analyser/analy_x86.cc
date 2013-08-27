@@ -38,7 +38,7 @@ bool AddressX86Flat32::add(int offset)
 	return true;
 }
 
-int AddressX86Flat32::byteSize()
+int AddressX86Flat32::byteSize() const
 {
 	return 4;
 }
@@ -51,7 +51,7 @@ int AddressX86Flat32::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86Flat32::compareDelinear(const Address *to)
+int AddressX86Flat32::compareDelinear(const Address *to) const
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 da = delinearize(addr);
@@ -61,7 +61,7 @@ int AddressX86Flat32::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86Flat32::difference(int &result, const Address *to)
+bool AddressX86Flat32::difference(int &result, const Address *to) const
 {
 	if (getObjectID() == to->getObjectID()) {
 		result = addr-((AddressX86Flat32 *)to)->addr;
@@ -166,7 +166,7 @@ bool AddressX86_1632::add(int offset)
 	return true;
 }
 
-int AddressX86_1632::byteSize()
+int AddressX86_1632::byteSize() const
 {
 	return 6;
 }
@@ -181,7 +181,7 @@ int AddressX86_1632::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86_1632::compareDelinear(const Address *to)
+int AddressX86_1632::compareDelinear(const Address *to) const
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 s1 = delinearize(seg);
@@ -195,7 +195,7 @@ int AddressX86_1632::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86_1632::difference(int &result, const Address *to)
+bool AddressX86_1632::difference(int &result, const Address *to) const
 {
 	if ((getObjectID() == to->getObjectID()) && (seg == ((AddressX86_1632 *)to)->seg)) {
 		result = addr-((AddressX86_1632 *)to)->addr;
@@ -304,7 +304,7 @@ bool AddressX86_1616::add(int offset)
 	return true;
 }
 
-int AddressX86_1616::byteSize()
+int AddressX86_1616::byteSize() const
 {
 	return 4;
 }
@@ -319,7 +319,7 @@ int AddressX86_1616::compareTo(const Object *obj) const
 	return 0;
 }
 
-int AddressX86_1616::compareDelinear(const Address *to)
+int AddressX86_1616::compareDelinear(const Address *to) const
 {
 	assert(getObjectID() == to->getObjectID());
 	uint32 s1 = delinearize(seg);
@@ -333,7 +333,7 @@ int AddressX86_1616::compareDelinear(const Address *to)
 	return 0;
 }
 
-bool AddressX86_1616::difference(int &result, const Address *to)
+bool AddressX86_1616::difference(int &result, const Address *to) const
 {
 	if ((getObjectID() == to->getObjectID()) && (seg == ((AddressX86_1616 *)to)->seg)) {
 		result = (int)addr-(int)((AddressX86_1616 *)to)->addr;
