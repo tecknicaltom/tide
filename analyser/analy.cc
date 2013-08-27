@@ -58,7 +58,7 @@ int Address::toString(char *s, int maxlen) const
 	return stringify(s, maxlen, global_analyser_address_string_format);
 }
 
-bool InvalidAddress::add(int offset)
+bool InvalidAddress::add(int UNUSED(offset))
 {
 	return false;
 }
@@ -68,16 +68,16 @@ int InvalidAddress::byteSize()
 	return 0;
 }
 
-int InvalidAddress::compareTo(const Object *obj) const
+int InvalidAddress::compareTo(const Object UNUSED(*obj)) const
 {
 	return 0;
 }
 
-void InvalidAddress::putIntoCPUAddress(CPU_ADDR *ca) const
+void InvalidAddress::putIntoCPUAddress(CPU_ADDR UNUSED(*ca)) const
 {
 }
 
-bool InvalidAddress::difference(int &result, const Address *to)
+bool InvalidAddress::difference(int UNUSED(&result), const Address UNUSED(*to))
 {
 	return false;
 }
@@ -87,15 +87,15 @@ InvalidAddress *InvalidAddress::clone() const
 	return new InvalidAddress(*this);
 }
 
-void InvalidAddress::getFromArray(const byte *array)
+void InvalidAddress::getFromArray(const byte UNUSED(*array))
 {
 }
 
-void InvalidAddress::getFromCPUAddress(const CPU_ADDR *ca)
+void InvalidAddress::getFromCPUAddress(const CPU_ADDR UNUSED(*ca))
 {
 }
 
-bool InvalidAddress::getFromUInt64(uint64 u)
+bool InvalidAddress::getFromUInt64(uint64 UNUSED(u))
 {
 	return false;
 }
@@ -110,16 +110,16 @@ ObjectID InvalidAddress::getObjectID() const
 	return ATOM_ADDRESS_INVALID;
 }
 
-void InvalidAddress::putIntoArray(byte *array) const
+void InvalidAddress::putIntoArray(byte UNUSED(*array)) const
 {
 }
 
-bool InvalidAddress::putIntoUInt64(uint64 &u) const
+bool InvalidAddress::putIntoUInt64(uint64 UNUSED(&u)) const
 {
 	return false;
 }
 
-int InvalidAddress::stringify(char *s, int max_length, int format) const
+int InvalidAddress::stringify(char *s, int max_length, int UNUSED(format)) const
 {
 	return ht_snprintf(s, max_length, "*INVALID");
 }
@@ -1492,7 +1492,7 @@ const char *Analyser::getSymbolNameByLocation(const Location *loc)
 /**
  *	converts |FileOfs fileofs| to |Address|
  */
-Address *Analyser::fileofsToAddress(FileOfs fileaddr)
+Address *Analyser::fileofsToAddress(FileOfs UNUSED(fileaddr))
 {
 	// abstract / stub
 	return new InvalidAddress();
@@ -1695,7 +1695,7 @@ int	Analyser::getSymbolCount() const
 /*
  *
  */
-const char *Analyser::getSegmentNameByAddress(const Address *Addr)
+const char *Analyser::getSegmentNameByAddress(const Address UNUSED(*Addr))
 {
 	return NULL;
 }
