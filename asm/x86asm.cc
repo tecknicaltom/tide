@@ -376,10 +376,10 @@ void x86asm::emitsib_scale(int scale)
 #define MATCHOPNAME_MATCH_IF_OPPREFIX	8
 #define MATCHOPNAME_MATCH_IF_NOOPPREFIX	9
 
-asm_code *x86asm::encode(const asm_insn *asm_insn, int options, CPU_ADDR cur_address)
+asm_code *x86asm::encode(asm_insn *asm_insn, int options, CPU_ADDR cur_address)
 {
 	Assembler::encode(asm_insn, options, cur_address);
-	x86asm_insn *insn = (x86asm_insn*)asm_insn;
+	x86asm_insn *insn = static_cast<x86asm_insn*>(asm_insn);
 
 	newcode();
 	namefound = false;
@@ -2073,7 +2073,7 @@ bool x86asm::opspecialregs(x86_insn_op *op, const char *xop)
 
 bool x86asm::translate_str(asm_insn *asm_insn, const char *s)
 {
-	x86asm_insn *insn=(x86asm_insn*)asm_insn;
+	x86asm_insn *insn=static_cast<x86asm_insn*>(asm_insn);
 	char *opp[5], op[5][256];
 	opp[0]=op[0];
 	opp[1]=op[1];

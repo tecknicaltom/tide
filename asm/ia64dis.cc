@@ -26,9 +26,9 @@
 #include "ia64opc.h"
 #include "snprintf.h"
 
-bool IA64Disassembler::selectNext(const dis_insn *disasm_insn)
+bool IA64Disassembler::selectNext(dis_insn *disasm_insn)
 {
-	IA64DisInsn *insn = (IA64DisInsn *)disasm_insn;
+	IA64DisInsn *insn = static_cast<IA64DisInsn *>(disasm_insn);
 	if (!insn->valid) return false;
 	insn->selected += insn->slot[insn->selected].next;
 	if (insn->selected > 2) {
@@ -475,7 +475,7 @@ void IA64Disassembler::getOpcodeMetrics(int &min_length, int &max_length, int &m
 
 byte IA64Disassembler::getSize(const dis_insn *disasm_insn)
 {
-	return ((IA64DisInsn*)disasm_insn)->size;
+	return static_cast<const IA64DisInsn*>(disasm_insn)->size;
 }
 
 const char *IA64Disassembler::getName() const
@@ -635,7 +635,7 @@ ObjectID IA64Disassembler::getObjectID() const
 	return ATOM_DISASM_IA64;
 }
 
-bool IA64Disassembler::validInsn(const dis_insn *disasm_insn)
+bool IA64Disassembler::validInsn(const dis_insn *disasm_insn) const
 {
-	return ((IA64DisInsn *)disasm_insn)->valid;
+	return static_cast<const IA64DisInsn *>(disasm_insn)->valid;
 }

@@ -37,7 +37,7 @@ class Stream {
 private:
 	IOAccessMode mAccessMode;
 protected:
-		void			checkAccess(IOAccessMode mask);
+		void			checkAccess(IOAccessMode mask) const;
 public:
 					Stream();
 	virtual				~Stream() {};

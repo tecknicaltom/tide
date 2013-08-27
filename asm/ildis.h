@@ -64,7 +64,7 @@ public:
 	virtual	const char	*str(const dis_insn *disasm_insn, int style);
 	virtual	const char	*strf(const dis_insn *disasm_insn, int style, const char *format);
 	virtual	ObjectID	getObjectID() const;
-	virtual	bool		validInsn(const dis_insn *disasm_insn);
+	virtual	bool		validInsn(const dis_insn *disasm_insn) const;
 };
 
 #endif

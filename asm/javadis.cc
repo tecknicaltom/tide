@@ -218,7 +218,7 @@ const char *javadis::getName() const
 
 byte javadis::getSize(const dis_insn *disasm_insn)
 {
-	return ((javadis_insn*)disasm_insn)->size;
+	return static_cast<const javadis_insn*>(disasm_insn)->size;
 }
 
 void javadis::invalidate()
@@ -436,7 +436,7 @@ const char *javadis::strf(const dis_insn *disasm_insn, int opt, const char *form
 	return insnstr;
 }
 
-bool javadis::validInsn(const dis_insn *disasm_insn)
+bool javadis::validInsn(const dis_insn *disasm_insn) const
 {
-	return !((javadis_insn *)disasm_insn)->invalid;
+	return !static_cast<const javadis_insn *>(disasm_insn)->invalid;
 }

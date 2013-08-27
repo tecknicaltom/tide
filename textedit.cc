@@ -270,7 +270,7 @@ ht_undo_data_delete_string2::~ht_undo_data_delete_string2()
 bool ht_undo_data_delete_string2::combine(ht_undo_data *ud)
 {
 	if (ud->getObjectID() == getObjectID()) {
-		ht_undo_data_delete_string2 *ud2 = (ht_undo_data_delete_string2 *)ud;
+		ht_undo_data_delete_string2 *ud2 = static_cast<ht_undo_data_delete_string2 *>(ud);
 		if (ud2->apos.line == apos.line) {
 			if (ud2->apos.pofs == apos.pofs) {
 				string = realloc(string, len+ud2->len);

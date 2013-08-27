@@ -180,7 +180,7 @@ void ILDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &min
 
 byte ILDisassembler::getSize(const dis_insn *disasm_insn)
 {
-	return ((ILDisInsn*)disasm_insn)->size;
+	return static_cast<const ILDisInsn*>(disasm_insn)->size;
 }
 
 const char *ILDisassembler::getName() const
@@ -304,7 +304,7 @@ ObjectID ILDisassembler::getObjectID() const
 	return ATOM_DISASM_IL;
 }
 
-bool ILDisassembler::validInsn(const dis_insn *disasm_insn)
+bool ILDisassembler::validInsn(const dis_insn *disasm_insn) const
 {
-	return ((ILDisInsn *)disasm_insn)->valid;
+	return static_cast<const ILDisInsn *>(disasm_insn)->valid;
 }

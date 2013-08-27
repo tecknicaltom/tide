@@ -111,7 +111,7 @@ ObjectID ArmDisassembler::getObjectID() const
 	return ATOM_DISASM_ARM;
 }
 
-bool ArmDisassembler::validInsn(const dis_insn *disasm_insn)
+bool ArmDisassembler::validInsn(const dis_insn *disasm_insn) const
 {
 	return true;
 	const ArmDisInsn *adi = static_cast<const ArmDisInsn *>(disasm_insn);

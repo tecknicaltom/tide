@@ -1069,7 +1069,7 @@ int x86dis::getsib()
 
 byte x86dis::getSize(const dis_insn *disasm_insn)
 {
-	return ((x86dis_insn*)disasm_insn)->size;
+	return static_cast<const x86dis_insn*>(disasm_insn)->size;
 }
 
 void x86dis::invalidate()
@@ -1562,7 +1562,7 @@ static void pickname(char *result, const char *name, int n)
 
 const char *x86dis::strf(const dis_insn *disasm_insn, int opt, const char *format)
 {
-	x86dis_insn *insn = (x86dis_insn*)disasm_insn;
+	const x86dis_insn *insn = static_cast<const x86dis_insn*>(disasm_insn);
 	char prefix[64];
 	char *p = prefix;
 	options = opt;
@@ -1640,9 +1640,9 @@ void x86dis::store(ObjectStream &f) const
 	PUT_INT32X(f, addrsize);
 }
 
-bool x86dis::validInsn(const dis_insn *disasm_insn)
+bool x86dis::validInsn(const dis_insn *disasm_insn) const
 {
-	return !((x86dis_insn *)disasm_insn)->invalid;
+	return !static_cast<const x86dis_insn *>(disasm_insn)->invalid;
 }
 
 /*

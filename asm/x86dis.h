@@ -133,7 +133,7 @@ public:
 	virtual const char *	str(const dis_insn *disasm_insn, int options);
 	virtual const char *	strf(const dis_insn *disasm_insn, int options, const char *format);
 	virtual void		store(ObjectStream &f) const;
-	virtual bool		validInsn(const dis_insn *disasm_insn);
+	virtual bool		validInsn(const dis_insn *disasm_insn) const;
 };
 
 class x86_64dis: public x86dis {

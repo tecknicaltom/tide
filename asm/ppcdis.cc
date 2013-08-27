@@ -167,7 +167,7 @@ void PPCDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &mi
 
 byte PPCDisassembler::getSize(const dis_insn *disasm_insn)
 {
-	return ((ppcdis_insn*)disasm_insn)->size;
+	return static_cast<const ppcdis_insn*>(disasm_insn)->size;
 }
 
 const char *PPCDisassembler::getName() const
@@ -292,7 +292,7 @@ void PPCDisassembler::store(ObjectStream &f) const
 	PUT_INT32X(f, mode);
 }
 
-bool PPCDisassembler::validInsn(const dis_insn *disasm_insn)
+bool PPCDisassembler::validInsn(const dis_insn *disasm_insn) const
 {
-	return ((ppcdis_insn*)disasm_insn)->valid;
+	return static_cast<const ppcdis_insn*>(disasm_insn)->valid;
 }

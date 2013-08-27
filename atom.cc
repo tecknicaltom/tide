@@ -39,7 +39,7 @@ public:
 
 	int compareTo(const Object *obj) const
 	{
-		Atom *a = (Atom*)obj;
+		const Atom *a = static_cast<const Atom*>(obj);
 		return id - a->id;
 	}
 

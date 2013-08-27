@@ -39,7 +39,7 @@
 
 int compare_keys_addresses_delinear(Object *key_a, Object *key_b)
 {
-	return ((Address*)key_a)->compareDelinear((Address*)key_b);
+	return (static_cast<Address*>(key_a))->compareDelinear(static_cast<Address*>(key_b));
 }
 
 /*
@@ -99,7 +99,7 @@ OutLine *OutAddr::getLine(int i)
 int OutAddr::compareTo(const Object *o) const
 {
 //	uint oo = o->getObjectID();
-	return addr->compareTo(((OutAddr*)o)->addr);
+	return addr->compareTo((static_cast<const OutAddr*>(o))->addr);
 }
 
 void OutAddr::updateTime(uint Time)
@@ -562,7 +562,7 @@ OutAddr *AnalyserOutput::getAddr(Address *Addr)
 		delete addr;
 		addr = Addr->clone();
 		OutAddr oatmp(addr, 0);
-		OutAddr *oa = (OutAddr*)out_addrs->get(out_addrs->find(&oatmp));
+		OutAddr *oa = static_cast<OutAddr*>(out_addrs->get(out_addrs->find(&oatmp)));
 		if (!oa) {
 			DPRINTF("generate\n");
 			if (out_addrs->count() > 1024) {

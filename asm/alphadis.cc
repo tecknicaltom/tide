@@ -259,7 +259,7 @@ const char *Alphadis::getName() const
 
 byte	Alphadis::getSize(const dis_insn *disasm_insn)
 {
-	return ((alphadis_insn*)disasm_insn)->size;
+	return static_cast<const alphadis_insn*>(disasm_insn)->size;
 }
 
 ObjectID Alphadis::getObjectID() const
@@ -373,8 +373,8 @@ const char *Alphadis::strf(const dis_insn *disasm_insn, int style, const char *f
 	return insnstr;
 }
 
-bool	Alphadis::validInsn(const dis_insn *disasm_insn)
+bool	Alphadis::validInsn(const dis_insn *disasm_insn) const
 {
-	return ((alphadis_insn *)disasm_insn)->valid;
+	return static_cast<const alphadis_insn *>(disasm_insn)->valid;
 }
 

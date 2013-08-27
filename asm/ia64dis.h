@@ -94,11 +94,11 @@ public:
 	virtual	void		getOpcodeMetrics(int &min_length, int &max_length, int &min_look_ahead, int &avg_look_ahead, int &addr_align);
 	virtual	byte		getSize(const dis_insn *disasm_insn);
 	virtual	const char	*getName() const;
-	virtual	bool		selectNext(const dis_insn *disasm_insn);
+	virtual	bool		selectNext(dis_insn *disasm_insn);
 	virtual	const char	*str(const dis_insn *disasm_insn, int style);
 	virtual	const char	*strf(const dis_insn *disasm_insn, int style, const char *format);
 	virtual	ObjectID	getObjectID() const;
-	virtual	bool		validInsn(const dis_insn *disasm_insn);
+	virtual	bool		validInsn(const dis_insn *disasm_insn) const;
 private:
 		void		decodeSlot(int slot_nb);
 		uint64		signExtend(uint64 a, int length);

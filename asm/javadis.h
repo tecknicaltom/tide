@@ -80,7 +80,7 @@ public:
 	virtual ObjectID getObjectID() const;
 	virtual const char *str(const dis_insn *disasm_insn, int options);
 	virtual const char *strf(const dis_insn *disasm_insn, int options, const char *format);
-	virtual bool validInsn(const dis_insn *disasm_insn);
+	virtual bool validInsn(const dis_insn *disasm_insn) const;
 };
 
 #endif /* __JAVADIS_H__ */

@@ -708,7 +708,7 @@ ht_elf32_reloc_file::ht_elf32_reloc_file(File *s, bool os, ht_elf_shared_data *d
 
 void	ht_elf32_reloc_file::reloc_apply(Object *reloc, byte *buf)
 {
-	ht_elf32_reloc_entry *e=(ht_elf32_reloc_entry*)reloc;
+	ht_elf32_reloc_entry *e=static_cast<ht_elf32_reloc_entry*>(reloc);
 
 	switch (e->type) {
 	case ELF_R_386_32: {
@@ -729,5 +729,5 @@ void	ht_elf32_reloc_file::reloc_apply(Object *reloc, byte *buf)
 bool	ht_elf32_reloc_file::reloc_unapply(Object *reloc, byte *data)
 {
 	return false;
-//	ht_elf32_reloc_entry *e=(ht_elf32_reloc_entry*)reloc;
+//	ht_elf32_reloc_entry *e=static_cast<ht_elf32_reloc_entry*>(reloc);
 }

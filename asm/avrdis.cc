@@ -148,7 +148,7 @@ void AVRDisassembler::getOpcodeMetrics(int &min_length, int &max_length, int &mi
 
 byte AVRDisassembler::getSize(const dis_insn *disasm_insn)
 {
-	return ((avrdis_insn*)disasm_insn)->size;
+	return static_cast<const avrdis_insn*>(disasm_insn)->size;
 }
 
 const char *AVRDisassembler::getName() const
@@ -284,7 +284,7 @@ ObjectID AVRDisassembler::getObjectID() const
 	return ATOM_DISASM_AVR;
 }
 
-bool AVRDisassembler::validInsn(const dis_insn *disasm_insn)
+bool AVRDisassembler::validInsn(const dis_insn *disasm_insn) const
 {
-	return ((avrdis_insn*)disasm_insn)->valid;
+	return static_cast<const avrdis_insn*>(disasm_insn)->valid;
 }

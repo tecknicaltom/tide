@@ -72,7 +72,7 @@ void Assembler::deletecode(asm_code *code)
 	}
 }
 
-asm_code *Assembler::encode(const asm_insn *asm_insn, int _options, CPU_ADDR cur_address)
+asm_code *Assembler::encode(asm_insn *asm_insn, int _options, CPU_ADDR cur_address)
 {
 	free_asm_codes();
 	error = 0;
@@ -290,7 +290,7 @@ void Disassembler::hexq(char **s, int size, int options, uint64 imm)
 	}
 }
 
-bool Disassembler::selectNext(const dis_insn *disasm_insn)
+bool Disassembler::selectNext(dis_insn *disasm_insn)
 {
 	return false;
 }
