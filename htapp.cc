@@ -1490,7 +1490,7 @@ void ht_app::init(Bounds *pq)
 
 	ht_static_context_menu *help=new ht_static_context_menu();
 	help->init("~Help");
-	help->insert_entry("~About "program_name, "", cmd_about, 0, 1);
+	help->insert_entry("~About " program_name, "", cmd_about, 0, 1);
 	help->insert_separator();
 	help->insert_entry("~Help contents", "F1", cmd_popup_window_help, 0, 1);
 	help->insert_entry("~Open info file...", NULL, cmd_popup_dialog_info_loader, 0, 1);
@@ -3224,7 +3224,7 @@ BUILDER(ATOM_HT_PROJECT_ITEM, ht_project_item, Object);
 bool init_app()
 {
 	Bounds b;
-	screen = allocSystemDisplay(program_name" "program_version);
+	screen = allocSystemDisplay(program_name " " program_version);
 
 	loglines = new ht_log();
 	loglines->init();

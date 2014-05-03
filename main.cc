@@ -303,11 +303,11 @@ int main(int argc, char *argv[])
 			break;
 		case LS_ERROR_MAGIC:
 		case LS_ERROR_FORMAT:
-			LOG_EX(LOG_ERROR, "%s %s %s...", "current configuration file ("SYSTEM_CONFIG_FILE_NAME") has", "invalid", "magic");
+			LOG_EX(LOG_ERROR, "%s %s %s...", "current configuration file (" SYSTEM_CONFIG_FILE_NAME ") has", "invalid", "magic");
 			systemconfig_magic = true;
 			break;
 		case LS_ERROR_VERSION:
-			LOG_EX(LOG_ERROR, "%s %s %s...", "current configuration file ("SYSTEM_CONFIG_FILE_NAME") has", "wrong", "version");
+			LOG_EX(LOG_ERROR, "%s %s %s...", "current configuration file (" SYSTEM_CONFIG_FILE_NAME ") has", "wrong", "version");
 			if (error_info < ht_systemconfig_fileversion) {
 				systemconfig_version = -1;
 			} else {
@@ -347,17 +347,17 @@ int main(int argc, char *argv[])
 	bool save_config = true;
 
 	if (systemconfig_magic) {
-		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file ("SYSTEM_CONFIG_FILE_NAME") has", "wrong", "magic")!=button_ok) {
+		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file (" SYSTEM_CONFIG_FILE_NAME ") has", "wrong", "magic")!=button_ok) {
 			save_config = false;
 		}
 	}
 
 	if (systemconfig_version < 0) {
-		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file ("SYSTEM_CONFIG_FILE_NAME") has", "older", "version")!=button_ok) {
+		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file (" SYSTEM_CONFIG_FILE_NAME ") has", "older", "version")!=button_ok) {
 			save_config = false;
 		}
 	} else if (systemconfig_version > 0) {
-		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file ("SYSTEM_CONFIG_FILE_NAME") has", "NEWER", "version")!=button_ok) {
+		if (confirmbox_modal("%s %s %s...\noverwrite it?", "current configuration file (" SYSTEM_CONFIG_FILE_NAME ") has", "NEWER", "version")!=button_ok) {
 			save_config = false;
 		}
 	}
